@@ -1,6 +1,6 @@
 <template>
   <div class="mz-list">
-    <div>
+    <div v-on:click="toggleView()" v-bind:class="{ expanded: expanded }">
       MZ
     </div>
   </div>
@@ -9,8 +9,15 @@
 <script>
 export default {
   name: 'MzList',
-  props: {
-    msg: String,
+  data: function() {
+    return {
+      expanded: true,
+    };
+  },
+  methods: {
+    toggleView: function() {
+      this.expanded = !this.expanded;
+    },
   },
 };
 </script>
@@ -18,7 +25,12 @@ export default {
 <style scoped lang="scss">
 .mz-list > div {
   background-color: yellow;
-  width: 100px;
+  width: 20px;
   min-height: 100vh;
+  overflow: hidden;
+
+  &.expanded {
+    width: 100px;
+  }
 }
 </style>

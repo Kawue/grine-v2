@@ -32,5 +32,15 @@ export default {
   bottom: 0px;
   z-index: 101;
   background-color: blue;
+
+  .row {
+    padding: 0;
+    margin: 0;
+
+    .col-sm {
+      padding: 0;
+      margin: 0;
+    }
+  }
 }
 </style>
