@@ -1,14 +1,14 @@
 <template>
-  <div class="images">
+  <div class="mz-list">
     <div>
-      images
+      MZ
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Images',
+  name: 'MzList',
   props: {
     msg: String,
   },
@@ -16,9 +16,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.images > div {
-  background-color: red;
-  width: 300px;
+.mz-list > div {
+  background-color: yellow;
+  width: 100px;
   min-height: 100vh;
 }
 </style>
