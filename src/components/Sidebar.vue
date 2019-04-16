@@ -27,9 +27,9 @@ export default {
 <style scoped lang="scss">
 .sidebar {
   position: absolute;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;
+  right: 0;
+  top: 0;
+  bottom: 0;
   z-index: 101;
   background-color: blue;
 
@@ -41,6 +41,12 @@ export default {
       padding: 0;
       margin: 0;
     }
+  }
+
+  .sidebar-widget {
+    width: 20px;
+    min-height: 100vh;
+    overflow: hidden;
   }
 }
 </style>

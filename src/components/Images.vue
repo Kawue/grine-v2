@@ -1,8 +1,10 @@
 <template>
-  <div class="images">
-    <div v-on:click="toggleView()" v-bind:class="{ expanded: expanded }">
-      images
-    </div>
+  <div
+    class="sidebar-widget"
+    v-bind:class="{ expanded: expanded }"
+    v-on:click="toggleView()"
+  >
+    IMAGES
   </div>
 </template>
 
@@ -23,14 +25,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.images > div {
+.sidebar-widget {
   background-color: red;
-  width: 20px;
-  min-height: 100vh;
-  overflow: hidden;
+}
 
+.sidebar-widget {
   &.expanded {
-    width: 300px;
+    width: 300px !important;
   }
 }
 </style>

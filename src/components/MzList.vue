@@ -1,8 +1,10 @@
 <template>
-  <div class="mz-list">
-    <div v-on:click="toggleView()" v-bind:class="{ expanded: expanded }">
-      MZ
-    </div>
+  <div
+    class="sidebar-widget"
+    v-bind:class="{ expanded: expanded }"
+    v-on:click="toggleView()"
+  >
+    MZ
   </div>
 </template>
 
@@ -23,14 +25,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.mz-list > div {
+.sidebar-widget {
   background-color: yellow;
-  width: 20px;
-  min-height: 100vh;
-  overflow: hidden;
+}
 
+.sidebar-widget {
   &.expanded {
-    width: 100px;
+    width: 100px !important;
   }
 }
 </style>
