@@ -9,18 +9,11 @@
 </template>
 
 <script>
+import SidebarWidget from './SidebarWidget';
+
 export default {
+  extends: SidebarWidget,
   name: 'MzList',
-  data: function() {
-    return {
-      expanded: true,
-    };
-  },
-  methods: {
-    toggleView: function() {
-      this.expanded = !this.expanded;
-    },
-  },
 };
 </script>
 

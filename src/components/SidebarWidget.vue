@@ -4,22 +4,29 @@
     v-bind:class="{ expanded: expanded }"
     v-on:click="toggleView()"
   >
-    IMAGES
+    Sidebar Widget
   </div>
 </template>
 
 <script>
-import SidebarWidget from './SidebarWidget';
-
 export default {
-  extends: SidebarWidget,
-  name: 'Images',
+  name: 'SidebarWidget',
+  data: function() {
+    return {
+      expanded: true,
+    };
+  },
+  methods: {
+    toggleView: function() {
+      this.expanded = !this.expanded;
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
 .sidebar-widget {
-  background-color: red;
+  background-color: white;
 }
 
 .sidebar-widget {
