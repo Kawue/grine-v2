@@ -1,9 +1,12 @@
 <template>
   <div class="sidebar-widget" v-bind:class="{ expanded: expanded }">
     <span v-on:click="toggleView()" class="float-right">
-      <font-awesome-icon icon="coffee" />
+      <v-icon name="arrow-right" v-if="expanded"></v-icon>
+      <v-icon name="arrow-left" v-if="!expanded"></v-icon>
     </span>
-    <slot></slot>
+    <div class="content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -31,6 +34,14 @@ export default {
 .sidebar-widget {
   &.expanded {
     width: 200px !important;
+
+    .content {
+      display: block;
+    }
+  }
+
+  .content {
+    display: none;
   }
 }
 </style>
