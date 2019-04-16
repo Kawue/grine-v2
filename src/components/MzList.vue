@@ -1,6 +1,6 @@
 <template>
   <SidebarWidget>
-    <div>IMAGES</div>
+    <div>MZ</div>
   </SidebarWidget>
 </template>
 

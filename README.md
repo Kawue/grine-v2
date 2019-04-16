@@ -1,34 +1,15 @@
-# grine-v2
+# Grine v2
+
+
+## FontAwesome
+Here are the available icons: https://fontawesome.com/icons?d=gallery
+
+Shows a list of available icon files:
+`ls node_modules/@fortawesome/free-solid-svg-icons/`
+
 
 ## Project setup
 ```
-yarn install
+npm install
+npm run serve
 ```
-
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
-
-### Compiles and minifies for production
-```
-yarn run build
-```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Run your unit tests
-```
-yarn run test:unit
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -1,9 +1,8 @@
 <template>
-  <div
-    class="sidebar-widget"
-    v-bind:class="{ expanded: expanded }"
-    v-on:click="toggleView()"
-  >
+  <div class="sidebar-widget" v-bind:class="{ expanded: expanded }">
+    <span v-on:click="toggleView()" class="float-right">
+      <font-awesome-icon icon="coffee" />
+    </span>
     <slot></slot>
   </div>
 </template>
