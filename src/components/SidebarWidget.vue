@@ -4,7 +4,7 @@
     v-bind:class="{ expanded: expanded }"
     v-on:click="toggleView()"
   >
-    Sidebar Widget
+    <slot></slot>
   </div>
 </template>
 

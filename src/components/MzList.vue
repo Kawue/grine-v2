@@ -1,11 +1,7 @@
 <template>
-  <div
-    class="sidebar-widget"
-    v-bind:class="{ expanded: expanded }"
-    v-on:click="toggleView()"
-  >
-    MZ
-  </div>
+  <SidebarWidget>
+    <div>IMAGES</div>
+  </SidebarWidget>
 </template>
 
 <script>
@@ -13,6 +9,9 @@ import SidebarWidget from './SidebarWidget';
 
 export default {
   extends: SidebarWidget,
+  components: {
+    SidebarWidget,
+  },
   name: 'MzList',
 };
 </script>
