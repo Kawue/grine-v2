@@ -2,24 +2,19 @@
   <div class="sidebar">
     <div class="row">
       <div class="col-sm">
-        <Images></Images>
-      </div>
-      <div class="col-sm">
-        <MzList></MzList>
+        <Options side="left"></Options>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Images from '@/components/Images.vue';
-import MzList from '@/components/MzList.vue';
+import Options from '@/components/Options.vue';
 
 export default {
   name: 'Sidebar',
   components: {
-    Images,
-    MzList,
+    Options,
   },
 };
 </script>
@@ -27,7 +22,7 @@ export default {
 <style scoped lang="scss">
 .sidebar {
   position: absolute;
-  right: 0;
+  left: 0;
   top: 0;
   bottom: 0;
   z-index: 101;
@@ -41,12 +36,6 @@ export default {
       padding: 0;
       margin: 0;
     }
-  }
-
-  .sidebar-widget {
-    width: 20px;
-    min-height: 100vh;
-    overflow: hidden;
   }
 }
 </style>

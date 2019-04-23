@@ -1,18 +1,21 @@
 <template>
   <div class="home">
-    <Sidebar />
+    <SidebarLeft />
+    <SidebarRight />
     <Graph />
   </div>
 </template>
 
 <script>
-import Sidebar from '@/components/Sidebar.vue';
+import SidebarLeft from '@/components/SidebarLeft.vue';
+import SidebarRight from '@/components/SidebarRight.vue';
 import Graph from '@/components/Graph.vue';
 
 export default {
   name: 'home',
   components: {
-    Sidebar,
+    SidebarLeft,
+    SidebarRight,
     Graph,
   },
 };

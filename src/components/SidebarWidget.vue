@@ -1,8 +1,8 @@
 <template>
   <div class="sidebar-widget" v-bind:class="{ expanded: expanded }">
     <span v-on:click="toggleView()" class="float-right">
-      <v-icon name="arrow-right" v-if="expanded"></v-icon>
-      <v-icon name="arrow-left" v-if="!expanded"></v-icon>
+      <v-icon name="arrow-right" v-if="showRightArrow()"></v-icon>
+      <v-icon name="arrow-left" v-if="showLeftArrow()"></v-icon>
     </span>
     <div class="content">
       <slot></slot>
@@ -13,6 +13,12 @@
 <script>
 export default {
   name: 'SidebarWidget',
+  props: {
+    side: {
+      type: String,
+      required: true,
+    },
+  },
   data: function() {
     return {
       expanded: true,
@@ -22,18 +28,25 @@ export default {
     toggleView: function() {
       this.expanded = !this.expanded;
     },
+    showLeftArrow: function() {
+      return this.side === 'right' ? !this.expanded : this.expanded;
+    },
+    showRightArrow: function() {
+      return this.side === 'right' ? this.expanded : !this.expanded;
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
 .sidebar-widget {
+  width: 20px;
+  min-height: 100vh;
+  overflow: hidden;
   background-color: white;
-}
 
-.sidebar-widget {
   &.expanded {
-    width: 200px !important;
+    width: 200px;
 
     .content {
       display: block;

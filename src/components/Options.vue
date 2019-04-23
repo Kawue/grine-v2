@@ -1,6 +1,6 @@
 <template>
   <SidebarWidget v-bind:side="side">
-    <div>IMAGES</div>
+    <div>OPTIONS</div>
   </SidebarWidget>
 </template>
 
@@ -12,13 +12,13 @@ export default {
   components: {
     SidebarWidget,
   },
-  name: 'Images',
+  name: 'Options',
 };
 </script>
 
 <style scoped lang="scss">
 .sidebar-widget {
-  background-color: red;
+  background-color: green;
 }
 
 .sidebar-widget {

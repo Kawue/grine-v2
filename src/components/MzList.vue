@@ -1,5 +1,5 @@
 <template>
-  <SidebarWidget>
+  <SidebarWidget v-bind:side="side">
     <div>MZ</div>
   </SidebarWidget>
 </template>
