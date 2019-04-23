@@ -50,6 +50,7 @@ export default {
 .sidebar-widget {
   width: 20px;
   min-height: 100vh;
+  max-height: 100vh;
   overflow: hidden;
   background-color: white;
 
