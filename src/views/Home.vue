@@ -10,6 +10,7 @@
 import SidebarLeft from '@/components/SidebarLeft.vue';
 import SidebarRight from '@/components/SidebarRight.vue';
 import Graph from '@/components/Graph.vue';
+import store from '@/store';
 
 export default {
   name: 'home',
@@ -17,6 +18,10 @@ export default {
     SidebarLeft,
     SidebarRight,
     Graph,
+  },
+  mounted: () => {
+    console.log('home component mounted');
+    store.dispatch('fetchData');
   },
 };
 </script>

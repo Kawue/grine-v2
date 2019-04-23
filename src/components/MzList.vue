@@ -1,11 +1,13 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
     <div>MZ</div>
+    {{ mzValues }}
   </SidebarWidget>
 </template>
 
 <script>
 import SidebarWidget from './SidebarWidget';
+import { mapGetters } from 'vuex';
 
 export default {
   extends: SidebarWidget,
@@ -13,6 +15,9 @@ export default {
     SidebarWidget,
   },
   name: 'MzList',
+  computed: mapGetters({
+    mzValues: 'getMzValues',
+  }),
 };
 </script>
 

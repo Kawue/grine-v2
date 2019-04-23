@@ -1,13 +1,13 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
     <div>IMAGES</div>
-    <div>{{ originalData }}</div>
+    <div>{{ data }}</div>
   </SidebarWidget>
 </template>
 
 <script>
 import SidebarWidget from './SidebarWidget';
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   extends: SidebarWidget,
@@ -15,8 +15,8 @@ export default {
     SidebarWidget,
   },
   name: 'Images',
-  computed: mapState({
-    originalData: 'originalData',
+  computed: mapGetters({
+    data: 'getData',
   }),
 };
 </script>
