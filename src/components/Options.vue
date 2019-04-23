@@ -1,5 +1,5 @@
 <template>
-  <SidebarWidget v-bind:side="side" v-bind:initial-expanded="false">
+  <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
     <div>OPTIONS</div>
   </SidebarWidget>
 </template>

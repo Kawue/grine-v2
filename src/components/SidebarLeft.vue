@@ -2,7 +2,7 @@
   <div class="sidebar">
     <div class="row">
       <div class="col-sm">
-        <Options side="left"></Options>
+        <Options side="left" v-bind:initialExpanded="false"></Options>
       </div>
     </div>
   </div>

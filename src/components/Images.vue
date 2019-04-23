@@ -1,5 +1,5 @@
 <template>
-  <SidebarWidget v-bind:side="side">
+  <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
     <div>IMAGES</div>
   </SidebarWidget>
 </template>
