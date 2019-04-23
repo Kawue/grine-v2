@@ -1,7 +1,13 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
-    <div>MZ</div>
-    {{ mzValues }}
+    <div style="position: sticky; top: 0;display: inline-block;">MZ</div>
+    <div style="overflow: auto;  min-height: 100vh; max-height: 100vh;">
+      <ul style="padding: 0; font-size: 0.7em;">
+        <li v-for="mz in mzValues">
+          {{ mz }}
+        </li>
+      </ul>
+    </div>
   </SidebarWidget>
 </template>
 
@@ -28,7 +34,7 @@ export default {
 
 .sidebar-widget {
   &.expanded {
-    width: 100px !important;
+    width: 120px !important;
   }
 }
 </style>
