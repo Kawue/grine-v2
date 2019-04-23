@@ -1,8 +1,8 @@
 <template>
   <div class="sidebar-widget" v-bind:class="{ expanded: expanded }">
-    <span v-on:click="toggleView()" class="float-right">
-      <v-icon name="arrow-right" v-if="showRightArrow()"></v-icon>
-      <v-icon name="arrow-left" v-if="showLeftArrow()"></v-icon>
+    <span v-on:click="toggleView()" v-bind:class="getExpandIconClass()">
+      <v-icon name="arrow-right" v-if="showExpandRightIcon()"></v-icon>
+      <v-icon name="arrow-left" v-if="showExpandLeftIcon()"></v-icon>
     </span>
     <div class="content">
       <slot></slot>
@@ -33,10 +33,13 @@ export default {
     toggleView: function() {
       this.expanded = !this.expanded;
     },
-    showLeftArrow: function() {
+    getExpandIconClass: function() {
+      return this.side === 'right' ? 'float-right' : 'float-left';
+    },
+    showExpandLeftIcon: function() {
       return this.side === 'right' ? !this.expanded : this.expanded;
     },
-    showRightArrow: function() {
+    showExpandRightIcon: function() {
       return this.side === 'right' ? this.expanded : !this.expanded;
     },
   },
