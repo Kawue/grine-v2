@@ -18,10 +18,15 @@ export default {
       type: String,
       required: true,
     },
+    initialExpanded: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   data: function() {
     return {
-      expanded: true,
+      expanded: this.initialExpanded,
     };
   },
   methods: {
