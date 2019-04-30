@@ -12,7 +12,7 @@ export default new Vuex.Store({
     options: {
       network: {},
       image: {
-        headline: true,
+        showMz: true,
       },
       data: {},
     },
@@ -34,10 +34,16 @@ export default new Vuex.Store({
       // later we will call api here
       state.originalData = testData;
     },
+    OPTIONS_IMAGE_UPDATE: (state, { data }) => {
+      state.options.image = data;
+    },
   },
   actions: {
     fetchData: context => {
       context.commit('FETCH_ALL');
+    },
+    updateOptionsImage: (context, data) => {
+      context.commit('OPTIONS_IMAGE_UPDATE', data);
     },
   },
 });

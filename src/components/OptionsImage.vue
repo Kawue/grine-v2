@@ -2,18 +2,25 @@
   <div class="image">
     <p>Image Options</p>
 
-    <input type="checkbox" id="jack" value="Jack" v-model="test">
-    <label for="jack">Jack</label>
+    <input type="checkbox" id="headline" v-model="options.showMz" />
+    <label for="headline">Show MZ Values</label>
   </div>
 </template>
 
 <script>
+import store from '@/store';
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'OptionsImage',
-  data: function() {
-    return {
-      test: false,
-    };
+  computed: mapGetters({
+    options: 'getOptionsImage',
+  }),
+  watch: {
+    test: function(val) {
+      console.log(val);
+      store.dispatch('updateOptionsImage', this.options);
+    },
   },
 };
 </script>

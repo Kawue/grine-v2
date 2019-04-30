@@ -1,8 +1,8 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
     <div slot="content">
-      <div v-if="options.headline">IMAGES</div>
-      <div>{{ data }}</div>
+      <div>IMAGES</div>
+      <div v-if="options.showMz">{{ data }}</div>
     </div>
   </SidebarWidget>
 </template>
