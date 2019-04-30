@@ -9,6 +9,13 @@ import testData from './data/test_new_json';
 export default new Vuex.Store({
   state: {
     originalData: {},
+    options: {
+      network: {},
+      image: {
+        headline: true,
+      },
+      data: {},
+    },
   },
   getters: {
     getMzValues: state => {
@@ -16,6 +23,9 @@ export default new Vuex.Store({
     },
     getData: state => {
       return state.originalData;
+    },
+    getOptionsImage: state => {
+      return state.options.image;
     },
   },
   mutations: {
