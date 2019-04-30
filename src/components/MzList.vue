@@ -1,38 +1,42 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
-    <div style="margin-top: 20px; display: inline-block">
-      <i>m/z</i> Values
+    <div style="margin-top: 4px; display: inline-block"><i>m/z</i> Values</div>
+    <div style="padding: 4px 8px 0 8px;">
+      <input
+        style="float: left"
+        type="checkbox"
+        v-model="showAll"
+        v-on:click="calculateCurrentMz"
+        v-b-tooltip.hover.top="'Show all'"
+      />
+      <span
+        v-on:click="
+          asc = !asc;
+          sortMZ();
+        "
+        style="float: right; padding: 0"
+      >
+        <v-icon v-bind:name="asc ? 'arrow-down' : 'arrow-up'"></v-icon>
+      </span>
     </div>
-    <div>
-      Sort by:
-      <select>
-        <option>
-          Community
-        </option>
-        <option>m/z Value</option>
-      </select>
-    </div>
-    <div>
-      Show all:
-      <input type="checkbox" v-model="showAll" v-on:click="calculateCurrentMz">
-    </div>
-    <span v-on:click="asc=!asc;sortMZ()">
-      <v-icon v-bind:name="asc ? 'arrow-down' : 'arrow-up'"></v-icon>
-    </span>
-    <div style="overflow: auto; max-height: 85vh;">
-      <ul style="flex: 40; padding: 0; font-size: 0.7em;">
-        <li v-bind:key="mzObject.mz" v-for="mzObject in currentMz" v-bind:class="{ inactive: !mzObject.highlight }"
-            v-bind:title="'mz: ' + mzObject.mz" v-on:click="mzClicked(mzObject.mz)">
-          {{ mzObject.mz }}
-        </li>
-      </ul>
-    </div>
+
+    <select v-model="selectedMz" v-on:click="mzClicked" class="list" multiple>
+      <option
+        v-for="mzObject in currentMz"
+        v-bind:class="{ inactive: !mzObject.highlight }"
+        v-bind:title="'mz: ' + mzObject.mz"
+        v-bind:value="mzObject.mz"
+        v-bind:key="mzObject.mz"
+      >
+        {{ mzObject.mz }}
+      </option>
+    </select>
   </SidebarWidget>
 </template>
 
 <script>
 import SidebarWidget from './SidebarWidget';
-import { mapGetters } from 'vuex';
+import store from '@/store';
 
 export default {
   extends: SidebarWidget,
@@ -42,61 +46,53 @@ export default {
   name: 'MzList',
   data: function() {
     return {
+      selectedMz: [],
       currentMz: [],
       asc: true,
       showAll: true,
-      notVisibleMz: {}
+      notVisibleMz: [],
     };
-},
-  computed: mapGetters({
-    mzValues: 'getMzValues',
-  }),
+  },
   methods: {
-    mzClicked: function(mz) {
-      console.log(mz);
+    mzClicked: function() {
+      console.log(`Selected mz: ${this.selectedMz.join(', ')}`);
     },
     sortMZ: function() {
       if (this.asc) {
-        this.currentMz = this.currentMz.sort(function(a, b){return a - b});
+        this.currentMz = this.currentMz.sort((a, b) => a.mz - b.mz);
       } else {
-        this.currentMz = this.currentMz.sort(function(a, b){return b - a});
+        this.currentMz = this.currentMz.sort((a, b) => b.mz - a.mz);
       }
     },
     calculateCurrentMz: function() {
-      if(this.showAll) {
-        if(this.notVisibleMz > 0) {
-          this.currentMz.push(...(this.notVisibleMz.map(mz => {
-            return {
-              highlight: false,
-              mz
-            };
-          })));
+      if (!this.showAll) {
+        if (this.notVisibleMz.length > 0) {
+          this.currentMz.push(
+            ...this.notVisibleMz.map(mz => {
+              return {
+                highlight: false,
+                mz,
+              };
+            })
+          );
           this.notVisibleMz = [];
+          this.sortMZ();
         }
       } else {
-        const indicesToRemove = [];
-        for(let i=0; i<this.currentMz.length; i++) {
-          const currentMZObject = this.currentMz[i];
-          if(!currentMZObject.highlight) {
-            indicesToRemove.push(i);
-            this.notVisibleMz.push(currentMZObject.mz)
+        for (let i = this.currentMz.length - 1; i >= 0; i--) {
+          if (!this.currentMz[i].highlight) {
+            this.notVisibleMz.push(this.currentMz[i].mz);
+            this.currentMz.splice(i, 1);
           }
-          if(indicesToRemove.length > 0) {
-            for(const index of indicesToRemove) {
-              this.currentMz = this.currentMz.slice(index, 1);
-            }
-            this.sortMZ();
-          }
-
         }
       }
-    }
+    },
   },
   created() {
-    for(const mz of this.mzValues) {
+    for (const mz of store.getters.getMzValues) {
       this.currentMz.push({
-        highlight: true,
-        mz
+        highlight: Math.random() > 0.3,
+        mz,
       });
     }
   },
@@ -105,16 +101,21 @@ export default {
 
 <style scoped lang="scss">
 .sidebar-widget {
-  background-color: yellow;
-}
-
-.sidebar-widget {
   &.expanded {
-    width: 150px !important;
+    width: 120px !important;
   }
 }
 
-  .inactive {
-    color: darkgray;
-  }
+.inactive {
+  color: darkgray;
+}
+
+.list {
+  padding: 0;
+  font-size: 0.9em;
+  min-height: 93vh;
+  width: 100%;
+  text-align: center;
+  margin-top: 8px;
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <SidebarLeft />
-    <SidebarRight />
+    <SidebarRight v-if="showPanels" />
     <Graph />
   </div>
 </template>
@@ -19,9 +19,15 @@ export default {
     SidebarRight,
     Graph,
   },
-  mounted: () => {
+  data: function() {
+    return {
+      showPanels: false,
+    };
+  },
+  mounted: function() {
     console.log('home component mounted');
     store.dispatch('fetchData');
+    this.showPanels = true;
   },
 };
 </script>
