@@ -1,6 +1,11 @@
 <template>
-  <div class="sidebar-widget" v-bind:class="{ expanded: expanded }">
-    <slot name="nav">
+  <div
+    class="sidebar-widget"
+    v-bind:class="getExpandedClass()"
+    @mouseover="hoverActive = true"
+    @mouseleave="hoverActive = false"
+  >
+    <slot name="nav" v-if="iconExpandEnabled">
       <span v-on:click="toggleView()" v-bind:class="getExpandIconClass()">
         <v-icon name="arrow-right" v-if="showExpandRightIcon()"></v-icon>
         <v-icon name="arrow-left" v-if="showExpandLeftIcon()"></v-icon>
@@ -25,15 +30,33 @@ export default {
       required: false,
       default: true,
     },
+    hoverExpandEnabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    iconExpandEnabled: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   data: function() {
     return {
       expanded: this.initialExpanded,
+      hoverActive: false,
     };
   },
   methods: {
     toggleView: function() {
       this.expanded = !this.expanded;
+    },
+    getExpandedClass: function() {
+      if (this.hoverExpandEnabled) {
+        return this.hoverActive ? 'expanded' : '';
+      } else {
+        return this.expanded ? 'expanded' : '';
+      }
     },
     getExpandIconClass: function() {
       return this.side === 'right' ? 'float-right' : 'float-left';

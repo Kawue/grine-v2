@@ -1,11 +1,11 @@
 <template>
-  <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
+  <SidebarWidget
+    v-bind:side="side"
+    v-bind:hoverExpandEnabled="hoverExpandEnabled"
+    v-bind:iconExpandEnabled="iconExpandEnabled"
+  >
     <div slot="content">
       <div>OPTIONS</div>
-    </div>
-
-    <div slot="nav">
-      lll
     </div>
   </SidebarWidget>
 </template>
