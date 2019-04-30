@@ -11,10 +11,10 @@
         <v-icon name="arrow-left" v-if="showExpandLeftIcon()"></v-icon>
       </span>
     </slot>
-    <div class="content-collapsed" v-if="!expanded">
+    <div class="content-collapsed" v-bind:class="{ hidden: expanded }">
       <slot name="content-collapsed"></slot>
     </div>
-    <div class="content" v-if="expanded">
+    <div class="content" v-bind:class="{ hidden: !expanded }">
       <slot name="content"></slot>
     </div>
   </div>

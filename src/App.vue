@@ -22,4 +22,7 @@
     }
   }
 }
+.hidden {
+  display: none;
+}
 </style>
