@@ -3,7 +3,8 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-import testData from './data/0.70854_barley';
+//import testData from './data/0.70854_barley';
+import testData from './data/test_new_json';
 
 export default new Vuex.Store({
   state: {
