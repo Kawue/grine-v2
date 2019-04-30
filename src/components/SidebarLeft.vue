@@ -2,7 +2,7 @@
   <div class="sidebar">
     <div class="row">
       <div class="col-sm">
-        <Options side="left" v-bind:initialExpanded="false"></Options>
+        <Options side="left" v-bind:initialExpanded="true"></Options>
       </div>
     </div>
   </div>
@@ -24,7 +24,6 @@ export default {
   position: absolute;
   left: 0;
   top: 0;
-  bottom: 0;
   z-index: 101;
   background-color: blue;
 

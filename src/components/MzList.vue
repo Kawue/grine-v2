@@ -1,7 +1,9 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
-    <div>MZ</div>
-    {{ mzValues }}
+    <div slot="content">
+      <div>MZ</div>
+      {{ mzValues }}
+    </div>
   </SidebarWidget>
 </template>
 

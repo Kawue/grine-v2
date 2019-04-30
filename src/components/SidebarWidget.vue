@@ -1,11 +1,13 @@
 <template>
   <div class="sidebar-widget" v-bind:class="{ expanded: expanded }">
-    <span v-on:click="toggleView()" v-bind:class="getExpandIconClass()">
-      <v-icon name="arrow-right" v-if="showExpandRightIcon()"></v-icon>
-      <v-icon name="arrow-left" v-if="showExpandLeftIcon()"></v-icon>
-    </span>
+    <slot name="nav">
+      <span v-on:click="toggleView()" v-bind:class="getExpandIconClass()">
+        <v-icon name="arrow-right" v-if="showExpandRightIcon()"></v-icon>
+        <v-icon name="arrow-left" v-if="showExpandLeftIcon()"></v-icon>
+      </span>
+    </slot>
     <div class="content">
-      <slot></slot>
+      <slot name="content"></slot>
     </div>
   </div>
 </template>
