@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-import testData from './data/0.70854_barley';
+import testData from './data/test_new_json';
 
 export default new Vuex.Store({
   state: {
@@ -11,10 +11,10 @@ export default new Vuex.Store({
   },
   getters: {
     getMzValues: state => {
-      return state.originalData.mz_values;
+      return state.originalData.graphs.graph0.mzs;
     },
     getData: state => {
-      return state.originalData;
+      return state.originalData.graphs;
     },
   },
   mutations: {
