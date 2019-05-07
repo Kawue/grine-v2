@@ -1,7 +1,5 @@
 <template>
   <div class="image">
-    <p>Image Options</p>
-
     <input type="checkbox" id="headline" v-model="options.showMz" />
     <label for="headline">Show MZ Values</label>
   </div>

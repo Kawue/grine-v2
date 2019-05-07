@@ -96,6 +96,38 @@ export default {
 };
 </script>
 
+<style lang="scss">
+.options {
+  hr {
+    background-color: #737374;
+  }
+  input,
+  select {
+    background-color: #4f5051;
+    color: white;
+    border: 1px solid #737374;
+    margin: 0 0 5px 0;
+  }
+  input[type='checkbox'] {
+    margin-right: 5px;
+  }
+  label {
+    font-size: 14px;
+    /*padding: 0;*/
+    margin: 0;
+  }
+  .btn-secondary {
+    background-color: #4f5051;
+    border: 1px solid #737374;
+    color: white;
+    &.active {
+      background-color: #3e3f40 !important;
+      border: 1px solid #cbcbcb !important;
+    }
+  }
+}
+</style>
+
 <style scoped lang="scss">
 .options {
   min-height: 450px;
@@ -103,13 +135,17 @@ export default {
   width: 40px;
   overflow: hidden;
   border-radius: 0 0 10px 0;
+  text-align: left;
 
   &.expanded {
     width: 600px !important;
     background-color: #3e3f40;
+    border-right: 1px solid #737374;
+    border-bottom: 1px solid #737374;
   }
   .options-content {
     color: white;
+    padding: 10px 10px 10px 50px;
   }
 }
 
@@ -131,8 +167,8 @@ export default {
     padding: 0;
     cursor: pointer;
     background-color: #4f5051;
-    color: white;
     border: 1px solid #737374;
+    color: white;
     border-top: 0;
     border-radius: 0 10px 10px 0;
 
