@@ -1,69 +1,71 @@
 <template>
-  <SidebarWidget
-    v-bind:side="side"
-    v-bind:hoverExpandEnabled="hoverExpandEnabled"
-    v-bind:iconExpandEnabled="iconExpandEnabled"
-    v-bind:initialExpanded="initialExpanded"
+  <div
+    class="options"
+    v-bind:class="getExpandedClass()"
+    @mouseleave="mouseLeave()"
   >
-    <div slot="content-always">
-      <div class="option-nav">
-        <div @mouseover="tabActive = 'network'" class="option-nav-btn">
-          <p>Network</p>
-        </div>
-        <div @mouseover="tabActive = 'image'" class="option-nav-btn">
-          <p>Image</p>
-        </div>
-        <div @mouseover="tabActive = 'data'" class="option-nav-btn">
-          <p>Data</p>
-        </div>
+    <div class="options-nav float-left">
+      <div @mouseover="mouseOverTab('network')" v-bind:class="getTabActiveClass('network')" class="options-nav-btn">
+        <p>Network</p>
+      </div>
+      <div @mouseover="mouseOverTab('image')" v-bind:class="getTabActiveClass('image')" class="options-nav-btn">
+        <p>Image</p>
+      </div>
+      <div @mouseover="mouseOverTab('data')" v-bind:class="getTabActiveClass('data')" class="options-nav-btn">
+        <p>Data</p>
       </div>
     </div>
 
-    <div slot="content">
-      <div class="options">
-        <div v-if="tabActive === 'network'">
-          <OptionsNetwork></OptionsNetwork>
-        </div>
+    <div class="options-content" v-if="showOptionsContent()">
+      <div v-if="tabActive === 'network'">
+        <OptionsNetwork></OptionsNetwork>
+      </div>
 
-        <div v-if="tabActive === 'image'">
-          <OptionsImage></OptionsImage>
-        </div>
+      <div v-if="tabActive === 'image'">
+        <OptionsImage></OptionsImage>
+      </div>
 
-        <div v-if="tabActive === 'data'">
-          <OptionsData></OptionsData>
-        </div>
+      <div v-if="tabActive === 'data'">
+        <OptionsData></OptionsData>
       </div>
     </div>
-  </SidebarWidget>
+  </div>
 </template>
 
 <script>
-import SidebarWidget from './SidebarWidget';
 import OptionsNetwork from './OptionsNetwork';
 import OptionsImage from './OptionsImage';
 import OptionsData from './OptionsData';
 
 export default {
-  extends: SidebarWidget,
   components: {
     OptionsData,
     OptionsImage,
     OptionsNetwork,
-    SidebarWidget,
   },
   name: 'Options',
-  props: {
-    initialTabActive: {
-      type: String,
-      required: false,
-      default: 'image',
-    },
-  },
+  props: {},
   data: function() {
     return {
-      tabActive: this.initialTabActive,
-      hoverActive: false,
+      tabActive: null,
     };
+  },
+  methods: {
+    mouseOverTab: function(tab) {
+      this.tabActive = tab;
+    },
+    mouseLeave: function() {
+      this.tabActive = null;
+    },
+    showOptionsContent: function() {
+      return this.tabActive !== null;
+    },
+    getExpandedClass: function() {
+      return this.showOptionsContent() ? 'expanded' : '';
+    },
+    getTabActiveClass: function(tab) {
+      return this.tabActive === tab ? 'active' : '';
+    },
   },
 };
 </script>
@@ -86,28 +88,30 @@ export default {
 </style>
 
 <style scoped lang="scss">
-.sidebar-widget {
-  background-color: transparent;
+.options {
   min-height: 450px;
   max-height: 450px;
   width: 40px;
-}
+  overflow: hidden;
+  border-radius: 0 0 10px 0;
 
-.sidebar-widget {
   &.expanded {
     width: 600px !important;
+    background-color: #3e3f40;
   }
-
-  .content {
-    display: block !important;
+  .options-content {
+    color: white;
   }
 }
 
-.option-nav {
-  .option-nav-btn {
-    &:hover {
+.options-nav {
+  .options-nav-btn {
+    &.active {
       background-color: #3e3f40;
       border: 1px solid #4c4c4d;
+    }
+    &:not(.active) {
+      background-image: linear-gradient(-90deg, #4f5051, #565656);
     }
     height: 150px;
     width: 40px;
