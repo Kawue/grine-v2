@@ -1,75 +1,77 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
     <div slot="content">
-    <div style="margin-top: 4px; display: inline-block"><i>m/z</i> Values</div>
-    <div style="padding: 4px 8px 0 8px;">
-      <input
-        style="float: left"
-        type="checkbox"
-        v-model="showAll"
-        v-on:click="calculateCurrentMz"
-        v-b-tooltip.hover.top="'Show all'"
-      />
-      <span
-        v-on:click="
-          asc = !asc;
-          sortMZ();
-        "
-        style="float: right; padding: 0"
-      >
-        <v-icon v-bind:name="asc ? 'arrow-down' : 'arrow-up'"></v-icon>
-      </span>
-    </div>
+      <div style="margin-top: 4px; display: inline-block">
+        <i>m/z</i> Values
+      </div>
+      <div style="padding: 4px 8px 0 8px;">
+        <input
+          style="float: left"
+          type="checkbox"
+          v-model="showAll"
+          v-on:click="calculateCurrentMz"
+          v-b-tooltip.hover.top="'Show all'"
+        />
+        <span
+          v-on:click="
+            asc = !asc;
+            sortMZ();
+          "
+          style="float: right; padding: 0"
+        >
+          <v-icon v-bind:name="asc ? 'arrow-down' : 'arrow-up'"></v-icon>
+        </span>
+      </div>
 
-    <select v-model="selectedMz" v-on:click="mzClicked" class="list" multiple>
-      <option
-        v-for="mzObject in currentMz"
-        v-bind:class="{ inactive: !mzObject.highlight }"
-        v-bind:title="'mz: ' + mzObject.mz"
-        v-bind:value="mzObject.mz"
-        v-bind:key="mzObject.mz"
-        v-on:dblclick="doubleClick(mzObject)"
+      <select v-model="selectedMz" v-on:click="mzClicked" class="list" multiple>
+        <option
+          v-for="mzObject in currentMz"
+          v-bind:class="{ inactive: !mzObject.highlight }"
+          v-bind:title="'mz: ' + mzObject.mz"
+          v-bind:value="mzObject.mz"
+          v-bind:key="mzObject.mz"
+          v-on:dblclick="doubleClick(mzObject)"
+        >
+          {{ mzObject.name }}
+        </option>
+      </select>
+      <b-modal
+        id="nameModal"
+        ref="nameModal"
+        @ok="handleOk"
+        @cancel="handleCancel"
+        title="Rename m/z Value"
       >
-        {{ mzObject.name }}
-      </option>
-    </select>
-    <b-modal
-      id="nameModal"
-      ref="nameModal"
-      @ok="handleOk"
-      @cancel="handleCancel"
-      title="Rename m/z Value"
-    >
-      <template slot="default">
-        m/z Value: {{ nameModalMz.mz }}
-        <form ref="form" @submit.stop.prevent="handleOk(null)">
-          <b-form-input
-            v-model="nameModalMz.name"
-            placeholder="Name"
-            required
-            maxlength="30"
-            invalid-feedback="Name is required"
-          ></b-form-input>
-        </form>
-      </template>
-      <template slot="modal-footer" slot-scope="{ cancel, ok }">
-        <b>Custom Footer</b>
-        <b-button
-          variant="outline-danger"
-          @click="cancel()"
-          v-if="nameModalMz.mz !== nameModalMz.name"
-        >
-          Reset
-        </b-button>
-        <b-button
-          variant="success"
-          @click="ok()"
-          v-bind:disabled="nameModalMz.name.length === 0"
-        >
-          Save
-        </b-button>
-      </template>
-    </b-modal>
+        <template slot="default">
+          m/z Value: {{ nameModalMz.mz }}
+          <form ref="form" @submit.stop.prevent="handleOk(null)">
+            <b-form-input
+              v-model="nameModalMz.name"
+              placeholder="Name"
+              required
+              maxlength="30"
+              invalid-feedback="Name is required"
+            ></b-form-input>
+          </form>
+        </template>
+        <template slot="modal-footer" slot-scope="{ cancel, ok }">
+          <b>Custom Footer</b>
+          <b-button
+            variant="outline-danger"
+            @click="cancel()"
+            v-if="nameModalMz.mz !== nameModalMz.name"
+          >
+            Reset
+          </b-button>
+          <b-button
+            variant="success"
+            @click="ok()"
+            v-bind:disabled="nameModalMz.name.length === 0"
+          >
+            Save
+          </b-button>
+        </template>
+      </b-modal>
     </div>
   </SidebarWidget>
 </template>
