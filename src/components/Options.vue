@@ -5,13 +5,28 @@
     @mouseleave="mouseLeave()"
   >
     <div class="options-nav float-left">
-      <div @mouseover="mouseOverTab('network')" v-bind:class="getTabActiveClass('network')" class="options-nav-btn">
+      <div
+        @mouseover="mouseTabOver('network')"
+        @mousedown="mouseTabDown('network')"
+        v-bind:class="getTabClass('network')"
+        class="options-nav-btn"
+      >
         <p>Network</p>
       </div>
-      <div @mouseover="mouseOverTab('image')" v-bind:class="getTabActiveClass('image')" class="options-nav-btn">
+      <div
+        @mouseover="mouseTabOver('image')"
+        @mousedown="mouseTabDown('image')"
+        v-bind:class="getTabClass('image')"
+        class="options-nav-btn"
+      >
         <p>Image</p>
       </div>
-      <div @mouseover="mouseOverTab('data')" v-bind:class="getTabActiveClass('data')" class="options-nav-btn">
+      <div
+        @mouseover="mouseTabOver('data')"
+        @mousedown="mouseTabDown('data')"
+        v-bind:class="getTabClass('data')"
+        class="options-nav-btn"
+      >
         <p>Data</p>
       </div>
     </div>
@@ -48,14 +63,23 @@ export default {
   data: function() {
     return {
       tabActive: null,
+      tabLocked: null,
     };
   },
   methods: {
-    mouseOverTab: function(tab) {
+    mouseTabOver: function(tab) {
+      if (this.tabLocked === null) {
+        this.tabActive = tab;
+      }
+    },
+    mouseTabDown: function(tab) {
+      this.tabLocked = this.tabLocked === tab ? null : tab;
       this.tabActive = tab;
     },
     mouseLeave: function() {
-      this.tabActive = null;
+      if (this.tabLocked === null) {
+        this.tabActive = null;
+      }
     },
     showOptionsContent: function() {
       return this.tabActive !== null;
@@ -63,29 +87,14 @@ export default {
     getExpandedClass: function() {
       return this.showOptionsContent() ? 'expanded' : '';
     },
-    getTabActiveClass: function(tab) {
-      return this.tabActive === tab ? 'active' : '';
+    getTabClass: function(tab) {
+      let classes = this.tabActive === tab ? 'active' : '';
+      classes += this.tabLocked === tab ? ' locked' : '';
+      return classes;
     },
   },
 };
 </script>
-
-<style lang="scss">
-/* don't know why this style is only accepted non-scoped? */
-.nav-link {
-  color: #495057;
-  border: 0 !important;
-
-  &:hover {
-    border: 0 !important;
-  }
-
-  &.active {
-    background-color: darkgrey !important;
-    border: 0 !important;
-  }
-}
-</style>
 
 <style scoped lang="scss">
 .options {
@@ -106,6 +115,9 @@ export default {
 
 .options-nav {
   .options-nav-btn {
+    &.locked {
+      border: 1px solid white !important;
+    }
     &.active {
       background-color: #3e3f40;
       border: 1px solid #4c4c4d;
