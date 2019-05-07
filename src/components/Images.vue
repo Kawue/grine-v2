@@ -1,7 +1,9 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
-    <div>IMAGES</div>
-    <div>{{ data }}</div>
+    <div slot="content">
+      <div>IMAGES</div>
+      <div v-if="options.showMz">{{ data }}</div>
+    </div>
   </SidebarWidget>
 </template>
 
@@ -17,6 +19,7 @@ export default {
   name: 'Images',
   computed: mapGetters({
     data: 'getData',
+    options: 'getOptionsImage',
   }),
 };
 </script>

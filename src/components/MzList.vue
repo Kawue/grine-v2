@@ -1,5 +1,6 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
+    <div slot="content">
     <div style="margin-top: 4px; display: inline-block"><i>m/z</i> Values</div>
     <div style="padding: 4px 8px 0 8px;">
       <input
@@ -69,6 +70,7 @@
         </b-button>
       </template>
     </b-modal>
+    </div>
   </SidebarWidget>
 </template>
 

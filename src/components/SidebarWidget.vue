@@ -1,11 +1,21 @@
 <template>
-  <div class="sidebar-widget" v-bind:class="{ expanded: expanded }">
-    <span v-on:click="toggleView()" v-bind:class="getExpandIconClass()">
-      <v-icon name="arrow-right" v-if="showExpandRightIcon()"></v-icon>
-      <v-icon name="arrow-left" v-if="showExpandLeftIcon()"></v-icon>
-    </span>
-    <div class="content">
-      <slot></slot>
+  <div
+    class="sidebar-widget"
+    v-bind:class="getExpandedClass()"
+    @mouseover="eventMouseOver()"
+    @mouseleave="eventMouseLeave()"
+  >
+    <slot name="nav" v-if="iconExpandEnabled">
+      <span v-on:click="toggleView()" v-bind:class="getExpandIconClass()">
+        <v-icon name="arrow-right" v-if="showExpandRightIcon()"></v-icon>
+        <v-icon name="arrow-left" v-if="showExpandLeftIcon()"></v-icon>
+      </span>
+    </slot>
+    <div class="content-collapsed" v-bind:class="{ hidden: expanded }">
+      <slot name="content-collapsed"></slot>
+    </div>
+    <div class="content" v-bind:class="{ hidden: !expanded }">
+      <slot name="content"></slot>
     </div>
   </div>
 </template>
@@ -23,15 +33,39 @@ export default {
       required: false,
       default: true,
     },
+    hoverExpandEnabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    iconExpandEnabled: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   data: function() {
     return {
-      expanded: this.initialExpanded,
+      expanded: this.hoverExpandEnabled ? false : this.initialExpanded,
+      hoverActive: false,
     };
   },
   methods: {
+    eventMouseOver: function() {
+      if (this.hoverExpandEnabled) {
+        this.expanded = true;
+      }
+    },
+    eventMouseLeave: function() {
+      if (this.hoverExpandEnabled) {
+        this.expanded = false;
+      }
+    },
     toggleView: function() {
       this.expanded = !this.expanded;
+    },
+    getExpandedClass: function() {
+      return this.expanded ? 'expanded' : '';
     },
     getExpandIconClass: function() {
       return this.side === 'right' ? 'float-right' : 'float-left';
@@ -56,14 +90,6 @@ export default {
 
   &.expanded {
     width: 200px;
-
-    .content {
-      display: block;
-    }
-  }
-
-  .content {
-    display: none;
   }
 }
 </style>
