@@ -4,8 +4,9 @@
       <div class="col-sm">
         <Options
           side="left"
-          v-bind:hoverExpandEnabled="true"
+          v-bind:hoverExpandEnabled="false"
           v-bind:iconExpandEnabled="false"
+          v-bind:initialExpanded="false"
         ></Options>
       </div>
     </div>
@@ -29,7 +30,6 @@ export default {
   left: 0;
   top: 0;
   z-index: 101;
-  background-color: blue;
 
   .row {
     padding: 0;

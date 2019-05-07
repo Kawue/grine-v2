@@ -17,6 +17,9 @@
     <div class="content" v-bind:class="{ hidden: !expanded }">
       <slot name="content"></slot>
     </div>
+    <div class="content-always">
+      <slot name="content-always"></slot>
+    </div>
   </div>
 </template>
 
