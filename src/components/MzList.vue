@@ -1,23 +1,32 @@
 <template>
   <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
     <div slot="content">
-      <div style="margin-top: 4px; display: inline-block">
-        <i>m/z</i> Values
-      </div>
+      <div style="margin-top: 4px; display: inline-block"><i>m/z</i> List</div>
       <div style="padding: 4px 8px 0 8px;">
-        <input
-          style="float: left"
-          type="checkbox"
-          v-model="showAll"
-          v-on:click="calculateCurrentMz"
+        <span
+          style="float: left; color: #dc3b9e"
+          v-on:click="
+            showAll = !showAll;
+            calculateCurrentMz();
+          "
           v-b-tooltip.hover.top="'Show all'"
-        />
+        >
+          <v-icon name="bong" v-bind:class="{ inactive: !showAll }"></v-icon>
+        </span>
+        <span
+          style="float: left;margin-left: 15px; color: #dc3b9e"
+          v-on:click="showName = !showName"
+          v-b-tooltip.hover.top="'Show Annotations'"
+        >
+          <v-icon name="jedi" v-bind:class="{ inactive: !showName }"></v-icon>
+        </span>
         <span
           v-on:click="
             asc = !asc;
             sortMZ();
           "
           style="float: right; padding: 0"
+          v-b-tooltip.hover.top="'Sort'"
         >
           <v-icon v-bind:name="asc ? 'arrow-down' : 'arrow-up'"></v-icon>
         </span>
@@ -32,7 +41,7 @@
           v-bind:key="mzObject.mz"
           v-on:dblclick="doubleClick(mzObject)"
         >
-          {{ mzObject.name }}
+          {{ showName ? mzObject.name : mzObject.mz }}
         </option>
       </select>
       <b-modal
@@ -44,15 +53,26 @@
       >
         <template slot="default">
           m/z Value: {{ nameModalMz.mz }}
-          <form ref="form" @submit.stop.prevent="handleOk(null)">
-            <b-form-input
+          <b-form ref="form" @submit.stop.prevent="handleSubmit">
+            <label for="annotation-input" style="float: left;"
+              >Annotation</label
+            >
+            <b-input
               v-model="nameModalMz.name"
-              placeholder="Name"
+              placeholder="Annotation"
               required
               maxlength="30"
-              invalid-feedback="Name is required"
-            ></b-form-input>
-          </form>
+              :state="nameModalMz.name.length > 0 ? null : false"
+              id="annotation-input"
+              trim
+              ref="annotationinput"
+            ></b-input>
+            <b-form-invalid-feedback
+              :state="nameModalMz.name.length > 0 ? null : false"
+            >
+              The Annotation can't be empty
+            </b-form-invalid-feedback>
+          </b-form>
         </template>
         <template slot="modal-footer" slot-scope="{ cancel, ok }">
           <b>Custom Footer</b>
@@ -91,9 +111,13 @@ export default {
       selectedMz: [],
       currentMz: [],
       asc: true,
-      showAll: true,
+      showName: true,
+      showAll: false,
       notVisibleMz: [],
-      nameModalMz: {},
+      nameModalMz: {
+        name: '',
+        mz: 0,
+      },
     };
   },
   methods: {
@@ -107,15 +131,21 @@ export default {
         this.currentMz = this.currentMz.sort((a, b) => b.mz - a.mz);
       }
     },
-    doubleClick: function(des) {
+    doubleClick: function(mzObject) {
       this.nameModalMz = {
-        mz: des.mz,
-        name: des.name,
+        mz: mzObject.mz,
+        name: mzObject.name,
       };
       this.$refs['nameModal'].show();
+      setTimeout(() => {
+        this.$refs['annotationinput'].focus();
+      }, 500);
     },
     handleOk: function(bvModalEvt) {
       bvModalEvt.preventDefault();
+      this.handleSubmit();
+    },
+    handleSubmit: function() {
       if (!this.$refs.form.checkValidity()) {
         return;
       }
@@ -123,15 +153,19 @@ export default {
       const index = this.currentMz.findIndex(function(val) {
         return val.mz === mz;
       });
-      console.log(this.currentMz[index][3]['hierarchy' + 3]);
       this.currentMz[index].name = this.nameModalMz.name;
       store.getters.getData.graph0.graph['hierarchy' + 3].nodes[
         this.currentMz[index][3]['hierarchy' + 3]
       ].name = this.nameModalMz.name;
-      this.nameModalMz = {};
       this.$nextTick(() => {
         this.$refs['nameModal'].hide();
       });
+      setTimeout(() => {
+        this.nameModalMz = {
+          name: '',
+          mz: 0,
+        };
+      }, 1000);
     },
     handleCancel: function() {
       const mz = this.nameModalMz.mz;
@@ -142,10 +176,15 @@ export default {
       store.getters.getData.graph0.graph['hierarchy' + 3].nodes[
         this.currentMz[index][3]['hierarchy' + 3]
       ].name = this.nameModalMz.mz.toString();
-      this.nameModalMz = {};
+      setTimeout(() => {
+        this.nameModalMz = {
+          name: '',
+          mz: 0,
+        };
+      }, 1000);
     },
     calculateCurrentMz: function() {
-      if (!this.showAll) {
+      if (this.showAll) {
         if (this.notVisibleMz.length > 0) {
           this.currentMz.push(...this.notVisibleMz);
           this.notVisibleMz = [];
@@ -160,6 +199,9 @@ export default {
         }
       }
     },
+    validationName: function() {
+      return this.nameModalMz.name.length > 0;
+    },
   },
   created() {
     const numberOfLayers =
@@ -169,17 +211,18 @@ export default {
       t.push({
         highlight: Math.random() > 0.3,
         ...store.getters.getMzValues[mz],
-        name:
-          store.getters.getData.graph0.graph['hierarchy' + numberOfLayers]
-            .nodes[
-            store.getters.getMzValues[mz][numberOfLayers][
-              'hierarchy' + numberOfLayers
-            ]
-          ].name,
+        name: store.getters.getData.graph0.graph[
+          'hierarchy' + numberOfLayers
+        ].nodes[
+          store.getters.getMzValues[mz][numberOfLayers][
+            'hierarchy' + numberOfLayers
+          ]
+        ].name.toString(),
         mz: mz,
       });
     });
     this.currentMz.push(...t);
+    this.calculateCurrentMz();
   },
 };
 </script>
