@@ -52,27 +52,37 @@
         title="Rename m/z Value"
       >
         <template slot="default">
-          m/z Value: {{ nameModalMz.mz }}
-          <b-form ref="form" @submit.stop.prevent="handleSubmit">
-            <label for="annotation-input" style="float: left;"
-              >Annotation</label
-            >
-            <b-input
-              v-model="nameModalMz.name"
-              placeholder="Annotation"
-              required
-              maxlength="30"
-              :state="nameModalMz.name.length > 0 ? null : false"
-              id="annotation-input"
-              trim
-              ref="annotationinput"
-            ></b-input>
-            <b-form-invalid-feedback
-              :state="nameModalMz.name.length > 0 ? null : false"
-            >
-              The Annotation can't be empty
-            </b-form-invalid-feedback>
-          </b-form>
+          <b-row>
+            <b-col sm="3">
+              <p> m/z Value: </p>
+            </b-col>
+            <b-col sm="9">
+              <p id="annotation-mz-value"> {{ nameModalMz.mz }} </p>
+            </b-col>
+            <b-col sm="3">
+              <label for="annotation-input"> Annotation </label>
+            </b-col>
+            <b-col sm="9">
+              <b-form ref="form" @submit.stop.prevent="handleSubmit">
+                
+                <b-input
+                  v-model="nameModalMz.name"
+                  placeholder="Annotation"
+                  required
+                  maxlength="30"
+                  :state="nameModalMz.name.length > 0 ? null : false"
+                  id="annotation-input"
+                  trim
+                  ref="annotationinput"
+                ></b-input>
+                <b-form-invalid-feedback
+                  :state="nameModalMz.name.length > 0 ? null : false"
+                >
+                  The Annotation can't be empty
+                </b-form-invalid-feedback>
+              </b-form>
+            </b-col>
+          </b-row>
         </template>
         <template slot="modal-footer" slot-scope="{ cancel, ok }">
           <b>Custom Footer</b>
@@ -246,4 +256,10 @@ export default {
   text-align: center;
   margin-top: 8px;
 }
+
+#annotation-mz-value{
+  float: left;
+  padding-left: 13px !important;
+}
+
 </style>
