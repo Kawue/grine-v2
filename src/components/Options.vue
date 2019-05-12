@@ -5,7 +5,11 @@
     @mouseleave="mouseLeave"
   >
     <div class="options-nav float-left">
-      <div @click="tabsExpanded = !tabsExpanded" class="options-tab-toggle" v-bind:class="{ active: tabsExpanded }">
+      <div
+        @click="tabsExpanded = !tabsExpanded"
+        class="options-tab-toggle"
+        v-bind:class="{ active: tabsExpanded }"
+      >
         <img src="images/options.svg" />
       </div>
 
@@ -57,6 +61,7 @@
 import OptionsNetwork from './OptionsNetwork';
 import OptionsImage from './OptionsImage';
 import OptionsData from './OptionsData';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
@@ -66,12 +71,32 @@ export default {
   },
   name: 'Options',
   props: {},
-  data: function() {
-    return {
-      tabActive: null,
-      tabLocked: null,
-      tabsExpanded: false,
-    };
+  computed: {
+    ...mapGetters({ state: 'getOptionsState' }),
+    tabActive: {
+      get() {
+        return this.state.tabActive;
+      },
+      set(value) {
+        this.$store.commit('OPTIONS_STATE_UPDATE', { tabActive: value });
+      },
+    },
+    tabLocked: {
+      get() {
+        return this.state.tabLocked;
+      },
+      set(value) {
+        this.$store.commit('OPTIONS_STATE_UPDATE', { tabLocked: value });
+      },
+    },
+    tabsExpanded: {
+      get() {
+        return this.state.tabsExpanded;
+      },
+      set(value) {
+        this.$store.commit('OPTIONS_STATE_UPDATE', { tabsExpanded: value });
+      },
+    },
   },
   methods: {
     mouseTabOver: function(tab) {
