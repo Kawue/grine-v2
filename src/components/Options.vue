@@ -2,7 +2,7 @@
   <div
     class="options"
     v-bind:class="getExpandedClass()"
-    @mouseleave="mouseLeave()"
+    @mouseleave="mouseLeave"
   >
     <div class="options-nav float-left">
       <div
@@ -76,7 +76,10 @@ export default {
       this.tabLocked = this.tabLocked === tab ? null : tab;
       this.tabActive = tab;
     },
-    mouseLeave: function() {
+    mouseLeave: function(event) {
+      if (event.relatedTarget === null) {
+        return;
+      }
       if (this.tabLocked === null) {
         this.tabActive = null;
       }
