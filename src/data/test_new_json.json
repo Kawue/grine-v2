@@ -2131,1420 +2131,612 @@
                 }
             },
             "mzs": {
-                "74.651": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n0"
-                    }
-                ],
-                "104.107": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n1"
-                    }
-                ],
-                "118.277": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n2"
-                    }
-                ],
-                "175.328": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n3"
-                    }
-                ],
-                "184.073": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n4"
-                    }
-                ],
-                "230.003": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n5"
-                    }
-                ],
-                "277.166": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n6"
-                    }
-                ],
-                "293.161": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n7"
-                    }
-                ],
-                "307.176": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n8"
-                    }
-                ],
-                "323.171": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n9"
-                    }
-                ],
-                "381.079": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n10"
-                    }
-                ],
-                "496.339": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n11"
-                    }
-                ],
-                "518.321": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n12"
-                    }
-                ],
-                "520.34": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n13"
-                    }
-                ],
-                "534.089": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n14"
-                    }
-                ],
-                "543.132": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n15"
-                    }
-                ],
-                "551.309": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n16"
-                    }
-                ],
-                "558.176": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n17"
-                    }
-                ],
-                "567.304": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n18"
-                    }
-                ],
-                "573.291": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n19"
-                    }
-                ],
-                "581.319": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n20"
-                    }
-                ],
-                "589.265": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n21"
-                    }
-                ],
-                "589.286": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n22"
-                    }
-                ],
-                "597.314": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n23"
-                    }
-                ],
-                "603.301": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n24"
-                    }
-                ],
-                "605.26": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n25"
-                    }
-                ],
-                "611.33": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n26"
-                    }
-                ],
-                "619.275": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n27"
-                    }
-                ],
-                "619.296": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n28"
-                    }
-                ],
-                "627.325": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n29"
-                    }
-                ],
-                "635.27": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n30"
-                    }
-                ],
-                "650.554": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n31"
-                    }
-                ],
-                "674.375": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n32"
-                    }
-                ],
-                "689.211": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n33"
-                    }
-                ],
-                "705.185": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n34"
-                    }
-                ],
-                "713.362": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n35"
-                    }
-                ],
-                "729.357": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n36"
-                    }
-                ],
-                "735.344": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n37"
-                    }
-                ],
-                "743.372": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n38"
-                    }
-                ],
-                "751.318": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n39"
-                    }
-                ],
-                "751.339": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n40"
-                    }
-                ],
-                "756.553": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n41"
-                    }
-                ],
-                "758.569": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n42"
-                    }
-                ],
-                "759.367": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n43"
-                    }
-                ],
-                "765.354": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n44"
-                    }
-                ],
-                "767.312": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n45"
-                    }
-                ],
-                "773.383": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n46"
-                    }
-                ],
-                "780.553": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n47"
-                    }
-                ],
-                "781.328": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n48"
-                    }
-                ],
-                "781.349": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n49"
-                    }
-                ],
-                "782.656": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n50"
-                    }
-                ],
-                "789.378": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n51"
-                    }
-                ],
-                "795.365": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n52"
-                    }
-                ],
-                "796.524": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n53"
-                    }
-                ],
-                "797.323": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n54"
-                    }
-                ],
-                "811.339": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n55"
-                    }
-                ],
-                "811.36": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n56"
-                    }
-                ],
-                "820.525": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n57"
-                    }
-                ],
-                "827.334": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n58"
-                    }
-                ],
-                "851.264": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n59"
-                    }
-                ],
-                "867.238": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n60"
-                    }
-                ],
-                "875.415": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n61"
-                    }
-                ],
-                "891.409": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n62"
-                    }
-                ],
-                "897.396": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n63"
-                    }
-                ],
-                "897.73": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n64"
-                    }
-                ],
-                "905.425": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n65"
-                    }
-                ],
-                "913.37": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n66"
-                    }
-                ],
-                "913.391": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n67"
-                    }
-                ],
-                "921.42": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n68"
-                    }
-                ],
-                "927.407": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n69"
-                    }
-                ],
-                "929.365": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n70"
-                    }
-                ],
-                "935.436": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n71"
-                    }
-                ],
-                "943.381": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n72"
-                    }
-                ],
-                "943.402": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n73"
-                    }
-                ],
-                "951.431": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n74"
-                    }
-                ],
-                "955.573": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n75"
-                    }
-                ],
-                "957.418": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n76"
-                    }
-                ],
-                "959.376": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n77"
-                    }
-                ],
-                "963.604": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n78"
-                    }
-                ],
-                "973.392": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n79"
-                    }
-                ],
-                "973.413": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n80"
-                    }
-                ],
-                "979.574": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n81"
-                    }
-                ],
-                "989.386": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n82"
-                    }
-                ],
-                "1006.576": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n83"
-                    }
-                ],
-                "1013.314": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n84"
-                    }
-                ],
-                "1029.291": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n85"
-                    }
-                ],
-                "1175.37": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n86"
-                    }
-                ],
-                "1191.343": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n87"
-                    }
-                ],
-                "1337.422": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n88"
-                    }
-                ],
-                "1353.398": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n89"
-                    }
-                ],
-                "1499.473": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n90"
-                    }
-                ],
-                "1515.45": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n91"
-                    }
-                ],
-                "1661.531": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n92"
-                    }
-                ],
-                "1677.505": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n93"
-                    }
-                ],
-                "1823.583": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n94"
-                    }
-                ],
-                "1839.557": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n95"
-                    }
-                ],
-                "1986.101": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n96"
-                    }
-                ],
-                "2001.743": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n97"
-                    }
-                ],
-                "2148.048": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n98"
-                    }
-                ],
-                "2163.914": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n99"
-                    }
-                ],
-                "2200.687": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n100"
-                    }
-                ]
+                "74.651": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n0"
+                },
+                "104.107": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n1"
+                },
+                "118.277": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n2"
+                },
+                "175.328": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n3"
+                },
+                "184.073": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n4"
+                },
+                "230.003": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n5"
+                },
+                "277.166": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n6"
+                },
+                "293.161": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n7"
+                },
+                "307.176": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n8"
+                },
+                "323.171": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n9"
+                },
+                "381.079": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n10"
+                },
+                "496.339": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n11"
+                },
+                "518.321": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n12"
+                },
+                "520.34": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n13"
+                },
+                "534.089": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n14"
+                },
+                "543.132": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n15"
+                },
+                "551.309": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n16"
+                },
+                "558.176": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n17"
+                },
+                "567.304": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n18"
+                },
+                "573.291": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n19"
+                },
+                "581.319": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n20"
+                },
+                "589.265": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n21"
+                },
+                "589.286": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n22"
+                },
+                "597.314": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n23"
+                },
+                "603.301": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n24"
+                },
+                "605.26": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n25"
+                },
+                "611.33": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n26"
+                },
+                "619.275": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n27"
+                },
+                "619.296": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n28"
+                },
+                "627.325": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n29"
+                },
+                "635.27": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n30"
+                },
+                "650.554": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n31"
+                },
+                "674.375": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n32"
+                },
+                "689.211": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n33"
+                },
+                "705.185": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n34"
+                },
+                "713.362": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n35"
+                },
+                "729.357": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n36"
+                },
+                "735.344": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n37"
+                },
+                "743.372": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n38"
+                },
+                "751.318": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n39"
+                },
+                "751.339": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n40"
+                },
+                "756.553": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n41"
+                },
+                "758.569": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n42"
+                },
+                "759.367": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n43"
+                },
+                "765.354": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n44"
+                },
+                "767.312": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n45"
+                },
+                "773.383": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n46"
+                },
+                "780.553": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n47"
+                },
+                "781.328": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n48"
+                },
+                "781.349": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n49"
+                },
+                "782.656": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n50"
+                },
+                "789.378": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n51"
+                },
+                "795.365": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n52"
+                },
+                "796.524": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n53"
+                },
+                "797.323": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n54"
+                },
+                "811.339": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n55"
+                },
+                "811.36": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n56"
+                },
+                "820.525": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n57"
+                },
+                "827.334": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n58"
+                },
+                "851.264": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n59"
+                },
+                "867.238": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n60"
+                },
+                "875.415": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n61"
+                },
+                "891.409": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n62"
+                },
+                "897.396": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n63"
+                },
+                "897.73": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n64"
+                },
+                "905.425": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n65"
+                },
+                "913.37": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n66"
+                },
+                "913.391": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n67"
+                },
+                "921.42": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n68"
+                },
+                "927.407": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n69"
+                },
+                "929.365": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n70"
+                },
+                "935.436": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n71"
+                },
+                "943.381": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n72"
+                },
+                "943.402": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n73"
+                },
+                "951.431": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n74"
+                },
+                "955.573": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n75"
+                },
+                "957.418": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n76"
+                },
+                "959.376": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n77"
+                },
+                "963.604": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n78"
+                },
+                "973.392": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n79"
+                },
+                "973.413": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n80"
+                },
+                "979.574": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n81"
+                },
+                "989.386": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n82"
+                },
+                "1006.576": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n83"
+                },
+                "1013.314": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n84"
+                },
+                "1029.291": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n85"
+                },
+                "1175.37": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n86"
+                },
+                "1191.343": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n87"
+                },
+                "1337.422": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n88"
+                },
+                "1353.398": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n89"
+                },
+                "1499.473": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n90"
+                },
+                "1515.45": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n91"
+                },
+                "1661.531": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n92"
+                },
+                "1677.505": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n93"
+                },
+                "1823.583": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n94"
+                },
+                "1839.557": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n95"
+                },
+                "1986.101": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n96"
+                },
+                "2001.743": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n97"
+                },
+                "2148.048": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n98"
+                },
+                "2163.914": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n99"
+                },
+                "2200.687": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n100"
+                }
             }
         },
         "graph1": {
@@ -5678,1420 +4870,612 @@
                 }
             },
             "mzs": {
-                "74.651": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n0"
-                    }
-                ],
-                "104.107": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n1"
-                    }
-                ],
-                "118.277": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n2"
-                    }
-                ],
-                "175.328": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n3"
-                    }
-                ],
-                "184.073": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n4"
-                    }
-                ],
-                "230.003": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n5"
-                    }
-                ],
-                "277.166": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n6"
-                    }
-                ],
-                "293.161": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n7"
-                    }
-                ],
-                "307.176": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n8"
-                    }
-                ],
-                "323.171": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n9"
-                    }
-                ],
-                "381.079": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n10"
-                    }
-                ],
-                "496.339": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n11"
-                    }
-                ],
-                "518.321": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n12"
-                    }
-                ],
-                "520.34": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n13"
-                    }
-                ],
-                "534.089": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n14"
-                    }
-                ],
-                "543.132": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n15"
-                    }
-                ],
-                "551.309": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n16"
-                    }
-                ],
-                "558.176": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n17"
-                    }
-                ],
-                "567.304": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n18"
-                    }
-                ],
-                "573.291": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n19"
-                    }
-                ],
-                "581.319": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n20"
-                    }
-                ],
-                "589.265": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n21"
-                    }
-                ],
-                "589.286": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n22"
-                    }
-                ],
-                "597.314": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n23"
-                    }
-                ],
-                "603.301": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n24"
-                    }
-                ],
-                "605.26": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n25"
-                    }
-                ],
-                "611.33": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n26"
-                    }
-                ],
-                "619.275": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n27"
-                    }
-                ],
-                "619.296": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n28"
-                    }
-                ],
-                "627.325": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n29"
-                    }
-                ],
-                "635.27": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n30"
-                    }
-                ],
-                "650.554": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n31"
-                    }
-                ],
-                "674.375": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n32"
-                    }
-                ],
-                "689.211": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n33"
-                    }
-                ],
-                "705.185": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n34"
-                    }
-                ],
-                "713.362": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n35"
-                    }
-                ],
-                "729.357": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n36"
-                    }
-                ],
-                "735.344": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n37"
-                    }
-                ],
-                "743.372": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n38"
-                    }
-                ],
-                "751.318": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n39"
-                    }
-                ],
-                "751.339": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n40"
-                    }
-                ],
-                "756.553": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n41"
-                    }
-                ],
-                "758.569": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n42"
-                    }
-                ],
-                "759.367": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n43"
-                    }
-                ],
-                "765.354": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n44"
-                    }
-                ],
-                "767.312": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n45"
-                    }
-                ],
-                "773.383": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n46"
-                    }
-                ],
-                "780.553": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n47"
-                    }
-                ],
-                "781.328": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n48"
-                    }
-                ],
-                "781.349": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n49"
-                    }
-                ],
-                "782.656": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n50"
-                    }
-                ],
-                "789.378": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n51"
-                    }
-                ],
-                "795.365": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n52"
-                    }
-                ],
-                "796.524": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n53"
-                    }
-                ],
-                "797.323": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n54"
-                    }
-                ],
-                "811.339": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n55"
-                    }
-                ],
-                "811.36": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n56"
-                    }
-                ],
-                "820.525": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n57"
-                    }
-                ],
-                "827.334": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n58"
-                    }
-                ],
-                "851.264": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n59"
-                    }
-                ],
-                "867.238": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n60"
-                    }
-                ],
-                "875.415": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n61"
-                    }
-                ],
-                "891.409": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n62"
-                    }
-                ],
-                "897.396": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n63"
-                    }
-                ],
-                "897.73": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n64"
-                    }
-                ],
-                "905.425": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n65"
-                    }
-                ],
-                "913.37": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n66"
-                    }
-                ],
-                "913.391": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n67"
-                    }
-                ],
-                "921.42": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n68"
-                    }
-                ],
-                "927.407": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n69"
-                    }
-                ],
-                "929.365": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n70"
-                    }
-                ],
-                "935.436": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n71"
-                    }
-                ],
-                "943.381": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n72"
-                    }
-                ],
-                "943.402": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n73"
-                    }
-                ],
-                "951.431": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n74"
-                    }
-                ],
-                "955.573": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n75"
-                    }
-                ],
-                "957.418": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n76"
-                    }
-                ],
-                "959.376": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n77"
-                    }
-                ],
-                "963.604": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n78"
-                    }
-                ],
-                "973.392": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n79"
-                    }
-                ],
-                "973.413": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n80"
-                    }
-                ],
-                "979.574": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n81"
-                    }
-                ],
-                "989.386": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n82"
-                    }
-                ],
-                "1006.576": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n83"
-                    }
-                ],
-                "1013.314": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n84"
-                    }
-                ],
-                "1029.291": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n85"
-                    }
-                ],
-                "1175.37": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n86"
-                    }
-                ],
-                "1191.343": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n87"
-                    }
-                ],
-                "1337.422": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n88"
-                    }
-                ],
-                "1353.398": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n89"
-                    }
-                ],
-                "1499.473": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n90"
-                    }
-                ],
-                "1515.45": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n91"
-                    }
-                ],
-                "1661.531": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n92"
-                    }
-                ],
-                "1677.505": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n93"
-                    }
-                ],
-                "1823.583": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n94"
-                    }
-                ],
-                "1839.557": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n95"
-                    }
-                ],
-                "1986.101": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n96"
-                    }
-                ],
-                "2001.743": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n97"
-                    }
-                ],
-                "2148.048": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n98"
-                    }
-                ],
-                "2163.914": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n99"
-                    }
-                ],
-                "2200.687": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n100"
-                    }
-                ]
+                "74.651": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n0"
+                },
+                "104.107": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n1"
+                },
+                "118.277": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n2"
+                },
+                "175.328": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n3"
+                },
+                "184.073": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n4"
+                },
+                "230.003": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n5"
+                },
+                "277.166": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n6"
+                },
+                "293.161": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n7"
+                },
+                "307.176": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n8"
+                },
+                "323.171": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n9"
+                },
+                "381.079": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n10"
+                },
+                "496.339": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n11"
+                },
+                "518.321": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n12"
+                },
+                "520.34": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n13"
+                },
+                "534.089": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n14"
+                },
+                "543.132": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n15"
+                },
+                "551.309": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n16"
+                },
+                "558.176": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n17"
+                },
+                "567.304": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n18"
+                },
+                "573.291": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n19"
+                },
+                "581.319": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n20"
+                },
+                "589.265": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n21"
+                },
+                "589.286": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n22"
+                },
+                "597.314": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n23"
+                },
+                "603.301": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n24"
+                },
+                "605.26": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n25"
+                },
+                "611.33": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n26"
+                },
+                "619.275": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n27"
+                },
+                "619.296": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n28"
+                },
+                "627.325": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n29"
+                },
+                "635.27": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n30"
+                },
+                "650.554": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n31"
+                },
+                "674.375": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n32"
+                },
+                "689.211": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n33"
+                },
+                "705.185": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n34"
+                },
+                "713.362": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n35"
+                },
+                "729.357": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n36"
+                },
+                "735.344": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n37"
+                },
+                "743.372": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n38"
+                },
+                "751.318": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n39"
+                },
+                "751.339": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n40"
+                },
+                "756.553": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n41"
+                },
+                "758.569": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n42"
+                },
+                "759.367": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n43"
+                },
+                "765.354": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n44"
+                },
+                "767.312": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n45"
+                },
+                "773.383": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n46"
+                },
+                "780.553": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n47"
+                },
+                "781.328": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n48"
+                },
+                "781.349": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n49"
+                },
+                "782.656": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n50"
+                },
+                "789.378": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n51"
+                },
+                "795.365": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n52"
+                },
+                "796.524": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n53"
+                },
+                "797.323": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n54"
+                },
+                "811.339": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n55"
+                },
+                "811.36": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n56"
+                },
+                "820.525": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n57"
+                },
+                "827.334": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n58"
+                },
+                "851.264": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n59"
+                },
+                "867.238": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n60"
+                },
+                "875.415": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n61"
+                },
+                "891.409": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n62"
+                },
+                "897.396": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n63"
+                },
+                "897.73": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n64"
+                },
+                "905.425": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n65"
+                },
+                "913.37": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n66"
+                },
+                "913.391": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n67"
+                },
+                "921.42": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n68"
+                },
+                "927.407": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n69"
+                },
+                "929.365": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n70"
+                },
+                "935.436": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n71"
+                },
+                "943.381": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n72"
+                },
+                "943.402": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n73"
+                },
+                "951.431": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n74"
+                },
+                "955.573": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n75"
+                },
+                "957.418": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n76"
+                },
+                "959.376": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n77"
+                },
+                "963.604": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n78"
+                },
+                "973.392": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n79"
+                },
+                "973.413": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n80"
+                },
+                "979.574": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n81"
+                },
+                "989.386": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n82"
+                },
+                "1006.576": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n83"
+                },
+                "1013.314": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n84"
+                },
+                "1029.291": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n85"
+                },
+                "1175.37": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n86"
+                },
+                "1191.343": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n87"
+                },
+                "1337.422": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n88"
+                },
+                "1353.398": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n89"
+                },
+                "1499.473": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n90"
+                },
+                "1515.45": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n91"
+                },
+                "1661.531": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n92"
+                },
+                "1677.505": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n93"
+                },
+                "1823.583": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n94"
+                },
+                "1839.557": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n95"
+                },
+                "1986.101": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n96"
+                },
+                "2001.743": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n97"
+                },
+                "2148.048": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n98"
+                },
+                "2163.914": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n99"
+                },
+                "2200.687": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n100"
+                }
             }
         },
         "graph2": {
@@ -9225,1420 +7609,612 @@
                 }
             },
             "mzs": {
-                "74.651": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n0"
-                    }
-                ],
-                "104.107": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n1"
-                    }
-                ],
-                "118.277": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n2"
-                    }
-                ],
-                "175.328": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n3"
-                    }
-                ],
-                "184.073": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n4"
-                    }
-                ],
-                "230.003": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n5"
-                    }
-                ],
-                "277.166": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n6"
-                    }
-                ],
-                "293.161": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n7"
-                    }
-                ],
-                "307.176": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n8"
-                    }
-                ],
-                "323.171": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n9"
-                    }
-                ],
-                "381.079": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n10"
-                    }
-                ],
-                "496.339": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n11"
-                    }
-                ],
-                "518.321": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n12"
-                    }
-                ],
-                "520.34": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n13"
-                    }
-                ],
-                "534.089": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n14"
-                    }
-                ],
-                "543.132": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n15"
-                    }
-                ],
-                "551.309": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n16"
-                    }
-                ],
-                "558.176": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n17"
-                    }
-                ],
-                "567.304": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n18"
-                    }
-                ],
-                "573.291": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n19"
-                    }
-                ],
-                "581.319": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n20"
-                    }
-                ],
-                "589.265": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n21"
-                    }
-                ],
-                "589.286": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n22"
-                    }
-                ],
-                "597.314": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n23"
-                    }
-                ],
-                "603.301": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n24"
-                    }
-                ],
-                "605.26": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n25"
-                    }
-                ],
-                "611.33": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n26"
-                    }
-                ],
-                "619.275": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n27"
-                    }
-                ],
-                "619.296": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n28"
-                    }
-                ],
-                "627.325": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n29"
-                    }
-                ],
-                "635.27": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n1"
-                    },
-                    {
-                        "hierarchy3": "h3n30"
-                    }
-                ],
-                "650.554": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n31"
-                    }
-                ],
-                "674.375": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n32"
-                    }
-                ],
-                "689.211": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n33"
-                    }
-                ],
-                "705.185": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n34"
-                    }
-                ],
-                "713.362": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n35"
-                    }
-                ],
-                "729.357": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n36"
-                    }
-                ],
-                "735.344": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n37"
-                    }
-                ],
-                "743.372": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n38"
-                    }
-                ],
-                "751.318": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n39"
-                    }
-                ],
-                "751.339": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n40"
-                    }
-                ],
-                "756.553": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n41"
-                    }
-                ],
-                "758.569": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n42"
-                    }
-                ],
-                "759.367": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n43"
-                    }
-                ],
-                "765.354": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n44"
-                    }
-                ],
-                "767.312": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n2"
-                    },
-                    {
-                        "hierarchy3": "h3n45"
-                    }
-                ],
-                "773.383": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n46"
-                    }
-                ],
-                "780.553": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n47"
-                    }
-                ],
-                "781.328": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n48"
-                    }
-                ],
-                "781.349": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n49"
-                    }
-                ],
-                "782.656": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n50"
-                    }
-                ],
-                "789.378": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n51"
-                    }
-                ],
-                "795.365": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n52"
-                    }
-                ],
-                "796.524": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n53"
-                    }
-                ],
-                "797.323": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n54"
-                    }
-                ],
-                "811.339": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n55"
-                    }
-                ],
-                "811.36": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n56"
-                    }
-                ],
-                "820.525": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n57"
-                    }
-                ],
-                "827.334": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n58"
-                    }
-                ],
-                "851.264": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n59"
-                    }
-                ],
-                "867.238": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n60"
-                    }
-                ],
-                "875.415": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n61"
-                    }
-                ],
-                "891.409": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n62"
-                    }
-                ],
-                "897.396": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n63"
-                    }
-                ],
-                "897.73": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n64"
-                    }
-                ],
-                "905.425": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n65"
-                    }
-                ],
-                "913.37": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n66"
-                    }
-                ],
-                "913.391": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n67"
-                    }
-                ],
-                "921.42": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n68"
-                    }
-                ],
-                "927.407": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n10"
-                    },
-                    {
-                        "hierarchy3": "h3n69"
-                    }
-                ],
-                "929.365": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n70"
-                    }
-                ],
-                "935.436": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n1"
-                    },
-                    {
-                        "hierarchy2": "h2n8"
-                    },
-                    {
-                        "hierarchy3": "h3n71"
-                    }
-                ],
-                "943.381": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n72"
-                    }
-                ],
-                "943.402": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n73"
-                    }
-                ],
-                "951.431": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n74"
-                    }
-                ],
-                "955.573": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n75"
-                    }
-                ],
-                "957.418": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n76"
-                    }
-                ],
-                "959.376": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n77"
-                    }
-                ],
-                "963.604": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n78"
-                    }
-                ],
-                "973.392": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n79"
-                    }
-                ],
-                "973.413": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n80"
-                    }
-                ],
-                "979.574": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n81"
-                    }
-                ],
-                "989.386": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n82"
-                    }
-                ],
-                "1006.576": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n83"
-                    }
-                ],
-                "1013.314": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n84"
-                    }
-                ],
-                "1029.291": [
-                    {
-                        "hierarchy0": "h0n3"
-                    },
-                    {
-                        "hierarchy1": "h1n4"
-                    },
-                    {
-                        "hierarchy2": "h2n5"
-                    },
-                    {
-                        "hierarchy3": "h3n85"
-                    }
-                ],
-                "1175.37": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n86"
-                    }
-                ],
-                "1191.343": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n87"
-                    }
-                ],
-                "1337.422": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n88"
-                    }
-                ],
-                "1353.398": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n89"
-                    }
-                ],
-                "1499.473": [
-                    {
-                        "hierarchy0": "h0n5"
-                    },
-                    {
-                        "hierarchy1": "h1n6"
-                    },
-                    {
-                        "hierarchy2": "h2n9"
-                    },
-                    {
-                        "hierarchy3": "h3n90"
-                    }
-                ],
-                "1515.45": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n91"
-                    }
-                ],
-                "1661.531": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n92"
-                    }
-                ],
-                "1677.505": [
-                    {
-                        "hierarchy0": "h0n1"
-                    },
-                    {
-                        "hierarchy1": "h1n2"
-                    },
-                    {
-                        "hierarchy2": "h2n3"
-                    },
-                    {
-                        "hierarchy3": "h3n93"
-                    }
-                ],
-                "1823.583": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n94"
-                    }
-                ],
-                "1839.557": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n6"
-                    },
-                    {
-                        "hierarchy3": "h3n95"
-                    }
-                ],
-                "1986.101": [
-                    {
-                        "hierarchy0": "h0n0"
-                    },
-                    {
-                        "hierarchy1": "h1n0"
-                    },
-                    {
-                        "hierarchy2": "h2n0"
-                    },
-                    {
-                        "hierarchy3": "h3n96"
-                    }
-                ],
-                "2001.743": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n97"
-                    }
-                ],
-                "2148.048": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n98"
-                    }
-                ],
-                "2163.914": [
-                    {
-                        "hierarchy0": "h0n2"
-                    },
-                    {
-                        "hierarchy1": "h1n3"
-                    },
-                    {
-                        "hierarchy2": "h2n4"
-                    },
-                    {
-                        "hierarchy3": "h3n99"
-                    }
-                ],
-                "2200.687": [
-                    {
-                        "hierarchy0": "h0n4"
-                    },
-                    {
-                        "hierarchy1": "h1n5"
-                    },
-                    {
-                        "hierarchy2": "h2n7"
-                    },
-                    {
-                        "hierarchy3": "h3n100"
-                    }
-                ]
+                "74.651": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n0"
+                },
+                "104.107": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n1"
+                },
+                "118.277": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n2"
+                },
+                "175.328": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n3"
+                },
+                "184.073": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n4"
+                },
+                "230.003": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n5"
+                },
+                "277.166": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n6"
+                },
+                "293.161": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n7"
+                },
+                "307.176": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n8"
+                },
+                "323.171": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n9"
+                },
+                "381.079": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n10"
+                },
+                "496.339": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n11"
+                },
+                "518.321": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n12"
+                },
+                "520.34": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n13"
+                },
+                "534.089": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n14"
+                },
+                "543.132": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n15"
+                },
+                "551.309": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n16"
+                },
+                "558.176": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n17"
+                },
+                "567.304": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n18"
+                },
+                "573.291": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n19"
+                },
+                "581.319": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n20"
+                },
+                "589.265": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n21"
+                },
+                "589.286": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n22"
+                },
+                "597.314": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n23"
+                },
+                "603.301": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n24"
+                },
+                "605.26": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n25"
+                },
+                "611.33": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n26"
+                },
+                "619.275": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n27"
+                },
+                "619.296": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n28"
+                },
+                "627.325": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n29"
+                },
+                "635.27": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n1",
+                    "hierarchy3": "h3n30"
+                },
+                "650.554": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n31"
+                },
+                "674.375": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n32"
+                },
+                "689.211": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n33"
+                },
+                "705.185": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n34"
+                },
+                "713.362": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n35"
+                },
+                "729.357": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n36"
+                },
+                "735.344": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n37"
+                },
+                "743.372": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n38"
+                },
+                "751.318": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n39"
+                },
+                "751.339": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n40"
+                },
+                "756.553": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n41"
+                },
+                "758.569": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n42"
+                },
+                "759.367": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n43"
+                },
+                "765.354": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n44"
+                },
+                "767.312": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n2",
+                    "hierarchy3": "h3n45"
+                },
+                "773.383": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n46"
+                },
+                "780.553": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n47"
+                },
+                "781.328": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n48"
+                },
+                "781.349": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n49"
+                },
+                "782.656": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n50"
+                },
+                "789.378": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n51"
+                },
+                "795.365": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n52"
+                },
+                "796.524": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n53"
+                },
+                "797.323": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n54"
+                },
+                "811.339": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n55"
+                },
+                "811.36": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n56"
+                },
+                "820.525": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n57"
+                },
+                "827.334": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n58"
+                },
+                "851.264": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n59"
+                },
+                "867.238": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n60"
+                },
+                "875.415": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n61"
+                },
+                "891.409": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n62"
+                },
+                "897.396": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n63"
+                },
+                "897.73": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n64"
+                },
+                "905.425": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n65"
+                },
+                "913.37": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n66"
+                },
+                "913.391": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n67"
+                },
+                "921.42": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n68"
+                },
+                "927.407": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n10",
+                    "hierarchy3": "h3n69"
+                },
+                "929.365": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n70"
+                },
+                "935.436": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n1",
+                    "hierarchy2": "h2n8",
+                    "hierarchy3": "h3n71"
+                },
+                "943.381": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n72"
+                },
+                "943.402": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n73"
+                },
+                "951.431": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n74"
+                },
+                "955.573": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n75"
+                },
+                "957.418": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n76"
+                },
+                "959.376": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n77"
+                },
+                "963.604": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n78"
+                },
+                "973.392": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n79"
+                },
+                "973.413": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n80"
+                },
+                "979.574": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n81"
+                },
+                "989.386": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n82"
+                },
+                "1006.576": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n83"
+                },
+                "1013.314": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n84"
+                },
+                "1029.291": {
+                    "hierarchy0": "h0n3",
+                    "hierarchy1": "h1n4",
+                    "hierarchy2": "h2n5",
+                    "hierarchy3": "h3n85"
+                },
+                "1175.37": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n86"
+                },
+                "1191.343": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n87"
+                },
+                "1337.422": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n88"
+                },
+                "1353.398": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n89"
+                },
+                "1499.473": {
+                    "hierarchy0": "h0n5",
+                    "hierarchy1": "h1n6",
+                    "hierarchy2": "h2n9",
+                    "hierarchy3": "h3n90"
+                },
+                "1515.45": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n91"
+                },
+                "1661.531": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n92"
+                },
+                "1677.505": {
+                    "hierarchy0": "h0n1",
+                    "hierarchy1": "h1n2",
+                    "hierarchy2": "h2n3",
+                    "hierarchy3": "h3n93"
+                },
+                "1823.583": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n94"
+                },
+                "1839.557": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n6",
+                    "hierarchy3": "h3n95"
+                },
+                "1986.101": {
+                    "hierarchy0": "h0n0",
+                    "hierarchy1": "h1n0",
+                    "hierarchy2": "h2n0",
+                    "hierarchy3": "h3n96"
+                },
+                "2001.743": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n97"
+                },
+                "2148.048": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n98"
+                },
+                "2163.914": {
+                    "hierarchy0": "h0n2",
+                    "hierarchy1": "h1n3",
+                    "hierarchy2": "h2n4",
+                    "hierarchy3": "h3n99"
+                },
+                "2200.687": {
+                    "hierarchy0": "h0n4",
+                    "hierarchy1": "h1n5",
+                    "hierarchy2": "h2n7",
+                    "hierarchy3": "h3n100"
+                }
             }
         }
     }

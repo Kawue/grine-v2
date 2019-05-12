@@ -1,7 +1,10 @@
 <template>
-  <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
+  <SidebarWidget
+    v-bind:side="side"
+    v-bind:initial-expanded="initialExpanded"
+    title="m/z List"
+  >
     <div slot="content">
-      <div style="margin-top: 4px; display: inline-block"><i>m/z</i> List</div>
       <div style="padding: 4px 8px 0 8px;">
         <span
           style="float: left; color: #dc3b9e"
@@ -28,7 +31,9 @@
           style="float: right; padding: 0"
           v-b-tooltip.hover.top="'Sort'"
         >
-          <v-icon v-bind:name="asc ? 'arrow-down' : 'arrow-up'"></v-icon>
+          <v-icon
+            v-bind:name="asc ? 'sort-amount-down' : 'sort-amount-up'"
+          ></v-icon>
         </span>
       </div>
 
@@ -53,21 +58,20 @@
       >
         <template slot="default">
           <b-row>
-            <b-col sm="3">
-              <p> m/z Value: </p>
+            <b-col sm="3" class="align-self-center">
+              <p>m/z Value:</p>
             </b-col>
             <b-col sm="9">
-              <p id="annotation-mz-value"> {{ nameModalMz.mz }} </p>
+              <p id="annotation-mz-value">{{ nameModalMz.mz }}</p>
             </b-col>
-            <b-col sm="3">
-              <label for="annotation-input"> Annotation </label>
+            <b-col sm="3" class="align-self-center">
+              <label for="annotation-input">Annotation:</label>
             </b-col>
             <b-col sm="9">
               <b-form ref="form" @submit.stop.prevent="handleSubmit">
-                
                 <b-input
                   v-model="nameModalMz.name"
-                  placeholder="Annotation"
+                  placeholder="Moin"
                   required
                   maxlength="30"
                   :state="nameModalMz.name.length > 0 ? null : false"
@@ -75,13 +79,13 @@
                   trim
                   ref="annotationinput"
                 ></b-input>
-                <b-form-invalid-feedback
-                  :state="nameModalMz.name.length > 0 ? null : false"
-                >
-                  The Annotation can't be empty
-                </b-form-invalid-feedback>
               </b-form>
             </b-col>
+            <b-form-invalid-feedback
+              :state="nameModalMz.name.length > 0 ? null : false"
+            >
+              The Annotation can't be empty
+            </b-form-invalid-feedback>
           </b-row>
         </template>
         <template slot="modal-footer" slot-scope="{ cancel, ok }">
@@ -224,9 +228,7 @@ export default {
         name: store.getters.getData.graph0.graph[
           'hierarchy' + numberOfLayers
         ].nodes[
-          store.getters.getMzValues[mz][numberOfLayers][
-            'hierarchy' + numberOfLayers
-          ]
+          store.getters.getMzValues[mz]['hierarchy' + numberOfLayers]
         ].name.toString(),
         mz: mz,
       });
@@ -257,9 +259,8 @@ export default {
   margin-top: 8px;
 }
 
-#annotation-mz-value{
+#annotation-mz-value {
   float: left;
   padding-left: 13px !important;
 }
-
 </style>
