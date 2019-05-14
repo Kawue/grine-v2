@@ -3,8 +3,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-//import testData from './data/0.70854_barley';
-import testData from './data/test_new_json';
+import ApiService from './services/ApiService';
 
 export default new Vuex.Store({
   state: {
@@ -37,10 +36,8 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    FETCH_ALL: state => {
-      console.log('fetching json data');
-      // later we will call api here
-      state.originalData = testData;
+    SET_ORIGINAL_DATA: (state, originalData) => {
+      state.originalData = originalData;
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -54,7 +51,8 @@ export default new Vuex.Store({
   },
   actions: {
     fetchData: context => {
-      context.commit('FETCH_ALL');
+      let apiService = new ApiService();
+      context.commit('SET_ORIGINAL_DATA', apiService.fetchData());
     },
     updateOptionsImage: (context, data) => {
       context.commit('OPTIONS_IMAGE_UPDATE', data);
