@@ -4,6 +4,9 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 import ApiService from './services/ApiService';
+import OptionsService from './services/OptionsService';
+let apiService = new ApiService();
+let optionsService = new OptionsService();
 
 export default new Vuex.Store({
   state: {
@@ -51,11 +54,11 @@ export default new Vuex.Store({
   },
   actions: {
     fetchData: context => {
-      let apiService = new ApiService();
       context.commit('SET_ORIGINAL_DATA', apiService.fetchData());
     },
     updateOptionsImage: (context, data) => {
-      context.commit('OPTIONS_IMAGE_UPDATE', data);
+      let calculatedImageOptions = optionsService.calculateImageOptions(data);
+      context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
   },
 });
