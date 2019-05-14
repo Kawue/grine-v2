@@ -2,8 +2,8 @@
 
 ## Project setup
 ```
-npm install
-npm run serve
+yarn install
+yarn serve
 ```
 
 ## FontAwesome / Vue Awesome

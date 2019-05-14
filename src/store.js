@@ -10,6 +10,11 @@ export default new Vuex.Store({
   state: {
     originalData: {},
     options: {
+      state: {
+        tabActive: null,
+        tabLocked: null,
+        tabsExpanded: false,
+      },
       network: {},
       image: {
         showMz: true,
@@ -27,6 +32,9 @@ export default new Vuex.Store({
     getOptionsImage: state => {
       return state.options.image;
     },
+    getOptionsState: state => {
+      return state.options.state;
+    },
   },
   mutations: {
     FETCH_ALL: state => {
@@ -36,6 +44,12 @@ export default new Vuex.Store({
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
+    },
+    OPTIONS_STATE_UPDATE: (state, data) => {
+      state.options.state = {
+        ...state.options.state,
+        ...data,
+      };
     },
   },
   actions: {
