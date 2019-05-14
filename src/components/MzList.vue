@@ -36,6 +36,11 @@
           ></v-icon>
         </span>
       </div>
+      <div style="width: 100%; position: absolute; top: 20px; right: 0;">
+        <div v-on:click="loadGraph(0)" style="display: inline-block">0</div>
+        <div v-on:click="loadGraph(1)" style="display: inline-block">1</div>
+        <div v-on:click="loadGraph(2)" style="display: inline-block">2</div>
+      </div>
 
       <select v-model="selectedMz" v-on:click="mzClicked" class="list" multiple>
         <option
@@ -81,19 +86,22 @@
                 ></b-input>
               </b-form>
             </b-col>
-            <b-form-invalid-feedback
-              :state="nameModalMz.name.length > 0 ? null : false"
-            >
-              The Annotation can't be empty
-            </b-form-invalid-feedback>
+          </b-row>
+          <b-row>
+            <b-col offset-sm="3">
+              <b-form-invalid-feedback
+                :state="nameModalMz.name.length > 0 ? null : false"
+              >
+                The Annotation can't be empty
+              </b-form-invalid-feedback>
+            </b-col>
           </b-row>
         </template>
         <template slot="modal-footer" slot-scope="{ cancel, ok }">
-          <b>Custom Footer</b>
           <b-button
             variant="outline-danger"
             @click="cancel()"
-            v-if="nameModalMz.mz !== nameModalMz.name"
+            v-bind:disabled="nameModalMz.mz === nameModalMz.name"
           >
             Reset
           </b-button>
@@ -124,6 +132,7 @@ export default {
     return {
       selectedMz: [],
       currentMz: [],
+      graph: 0,
       asc: true,
       showName: true,
       showAll: false,
@@ -159,6 +168,32 @@ export default {
       bvModalEvt.preventDefault();
       this.handleSubmit();
     },
+    loadGraph(graphNumber) {
+      console.log('new Graph');
+      this.graph = graphNumber;
+      this.selectedMz = [];
+      const numberOfLayers =
+        Object.keys(
+          store.getters.getData['graph' + graphNumber.toString()].graph
+        ).length - 1;
+      const t = [];
+      this.currentMz = [];
+      this.notVisibleMz = [];
+      Object.keys(store.getters.getMzValues).forEach(function(mz) {
+        t.push({
+          highlight: Math.random() > 0.3,
+          ...store.getters.getMzValues[mz],
+          name: store.getters.getData['graph' + graphNumber.toString()].graph[
+            'hierarchy' + numberOfLayers
+          ].nodes[
+            store.getters.getMzValues[mz]['hierarchy' + numberOfLayers]
+          ].name.toString(),
+          mz: mz,
+        });
+      });
+      this.currentMz.push(...t);
+      this.calculateCurrentMz();
+    },
     handleSubmit: function() {
       if (!this.$refs.form.checkValidity()) {
         return;
@@ -168,8 +203,10 @@ export default {
         return val.mz === mz;
       });
       this.currentMz[index].name = this.nameModalMz.name;
-      store.getters.getData.graph0.graph['hierarchy' + 3].nodes[
-        this.currentMz[index][3]['hierarchy' + 3]
+      store.getters.getData['graph' + this.graph.toString()].graph[
+        'hierarchy' + 3
+      ].nodes[
+        this.currentMz[index]['hierarchy' + 3]
       ].name = this.nameModalMz.name;
       this.$nextTick(() => {
         this.$refs['nameModal'].hide();
@@ -187,8 +224,10 @@ export default {
         return val.mz === mz;
       });
       this.currentMz[index].name = this.nameModalMz.mz.toString();
-      store.getters.getData.graph0.graph['hierarchy' + 3].nodes[
-        this.currentMz[index][3]['hierarchy' + 3]
+      store.getters.getData['graph' + this.graph.toString()].graph[
+        'hierarchy' + 3
+      ].nodes[
+        this.currentMz[index]['hierarchy' + 3]
       ].name = this.nameModalMz.mz.toString();
       setTimeout(() => {
         this.nameModalMz = {
@@ -213,19 +252,18 @@ export default {
         }
       }
     },
-    validationName: function() {
-      return this.nameModalMz.name.length > 0;
-    },
   },
   created() {
     const numberOfLayers =
-      Object.keys(store.getters.getData.graph0.graph).length - 1;
+      Object.keys(store.getters.getData['graph0'].graph).length - 1;
     const t = [];
+    this.currentMz = [];
+    this.notVisibleMz = [];
     Object.keys(store.getters.getMzValues).forEach(function(mz) {
       t.push({
         highlight: Math.random() > 0.3,
         ...store.getters.getMzValues[mz],
-        name: store.getters.getData.graph0.graph[
+        name: store.getters.getData['graph0'].graph[
           'hierarchy' + numberOfLayers
         ].nodes[
           store.getters.getMzValues[mz]['hierarchy' + numberOfLayers]
