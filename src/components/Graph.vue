@@ -1,12 +1,33 @@
 <template>
   <div class="graph">
     <h1>GRAPH</h1>
+    <PackChart :tweetData="loadData"></PackChart>
   </div>
 </template>
 
 <script>
+import tweets from '../data/tweets.json';
+import PackChart from './PackChart';
+
 export default {
   name: 'Graph',
+  components: {
+    PackChart,
+  },
+  data: function() {
+    return {
+      loadData: [],
+    };
+  },
+  mounted() {
+    console.log('App loaded');
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      this.loadData = tweets;
+    },
+  },
 };
 </script>
 
