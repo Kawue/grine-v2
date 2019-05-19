@@ -31,7 +31,6 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 101;
-  background-color: blue;
 
   .row {
     padding: 0;
