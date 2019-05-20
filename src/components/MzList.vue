@@ -9,7 +9,7 @@
         <span
           style="float: left; color: #dc3b9e"
           v-on:click="
-            showAll = !showAll;
+            toggleShowAll();
             calculateCurrentMz();
           "
           v-b-tooltip.hover.top="'Show all'"
@@ -18,14 +18,17 @@
         </span>
         <span
           style="float: left;margin-left: 15px; color: #dc3b9e"
-          v-on:click="showName = !showName"
+          v-on:click="toggleShowAnnotation"
           v-b-tooltip.hover.top="'Show Annotations'"
         >
-          <v-icon name="jedi" v-bind:class="{ inactive: !showName }"></v-icon>
+          <v-icon
+            name="jedi"
+            v-bind:class="{ inactive: !showAnnotation }"
+          ></v-icon>
         </span>
         <span
           v-on:click="
-            asc = !asc;
+            toggleAsc();
             sortMZ();
           "
           style="float: right; padding: 0"
@@ -42,7 +45,12 @@
         <div v-on:click="loadGraph(2)" style="display: inline-block">2</div>
       </div>
 
-      <select v-model="selectedMz" v-on:click="mzClicked" class="list" multiple>
+      <select
+        v-model="localSelectedMz"
+        v-on:click="mzClicked"
+        class="list"
+        multiple
+      >
         <option
           v-for="mzObject in currentMz"
           v-bind:class="{ inactive: !mzObject.highlight }"
@@ -51,7 +59,7 @@
           v-bind:key="mzObject.mz"
           v-on:dblclick="doubleClick(mzObject)"
         >
-          {{ showName ? mzObject.name : mzObject.mz }}
+          {{ showAnnotation ? mzObject.name : mzObject.mz }}
         </option>
       </select>
       <b-modal
@@ -97,7 +105,11 @@
             </b-col>
           </b-row>
         </template>
-        <template slot="modal-footer" slot-scope="{ cancel, ok }">
+        <template
+          slot="modal-footer"
+          style="display: block !important;"
+          slot-scope="{ cancel, ok }"
+        >
           <b-button
             variant="outline-danger"
             @click="cancel()"
@@ -121,6 +133,7 @@
 <script>
 import SidebarWidget from './SidebarWidget';
 import store from '@/store';
+import { mapGetters } from 'vuex';
 
 export default {
   extends: SidebarWidget,
@@ -130,29 +143,40 @@ export default {
   name: 'MzList',
   data: function() {
     return {
-      selectedMz: [],
-      currentMz: [],
-      graph: 0,
-      asc: true,
-      showName: true,
-      showAll: false,
-      notVisibleMz: [],
+      localSelectedMz: [],
       nameModalMz: {
         name: '',
         mz: 0,
       },
     };
   },
+  computed: {
+    ...mapGetters({
+      options: 'mzListOptions',
+      currentMz: 'mzListOptionsVisibleMz',
+      notVisibleMz: 'mzListOptionsNotVisibleMz',
+      showAll: 'mzListOptionsShowAll',
+      showAnnotation: 'mzListOptionsShowAnnotation',
+      asc: 'mzListOptionsAsc',
+      graph: 'mzListOptionsGraph',
+    }),
+  },
   methods: {
     mzClicked: function() {
-      // console.log(`Selected mz: ${this.selectedMz.join(', ')}`);
+      console.log(`Selected mz: ${this.localSelectedMz.join(', ')}`);
+      store.commit('OPTIONS_MZLIST_UPDATE_SELECTED_MZ', this.localSelectedMz);
     },
     sortMZ: function() {
-      if (this.asc) {
-        this.currentMz = this.currentMz.sort((a, b) => a.mz - b.mz);
-      } else {
-        this.currentMz = this.currentMz.sort((a, b) => b.mz - a.mz);
-      }
+      store.commit('OPTIONS_MZLIST_SORT_MZ');
+    },
+    toggleAsc: function() {
+      store.commit('OPTIONS_MZLIST_TOOGLE_ASC');
+    },
+    toggleShowAll: function() {
+      store.commit('OPTIONS_MZLIST_TOOGLE_SHOW_ALL');
+    },
+    toggleShowAnnotation: function() {
+      store.commit('OPTIONS_MZLIST_TOOGLE_SHOW_ANNOTATION');
     },
     doubleClick: function(mzObject) {
       this.nameModalMz = {
@@ -169,30 +193,9 @@ export default {
       this.handleSubmit();
     },
     loadGraph(graphNumber) {
-      console.log('new Graph');
-      this.graph = graphNumber;
-      this.selectedMz = [];
-      const numberOfLayers =
-        Object.keys(
-          store.getters.getData['graph' + graphNumber.toString()].graph
-        ).length - 1;
-      const t = [];
-      this.currentMz = [];
-      this.notVisibleMz = [];
-      Object.keys(store.getters.getMzValues).forEach(function(mz) {
-        t.push({
-          highlight: Math.random() > 0.3,
-          ...store.getters.getMzValues[mz],
-          name: store.getters.getData['graph' + graphNumber.toString()].graph[
-            'hierarchy' + numberOfLayers
-          ].nodes[
-            store.getters.getMzValues[mz]['hierarchy' + numberOfLayers]
-          ].name.toString(),
-          mz: mz,
-        });
-      });
-      this.currentMz.push(...t);
-      this.calculateCurrentMz();
+      store.commit('OPTIONS_MZLIST_CHANGE_GRAPH', graphNumber);
+      store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
+      store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
     },
     handleSubmit: function() {
       if (!this.$refs.form.checkValidity()) {
@@ -237,42 +240,12 @@ export default {
       }, 1000);
     },
     calculateCurrentMz: function() {
-      if (this.showAll) {
-        if (this.notVisibleMz.length > 0) {
-          this.currentMz.push(...this.notVisibleMz);
-          this.notVisibleMz = [];
-          this.sortMZ();
-        }
-      } else {
-        for (let i = this.currentMz.length - 1; i >= 0; i--) {
-          if (!this.currentMz[i].highlight) {
-            this.notVisibleMz.push(this.currentMz[i]);
-            this.currentMz.splice(i, 1);
-          }
-        }
-      }
+      store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
     },
   },
   created() {
-    const numberOfLayers =
-      Object.keys(store.getters.getData['graph0'].graph).length - 1;
-    const t = [];
-    this.currentMz = [];
-    this.notVisibleMz = [];
-    Object.keys(store.getters.getMzValues).forEach(function(mz) {
-      t.push({
-        highlight: Math.random() > 0.3,
-        ...store.getters.getMzValues[mz],
-        name: store.getters.getData['graph0'].graph[
-          'hierarchy' + numberOfLayers
-        ].nodes[
-          store.getters.getMzValues[mz]['hierarchy' + numberOfLayers]
-        ].name.toString(),
-        mz: mz,
-      });
-    });
-    this.currentMz.push(...t);
-    this.calculateCurrentMz();
+    store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
+    store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
   },
 };
 </script>

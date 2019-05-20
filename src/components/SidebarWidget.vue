@@ -21,6 +21,7 @@
       </span>
       <span
         class="vertical-title"
+        v-on:click="toggleView()"
         v-if="!expanded"
         style="writing-mode: vertical-rl;text-orientation: mixed;"
         >{{ title }}</span
