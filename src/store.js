@@ -5,8 +5,10 @@ Vue.use(Vuex);
 
 import ApiService from './services/ApiService';
 import OptionsService from './services/OptionsService';
+import MzListService from './services/MzListService';
 let apiService = new ApiService();
 let optionsService = new OptionsService();
+let mzListService = new MzListService();
 
 export default new Vuex.Store({
   state: {
@@ -71,7 +73,7 @@ export default new Vuex.Store({
       return state.options.mzList.asc;
     },
     stateOptionsGraph: state => {
-      return state.options.mzList.graph;
+      return state.options.state.graph;
     },
   },
   mutations: {
@@ -101,71 +103,30 @@ export default new Vuex.Store({
       state.options.state.graph = graph;
     },
     OPTIONS_MZLIST_SORT_MZ: state => {
-      if (state.options.mzList.asc) {
-        state.options.mzList.visibleMz = state.options.mzList.visibleMz.sort(
-          (a, b) => a.mz - b.mz
-        );
-      } else {
-        state.options.mzList.visibleMz = state.options.mzList.visibleMz.sort(
-          (a, b) => b.mz - a.mz
-        );
-      }
+      state.options.mzList.visibleMz = mzListService.sortMzList(
+        state.options.mzList.visibleMz,
+        state.options.mzList.asc
+      );
     },
     OPTIONS_MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.options.mzList.selectedMz = data;
     },
     OPTIONS_MZLIST_LOAD_GRAPH: state => {
-      const graphString = 'graph' + state.options.state.graph.toString();
-      const numberOfLayers =
-        Object.keys(state.originalData.graphs[graphString].graph).length - 1;
-      const t = [];
-      state.options.mzList.visibleMz = [];
       state.options.mzList.notVisibleMz = [];
-      Object.keys(state.originalData.graphs[graphString].mzs).forEach(function(
-        mz
-      ) {
-        t.push({
-          highlight: Math.random() > 0.3,
-          ...state.originalData.graphs[graphString].mzs[mz],
-          name: state.originalData.graphs[graphString].graph[
-            'hierarchy' + numberOfLayers
-          ].nodes[
-            state.originalData.graphs[graphString].mzs[mz][
-              'hierarchy' + numberOfLayers
-            ]
-          ].name.toString(),
-          mz: mz,
-        });
-      });
-      state.options.mzList.visibleMz.push(...t);
+      state.options.mzList.visibleMz = mzListService.loadGraph(
+        state.options.state.graph,
+        state.originalData.graphs
+      );
     },
     OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ: state => {
-      if (state.options.mzList.showAll) {
-        if (state.options.mzList.notVisibleMz.length > 0) {
-          state.options.mzList.visibleMz.push(
-            ...state.options.mzList.notVisibleMz
-          );
-          state.options.mzList.notVisibleMz = [];
-          if (state.options.mzList.asc) {
-            state.options.mzList.visibleMz = state.options.mzList.visibleMz.sort(
-              (a, b) => a.mz - b.mz
-            );
-          } else {
-            state.options.mzList.visibleMz = state.options.mzList.visibleMz.sort(
-              (a, b) => b.mz - a.mz
-            );
-          }
-        }
-      } else {
-        for (let i = state.options.mzList.visibleMz.length - 1; i >= 0; i--) {
-          if (!state.options.mzList.visibleMz[i].highlight) {
-            state.options.mzList.notVisibleMz.push(
-              state.options.mzList.visibleMz[i]
-            );
-            state.options.mzList.visibleMz.splice(i, 1);
-          }
-        }
-      }
+      const tuple = mzListService.calculateVisibleMz(
+        state.options.mzList.showAll,
+        state.options.mzList.notVisibleMz,
+        state.options.mzList.visibleMz,
+        state.options.mzList.asc
+      );
+      state.options.mzList.visibleMz = tuple[0];
+      state.options.mzList.notVisibleMz = tuple[1];
     },
   },
   actions: {
