@@ -1,14 +1,14 @@
 <template>
   <div>
-    <svg width="250" height="250">
-      <g style="transform: translate(0, 10px)">
+    <svg v-bind:width="width" v-bind:height="height">
+      <g>
         <rect
           v-for="point in points"
           v-bind:x="getPosX(point)"
           v-bind:y="getPosY(point)"
           v-bind:width="getWidth()"
           v-bind:height="getHeight()"
-          v-bind:fill="pointColor(point)"
+          v-bind:fill="getPointColor(point)"
         ></rect>
       </g>
     </svg>
@@ -23,85 +23,73 @@ export default {
   data() {
     return {
       points: [],
+      width: 250,
+      height: 250,
     };
   },
   mounted() {
-    this.calculateImageData();
+    for (let i = 0; i < 250; i++) {
+      for (let j = 0; j < 250; j++) {
+        let d = Math.floor(Math.random() * 100) + 30;
+        this.points.push([i, j, d]);
+      }
+    }
+  },
+  computed: {
+    domainX: function() {
+      let domain = [];
+      for (let i = 0; i < 250; i++) {
+        domain.push(i);
+      }
+      return domain;
+    },
+    domainY: function() {
+      let domain = [];
+      for (let i = 0; i < 250; i++) {
+        domain.push(i);
+      }
+      return domain;
+    },
+    scaleBandX: function() {
+      return d3
+        .scaleBand()
+        .range([0, this.width])
+        .domain(this.domainX)
+        .padding(0.01);
+    },
+    scaleBandY: function() {
+      return d3
+        .scaleBand()
+        .range([this.height, 0])
+        .domain(this.domainY)
+        .padding(0.01);
+    },
+    pointColor: function() {
+      return d3
+        .scaleLinear()
+        .range(['white', '#69b3a2'])
+        .domain([0, 100]);
+    },
   },
   methods: {
-    pointColor(point) {
-      let myColor = d3.scaleLinear()
-        .range(['white', '#69b3a2'])
-        .domain([1, 100]);
-      return myColor(point[2]);
-    },
-    getScaleBandX() {
-      var myGroups = [];
-      for (var i = 0; i <= 250; i++) {
-        myGroups.push(i);
-      }
-
-      var x = d3.scaleBand()
-        .range([0, 250])
-        .domain(myGroups)
-        .padding(0.01);
-
-      return x;
+    getPointColor(point) {
+      return this.pointColor(point[2]);
     },
     getPosX(point) {
-      let scaleBand = this.getScaleBandX();
+      let scaleBand = this.scaleBandX;
       return scaleBand(point[0]);
     },
     getWidth() {
-      let scaleBand = this.getScaleBandX();
+      let scaleBand = this.scaleBandX;
       return scaleBand.bandwidth();
     },
-
-    getScaleBandY() {
-      var myGroups = [];
-      for (var i = 0; i <= 250; i++) {
-        myGroups.push(i);
-      }
-
-      var y = d3.scaleBand()
-        .range([250, 0])
-        .domain(myGroups)
-        .padding(0.01);
-
-      return y;
-    },
     getPosY(point) {
-      let scaleBand = this.getScaleBandY();
+      let scaleBand = this.scaleBandY;
       return scaleBand(point[1]);
     },
     getHeight() {
-      let scaleBand = this.getScaleBandY();
+      let scaleBand = this.scaleBandY;
       return scaleBand.bandwidth();
-    },
-
-
-    /*pointY(point) {
-
-    },*/
-    /*pointStyle(point) {
-      return 'transform: translate(' + point[0] + 'px, ' + point[1] + 'px)';
-    },*/
-    /*getScales() {
-      const x = d3.scaleTime().range([0, 430]);
-      const y = d3.scaleLinear().range([210, 0]);
-      d3.axisLeft().scale(x);
-      d3.axisBottom().scale(y);
-      x.domain(d3.extent(this.data, (d, i) => i));
-      y.domain([0, d3.max(this.data, d => d)]);
-      return { x, y };
-    },*/
-    calculateImageData() {
-      for (let i = 0; i < 10000; i++) {
-        let x = Math.floor(Math.random() * 250) + 0;
-        let y = Math.floor(Math.random() * 250) + 0;
-        let d = Math.floor(Math.random() * 100) + 0;
-        this.points.push([x, y, d]);
-      }
     },
   },
 };
