@@ -5,7 +5,7 @@
     title="Images"
   >
     <div slot="content">
-      <mz-image></mz-image>
+      <mz-image v-if="options.showMz"></mz-image>
     </div>
   </SidebarWidget>
 </template>
