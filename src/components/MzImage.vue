@@ -2,19 +2,13 @@
   <div>
     <svg width="250" height="250">
       <g style="transform: translate(0, 10px)">
-        <!--<circle-->
-          <!--v-for="point in points"-->
-          <!--r="1"-->
-          <!--v-bind:style="pointStyle(point)"-->
-        <!--&gt;</circle>-->
         <rect
           v-for="point in points"
-          r="1"
-          v-bind:x="point[0]"
-          v-bind:y="point[1]"
-          width="10"
-          height="10"
-          v-bind:fill="pointColor(point[2])"
+          v-bind:x="getPosX(point)"
+          v-bind:y="getPosY(point)"
+          v-bind:width="getWidth()"
+          v-bind:height="getHeight()"
+          v-bind:fill="pointColor(point)"
         ></rect>
       </g>
     </svg>
@@ -28,26 +22,67 @@ export default {
   name: 'MzImage',
   data() {
     return {
-      points: [
-        /*[10, 10, 55],
-        [20, 20, 0],
-        [30, 30, 33],
-        [40, 40, 89],
-        [50, 50, 80],
-        [500, 500, 4],*/
-      ],
+      points: [],
     };
   },
   mounted() {
     this.calculateImageData();
   },
   methods: {
-    pointColor(intensity) {
+    pointColor(point) {
       let myColor = d3.scaleLinear()
         .range(['white', '#69b3a2'])
         .domain([1, 100]);
-      return myColor(intensity);
+      return myColor(point[2]);
     },
+    getScaleBandX() {
+      var myGroups = [];
+      for (var i = 0; i <= 250; i++) {
+        myGroups.push(i);
+      }
+
+      var x = d3.scaleBand()
+        .range([0, 250])
+        .domain(myGroups)
+        .padding(0.01);
+
+      return x;
+    },
+    getPosX(point) {
+      let scaleBand = this.getScaleBandX();
+      return scaleBand(point[0]);
+    },
+    getWidth() {
+      let scaleBand = this.getScaleBandX();
+      return scaleBand.bandwidth();
+    },
+
+    getScaleBandY() {
+      var myGroups = [];
+      for (var i = 0; i <= 250; i++) {
+        myGroups.push(i);
+      }
+
+      var y = d3.scaleBand()
+        .range([250, 0])
+        .domain(myGroups)
+        .padding(0.01);
+
+      return y;
+    },
+    getPosY(point) {
+      let scaleBand = this.getScaleBandY();
+      return scaleBand(point[1]);
+    },
+    getHeight() {
+      let scaleBand = this.getScaleBandY();
+      return scaleBand.bandwidth();
+    },
+
+
+    /*pointY(point) {
+
+    },*/
     /*pointStyle(point) {
       return 'transform: translate(' + point[0] + 'px, ' + point[1] + 'px)';
     },*/
