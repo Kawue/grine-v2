@@ -16,6 +16,7 @@ export default new Vuex.Store({
         tabActive: null,
         tabLocked: null,
         tabsExpanded: false,
+        graph: 0,
       },
       network: {},
       image: {
@@ -28,14 +29,13 @@ export default new Vuex.Store({
         showAll: false,
         showAnnotation: true,
         asc: true,
-        graph: 0,
       },
       data: {},
     },
   },
   getters: {
     getMzValues: state => {
-      return state.originalData.graphs.graph0.mzs;
+      return state.originalData.graphs['graph' + state.options.state.graph].mzs;
     },
     getData: state => {
       return state.originalData.graphs;
@@ -70,7 +70,7 @@ export default new Vuex.Store({
     mzListOptionsAsc: state => {
       return state.options.mzList.asc;
     },
-    mzListOptionsGraph: state => {
+    stateOptionsGraph: state => {
       return state.options.mzList.graph;
     },
   },
@@ -97,8 +97,8 @@ export default new Vuex.Store({
       state.options.mzList.showAnnotation = !state.options.mzList
         .showAnnotation;
     },
-    OPTIONS_MZLIST_CHANGE_GRAPH: (state, graph) => {
-      state.options.mzList.graph = graph;
+    OPTIONS_STATE_CHANGE_GRAPH: (state, graph) => {
+      state.options.state.graph = graph;
     },
     OPTIONS_MZLIST_SORT_MZ: state => {
       if (state.options.mzList.asc) {
@@ -115,7 +115,7 @@ export default new Vuex.Store({
       state.options.mzList.selectedMz = data;
     },
     OPTIONS_MZLIST_LOAD_GRAPH: state => {
-      const graphString = 'graph' + state.options.mzList.graph.toString();
+      const graphString = 'graph' + state.options.state.graph.toString();
       const numberOfLayers =
         Object.keys(state.originalData.graphs[graphString].graph).length - 1;
       const t = [];

@@ -158,7 +158,7 @@ export default {
       showAll: 'mzListOptionsShowAll',
       showAnnotation: 'mzListOptionsShowAnnotation',
       asc: 'mzListOptionsAsc',
-      graph: 'mzListOptionsGraph',
+      graph: 'stateOptionsGraph',
     }),
   },
   methods: {
@@ -193,7 +193,7 @@ export default {
       this.handleSubmit();
     },
     loadGraph(graphNumber) {
-      store.commit('OPTIONS_MZLIST_CHANGE_GRAPH', graphNumber);
+      store.commit('OPTIONS_STATE_CHANGE_GRAPH', graphNumber);
       store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
       store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
     },
