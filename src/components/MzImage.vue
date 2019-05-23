@@ -1,7 +1,7 @@
 <template>
   <div>
     <svg v-bind:width="width" v-bind:height="height">
-      <g>
+      <g v-if="render">
         <rect
           v-for="point in points"
           v-bind:x="getPosX(point)"
@@ -12,6 +12,14 @@
         ></rect>
       </g>
     </svg>
+    <button @click="clearImageData">Clear</button>
+    <button @click="generateRandomImageData">Generate</button>
+    <button @click="toggleRenderRandomImageData">Toggle Render</button>
+
+    <br>
+    <p>Clear: clear the data array</p>
+    <p>Generate: generate a new random data array</p>
+    <p>Toggle Render: toggle boolean to render svg g-element via v-if</p>
   </div>
 </template>
 
@@ -25,15 +33,8 @@ export default {
       points: [],
       width: 250,
       height: 250,
+      render: false,
     };
-  },
-  mounted() {
-    for (let i = 0; i < 250; i++) {
-      for (let j = 0; j < 250; j++) {
-        let d = Math.floor(Math.random() * 100) + 30;
-        this.points.push([i, j, d]);
-      }
-    }
   },
   computed: {
     domainX: function() {
@@ -72,6 +73,20 @@ export default {
     },
   },
   methods: {
+    clearImageData() {
+      this.points = [];
+    },
+    generateRandomImageData() {
+      for (let i = 0; i < 250; i++) {
+        for (let j = 0; j < 250; j++) {
+          let d = Math.floor(Math.random() * 100) + 30;
+          this.points.push([i, j, d]);
+        }
+      }
+    },
+    toggleRenderRandomImageData() {
+      this.render = !this.render;
+    },
     getPointColor(point) {
       return this.pointColor(point[2]);
     },
