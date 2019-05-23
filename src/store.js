@@ -5,8 +5,10 @@ Vue.use(Vuex);
 
 import ApiService from './services/ApiService';
 import OptionsService from './services/OptionsService';
+import MzListService from './services/MzListService';
 let apiService = new ApiService();
 let optionsService = new OptionsService();
+let mzListService = new MzListService();
 
 export default new Vuex.Store({
   state: {
@@ -16,17 +18,26 @@ export default new Vuex.Store({
         tabActive: null,
         tabLocked: null,
         tabsExpanded: false,
+        graph: 0,
       },
       network: {},
       image: {
         showMz: true,
+      },
+      mzList: {
+        selectedMz: [],
+        visibleMz: [],
+        notVisibleMz: [],
+        showAll: false,
+        showAnnotation: true,
+        asc: true,
       },
       data: {},
     },
   },
   getters: {
     getMzValues: state => {
-      return state.originalData.graphs.graph0.mzs;
+      return state.originalData.graphs['graph' + state.options.state.graph].mzs;
     },
     getData: state => {
       return state.originalData.graphs;
@@ -36,6 +47,33 @@ export default new Vuex.Store({
     },
     getOptionsState: state => {
       return state.options.state;
+    },
+    mzListGraph: state => {
+      return state.options.mzList;
+    },
+    mzListOptions: state => {
+      return state.options.graph;
+    },
+    mzListOptionsSelectedMz: state => {
+      return state.options.mzList.selectedMz;
+    },
+    mzListOptionsVisibleMz: state => {
+      return state.options.mzList.visibleMz;
+    },
+    mzListOptionsNotVisibleMz: state => {
+      return state.options.mzList.notVisibleMz;
+    },
+    mzListOptionsShowAll: state => {
+      return state.options.mzList.showAll;
+    },
+    mzListOptionsShowAnnotation: state => {
+      return state.options.mzList.showAnnotation;
+    },
+    mzListOptionsAsc: state => {
+      return state.options.mzList.asc;
+    },
+    stateOptionsGraph: state => {
+      return state.options.state.graph;
     },
   },
   mutations: {
@@ -50,6 +88,45 @@ export default new Vuex.Store({
         ...state.options.state,
         ...data,
       };
+    },
+    OPTIONS_MZLIST_TOOGLE_ASC: state => {
+      state.options.mzList.asc = !state.options.mzList.asc;
+    },
+    OPTIONS_MZLIST_TOOGLE_SHOW_ALL: state => {
+      state.options.mzList.showAll = !state.options.mzList.showAll;
+    },
+    OPTIONS_MZLIST_TOOGLE_SHOW_ANNOTATION: state => {
+      state.options.mzList.showAnnotation = !state.options.mzList
+        .showAnnotation;
+    },
+    OPTIONS_STATE_CHANGE_GRAPH: (state, graph) => {
+      state.options.state.graph = graph;
+    },
+    OPTIONS_MZLIST_SORT_MZ: state => {
+      state.options.mzList.visibleMz = mzListService.sortMzList(
+        state.options.mzList.visibleMz,
+        state.options.mzList.asc
+      );
+    },
+    OPTIONS_MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
+      state.options.mzList.selectedMz = data;
+    },
+    OPTIONS_MZLIST_LOAD_GRAPH: state => {
+      state.options.mzList.notVisibleMz = [];
+      state.options.mzList.visibleMz = mzListService.loadGraph(
+        state.options.state.graph,
+        state.originalData.graphs
+      );
+    },
+    OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ: state => {
+      const tuple = mzListService.calculateVisibleMz(
+        state.options.mzList.showAll,
+        state.options.mzList.notVisibleMz,
+        state.options.mzList.visibleMz,
+        state.options.mzList.asc
+      );
+      state.options.mzList.visibleMz = tuple[0];
+      state.options.mzList.notVisibleMz = tuple[1];
     },
   },
   actions: {

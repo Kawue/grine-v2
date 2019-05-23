@@ -1,29 +1,56 @@
 <template>
-  <SidebarWidget v-bind:side="side" v-bind:initial-expanded="initialExpanded">
+  <SidebarWidget
+    v-bind:side="side"
+    v-bind:initial-expanded="initialExpanded"
+    title="m/z List"
+  >
     <div slot="content">
-      <div style="margin-top: 4px; display: inline-block">
-        <i>m/z</i> Values
-      </div>
       <div style="padding: 4px 8px 0 8px;">
-        <input
-          style="float: left"
-          type="checkbox"
-          v-model="showAll"
-          v-on:click="calculateCurrentMz"
+        <span
+          style="float: left; color: #dc3b9e"
+          v-on:click="
+            toggleShowAll();
+            calculateCurrentMz();
+          "
           v-b-tooltip.hover.top="'Show all'"
-        />
+        >
+          <v-icon name="bong" v-bind:class="{ inactive: !showAll }"></v-icon>
+        </span>
+        <span
+          style="float: left;margin-left: 15px; color: #dc3b9e"
+          v-on:click="toggleShowAnnotation"
+          v-b-tooltip.hover.top="'Show Annotations'"
+        >
+          <v-icon
+            name="jedi"
+            v-bind:class="{ inactive: !showAnnotation }"
+          ></v-icon>
+        </span>
         <span
           v-on:click="
-            asc = !asc;
+            toggleAsc();
             sortMZ();
           "
           style="float: right; padding: 0"
+          v-b-tooltip.hover.top="'Sort'"
         >
-          <v-icon v-bind:name="asc ? 'arrow-down' : 'arrow-up'"></v-icon>
+          <v-icon
+            v-bind:name="asc ? 'sort-amount-down' : 'sort-amount-up'"
+          ></v-icon>
         </span>
       </div>
+      <div style="width: 100%; position: absolute; top: 20px; right: 0;">
+        <div v-on:click="loadGraph(0)" style="display: inline-block">0</div>
+        <div v-on:click="loadGraph(1)" style="display: inline-block">1</div>
+        <div v-on:click="loadGraph(2)" style="display: inline-block">2</div>
+      </div>
 
-      <select v-model="selectedMz" v-on:click="mzClicked" class="list" multiple>
+      <select
+        v-model="localSelectedMz"
+        v-on:click="mzClicked"
+        class="list"
+        multiple
+      >
         <option
           v-for="mzObject in currentMz"
           v-bind:class="{ inactive: !mzObject.highlight }"
@@ -32,7 +59,7 @@
           v-bind:key="mzObject.mz"
           v-on:dblclick="doubleClick(mzObject)"
         >
-          {{ mzObject.name }}
+          {{ showAnnotation ? mzObject.name : mzObject.mz }}
         </option>
       </select>
       <b-modal
@@ -43,23 +70,50 @@
         title="Rename m/z Value"
       >
         <template slot="default">
-          m/z Value: {{ nameModalMz.mz }}
-          <form ref="form" @submit.stop.prevent="handleOk(null)">
-            <b-form-input
-              v-model="nameModalMz.name"
-              placeholder="Name"
-              required
-              maxlength="30"
-              invalid-feedback="Name is required"
-            ></b-form-input>
-          </form>
+          <b-row>
+            <b-col sm="3" class="align-self-center">
+              <p>m/z Value:</p>
+            </b-col>
+            <b-col sm="9">
+              <p id="annotation-mz-value">{{ nameModalMz.mz }}</p>
+            </b-col>
+            <b-col sm="3" class="align-self-center">
+              <label for="annotation-input">Annotation:</label>
+            </b-col>
+            <b-col sm="9">
+              <b-form ref="form" @submit.stop.prevent="handleSubmit">
+                <b-input
+                  v-model="nameModalMz.name"
+                  placeholder="Moin"
+                  required
+                  maxlength="30"
+                  :state="nameModalMz.name.length > 0 ? null : false"
+                  id="annotation-input"
+                  trim
+                  ref="annotationinput"
+                ></b-input>
+              </b-form>
+            </b-col>
+          </b-row>
+          <b-row>
+            <b-col offset-sm="3">
+              <b-form-invalid-feedback
+                :state="nameModalMz.name.length > 0 ? null : false"
+              >
+                The Annotation can't be empty
+              </b-form-invalid-feedback>
+            </b-col>
+          </b-row>
         </template>
-        <template slot="modal-footer" slot-scope="{ cancel, ok }">
-          <b>Custom Footer</b>
+        <template
+          slot="modal-footer"
+          style="display: block !important;"
+          slot-scope="{ cancel, ok }"
+        >
           <b-button
             variant="outline-danger"
             @click="cancel()"
-            v-if="nameModalMz.mz !== nameModalMz.name"
+            v-bind:disabled="nameModalMz.mz === nameModalMz.name"
           >
             Reset
           </b-button>
@@ -79,6 +133,7 @@
 <script>
 import SidebarWidget from './SidebarWidget';
 import store from '@/store';
+import { mapGetters } from 'vuex';
 
 export default {
   extends: SidebarWidget,
@@ -88,34 +143,61 @@ export default {
   name: 'MzList',
   data: function() {
     return {
-      selectedMz: [],
-      currentMz: [],
-      asc: true,
-      showAll: true,
-      notVisibleMz: [],
-      nameModalMz: {},
+      localSelectedMz: [],
+      nameModalMz: {
+        name: '',
+        mz: 0,
+      },
     };
+  },
+  computed: {
+    ...mapGetters({
+      options: 'mzListOptions',
+      currentMz: 'mzListOptionsVisibleMz',
+      notVisibleMz: 'mzListOptionsNotVisibleMz',
+      showAll: 'mzListOptionsShowAll',
+      showAnnotation: 'mzListOptionsShowAnnotation',
+      asc: 'mzListOptionsAsc',
+      graph: 'stateOptionsGraph',
+    }),
   },
   methods: {
     mzClicked: function() {
-      // console.log(`Selected mz: ${this.selectedMz.join(', ')}`);
+      console.log(`Selected mz: ${this.localSelectedMz.join(', ')}`);
+      store.commit('OPTIONS_MZLIST_UPDATE_SELECTED_MZ', this.localSelectedMz);
     },
     sortMZ: function() {
-      if (this.asc) {
-        this.currentMz = this.currentMz.sort((a, b) => a.mz - b.mz);
-      } else {
-        this.currentMz = this.currentMz.sort((a, b) => b.mz - a.mz);
-      }
+      store.commit('OPTIONS_MZLIST_SORT_MZ');
     },
-    doubleClick: function(des) {
+    toggleAsc: function() {
+      store.commit('OPTIONS_MZLIST_TOOGLE_ASC');
+    },
+    toggleShowAll: function() {
+      store.commit('OPTIONS_MZLIST_TOOGLE_SHOW_ALL');
+    },
+    toggleShowAnnotation: function() {
+      store.commit('OPTIONS_MZLIST_TOOGLE_SHOW_ANNOTATION');
+    },
+    doubleClick: function(mzObject) {
       this.nameModalMz = {
-        mz: des.mz,
-        name: des.name,
+        mz: mzObject.mz,
+        name: mzObject.name,
       };
       this.$refs['nameModal'].show();
+      setTimeout(() => {
+        this.$refs['annotationinput'].focus();
+      }, 500);
     },
     handleOk: function(bvModalEvt) {
       bvModalEvt.preventDefault();
+      this.handleSubmit();
+    },
+    loadGraph(graphNumber) {
+      store.commit('OPTIONS_STATE_CHANGE_GRAPH', graphNumber);
+      store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
+      store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
+    },
+    handleSubmit: function() {
       if (!this.$refs.form.checkValidity()) {
         return;
       }
@@ -123,15 +205,19 @@ export default {
       const index = this.currentMz.findIndex(function(val) {
         return val.mz === mz;
       });
-      console.log(this.currentMz[index][3]['hierarchy' + 3]);
       this.currentMz[index].name = this.nameModalMz.name;
-      store.getters.getData.graph0.graph['hierarchy' + 3].nodes[
-        this.currentMz[index][3]['hierarchy' + 3]
+      store.getters.getData['graph' + this.graph].graph['hierarchy' + 3].nodes[
+        this.currentMz[index]['hierarchy' + 3]
       ].name = this.nameModalMz.name;
-      this.nameModalMz = {};
       this.$nextTick(() => {
         this.$refs['nameModal'].hide();
       });
+      setTimeout(() => {
+        this.nameModalMz = {
+          name: '',
+          mz: 0,
+        };
+      }, 1000);
     },
     handleCancel: function() {
       const mz = this.nameModalMz.mz;
@@ -139,47 +225,25 @@ export default {
         return val.mz === mz;
       });
       this.currentMz[index].name = this.nameModalMz.mz.toString();
-      store.getters.getData.graph0.graph['hierarchy' + 3].nodes[
-        this.currentMz[index][3]['hierarchy' + 3]
+      store.getters.getData['graph' + this.graph.toString()].graph[
+        'hierarchy' + 3
+      ].nodes[
+        this.currentMz[index]['hierarchy' + 3]
       ].name = this.nameModalMz.mz.toString();
-      this.nameModalMz = {};
+      setTimeout(() => {
+        this.nameModalMz = {
+          name: '',
+          mz: 0,
+        };
+      }, 1000);
     },
     calculateCurrentMz: function() {
-      if (!this.showAll) {
-        if (this.notVisibleMz.length > 0) {
-          this.currentMz.push(...this.notVisibleMz);
-          this.notVisibleMz = [];
-          this.sortMZ();
-        }
-      } else {
-        for (let i = this.currentMz.length - 1; i >= 0; i--) {
-          if (!this.currentMz[i].highlight) {
-            this.notVisibleMz.push(this.currentMz[i]);
-            this.currentMz.splice(i, 1);
-          }
-        }
-      }
+      store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
     },
   },
   created() {
-    const numberOfLayers =
-      Object.keys(store.getters.getData.graph0.graph).length - 1;
-    const t = [];
-    Object.keys(store.getters.getMzValues).forEach(function(mz) {
-      t.push({
-        highlight: Math.random() > 0.3,
-        ...store.getters.getMzValues[mz],
-        name:
-          store.getters.getData.graph0.graph['hierarchy' + numberOfLayers]
-            .nodes[
-            store.getters.getMzValues[mz][numberOfLayers][
-              'hierarchy' + numberOfLayers
-            ]
-          ].name,
-        mz: mz,
-      });
-    });
-    this.currentMz.push(...t);
+    store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
+    store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
   },
 };
 </script>
@@ -202,5 +266,10 @@ export default {
   width: 100%;
   text-align: center;
   margin-top: 8px;
+}
+
+#annotation-mz-value {
+  float: left;
+  padding-left: 13px !important;
 }
 </style>

@@ -6,10 +6,26 @@
     @mouseleave="eventMouseLeave()"
   >
     <slot name="nav" v-if="iconExpandEnabled">
-      <span v-on:click="toggleView()" v-bind:class="getExpandIconClass()">
-        <v-icon name="arrow-right" v-if="showExpandRightIcon()"></v-icon>
-        <v-icon name="arrow-left" v-if="showExpandLeftIcon()"></v-icon>
+      <span v-if="expanded" class="horizontal-title">{{ title }}</span>
+      <span v-on:click="toggleView()">
+        <v-icon
+          name="arrow-right"
+          class="icon-open"
+          v-if="showExpandRightIcon()"
+        ></v-icon>
+        <v-icon
+          name="arrow-left"
+          class="icon-collapsed"
+          v-if="showExpandLeftIcon()"
+        ></v-icon>
       </span>
+      <span
+        class="vertical-title"
+        v-on:click="toggleView()"
+        v-if="!expanded"
+        style="writing-mode: vertical-rl;text-orientation: mixed;"
+        >{{ title }}</span
+      >
     </slot>
     <div class="content-collapsed" v-bind:class="{ hidden: expanded }">
       <slot name="content-collapsed"></slot>
@@ -30,6 +46,9 @@ export default {
     side: {
       type: String,
       required: true,
+    },
+    title: {
+      type: String,
     },
     initialExpanded: {
       type: Boolean,
@@ -94,5 +113,27 @@ export default {
   &.expanded {
     width: 200px;
   }
+}
+
+.vertical-title {
+  padding-top: 10px;
+}
+
+.horizontal-title {
+  display: inline-block;
+  padding-top: 5px;
+  padding-bottom: 0;
+}
+
+.icon-collapsed {
+  width: 100%;
+  margin: auto;
+  margin-top: 10px !important;
+}
+
+.icon-open {
+  margin-top: 12px;
+  margin-right: 5px;
+  float: right;
 }
 </style>
