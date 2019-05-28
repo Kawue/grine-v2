@@ -1,7 +1,11 @@
 <template>
   <div>
     Lasso Test
-    <div class="canvas"></div>
+    <div class="vis-root" style="position: relative;">
+      <canvas width="500" height="500" style="position: absolute;top: 0;left: 0;"></canvas>
+      <svg width="250" height="250" style="position: absolute; top: 0px; left: 0px;">
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -16,8 +20,8 @@ export default {
   },
   mounted: function() {
     // general size parameters for the vis
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const width = 250;
+    const height = 250;
     const padding = { top: 40, right: 40, bottom: 40, left: 40 };
     const plotAreaWidth = width - padding.left - padding.right;
     const plotAreaHeight = height - padding.top - padding.bottom;
@@ -37,7 +41,7 @@ export default {
     }
 
     // reset selected points when starting a new polygon
-    function handleLassoStart(lassoPolygon) {
+    function handleLassoStart() {
       updateSelectedPoints([]);
     }
 
@@ -85,35 +89,8 @@ export default {
       context.restore();
     }
 
-    // create a container with position relative to handle our canvas layer
-    // and our SVG interaction layer
-    const visRoot = d3
-      .select('.canvas')
-      .append('div')
-      .attr('class', 'vis-root')
-      .style('position', 'relative');
-
-    // main canvas to draw on
-    const screenScale = window.devicePixelRatio || 1;
-    const canvas = visRoot
-      .append('canvas')
-      .attr('width', width * screenScale)
-      .attr('height', height * screenScale)
-      .style('width', `${width}px`)
-      .style('height', `${height}px`);
-    canvas
-      .node()
-      .getContext('2d')
-      .scale(screenScale, screenScale);
-
-    // add in an interaction layer as an SVG
-    const interactionSvg = visRoot
-      .append('svg')
-      .attr('width', width)
-      .attr('height', height)
-      .style('position', 'absolute')
-      .style('top', 0)
-      .style('left', 0);
+    const canvas = d3.select('.vis-root canvas');
+    const interactionSvg = d3.select('.vis-root svg');
 
     // attach lasso to interaction SVG
     const lassoInstance = lasso()

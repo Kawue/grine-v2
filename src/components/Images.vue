@@ -5,7 +5,7 @@
     title="Images"
   >
     <div slot="content">
-      <mz-image v-if="options.showMz"></mz-image>
+      <!--<mz-image v-if="options.showMz"></mz-image>-->
       <MzImageLasso></MzImageLasso>
     </div>
   </SidebarWidget>
