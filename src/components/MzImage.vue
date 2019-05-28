@@ -98,6 +98,7 @@ export default {
       this.points = [];
     },
     generateRandomImageData() {
+      this.clearImageData();
       for (let i = 0; i < 250; i++) {
         for (let j = 0; j < 250; j++) {
           let d = Math.floor(Math.random() * 100) + 30;
