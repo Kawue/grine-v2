@@ -9,7 +9,6 @@ function distance(pt1, pt2) {
 }
 
 export default function lasso() {
-//function lasso() {
   const dispatch = d3.dispatch('start', 'end');
 
   // distance last point has to be to first point before it auto closes when mouse is released
@@ -46,16 +45,16 @@ export default function lasso() {
 
       lassoPath = g
         .append('path')
-        .attr('fill', '#0bb')
+        .attr('fill', '#fff')
         .attr('fill-opacity', 0.1)
-        .attr('stroke', '#0bb')
+        .attr('stroke', '#fff')
         .attr('stroke-dasharray', '3, 3');
 
       closePath = g
         .append('line')
         .attr('x2', lassoPolygon[0][0])
         .attr('y2', lassoPolygon[0][1])
-        .attr('stroke', '#0bb')
+        .attr('stroke', '#fff')
         .attr('stroke-dasharray', '3, 3')
         .attr('opacity', 0);
 
