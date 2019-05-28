@@ -6,6 +6,7 @@
   >
     <div slot="content">
       <mz-image v-if="options.showMz"></mz-image>
+      <MzImageLasso></MzImageLasso>
     </div>
   </SidebarWidget>
 </template>
@@ -13,6 +14,7 @@
 <script>
 import SidebarWidget from './SidebarWidget';
 import MzImage from './MzImage';
+import MzImageLasso from './MzImageLasso';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -20,6 +22,7 @@ export default {
   components: {
     SidebarWidget,
     MzImage,
+    MzImageLasso,
   },
   name: 'Images',
   computed: mapGetters({
@@ -36,7 +39,7 @@ export default {
 
 .sidebar-widget {
   &.expanded {
-    width: 300px !important;
+    width: 800px !important;
   }
 }
 </style>
