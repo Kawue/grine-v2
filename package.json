@@ -12,11 +12,12 @@
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "2.0.0-rc.20",
     "core-js": "^2.6.5",
-    "d3": "^5.9.2",
+    "echarts": "^4.2.1",
     "i": "^0.3.6",
     "npm": "^6.9.0",
     "vue": "^2.6.10",
     "vue-awesome": "^3.5.1",
+    "vue-echarts": "^4.0.3",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
