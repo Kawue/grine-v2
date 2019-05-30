@@ -8,14 +8,29 @@
     </button>
     <button
       @click="addHighNode"
-      style="position: absolute; top: 20px; left: 700px;z-index: 10;"
+      style="position: absolute; top: 20px; left: 600px;z-index: 10;"
     >
       Add High Node
     </button>
+    <button
+      @click="printLinks"
+      style="position: absolute; top: 20px; left: 800px;z-index: 10;"
+    >
+      Print Links
+    </button>
+    <ol
+      multiple
+      style="position: absolute; top: 10px;left: 100px;height: 80vh; overflow: auto; background: white; color: black; width: 150px; z-index: 10"
+    >
+      <li v-for="link of optionsV.series[0].links" class="text-center">
+        {{ link.source }} -> {{ link.target }}
+      </li>
+    </ol>
     <v-chart
       :options="optionsV"
       style="width: 100vw; height: 100vh;"
       @click="onClick"
+      :init-options="{ renderer: 'svg' }"
     />
   </div>
 </template>
@@ -26,76 +41,6 @@ export default {
   data: function() {
     return {
       counter: 13,
-      communityLinks: {
-        c0: [
-          {
-            source: 0,
-            target: 1,
-            symbolSize: [5, 20],
-            lineStyle: {
-              normal: {
-                width: 3,
-                curveness: 0.2,
-              },
-            },
-          },
-        ],
-        c1: [
-          {
-            name: '3',
-            x: null,
-            y: null,
-            draggable: true,
-            value: 'h1',
-          },
-        ],
-        h0: [
-          {
-            name: '7',
-            x: null,
-            y: null,
-            draggable: true,
-            value: 'c0',
-          },
-          {
-            name: '8',
-            x: null,
-            y: null,
-            draggable: true,
-            value: 'c0',
-          },
-          {
-            name: '9',
-            x: null,
-            y: null,
-            draggable: true,
-            value: 'c0',
-          },
-        ],
-        h1: [
-          {
-            name: '10',
-            x: null,
-            y: null,
-            draggable: true,
-            value: 'c1',
-          },
-          {
-            name: '11',
-            x: null,
-            y: null,
-            draggable: true,
-            value: 'c1',
-          },
-          {
-            name: '12',
-            x: null,
-            y: null,
-            draggable: true,
-            value: 'c1',
-          },
-        ],
-      },
       communityNodes: {
         c0: [
           {
@@ -320,6 +265,18 @@ export default {
                 source: '3',
                 target: '5',
               },
+              {
+                source: '10',
+                target: '11',
+              },
+              {
+                source: '11',
+                target: '12',
+              },
+              {
+                source: '12',
+                target: '10',
+              },
             ],
             lineStyle: {
               normal: {
@@ -336,7 +293,7 @@ export default {
   methods: {
     addLowNode: function() {
       this.optionsV.series[0].data.push({
-        name: this.counter,
+        name: this.counter.toString(),
         x: null,
         y: null,
         draggable: true,
@@ -368,12 +325,18 @@ export default {
           ...this.communityNodes[event.value.relative.toString()]
         );
       } else if (event.dataType === 'edge') {
+        console.log('Link Index', event.dataIndex);
+        console.log(
+          `Delete Link ${
+            this.optionsV.series[0].links[event.dataIndex].source
+          } -> ${this.optionsV.series[0].links[event.dataIndex].target}`
+        );
         this.optionsV.series[0].links.splice(event.dataIndex, 1);
       }
     },
     addHighNode: function() {
       this.optionsV.series[0].data.push({
-        name: this.counter,
+        name: this.counter.toString(),
         x: null,
         y: null,
         draggable: true,
@@ -390,6 +353,15 @@ export default {
           Math.round(Math.random() * 1000) % (this.counter - 1).toString(),
       });
       this.counter++;
+    },
+    printLinks: function() {
+      for (let link of this.optionsV.series[0].links.sort(
+        (a, b) => parseInt(a.source, 10) - parseInt(b.source, 10)
+      )) {
+        console.log(`${link.source} -> ${link.target}`);
+      }
+      console.log('Number of Links', this.optionsV.series[0].links.length);
+      console.log('-------------------------------------------');
     },
   },
   mounted() {
