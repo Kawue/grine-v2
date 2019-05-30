@@ -30,8 +30,8 @@
       :options="optionsV"
       style="width: 100vw; height: 100vh;"
       @click="onClick"
-      :init-options="{ renderer: 'svg' }"
     />
+    <!-- :init-options="{ renderer: 'svg' }" -->
   </div>
 </template>
 
@@ -40,7 +40,7 @@ export default {
   name: 'Graph',
   data: function() {
     return {
-      counter: 13,
+      counter: 12,
       communityNodes: {
         c0: [
           {
@@ -70,6 +70,17 @@ export default {
         ],
         h0: [
           {
+            name: '6',
+            x: null,
+            y: null,
+            draggable: true,
+            category: 0,
+            value: {
+              self: 'h0',
+              relative: 'c0',
+            },
+          },
+          {
             name: '7',
             x: null,
             y: null,
@@ -91,19 +102,19 @@ export default {
               relative: 'c0',
             },
           },
+        ],
+        h1: [
           {
             name: '9',
             x: null,
             y: null,
             draggable: true,
-            category: 0,
+            category: 1,
             value: {
-              self: 'h0',
-              relative: 'c0',
+              self: 'h1',
+              relative: 'c1',
             },
           },
-        ],
-        h1: [
           {
             name: '10',
             x: null,
@@ -117,17 +128,6 @@ export default {
           },
           {
             name: '11',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 1,
-            value: {
-              self: 'h1',
-              relative: 'c1',
-            },
-          },
-          {
-            name: '12',
             x: null,
             y: null,
             draggable: true,
