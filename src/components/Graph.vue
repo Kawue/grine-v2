@@ -302,7 +302,7 @@ export default {
       this.optionsV.series[0].links.push({
         source: this.counter.toString(),
         target:
-          randCalc(this.counter.toString()),
+          this.randCalc(this.counter.toString()),
       });
       this.counter++;
     },
@@ -345,12 +345,12 @@ export default {
       this.optionsV.series[0].links.push({
         source: this.counter.toString(),
         target:
-          randCalc(this.counter.toString()),
+          this.randCalc(this.counter.toString()),
       });
       this.optionsV.series[0].links.push({
         target: this.counter.toString(),
         source:
-          randCalc(this.counter.toString()),
+          this.randCalc(this.counter.toString()),
       });
       this.counter++;
     },
