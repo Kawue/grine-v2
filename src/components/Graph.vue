@@ -302,7 +302,7 @@ export default {
       this.optionsV.series[0].links.push({
         source: this.counter.toString(),
         target:
-          Math.round(Math.random() * 1000) % (this.counter - 1).toString(),
+          randCalc(this.counter.toString()),
       });
       this.counter++;
     },
@@ -345,12 +345,12 @@ export default {
       this.optionsV.series[0].links.push({
         source: this.counter.toString(),
         target:
-          Math.round(Math.random() * 1000) % (this.counter - 1).toString(),
+          randCalc(this.counter.toString()),
       });
       this.optionsV.series[0].links.push({
         target: this.counter.toString(),
         source:
-          Math.round(Math.random() * 1000) % (this.counter - 1).toString(),
+          randCalc(this.counter.toString()),
       });
       this.counter++;
     },
@@ -363,6 +363,11 @@ export default {
       console.log('Number of Links', this.optionsV.series[0].links.length);
       console.log('-------------------------------------------');
     },
+    randCalc: function(old){
+      let numb = Math.round(Math.random() * 1000) % (this.counter - 1)
+      console.log(old + " -- " + numb)
+      return numb.toString()
+    }
   },
   mounted() {
     console.log('App loaded');
