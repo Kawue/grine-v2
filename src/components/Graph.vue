@@ -12,12 +12,6 @@
     >
       Add High Node
     </button>
-    <button
-      @click="printLinks"
-      style="position: absolute; top: 20px; left: 800px;z-index: 10;"
-    >
-      Print Links
-    </button>
     <ol
       multiple
       style="position: absolute; top: 10px;left: 100px;height: 80vh; overflow: auto; background: white; color: black; width: 150px; z-index: 10"
@@ -26,15 +20,20 @@
       <li
         v-for="(link, index) of optionsV.series[0].links"
         class="text-center"
-        v-bind:class="{ orga: index === selectIndex }"
+        v-bind:class="{
+          orga: index === selectIndex,
+          brog: index === trueIndex,
+        }"
       >
         {{ link.source }} -> {{ link.target }}
       </li>
     </ol>
+    <!-- Press Ctrl and click on node to expand community -->
+    <!-- Press Ctrl+Alt and click node to shrink community -->
     <v-chart
       :options="optionsV"
       style="width: 100vw; height: 100vh;"
-      @click="onClick"
+      @click="onClickGraph"
     />
     <!-- :init-options="{ renderer: 'svg' }" -->
   </div>
@@ -46,7 +45,10 @@ export default {
   data: function() {
     return {
       counter: 12,
+      ctrl: false,
+      alt: false,
       selectIndex: null,
+      trueIndex: null,
       communityNodes: {
         c0: [
           {
@@ -245,7 +247,7 @@ export default {
                 },
               },
               {
-                source: 'n',
+                source: 'n8',
                 target: 'n5',
                 lineStyle: {
                   normal: { curveness: 0.2 },
@@ -311,35 +313,52 @@ export default {
       });
       this.counter++;
     },
-    onClick(event) {
+    onClickGraph(event) {
       if (event.dataType === 'node' && event.value != null) {
-        /*
-        const nodeNames = this.communityNodes[event.value.self.toString()].map(
-          item => item.name
-        );
-
-        this.optionsV.series[0].links = this.optionsV.series[0].links.filter(
-          item =>
-            !nodeNames.includes(item.target) && !nodeNames.includes(item.source)
-        );
-        */
-        this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
-          item => item.value == null || item.value.self !== event.value.self
-        );
-        this.optionsV.series[0].data.push(
-          ...this.communityNodes[event.value.relative.toString()]
-        );
+        // Expand community
+        if (this.ctrl && !this.alt && event.value.self.startsWith('c')) {
+          this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
+            item => item.value == null || item.value.self !== event.value.self
+          );
+          this.optionsV.series[0].data.push(
+            ...this.communityNodes[event.value.relative.toString()]
+          );
+        } // shrink community
+        else if (this.alt && this.ctrl && event.value.self.startsWith('h')) {
+          this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
+            item => item.value == null || item.value.self !== event.value.self
+          );
+          this.optionsV.series[0].data.push(
+            ...this.communityNodes[event.value.relative.toString()]
+          );
+        }
       } else if (event.dataType === 'edge') {
-        console.log(event);
-        console.log('Link Index', event.dataIndex);
+        this.selectIndex = event.dataIndex;
+        this.trueIndex = this.getEdgeIndex(
+          event.data.source,
+          event.data.target
+        );
         console.log(
           `Delete Link ${
-            this.optionsV.series[0].links[event.dataIndex].source
-          } -> ${this.optionsV.series[0].links[event.dataIndex].target}`
+            this.optionsV.series[0].links[this.trueIndex].source
+          } -> ${this.optionsV.series[0].links[this.trueIndex].target}`
         );
-        this.selectIndex = event.dataIndex;
-        // this.optionsV.series[0].links.splice(event.dataIndex, 1);
+        /*
+        this.optionsV.series[0].links.splice(
+          this.optionsV.series[0].links.findIndex(link => {
+            return (
+              link.source === event.data.source &&
+              link.target === event.data.target
+            );
+          }),
+          1
+        );*/
       }
+    },
+    getEdgeIndex: function(source, target) {
+      return this.optionsV.series[0].links.findIndex(link => {
+        return link.source === source && link.target === target;
+      });
     },
     addHighNode: function() {
       this.optionsV.series[0].data.push({
@@ -359,23 +378,36 @@ export default {
       });
       this.counter++;
     },
-    printLinks: function() {
-      for (let link of this.optionsV.series[0].links.sort(
-        (a, b) => parseInt(a.source, 10) - parseInt(b.source, 10)
-      )) {
-        console.log(`${link.source} -> ${link.target}`);
-      }
-      console.log('Number of Links', this.optionsV.series[0].links.length);
-      console.log('-------------------------------------------');
-    },
     randCalc: function(old) {
       let numb = Math.round(Math.random() * 1000) % (this.counter - 1);
-      console.log(old + ' -- ' + numb);
       return numb.toString();
     },
+    keyDownHandler: function(event) {
+      switch(event.which) {
+        case 17:
+          this.ctrl = true;
+          break;
+        case 18:
+          this.alt = true;
+          break;
+        default:
+      }
+    },
+    keyUpHandler: function(event) {
+      switch(event.which) {
+        case 17:
+          this.ctrl = false;
+          break;
+        case 18:
+          this.alt = false;
+          break;
+        default:
+      }
+    },
   },
-  mounted() {
-    console.log('App loaded');
+  created() {
+    window.addEventListener('keyup', this.keyUpHandler);
+    window.addEventListener('keydown', this.keyDownHandler);
   },
 };
 </script>
@@ -394,5 +426,9 @@ export default {
 
 .orga {
   color: #dc8534;
+}
+
+.brog {
+  border: 1px solid black;
 }
 </style>
