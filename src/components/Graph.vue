@@ -21,8 +21,13 @@
     <ol
       multiple
       style="position: absolute; top: 10px;left: 100px;height: 80vh; overflow: auto; background: white; color: black; width: 150px; z-index: 10"
+      start="0"
     >
-      <li v-for="link of optionsV.series[0].links" class="text-center">
+      <li
+        v-for="(link, index) of optionsV.series[0].links"
+        class="text-center"
+        v-bind:class="{ orga: index === selectIndex }"
+      >
         {{ link.source }} -> {{ link.target }}
       </li>
     </ol>
@@ -41,10 +46,11 @@ export default {
   data: function() {
     return {
       counter: 12,
+      selectIndex: null,
       communityNodes: {
         c0: [
           {
-            name: '1',
+            name: 'n1',
             x: null,
             y: null,
             draggable: true,
@@ -57,7 +63,7 @@ export default {
         ],
         c1: [
           {
-            name: '3',
+            name: 'n3',
             x: null,
             y: null,
             draggable: true,
@@ -70,7 +76,7 @@ export default {
         ],
         h0: [
           {
-            name: '6',
+            name: 'n6',
             x: null,
             y: null,
             draggable: true,
@@ -81,7 +87,7 @@ export default {
             },
           },
           {
-            name: '7',
+            name: 'n7',
             x: null,
             y: null,
             draggable: true,
@@ -92,7 +98,7 @@ export default {
             },
           },
           {
-            name: '8',
+            name: 'n8',
             x: null,
             y: null,
             draggable: true,
@@ -105,7 +111,7 @@ export default {
         ],
         h1: [
           {
-            name: '9',
+            name: 'n9',
             x: null,
             y: null,
             draggable: true,
@@ -116,7 +122,7 @@ export default {
             },
           },
           {
-            name: '10',
+            name: 'n10',
             x: null,
             y: null,
             draggable: true,
@@ -127,7 +133,7 @@ export default {
             },
           },
           {
-            name: '11',
+            name: 'n11',
             x: null,
             y: null,
             draggable: true,
@@ -182,7 +188,7 @@ export default {
             },
             data: [
               {
-                name: '1',
+                name: 'n1',
                 x: null,
                 y: null,
                 draggable: true,
@@ -193,14 +199,14 @@ export default {
                 },
               },
               {
-                name: '2',
+                name: 'n2',
                 x: null,
                 y: null,
                 draggable: true,
                 category: 2,
               },
               {
-                name: '3',
+                name: 'n3',
                 x: null,
                 y: null,
                 draggable: true,
@@ -211,14 +217,14 @@ export default {
                 },
               },
               {
-                name: '4',
+                name: 'n4',
                 x: null,
                 y: null,
                 draggable: true,
                 category: 2,
               },
               {
-                name: '5',
+                name: 'n5',
                 x: null,
                 y: null,
                 draggable: true,
@@ -228,8 +234,8 @@ export default {
             // links: [],
             links: [
               {
-                source: '1',
-                target: '2',
+                source: 'n1',
+                target: 'n2',
                 symbolSize: [5, 20],
                 lineStyle: {
                   normal: {
@@ -239,43 +245,43 @@ export default {
                 },
               },
               {
-                source: '2',
-                target: '5',
+                source: 'n',
+                target: 'n5',
                 lineStyle: {
                   normal: { curveness: 0.2 },
                 },
               },
               {
-                source: '1',
-                target: '3',
+                source: 'n1',
+                target: 'n3',
               },
               {
-                source: '2',
-                target: '3',
+                source: 'n2',
+                target: 'n3',
               },
               {
-                source: '1',
-                target: '4',
+                source: 'n1',
+                target: 'n4',
               },
               {
-                source: '4',
-                target: '5',
+                source: 'n4',
+                target: 'n5',
               },
               {
-                source: '3',
-                target: '5',
+                source: 'n5',
+                target: 'n2',
               },
               {
-                source: '10',
-                target: '11',
+                source: 'n9',
+                target: 'n10',
               },
               {
-                source: '11',
-                target: '12',
+                source: 'n10',
+                target: 'n11',
               },
               {
-                source: '12',
-                target: '10',
+                source: 'n11',
+                target: 'n9',
               },
             ],
             lineStyle: {
@@ -293,16 +299,15 @@ export default {
   methods: {
     addLowNode: function() {
       this.optionsV.series[0].data.push({
-        name: this.counter.toString(),
+        name: 'n' + this.counter.toString(),
         x: null,
         y: null,
         draggable: true,
         category: 2,
       });
       this.optionsV.series[0].links.push({
-        source: this.counter.toString(),
-        target:
-          this.randCalc(this.counter.toString()),
+        source: 'n' + this.counter.toString(),
+        target: 'n' + this.randCalc(this.counter.toString()),
       });
       this.counter++;
     },
@@ -325,32 +330,32 @@ export default {
           ...this.communityNodes[event.value.relative.toString()]
         );
       } else if (event.dataType === 'edge') {
+        console.log(event);
         console.log('Link Index', event.dataIndex);
         console.log(
           `Delete Link ${
             this.optionsV.series[0].links[event.dataIndex].source
           } -> ${this.optionsV.series[0].links[event.dataIndex].target}`
         );
-        this.optionsV.series[0].links.splice(event.dataIndex, 1);
+        this.selectIndex = event.dataIndex;
+        // this.optionsV.series[0].links.splice(event.dataIndex, 1);
       }
     },
     addHighNode: function() {
       this.optionsV.series[0].data.push({
-        name: this.counter.toString(),
+        name: 'n' + this.counter.toString(),
         x: null,
         y: null,
         draggable: true,
         category: 2,
       });
       this.optionsV.series[0].links.push({
-        source: this.counter.toString(),
-        target:
-          this.randCalc(this.counter.toString()),
+        source: 'n' + this.counter.toString(),
+        target: 'n' + this.randCalc(this.counter.toString()),
       });
       this.optionsV.series[0].links.push({
-        target: this.counter.toString(),
-        source:
-          this.randCalc(this.counter.toString()),
+        target: 'n' + this.counter.toString(),
+        source: 'n' + this.randCalc(this.counter.toString()),
       });
       this.counter++;
     },
@@ -363,11 +368,11 @@ export default {
       console.log('Number of Links', this.optionsV.series[0].links.length);
       console.log('-------------------------------------------');
     },
-    randCalc: function(old){
-      let numb = Math.round(Math.random() * 1000) % (this.counter - 1)
-      console.log(old + " -- " + numb)
-      return numb.toString()
-    }
+    randCalc: function(old) {
+      let numb = Math.round(Math.random() * 1000) % (this.counter - 1);
+      console.log(old + ' -- ' + numb);
+      return numb.toString();
+    },
   },
   mounted() {
     console.log('App loaded');
@@ -385,5 +390,9 @@ export default {
   background-color: lightblue;
   z-index: 100;
   color: white;
+}
+
+.orga {
+  color: #dc8534;
 }
 </style>
