@@ -1,6 +1,8 @@
 from sys import argv
 import pandas as pd
 import numpy as np
+import json
+from flask import Flask
 
 # load dataframe (.h5)
 merged_dframe = pd.read_hdf(argv[1])
@@ -19,4 +21,48 @@ pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
 
 # select a single mz image vector from a selected single data set
 example_mz = 74.651
-single_dframe[example_mz]
+
+print(single_dframe)
+
+print(pos_x)
+print(pos_y)
+
+
+print(single_dframe.index)
+
+#intensity = np.array(single_dframe.index.get_level_values(example_mz))
+#print(intensity)
+
+
+
+
+#print(single_dframe[example_mz])
+
+
+app = Flask(__name__)
+
+
+@app.route('/datasets')
+def datasets():
+    names = []
+    for name in dataset_names:
+      names.append(name)
+    return json.dumps(names)
+
+
+@app.route('/mzvalues')
+def mzvalues():
+    mzs = []
+    for key, value in single_dframe.iteritems():
+        mzs.append(key)
+    return json.dumps(mzs)
+
+
+@app.route('/mzdata')
+def mzdata():
+    return "test"
+    #return json.dumps(single_dframe[example_mz])
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
