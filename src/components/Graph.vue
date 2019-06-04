@@ -1,17 +1,5 @@
 <template>
   <div class="graph">
-    <button
-      @click="addLowNode"
-      style="position: absolute; top: 20px; left: 400px;z-index: 10;"
-    >
-      Add Low Node
-    </button>
-    <button
-      @click="addHighNode"
-      style="position: absolute; top: 20px; left: 600px;z-index: 10;"
-    >
-      Add High Node
-    </button>
     <ol
       multiple
       style="position: absolute; top: 10px;left: 100px;height: 80vh; overflow: auto; background: white; color: black; width: 150px; z-index: 10"
@@ -40,6 +28,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   name: 'Graph',
   data: function() {
@@ -49,104 +38,6 @@ export default {
       alt: false,
       selectIndex: null,
       trueIndex: null,
-      communityNodes: {
-        c0: [
-          {
-            name: 'n1',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 0,
-            value: {
-              self: 'c0',
-              relative: 'h0',
-            },
-          },
-        ],
-        c1: [
-          {
-            name: 'n3',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 1,
-            value: {
-              self: 'c1',
-              relative: 'h1',
-            },
-          },
-        ],
-        h0: [
-          {
-            name: 'n6',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 0,
-            value: {
-              self: 'h0',
-              relative: 'c0',
-            },
-          },
-          {
-            name: 'n7',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 0,
-            value: {
-              self: 'h0',
-              relative: 'c0',
-            },
-          },
-          {
-            name: 'n8',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 0,
-            value: {
-              self: 'h0',
-              relative: 'c0',
-            },
-          },
-        ],
-        h1: [
-          {
-            name: 'n9',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 1,
-            value: {
-              self: 'h1',
-              relative: 'c1',
-            },
-          },
-          {
-            name: 'n10',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 1,
-            value: {
-              self: 'h1',
-              relative: 'c1',
-            },
-          },
-          {
-            name: 'n11',
-            x: null,
-            y: null,
-            draggable: true,
-            category: 1,
-            value: {
-              self: 'h1',
-              relative: 'c1',
-            },
-          },
-        ],
-      },
       optionsV: {
         title: {
           text: 'Graph Test',
@@ -173,7 +64,34 @@ export default {
                 name: 'Community 2',
               },
               {
-                name: 'Others',
+                name: 'Community 3',
+              },
+              {
+                name: 'Community 4',
+              },
+              {
+                name: 'Community 5',
+              },
+              {
+                name: 'Community 6',
+              },
+              {
+                name: 'Community 7',
+              },
+              {
+                name: 'Community 8',
+              },
+              {
+                name: 'Community 9',
+              },
+              {
+                name: 'Community 10',
+              },
+              {
+                name: 'Community 11',
+              },
+              {
+                name: 'Community 12',
               },
             ],
             edgeSymbol: ['circle', 'arrow'],
@@ -188,104 +106,9 @@ export default {
                 },
               },
             },
-            data: [
-              {
-                name: 'n1',
-                x: null,
-                y: null,
-                draggable: true,
-                category: 0,
-                value: {
-                  self: 'c0',
-                  relative: 'h0',
-                },
-              },
-              {
-                name: 'n2',
-                x: null,
-                y: null,
-                draggable: true,
-                category: 2,
-              },
-              {
-                name: 'n3',
-                x: null,
-                y: null,
-                draggable: true,
-                category: 1,
-                value: {
-                  self: 'c1',
-                  relative: 'h1',
-                },
-              },
-              {
-                name: 'n4',
-                x: null,
-                y: null,
-                draggable: true,
-                category: 2,
-              },
-              {
-                name: 'n5',
-                x: null,
-                y: null,
-                draggable: true,
-                category: 2,
-              },
-            ],
+            data: [],
             // links: [],
-            links: [
-              {
-                source: 'n1',
-                target: 'n2',
-                symbolSize: [5, 20],
-                lineStyle: {
-                  normal: {
-                    width: 3,
-                    curveness: 0.2,
-                  },
-                },
-              },
-              {
-                source: 'n8',
-                target: 'n5',
-                lineStyle: {
-                  normal: { curveness: 0.2 },
-                },
-              },
-              {
-                source: 'n1',
-                target: 'n3',
-              },
-              {
-                source: 'n2',
-                target: 'n3',
-              },
-              {
-                source: 'n1',
-                target: 'n4',
-              },
-              {
-                source: 'n4',
-                target: 'n5',
-              },
-              {
-                source: 'n5',
-                target: 'n2',
-              },
-              {
-                source: 'n9',
-                target: 'n10',
-              },
-              {
-                source: 'n10',
-                target: 'n11',
-              },
-              {
-                source: 'n11',
-                target: 'n9',
-              },
-            ],
+            links: [],
             lineStyle: {
               normal: {
                 opacity: 0.9,
@@ -298,6 +121,11 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapGetters({
+      graph: 'getGraph',
+    }),
+  },
   methods: {
     addLowNode: function() {
       this.optionsV.series[0].data.push({
@@ -309,28 +137,28 @@ export default {
       });
       this.optionsV.series[0].links.push({
         source: 'n' + this.counter.toString(),
-        target: 'n' + this.randCalc(this.counter.toString()),
+        target: 'n' + this.randCalc(),
       });
       this.counter++;
     },
     onClickGraph(event) {
       if (event.dataType === 'node' && event.value != null) {
         // Expand community
-        if (this.ctrl && !this.alt && event.value.self.startsWith('c')) {
-          this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
+        if (this.ctrl && !this.alt) {
+          /*this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
             item => item.value == null || item.value.self !== event.value.self
           );
           this.optionsV.series[0].data.push(
             ...this.communityNodes[event.value.relative.toString()]
-          );
+          );*/
         } // shrink community
-        else if (this.alt && this.ctrl && event.value.self.startsWith('h')) {
-          this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
+        else if (this.alt && this.ctrl) {
+          /* this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
             item => item.value == null || item.value.self !== event.value.self
           );
           this.optionsV.series[0].data.push(
             ...this.communityNodes[event.value.relative.toString()]
-          );
+          );*/
         }
       } else if (event.dataType === 'edge') {
         this.selectIndex = event.dataIndex;
@@ -343,16 +171,7 @@ export default {
             this.optionsV.series[0].links[this.trueIndex].source
           } -> ${this.optionsV.series[0].links[this.trueIndex].target}`
         );
-        /*
-        this.optionsV.series[0].links.splice(
-          this.optionsV.series[0].links.findIndex(link => {
-            return (
-              link.source === event.data.source &&
-              link.target === event.data.target
-            );
-          }),
-          1
-        );*/
+        // this.optionsV.series[0].links.splice(this.trueIndex, 1);
       }
     },
     getEdgeIndex: function(source, target) {
@@ -370,20 +189,20 @@ export default {
       });
       this.optionsV.series[0].links.push({
         source: 'n' + this.counter.toString(),
-        target: 'n' + this.randCalc(this.counter.toString()),
+        target: 'n' + this.randCalc(),
       });
       this.optionsV.series[0].links.push({
         target: 'n' + this.counter.toString(),
-        source: 'n' + this.randCalc(this.counter.toString()),
+        source: 'n' + this.randCalc(),
       });
       this.counter++;
     },
-    randCalc: function(old) {
+    randCalc: function() {
       let numb = Math.round(Math.random() * 1000) % (this.counter - 1);
       return numb.toString();
     },
     keyDownHandler: function(event) {
-      switch(event.which) {
+      switch (event.which) {
         case 17:
           this.ctrl = true;
           break;
@@ -394,7 +213,7 @@ export default {
       }
     },
     keyUpHandler: function(event) {
-      switch(event.which) {
+      switch (event.which) {
         case 17:
           this.ctrl = false;
           break;
@@ -408,6 +227,33 @@ export default {
   created() {
     window.addEventListener('keyup', this.keyUpHandler);
     window.addEventListener('keydown', this.keyDownHandler);
+    const n = [];
+    const nodeNames = Object.keys(this.graph['hierarchy0'].nodes);
+    nodeNames.forEach(nodeKey => {
+      n.push({
+        name: nodeKey.toString(),
+        x: null,
+        y: null,
+        draggable: true,
+        category: parseInt(nodeKey.toString().split('n')[1], 10),
+        value: {
+          childs: this.graph['hierarchy0'].nodes[nodeKey].childs,
+          mzs: this.graph['hierarchy0'].nodes[nodeKey].mzs,
+        },
+      });
+    });
+    this.optionsV.series[0].data = [...n];
+    const e = [];
+    Object.keys(this.graph).forEach(hierarchy => {
+      Object.keys(this.graph[hierarchy]['edges']).forEach(edgeKey => {
+        e.push({
+          source: this.graph[hierarchy].edges[edgeKey]['source'],
+          target: this.graph[hierarchy].edges[edgeKey]['target'],
+          value: this.graph[hierarchy].edges[edgeKey]['weight'],
+        });
+      });
+    });
+    this.optionsV.series[0].links = [...e];
   },
 };
 </script>

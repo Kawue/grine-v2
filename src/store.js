@@ -42,6 +42,10 @@ export default new Vuex.Store({
     getData: state => {
       return state.originalData.graphs;
     },
+    getGraph: state => {
+      return state.originalData.graphs['graph' + state.options.state.graph]
+        .graph;
+    },
     getOptionsImage: state => {
       return state.options.image;
     },
