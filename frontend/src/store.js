@@ -13,8 +13,10 @@ const API_URL = 'http://localhost:5000';
 
 export default new Vuex.Store({
   state: {
-    loading: true,
-    originalData: {},
+    loadingGraphData: true,
+    loadingImageData: true,
+    originalGraphData: {},
+    originalImageData: {},
     options: {
       state: {
         tabActive: null,
@@ -36,17 +38,25 @@ export default new Vuex.Store({
       },
       data: {},
     },
-    images: {},
   },
   getters: {
+    getLoadingGraphData: state => {
+      return state.loadingGraphData;
+    },
+    getLoadingImageData: state => {
+      return state.loadingImageData;
+    },
     getMzValues: state => {
-      if (state.loading) {
+      if (state.loadingGraphData) {
         return;
       }
-      return state.originalData.graphs['graph' + state.options.state.graph].mzs;
+      return state.originalGraphData.graphs['graph' + state.options.state.graph].mzs;
     },
-    getData: state => {
-      return state.originalData.graphs;
+    getGraphData: state => {
+      return state.originalGraphData.graphs;
+    },
+    getImageData: state => {
+      return state.originalImageData;
     },
     getOptionsImage: state => {
       return state.options.image;
@@ -83,11 +93,17 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    SET_LOADING: (state, loading) => {
-      state.loading = loading;
+    SET_LOADING_GRAPH_DATA: (state, loading) => {
+      state.loadingGraphData = loading;
     },
-    SET_ORIGINAL_DATA: (state, originalData) => {
-      state.originalData = originalData;
+    SET_LOADING_IMAGE_DATA: (state, loading) => {
+      state.loadingImageData = loading;
+    },
+    SET_ORIGINAL_GRAPH_DATA: (state, originalData) => {
+      state.originalGraphData = originalData;
+    },
+    SET_ORIGINAL_IMAGE_DATA: (state, originalData) => {
+      state.originalImageData = originalData;
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -124,7 +140,7 @@ export default new Vuex.Store({
       state.options.mzList.notVisibleMz = [];
       state.options.mzList.visibleMz = mzListService.loadGraph(
         state.options.state.graph,
-        state.originalData.graphs
+        state.originalGraphData.graphs
       );
     },
     OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ: state => {
@@ -139,13 +155,20 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    fetchData: context => {
+    fetchGraphData: context => {
       const url = API_URL + '/datasets/graphdata';
       axios.get(url).then(response => {
-        context.commit('SET_ORIGINAL_DATA', response.data);
+        context.commit('SET_ORIGINAL_GRAPH_DATA', response.data);
         context.commit('OPTIONS_MZLIST_LOAD_GRAPH');
         context.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
-        context.commit('SET_LOADING', false);
+        context.commit('SET_LOADING_GRAPH_DATA', false);
+      });
+    },
+    fetchImageData: context => {
+      const url = API_URL + '/datasets/barley101_1/imagedata';
+      axios.get(url).then(response => {
+        context.commit('SET_ORIGINAL_IMAGE_DATA', response.data);
+        context.commit('SET_LOADING_IMAGE_DATA', false);
       });
     },
     updateOptionsImage: (context, data) => {

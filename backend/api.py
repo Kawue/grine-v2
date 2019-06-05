@@ -39,7 +39,6 @@ def image_data_for_dataset_and_mz(ds_name, mz_value):
 # provides data to render all mz images for passed dataset
 def image_data_for_dataset(ds_name):
     object = {}
-    print(mz_values(ds_name))
     for key, mz in mz_values(ds_name).items():
         object[mz] = image_data_for_dataset_and_mz(ds_name, mz)
     return object

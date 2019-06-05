@@ -18,12 +18,13 @@
 <script>
 import * as d3 from 'd3';
 import lasso from '../services/Lasso';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'MzImage',
   data() {
     return {
-      points: [],
+      //points: [],
       width: 250,
       height: 250,
       render: false,
@@ -40,10 +41,13 @@ export default {
 
     interactionSvg.call(lassoInstance);
 
-    this.generateRandomImageData();
+    //this.generateRandomImageData();
     this.drawPoints();
   },
   computed: {
+    ...mapGetters({
+      points: 'getImageData',
+    }),
     domainX: function() {
       let domain = [];
       for (let i = 0; i < 250; i++) {
@@ -87,6 +91,7 @@ export default {
         return d3.polygonContains(lassoPolygon, [x, y]);
       });
       this.updateSelectedPoints(selectedPoints);
+      //this.drawPoints();
     },
     handleLassoStart() {
       this.updateSelectedPoints([]);
@@ -120,13 +125,18 @@ export default {
       }
     },
     drawPoints() {
+      /*if (typeof this.points === 'undefined' || this.points.length <= 0) {
+        return;
+      }*/
+
       const context = this.canvas.node().getContext('2d');
       context.save();
       context.clearRect(0, 0, this.width, this.height);
+      let data = this.points['1006.576'];
 
-      for (let i = 0; i < this.points.length; ++i) {
-        const point = this.points[i];
-        context.fillStyle = point.color;
+      for (let i = 0; i < data.length; ++i) {
+        const point = data[i];
+        //context.fillStyle = point.color;
         context.fillRect(
           this.getPosX(point.x),
           this.getPosY(point.y),

@@ -206,7 +206,7 @@ export default {
         return val.mz === mz;
       });
       this.currentMz[index].name = this.nameModalMz.name;
-      store.getters.getData['graph' + this.graph].graph['hierarchy' + 3].nodes[
+      store.getters.getGraphData['graph' + this.graph].graph['hierarchy' + 3].nodes[
         this.currentMz[index]['hierarchy' + 3]
       ].name = this.nameModalMz.name;
       this.$nextTick(() => {
@@ -225,7 +225,7 @@ export default {
         return val.mz === mz;
       });
       this.currentMz[index].name = this.nameModalMz.mz.toString();
-      store.getters.getData['graph' + this.graph.toString()].graph[
+      store.getters.getGraphData['graph' + this.graph.toString()].graph[
         'hierarchy' + 3
       ].nodes[
         this.currentMz[index]['hierarchy' + 3]
