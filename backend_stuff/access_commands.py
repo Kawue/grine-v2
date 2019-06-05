@@ -8,14 +8,9 @@ from flask import Flask
 merged_dframe = pd.read_hdf(argv[1])
 
 
-# select one of the 3 data sets
-example_ds_name = "barley101_1"
-
-
 # returns names of all available datasets
 def dataset_names():
     dt_names = set(merged_dframe.index.get_level_values("dataset"))
-
     names = []
     for name in dt_names:
         names.append(name)
@@ -25,37 +20,36 @@ def dataset_names():
 # returns list of all mz_values
 def mz_values(ds_name):
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
-
     mzs = []
     for key, value in single_dframe.iteritems():
         mzs.append(key)
-    return mzs
+    return {i: mzs[i] for i in range(0, len(mzs))}
 
 
-# provides data to render image for passed mz_value
-def mz_image_data(ds_name, mz_value):
+# provides data to render image for passed mz_value and dataset
+def image_data_for_dataset_and_mz(ds_name, mz_value):
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
-
-    # get x positions for all pixels from a selected single data set
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
-
-    # get y positions for all pixels from a selected single data set
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
-
-    # select a single mz image vector from a selected single data set
-
     intensity = list(np.array(single_dframe[mz_value]).astype(float))
-
     return [{'x': int(x), 'y': int(y), 'intensity': float(i)} for x, y, i in zip(pos_x, pos_y, intensity)]
 
 
-#print(intensity)
-#print(test[:, 2])
-#print(single_dframe[example_mz])
-#print(single_dframe[example_mz][4])
-#intensity = np.array(single_dframe.index.get_level_values(example_mz))
-#print(intensity)
-#print(single_dframe[example_mz])
+# provides data to render all mz images for passed dataset
+def image_data_for_dataset(ds_name):
+    object = {}
+    print(mz_values(ds_name))
+    for key, mz in mz_values(ds_name).items():
+        object[mz] = image_data_for_dataset_and_mz(ds_name, mz)
+    return object
+
+
+# provides all image data of all datasets and all mzvalues
+def image_data_all_datasets():
+    object = {}
+    for ds in dataset_names():
+        object.update({ds: image_data_for_dataset(ds)})
+    return object
 
 
 app = Flask(__name__)
@@ -66,14 +60,26 @@ def datasets_action():
     return json.dumps(dataset_names())
 
 
-@app.route('/mzvalues')
-def mz_values_action():
-    return json.dumps(mz_values(dataset_names()[0]))
+@app.route('/datasets/<dataset_name>/mzvalues')
+def datasets_mzvalues_action(dataset_name):
+    return json.dumps(mz_values(dataset_name))
 
 
-@app.route('/mzdata')
-def mz_data_action():
-    return json.dumps(mz_image_data(dataset_names()[0], 74.651))
+@app.route('/datasets/<dataset_name>/mzvalues/<mz_value_id>/imagedata')
+def datasets_mzvalues_imagedata_action(dataset_name, mz_value_id):
+    mz_value = mz_values(dataset_name)[int(mz_value_id)]
+    print(mz_value)
+    return json.dumps(image_data_for_dataset_and_mz(dataset_name, mz_value))
+
+
+@app.route('/datasets/<dataset_name>/imagedata')
+def datasets_imagedata_action(dataset_name):
+    return json.dumps(image_data_for_dataset(dataset_name))
+
+
+@app.route('/datasets/imagedata')
+def datasets_all_imagedata_action():
+    return json.dumps(image_data_all_datasets())
 
 
 if __name__ == '__main__':
