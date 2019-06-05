@@ -3,15 +3,17 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-import ApiService from './services/ApiService';
 import OptionsService from './services/OptionsService';
 import MzListService from './services/MzListService';
-let apiService = new ApiService();
 let optionsService = new OptionsService();
 let mzListService = new MzListService();
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000';
 
 export default new Vuex.Store({
   state: {
+    loading: true,
     originalData: {},
     options: {
       state: {
@@ -34,9 +36,13 @@ export default new Vuex.Store({
       },
       data: {},
     },
+    images: {},
   },
   getters: {
     getMzValues: state => {
+      if (state.loading) {
+        return;
+      }
       return state.originalData.graphs['graph' + state.options.state.graph].mzs;
     },
     getData: state => {
@@ -77,6 +83,9 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    SET_LOADING: (state, loading) => {
+      state.loading = loading;
+    },
     SET_ORIGINAL_DATA: (state, originalData) => {
       state.originalData = originalData;
     },
@@ -131,7 +140,13 @@ export default new Vuex.Store({
   },
   actions: {
     fetchData: context => {
-      context.commit('SET_ORIGINAL_DATA', apiService.fetchData());
+      const url = API_URL + '/datasets/graphdata';
+      axios.get(url).then(response => {
+        context.commit('SET_ORIGINAL_DATA', response.data);
+        context.commit('OPTIONS_MZLIST_LOAD_GRAPH');
+        context.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
+        context.commit('SET_LOADING', false);
+      });
     },
     updateOptionsImage: (context, data) => {
       let calculatedImageOptions = optionsService.calculateImageOptions(data);

@@ -3,9 +3,10 @@ import pandas as pd
 import numpy as np
 import json
 from flask import Flask
+from flask_cors import CORS
 
 # load dataframe (.h5)
-merged_dframe = pd.read_hdf(argv[1])
+merged_dframe = pd.read_hdf('datasets/' + argv[1])
 
 
 # returns names of all available datasets
@@ -54,7 +55,7 @@ def image_data_all_datasets():
 
 # generates json file for graph
 def graph_data_all_datasets():
-    with open('test_new_json.json', 'r') as file:
+    with open('json/test_new_json.json', 'r') as file:
         try:
             data = json.load(file)
         except:
@@ -63,6 +64,7 @@ def graph_data_all_datasets():
 
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/datasets')

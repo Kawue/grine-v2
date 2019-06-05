@@ -241,10 +241,6 @@ export default {
       store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
     },
   },
-  created() {
-    store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
-    store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
-  },
 };
 </script>
 

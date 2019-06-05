@@ -11,12 +11,13 @@ yarn serve
 
 ### Backend
 ```
-pip3 install tables pandas flask
+pip3 install tables pandas flask flask-cors
 cd backened
 ```
 
 ## Run project
-`./run/start.sh`
+`./run/frontend.sh`
+`./run/backend.sh`
 
 or manually:
 
