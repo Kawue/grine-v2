@@ -23,8 +23,7 @@ or manually:
 
 ```
 cd backend
-python3 api.py grinev2barleytest.h5
-
+python3 api.py grinev2barleytest.h5 test_new_json.json
 ```
 
 ```

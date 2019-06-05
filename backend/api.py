@@ -54,7 +54,7 @@ def image_data_all_datasets():
 
 # generates json file for graph
 def graph_data_all_datasets():
-    with open('json/test_new_json.json', 'r') as file:
+    with open('json/' + argv[2], 'r') as file:
         try:
             data = json.load(file)
         except:
