@@ -41,3 +41,6 @@ get mz image data for dataset for all mz values:
 
 get all image data for all datasets and all mz values:
 /datasets/mzimagedata
+
+get graph data for all datasets
+/datasets/graphdata

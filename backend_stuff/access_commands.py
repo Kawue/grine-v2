@@ -52,6 +52,16 @@ def image_data_all_datasets():
     return object
 
 
+# generates json file for graph
+def graph_data_all_datasets():
+    with open('test_new_json.json', 'r') as file:
+        try:
+            data = json.load(file)
+        except:
+            data = {}
+    return data
+
+
 app = Flask(__name__)
 
 
@@ -68,7 +78,6 @@ def datasets_mzvalues_action(dataset_name):
 @app.route('/datasets/<dataset_name>/mzvalues/<mz_value_id>/imagedata')
 def datasets_mzvalues_imagedata_action(dataset_name, mz_value_id):
     mz_value = mz_values(dataset_name)[int(mz_value_id)]
-    print(mz_value)
     return json.dumps(image_data_for_dataset_and_mz(dataset_name, mz_value))
 
 
@@ -80,6 +89,11 @@ def datasets_imagedata_action(dataset_name):
 @app.route('/datasets/imagedata')
 def datasets_all_imagedata_action():
     return json.dumps(image_data_all_datasets())
+
+
+@app.route('/datasets/graphdata')
+def datasets_graphdata_action():
+    return json.dumps(graph_data_all_datasets())
 
 
 if __name__ == '__main__':
