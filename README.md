@@ -4,6 +4,7 @@
 
 ### Frontend
 ```
+cd frontend
 yarn install
 yarn serve
 ```
@@ -11,7 +12,23 @@ yarn serve
 ### Backend
 ```
 pip3 install tables pandas flask
-python3 access_commands.py grinev2barleytest.h5
+cd backened
+```
+
+## Run project
+`./run/start.sh`
+
+or manually:
+
+```
+cd backend
+python3 api.py grinev2barleytest.h5
+
+```
+
+```
+cd frontend
+yarn serve
 ```
 
 
