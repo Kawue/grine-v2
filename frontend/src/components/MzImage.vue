@@ -113,6 +113,19 @@ export default {
       }
       this.drawPoints();*/
     },
+    /*generateRandomImageData() {
+      for (let i = 0; i < 250; i++) {
+        for (let j = 0; j < 250; j++) {
+          let d = Math.floor(Math.random() * 100) + 30;
+          this.points.push({
+            x: i,
+            y: j,
+            intensity: d,
+            color: this.getPointColor(d),
+          });
+        }
+      }
+    },*/
     drawPoints() {
       const context = this.canvas.node().getContext('2d');
       context.save();
@@ -129,6 +142,7 @@ export default {
           this.getHeight()
         );
       }
+
       context.restore();
     },
     getPosX(x) {
