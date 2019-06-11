@@ -176,18 +176,11 @@ export default new Vuex.Store({
     fetchImageData: context => {
       const url = API_URL + '/datasets/barley101_1/imagedata';
       axios.get(url).then(response => {
-
-        console.log(response.data['1006.576']);
-
-        context.commit('SET_ORIGINAL_IMAGE_DATA', response.data);
-        context.commit(
-          'SET_IMAGE_DATA',
-          imageService.setColorFromIntensity(
-            response.data[context.state.images.mzValue]
-          )
-          //response.data[context.state.images.mzValue]
-          //response.data['1006.576']
+        let imageData = imageService.calculateColors(
+          response.data[context.state.images.mzValue]
         );
+        context.commit('SET_ORIGINAL_IMAGE_DATA', response.data);
+        context.commit('SET_IMAGE_DATA', imageData);
         context.commit('SET_LOADING_IMAGE_DATA', false);
       });
     },
@@ -195,15 +188,13 @@ export default new Vuex.Store({
       let calculatedImageOptions = optionsService.calculateImageOptions(data);
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
-    /*mzImageSelectPoints: (context, selectedPoints) => {
-      //console.log('test');
-      context.commit(
-        'SET_IMAGE_DATA',
-        imageService.markSelectedPoints(
-          context.state.images.imageData,
-          selectedPoints
-        )
+    mzImageSelectPoints: (context, selectedPoints) => {
+      let imageData = imageService.markSelectedPoints(
+        context.state.images.imageData,
+        selectedPoints
       );
-    },*/
+      imageData = imageService.calculateColors(imageData);
+      context.commit('SET_IMAGE_DATA', imageData);
+    },
   },
 });

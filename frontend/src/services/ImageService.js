@@ -9,52 +9,71 @@ class ImageService {
   }
 
   /**
-   * copies passed object, returns object with colors assigned
-   * @param originalImageData
+   * assigns colors to image points
+   * @param imageData
    */
-  setColorFromIntensity2(originalImageData) {
-    let imageData = {};
-    for (let mzValue in originalImageData) {
-      if (originalImageData.hasOwnProperty(mzValue)) {
-        imageData[mzValue] = originalImageData[mzValue];
+  calculateColors(imageData) {
+    for (let imagePoint in imageData) {
+      if (imageData.hasOwnProperty(imagePoint)) {
+        let intensity = imageData[imagePoint].intensity;
+        if (imageData[imagePoint].selected) {
+          intensity += 0.5;
+        }
+        imageData[imagePoint].color = this.colorScale(intensity);
+      }
+    }
+    return imageData;
+  }
 
-        for (let imagePoint in imageData[mzValue]) {
-          if (imageData[mzValue].hasOwnProperty(imagePoint)) {
-            imageData[mzValue][imagePoint].color = this.colorScale(
-              imageData[mzValue][imagePoint].intensity
-            );
-          }
+  /**
+   * marks image points as selected
+   * @param imageData
+   * @param selectedPoints
+   * @returns imageData
+   */
+  markSelectedPoints(imageData, selectedPoints) {
+    if (!selectedPoints.length) {
+      for (let imagePoint in imageData) {
+        if (imageData.hasOwnProperty(imagePoint)) {
+          imageData[imagePoint].selected = false;
+        }
+      }
+    } else {
+      for (let imagePoint in imageData) {
+        if (imageData.hasOwnProperty(imagePoint)) {
+          imageData[imagePoint].selected = false;
+        }
+      }
+
+      for (let imagePoint in selectedPoints) {
+        if (selectedPoints.hasOwnProperty(imagePoint)) {
+          imageData[imagePoint].selected = true;
         }
       }
     }
+
+    //console.log(selectedPoints);
+    //console.log(imageData);
+
     return imageData;
+
+    /*if (!selectedPoints.length) {
+  this.points.forEach(point => {
+    point.color = this.getPointColor(point.intensity);
+  });
+} else {
+  this.points.forEach(point => {
+    point.color = this.getPointColor(point.intensity - 20);
+  });
+  selectedPoints.forEach(point => {
+    point.color = this.getPointColor(point.intensity + 20);
+  });
+}
+this.drawPoints();*/
+
+
+
   }
-
-  setColorFromIntensity(imageData) {
-    for (let imagePoint in imageData) {
-      if (imageData.hasOwnProperty(imagePoint)) {
-        imageData[imagePoint].color = this.colorScale(
-          imageData[imagePoint].intensity
-        );
-      }
-    }
-    return imageData;
-  }
-
-  /*markSelectedPoints(imageData, selectedPoints) {
-
-
-    for (let imagePoint in imageData) {
-      if (imageData.hasOwnProperty(imagePoint)) {
-        imageData[imagePoint].color = this.colorScale(
-          imageData[imagePoint].selected = true
-        );
-      }
-    }
-    return imageData;
-
-
-  }*/
 
 }
 export default ImageService;

@@ -40,8 +40,13 @@ export default {
       .on('start', this.handleLassoStart);
 
     interactionSvg.call(lassoInstance);
-
-    //this.generateRandomImageData();
+    this.$store.subscribe((mutation) => {
+      switch (mutation.type) {
+        case 'SET_IMAGE_DATA':
+          this.drawPoints();
+          break;
+      }
+    });
     this.drawPoints();
   },
   computed: {
@@ -76,12 +81,6 @@ export default {
         .domain(this.domainY)
         .padding(0);
     },
-    /*pointColor: function() {
-      return d3
-        .scaleLinear()
-        .range(['white', '#69b3a2'])
-        .domain([0, 100]);
-    },*/
   },
   methods: {
     handleLassoEnd(lassoPolygon) {
@@ -91,13 +90,14 @@ export default {
         return d3.polygonContains(lassoPolygon, [x, y]);
       });
       this.updateSelectedPoints(selectedPoints);
-      //this.drawPoints();
     },
     handleLassoStart() {
       this.updateSelectedPoints([]);
     },
     updateSelectedPoints(selectedPoints) {
-      //store.dispatch('mzImageSelectPoints', selectedPoints);
+      console.log(selectedPoints);
+      store.dispatch('mzImageSelectPoints', selectedPoints);
+      //this.drawPoints();
 
       /*if (!selectedPoints.length) {
         this.points.forEach(point => {
@@ -113,26 +113,7 @@ export default {
       }
       this.drawPoints();*/
     },
-    /*generateRandomImageData() {
-      for (let i = 0; i < 250; i++) {
-        for (let j = 0; j < 250; j++) {
-          let d = Math.floor(Math.random() * 100) + 30;
-          this.points.push({
-            x: i,
-            y: j,
-            intensity: d,
-            color: this.getPointColor(d),
-          });
-        }
-      }
-    },*/
     drawPoints() {
-      /*if (typeof this.points === 'undefined' || this.points.length <= 0) {
-        return;
-      }*/
-
-      console.log(this.points);
-
       const context = this.canvas.node().getContext('2d');
       context.save();
       context.clearRect(0, 0, this.width, this.height);
@@ -148,12 +129,8 @@ export default {
           this.getHeight()
         );
       }
-
       context.restore();
     },
-    /*getPointColor(intensity) {
-      return this.pointColor(intensity);
-    },*/
     getPosX(x) {
       let scaleBand = this.scaleBandX;
       return scaleBand(x);
