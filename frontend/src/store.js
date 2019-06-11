@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
+Vue.config.devtools = true;
 
 import OptionsService from './services/OptionsService';
 import MzListService from './services/MzListService';
@@ -17,10 +18,11 @@ export default new Vuex.Store({
   state: {
     loadingGraphData: true,
     originalGraphData: {},
+    dataSets: [],
     images: {
       originalImageData: {},
-      imageData: {},
-      mzValue: '1006.576',
+      imageData: [],
+      mzValue: null,
       loadingImageData: true,
     },
     options: {
@@ -28,7 +30,6 @@ export default new Vuex.Store({
         tabActive: null,
         tabLocked: null,
         tabsExpanded: false,
-        graph: 0,
       },
       network: {},
       image: {
@@ -42,7 +43,10 @@ export default new Vuex.Store({
         showAnnotation: true,
         asc: true,
       },
-      data: {},
+      data: {
+        graph: 0,
+        graphChoices: {},
+      },
     },
   },
   getters: {
@@ -56,7 +60,7 @@ export default new Vuex.Store({
       if (state.loadingGraphData) {
         return;
       }
-      return state.originalGraphData.graphs['graph' + state.options.state.graph].mzs;
+      return state.originalGraphData.graphs['graph' + state.options.data.graph].mzs;
     },
     getGraphData: state => {
       return state.originalGraphData.graphs;
@@ -69,6 +73,9 @@ export default new Vuex.Store({
     },
     getOptionsState: state => {
       return state.options.state;
+    },
+    getOptionsData: state => {
+      return state.options.data;
     },
     mzListGraph: state => {
       return state.options.mzList;
@@ -95,7 +102,10 @@ export default new Vuex.Store({
       return state.options.mzList.asc;
     },
     stateOptionsGraph: state => {
-      return state.options.state.graph;
+      return state.options.data.graph;
+    },
+    optionsDataGraphChoices: state => {
+      return state.options.data.graphChoices;
     },
   },
   mutations: {
@@ -113,6 +123,15 @@ export default new Vuex.Store({
     },
     SET_ORIGINAL_GRAPH_DATA: (state, originalData) => {
       state.originalGraphData = originalData;
+
+      // set options choices for dataset selection
+      for (let graph in originalData['graphs']) {
+        if (originalData['graphs'].hasOwnProperty(graph)) {
+          state.options.data.graphChoices[graph.replace('graph', '')] =
+            originalData['graphs'][graph]['dataset'];
+        }
+      }
+      state.options.data.graph = 0;
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -133,8 +152,8 @@ export default new Vuex.Store({
       state.options.mzList.showAnnotation = !state.options.mzList
         .showAnnotation;
     },
-    OPTIONS_STATE_CHANGE_GRAPH: (state, graph) => {
-      state.options.state.graph = graph;
+    OPTIONS_DATA_CHANGE_GRAPH: (state, graph) => {
+      state.options.data.graph = graph;
     },
     OPTIONS_MZLIST_SORT_MZ: state => {
       state.options.mzList.visibleMz = mzListService.sortMzList(
@@ -148,7 +167,7 @@ export default new Vuex.Store({
     OPTIONS_MZLIST_LOAD_GRAPH: state => {
       state.options.mzList.notVisibleMz = [];
       state.options.mzList.visibleMz = mzListService.loadGraph(
-        state.options.state.graph,
+        state.options.data.graph,
         state.originalGraphData.graphs
       );
     },
@@ -165,16 +184,23 @@ export default new Vuex.Store({
   },
   actions: {
     fetchGraphData: context => {
+      context.commit('SET_LOADING_GRAPH_DATA', true);
       const url = API_URL + '/datasets/graphdata';
       axios.get(url).then(response => {
         context.commit('SET_ORIGINAL_GRAPH_DATA', response.data);
         context.commit('OPTIONS_MZLIST_LOAD_GRAPH');
         context.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
         context.commit('SET_LOADING_GRAPH_DATA', false);
+        context.dispatch('fetchImageData');
       });
     },
     fetchImageData: context => {
-      const url = API_URL + '/datasets/barley101_1/imagedata';
+      context.commit('SET_LOADING_IMAGE_DATA', true);
+      const datasetName =
+        context.state.options.data.graphChoices[
+          context.state.options.data.graph
+        ];
+      const url = API_URL + '/datasets/' + datasetName + '/imagedata';
       axios.get(url).then(response => {
         context.commit('SET_ORIGINAL_IMAGE_DATA', response.data);
         context.commit('SET_LOADING_IMAGE_DATA', false);

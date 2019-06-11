@@ -2,36 +2,45 @@
   <div class="data">
     <div class="row">
       <div class="col-md-12">
-        <b-form-select v-model="selected" :options="options" size="sm"></b-form-select>
-      </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col-md-6">
-        <b-form-select v-model="selected" :options="options" size="sm"></b-form-select>
-        <b-form-select v-model="selected" :options="options" size="sm"></b-form-select>
-        <b-form-select v-model="selected" :options="options" size="sm"></b-form-select>
-      </div>
-      <div class="col-md-6">
-        <b-form-select v-model="selected" :options="options" size="sm"></b-form-select>
+        DataSet:
+        <b-form-select
+          v-model="selectedGraph"
+          :options="optionsDataGraphChoices"
+          size="sm"
+        >
+        </b-form-select>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'OptionsData',
-  data() {
-    return {
-      selected: null,
-      options: [
-        { value: null, text: 'Please select an option' },
-        { value: 'a', text: 'This is First option' },
-        { value: 'b', text: 'Selected Option' },
-        { value: { C: '3PO' }, text: 'This is an option with object value' },
-        { value: 'd', text: 'This one is disabled', disabled: true },
-      ],
-    };
+  mounted: function() {
+    this.$store.subscribe(mutation => {
+      switch (mutation.type) {
+        case 'OPTIONS_DATA_CHANGE_GRAPH':
+          this.$store.dispatch('fetchImageData');
+          break;
+      }
+    });
+  },
+  computed: {
+    ...mapGetters({
+      optionsDataGraphChoices: 'optionsDataGraphChoices',
+      state: 'getOptionsData',
+    }),
+    selectedGraph: {
+      get() {
+        return this.state.graph;
+      },
+      set(value) {
+        this.$store.commit('OPTIONS_DATA_CHANGE_GRAPH', value);
+      },
+    },
   },
 };
 </script>

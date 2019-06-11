@@ -39,11 +39,6 @@
           ></v-icon>
         </span>
       </div>
-      <div style="width: 100%; position: absolute; top: 20px; right: 0;">
-        <div v-on:click="loadGraph(0)" style="display: inline-block">0</div>
-        <div v-on:click="loadGraph(1)" style="display: inline-block">1</div>
-        <div v-on:click="loadGraph(2)" style="display: inline-block">2</div>
-      </div>
 
       <select
         v-model="localSelectedMz"
@@ -161,6 +156,16 @@ export default {
       graph: 'stateOptionsGraph',
     }),
   },
+  mounted: function() {
+    this.$store.subscribe(mutation => {
+      switch (mutation.type) {
+        case 'OPTIONS_DATA_CHANGE_GRAPH':
+          store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
+          store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
+          break;
+      }
+    });
+  },
   methods: {
     mzClicked: function() {
       console.log(`Selected mz: ${this.localSelectedMz.join(', ')}`);
@@ -194,11 +199,6 @@ export default {
     handleOk: function(bvModalEvt) {
       bvModalEvt.preventDefault();
       this.handleSubmit();
-    },
-    loadGraph(graphNumber) {
-      store.commit('OPTIONS_STATE_CHANGE_GRAPH', graphNumber);
-      store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
-      store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
     },
     handleSubmit: function() {
       if (!this.$refs.form.checkValidity()) {
