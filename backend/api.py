@@ -27,13 +27,24 @@ def mz_values(ds_name):
     return {i: mzs[i] for i in range(0, len(mzs))}
 
 
+def norm(val, min, max):
+    return (val - min) / (max - min)
+
+
 # provides data to render image for passed mz_value and dataset
 def image_data_for_dataset_and_mz(ds_name, mz_value):
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
     intensity = list(np.array(single_dframe[mz_value]).astype(float))
-    return [{'x': int(x), 'y': int(y), 'intensity': float(i)} for x, y, i in zip(pos_x, pos_y, intensity)]
+
+    intensity_min = min(intensity)
+    intensity_max = max(intensity)
+
+    return [
+        {'x': int(x), 'y': int(y), 'intensity': float(norm(i, intensity_min, intensity_max))}
+        for x, y, i in zip(pos_x, pos_y, intensity)
+    ]
 
 
 # provides data to render all mz images for passed dataset

@@ -2,10 +2,7 @@ import * as d3 from 'd3';
 
 class ImageService {
   constructor() {
-    this.colorScale = d3
-      .scaleLinear()
-      .range(['white', '#69b3a2'])
-      .domain([0, 1]);
+    this.colorScale = d3.scaleSequential(d3.interpolateMagma).domain([0, 1]);
   }
 
   /**
