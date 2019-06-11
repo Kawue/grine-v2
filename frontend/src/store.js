@@ -16,17 +16,25 @@ const API_URL = 'http://localhost:5000';
 
 export default new Vuex.Store({
   state: {
-    loadingGraphData: true,
-    originalGraphData: {},
-    dataSets: [],
+    loadingGraphData: true, // api fetch for graph data is running
+    originalGraphData: {}, // graph data api return
     images: {
-      originalImageData: {},
-      imageData: [],
-      mzValue: null,
-      loadingImageData: true,
+      originalImageData: {}, // image data api return
+      imageData: {
+        // data used to render the current mz image
+        points: [], // points that are displayed as mz image
+        max: {
+          // max image coors
+          x: null,
+          y: null,
+        },
+      },
+      mzValue: null, // mzValue of which the image is rendered
+      loadingImageData: true, // api fetch for image data is running
     },
     options: {
       state: {
+        // state of options widget
         tabActive: null,
         tabLocked: null,
         tabsExpanded: false,
@@ -44,8 +52,8 @@ export default new Vuex.Store({
         asc: true,
       },
       data: {
-        graph: 0,
-        graphChoices: {},
+        graph: 0, // selected graph
+        graphChoices: {}, // available graphs for selection
       },
     },
   },
@@ -65,8 +73,11 @@ export default new Vuex.Store({
     getGraphData: state => {
       return state.originalGraphData.graphs;
     },
-    getImageData: state => {
-      return state.images.imageData;
+    getImageDataPoints: state => {
+      return state.images.imageData.points;
+    },
+    getImageDataMax: state => {
+      return state.images.imageData.max;
     },
     getOptionsImage: state => {
       return state.options.image;
@@ -116,7 +127,19 @@ export default new Vuex.Store({
       state.images.originalImageData = originalData;
     },
     SET_IMAGE_DATA: (state, data) => {
-      state.images.imageData = data;
+      state.images.imageData.points = data;
+
+      let max = 0;
+      for (let point in data) {
+        if (data.hasOwnProperty(point)) {
+          if (data[point].x > max) {
+            max = data[point].x;
+          }
+        }
+      }
+      max += 10;
+      state.images.imageData.max.x = max;
+      state.images.imageData.max.y = max;
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
@@ -229,7 +252,7 @@ export default new Vuex.Store({
     },
     imagesMzImageSelectPoints: (context, selectedPoints) => {
       let imageData = imageService.markSelectedPoints(
-        context.state.images.imageData,
+        context.state.images.imageData.points,
         selectedPoints
       );
       imageData = imageService.calculateColors(imageData);

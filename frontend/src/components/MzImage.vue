@@ -56,19 +56,20 @@ export default {
   },
   computed: {
     ...mapGetters({
-      points: 'getImageData',
+      points: 'getImageDataPoints',
+      max: 'getImageDataMax',
       loading: 'getLoadingImageData',
     }),
     domainX: function() {
       let domain = [];
-      for (let i = 0; i < 250; i++) {
+      for (let i = 0; i < this.max.x; i++) {
         domain.push(i);
       }
       return domain;
     },
     domainY: function() {
       let domain = [];
-      for (let i = 0; i < 250; i++) {
+      for (let i = 0; i < this.max.y; i++) {
         domain.push(i);
       }
       return domain;
