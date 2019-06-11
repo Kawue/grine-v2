@@ -5,8 +5,10 @@ Vue.use(Vuex);
 
 import OptionsService from './services/OptionsService';
 import MzListService from './services/MzListService';
+import ImageService from './services/ImageService';
 let optionsService = new OptionsService();
 let mzListService = new MzListService();
+let imageService = new ImageService();
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000';
@@ -14,9 +16,13 @@ const API_URL = 'http://localhost:5000';
 export default new Vuex.Store({
   state: {
     loadingGraphData: true,
-    loadingImageData: true,
     originalGraphData: {},
-    originalImageData: {},
+    images: {
+      originalImageData: {},
+      imageData: {},
+      mzValue: '1006.576',
+      loadingImageData: true,
+    },
     options: {
       state: {
         tabActive: null,
@@ -44,7 +50,7 @@ export default new Vuex.Store({
       return state.loadingGraphData;
     },
     getLoadingImageData: state => {
-      return state.loadingImageData;
+      return state.images.loadingImageData;
     },
     getMzValues: state => {
       if (state.loadingGraphData) {
@@ -56,7 +62,7 @@ export default new Vuex.Store({
       return state.originalGraphData.graphs;
     },
     getImageData: state => {
-      return state.originalImageData;
+      return state.images.imageData;
     },
     getOptionsImage: state => {
       return state.options.image;
@@ -93,17 +99,20 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    SET_LOADING_IMAGE_DATA: (state, loading) => {
+      state.images.loadingImageData = loading;
+    },
+    SET_ORIGINAL_IMAGE_DATA: (state, originalData) => {
+      state.images.originalImageData = originalData;
+    },
+    SET_IMAGE_DATA: (state, data) => {
+      state.images.imageData = data;
+    },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
     },
-    SET_LOADING_IMAGE_DATA: (state, loading) => {
-      state.loadingImageData = loading;
-    },
     SET_ORIGINAL_GRAPH_DATA: (state, originalData) => {
       state.originalGraphData = originalData;
-    },
-    SET_ORIGINAL_IMAGE_DATA: (state, originalData) => {
-      state.originalImageData = originalData;
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -167,7 +176,18 @@ export default new Vuex.Store({
     fetchImageData: context => {
       const url = API_URL + '/datasets/barley101_1/imagedata';
       axios.get(url).then(response => {
+
+        console.log(response.data['1006.576']);
+
         context.commit('SET_ORIGINAL_IMAGE_DATA', response.data);
+        context.commit(
+          'SET_IMAGE_DATA',
+          imageService.setColorFromIntensity(
+            response.data[context.state.images.mzValue]
+          )
+          //response.data[context.state.images.mzValue]
+          //response.data['1006.576']
+        );
         context.commit('SET_LOADING_IMAGE_DATA', false);
       });
     },
@@ -175,5 +195,15 @@ export default new Vuex.Store({
       let calculatedImageOptions = optionsService.calculateImageOptions(data);
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
+    /*mzImageSelectPoints: (context, selectedPoints) => {
+      //console.log('test');
+      context.commit(
+        'SET_IMAGE_DATA',
+        imageService.markSelectedPoints(
+          context.state.images.imageData,
+          selectedPoints
+        )
+      );
+    },*/
   },
 });

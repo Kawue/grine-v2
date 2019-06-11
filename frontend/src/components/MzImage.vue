@@ -19,12 +19,12 @@
 import * as d3 from 'd3';
 import lasso from '../services/Lasso';
 import { mapGetters } from 'vuex';
+import store from '@/store';
 
 export default {
   name: 'MzImage',
   data() {
     return {
-      //points: [],
       width: 250,
       height: 250,
       render: false,
@@ -76,12 +76,12 @@ export default {
         .domain(this.domainY)
         .padding(0);
     },
-    pointColor: function() {
+    /*pointColor: function() {
       return d3
         .scaleLinear()
         .range(['white', '#69b3a2'])
         .domain([0, 100]);
-    },
+    },*/
   },
   methods: {
     handleLassoEnd(lassoPolygon) {
@@ -97,7 +97,9 @@ export default {
       this.updateSelectedPoints([]);
     },
     updateSelectedPoints(selectedPoints) {
-      if (!selectedPoints.length) {
+      //store.dispatch('mzImageSelectPoints', selectedPoints);
+
+      /*if (!selectedPoints.length) {
         this.points.forEach(point => {
           point.color = this.getPointColor(point.intensity);
         });
@@ -109,9 +111,9 @@ export default {
           point.color = this.getPointColor(point.intensity + 20);
         });
       }
-      this.drawPoints();
+      this.drawPoints();*/
     },
-    generateRandomImageData() {
+    /*generateRandomImageData() {
       for (let i = 0; i < 250; i++) {
         for (let j = 0; j < 250; j++) {
           let d = Math.floor(Math.random() * 100) + 30;
@@ -123,20 +125,22 @@ export default {
           });
         }
       }
-    },
+    },*/
     drawPoints() {
       /*if (typeof this.points === 'undefined' || this.points.length <= 0) {
         return;
       }*/
 
+      console.log(this.points);
+
       const context = this.canvas.node().getContext('2d');
       context.save();
       context.clearRect(0, 0, this.width, this.height);
-      let data = this.points['1006.576'];
+      let data = this.points;
 
       for (let i = 0; i < data.length; ++i) {
         const point = data[i];
-        //context.fillStyle = point.color;
+        context.fillStyle = point.color;
         context.fillRect(
           this.getPosX(point.x),
           this.getPosY(point.y),
@@ -147,9 +151,9 @@ export default {
 
       context.restore();
     },
-    getPointColor(intensity) {
+    /*getPointColor(intensity) {
       return this.pointColor(intensity);
-    },
+    },*/
     getPosX(x) {
       let scaleBand = this.scaleBandX;
       return scaleBand(x);
