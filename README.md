@@ -38,6 +38,9 @@ yarn serve
 https://justineo.github.io/vue-awesome/demo/
 Here is a list of icons: https://github.com/Justineo/vue-awesome/tree/master/src/icons
 
+### Vue Loading Spinner
+https://nguyenvanduocit.github.io/vue-loading-spinner/
+
 ## Backend
 
 ### Api Endpoints

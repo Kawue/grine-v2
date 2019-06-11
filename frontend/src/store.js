@@ -196,6 +196,7 @@ export default new Vuex.Store({
     },
     fetchImageData: context => {
       context.commit('SET_LOADING_IMAGE_DATA', true);
+      context.commit('SET_IMAGE_DATA', []);
       const datasetName =
         context.state.options.data.graphChoices[
           context.state.options.data.graph

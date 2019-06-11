@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="canvas-root" style="position: relative;">
+      <ScaleOut class="spinner" v-if="loading"></ScaleOut>
       <canvas
         v-bind:width="width"
         v-bind:height="height"
@@ -20,9 +21,13 @@ import * as d3 from 'd3';
 import lasso from '../services/Lasso';
 import { mapGetters } from 'vuex';
 import store from '@/store';
+import { ScaleOut } from 'vue-loading-spinner';
 
 export default {
   name: 'MzImage',
+  components: {
+    ScaleOut,
+  },
   data() {
     return {
       width: 250,
@@ -52,6 +57,7 @@ export default {
   computed: {
     ...mapGetters({
       points: 'getImageData',
+      loading: 'getLoadingImageData',
     }),
     domainX: function() {
       let domain = [];
@@ -140,6 +146,13 @@ export default {
 
   canvas {
     border: 1px solid lightgrey;
+  }
+
+  .spinner {
+    position: absolute;
+    top: 0;
+    margin: 0 auto;
+    margin-left: -20px;
   }
 }
 </style>
