@@ -33,6 +33,7 @@ export default {
   name: 'Graph',
   data: function() {
     return {
+      numHier: 3,
       counter: 12,
       ctrl: false,
       alt: false,
@@ -144,21 +145,72 @@ export default {
     onClickGraph(event) {
       if (event.dataType === 'node' && event.value != null) {
         // Expand community
+        const hierarchy = parseInt(event.data.name.split('n')[0].slice(1), 10);
         if (this.ctrl && !this.alt) {
-          /*this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
-            item => item.value == null || item.value.self !== event.value.self
-          );
-          this.optionsV.series[0].data.push(
-            ...this.communityNodes[event.value.relative.toString()]
-          );*/
+          const nextHierarchy = hierarchy + 1;
+          if (hierarchy < this.numHier) {
+            this.optionsV.series[0].data.splice(event.dataIndex, 1);
+            for (let child of event.value.childs) {
+              const nextNodeName =
+                'h' + nextHierarchy.toString() + 'n' + child.toString();
+              const nextNode = {
+                name: nextNodeName,
+                x: null,
+                y: null,
+                draggable: true,
+                category: event.data.category,
+                value: {
+                  mzs: this.graph['hierarchy' + nextHierarchy].nodes[
+                    nextNodeName
+                  ].mzs,
+                  parent: this.graph['hierarchy' + nextHierarchy].nodes[
+                    nextNodeName
+                  ]['membership'],
+                },
+              };
+              if (nextHierarchy < this.numHier) {
+                nextNode.value['childs'] = this.graph[
+                  'hierarchy' + nextHierarchy
+                ].nodes[nextNodeName].childs;
+              }
+              this.optionsV.series[0].data.push(nextNode);
+            }
+          }
         } // shrink community
         else if (this.alt && this.ctrl) {
-          /* this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
-            item => item.value == null || item.value.self !== event.value.self
-          );
-          this.optionsV.series[0].data.push(
-            ...this.communityNodes[event.value.relative.toString()]
-          );*/
+          if (hierarchy > 0) {
+            const previousHierarchy = hierarchy - 1;
+
+            this.optionsV.series[0].data = this.optionsV.series[0].data.filter(
+              item => item.value.parent !== event.value.parent
+            );
+            const nextNodeName =
+              'h' +
+              previousHierarchy.toString() +
+              'n' +
+              event.value.parent.toString();
+            const nextNode = {
+              name: nextNodeName,
+              x: null,
+              y: null,
+              draggable: true,
+              category: event.data.category,
+              value: {
+                mzs: this.graph['hierarchy' + previousHierarchy].nodes[
+                  nextNodeName
+                ].mzs,
+                childs: this.graph['hierarchy' + previousHierarchy].nodes[
+                  nextNodeName
+                ].childs,
+              },
+            };
+            if (previousHierarchy > 0) {
+              nextNode.value['parent'] = this.graph[
+                'hierarchy' + previousHierarchy
+              ].nodes[nextNodeName]['membership'];
+            }
+            this.optionsV.series[0].data.push(nextNode);
+          }
         }
       } else if (event.dataType === 'edge') {
         this.selectIndex = event.dataIndex;
