@@ -40,7 +40,7 @@ export default {
       .on('start', this.handleLassoStart);
 
     interactionSvg.call(lassoInstance);
-    this.$store.subscribe((mutation) => {
+    this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'SET_IMAGE_DATA':
           this.drawPoints();
@@ -89,43 +89,12 @@ export default {
         let y = this.getPosY(d.y);
         return d3.polygonContains(lassoPolygon, [x, y]);
       });
-      this.updateSelectedPoints(selectedPoints);
+
+      store.dispatch('mzImageSelectPoints', selectedPoints);
     },
     handleLassoStart() {
-      this.updateSelectedPoints([]);
+      store.dispatch('mzImageSelectPoints', []);
     },
-    updateSelectedPoints(selectedPoints) {
-      console.log(selectedPoints);
-      store.dispatch('mzImageSelectPoints', selectedPoints);
-      //this.drawPoints();
-
-      /*if (!selectedPoints.length) {
-        this.points.forEach(point => {
-          point.color = this.getPointColor(point.intensity);
-        });
-      } else {
-        this.points.forEach(point => {
-          point.color = this.getPointColor(point.intensity - 20);
-        });
-        selectedPoints.forEach(point => {
-          point.color = this.getPointColor(point.intensity + 20);
-        });
-      }
-      this.drawPoints();*/
-    },
-    /*generateRandomImageData() {
-      for (let i = 0; i < 250; i++) {
-        for (let j = 0; j < 250; j++) {
-          let d = Math.floor(Math.random() * 100) + 30;
-          this.points.push({
-            x: i,
-            y: j,
-            intensity: d,
-            color: this.getPointColor(d),
-          });
-        }
-      }
-    },*/
     drawPoints() {
       const context = this.canvas.node().getContext('2d');
       context.save();

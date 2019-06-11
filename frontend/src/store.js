@@ -10,7 +10,6 @@ let optionsService = new OptionsService();
 let mzListService = new MzListService();
 let imageService = new ImageService();
 import axios from 'axios';
-import * as d3 from "d3";
 
 const API_URL = 'http://localhost:5000';
 
@@ -180,29 +179,6 @@ export default new Vuex.Store({
         let imageData = imageService.calculateColors(
           response.data[context.state.images.mzValue]
         );
-
-
-        imageData = [];
-
-        let colorScale = d3
-          .scaleLinear()
-          .range(['white', '#69b3a2'])
-          .domain([0, 1]);
-
-        for (let i = 0; i < 250; i++) {
-          for (let j = 0; j < 250; j++) {
-            let d = Math.random();
-            imageData.push({
-              x: i,
-              y: j,
-              intensity: d,
-              //color: colorScale(d/100),
-            });
-          }
-        }
-
-        imageData = imageService.calculateColors(imageData);
-
         context.commit('SET_ORIGINAL_IMAGE_DATA', response.data);
         context.commit('SET_IMAGE_DATA', imageData);
         context.commit('SET_LOADING_IMAGE_DATA', false);

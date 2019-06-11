@@ -11,6 +11,7 @@ class ImageService {
   /**
    * assigns colors to image points
    * @param imageData
+   * return []
    */
   calculateColors(imageData) {
     for (let imagePoint in imageData) {
@@ -26,54 +27,19 @@ class ImageService {
   }
 
   /**
-   * marks image points as selected
+   * mark selected points
    * @param imageData
    * @param selectedPoints
-   * @returns imageData
+   * @returns []
    */
   markSelectedPoints(imageData, selectedPoints) {
-    if (!selectedPoints.length) {
-      for (let imagePoint in imageData) {
-        if (imageData.hasOwnProperty(imagePoint)) {
-          imageData[imagePoint].selected = false;
-        }
-      }
-    } else {
-      for (let imagePoint in imageData) {
-        if (imageData.hasOwnProperty(imagePoint)) {
-          imageData[imagePoint].selected = false;
-        }
-      }
-
-      for (let imagePoint in selectedPoints) {
-        if (selectedPoints.hasOwnProperty(imagePoint)) {
-          imageData[imagePoint].selected = true;
-        }
-      }
-    }
-
-    //console.log(selectedPoints);
-    //console.log(imageData);
-
+    imageData.forEach(point => {
+      point.selected = false;
+    });
+    selectedPoints.forEach(point => {
+      point.selected = true;
+    });
     return imageData;
-
-    /*if (!selectedPoints.length) {
-  this.points.forEach(point => {
-    point.color = this.getPointColor(point.intensity);
-  });
-} else {
-  this.points.forEach(point => {
-    point.color = this.getPointColor(point.intensity - 20);
-  });
-  selectedPoints.forEach(point => {
-    point.color = this.getPointColor(point.intensity + 20);
-  });
-}
-this.drawPoints();*/
-
-
-
   }
-
 }
 export default ImageService;
