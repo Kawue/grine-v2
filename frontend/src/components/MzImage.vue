@@ -90,10 +90,10 @@ export default {
         return d3.polygonContains(lassoPolygon, [x, y]);
       });
 
-      store.dispatch('mzImageSelectPoints', selectedPoints);
+      store.dispatch('imagesMzImageSelectPoints', selectedPoints);
     },
     handleLassoStart() {
-      store.dispatch('mzImageSelectPoints', []);
+      store.dispatch('imagesMzImageSelectPoints', []);
     },
     drawPoints() {
       const context = this.canvas.node().getContext('2d');

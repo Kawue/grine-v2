@@ -5,7 +5,7 @@
     title="Images"
   >
     <div slot="content">
-      <mz-image v-if="!loadingImageData"></mz-image>
+      <mz-image></mz-image>
     </div>
   </SidebarWidget>
 </template>
@@ -25,7 +25,6 @@ export default {
   computed: mapGetters({
     data: 'getData',
     options: 'getOptionsImage',
-    loadingImageData: 'getLoadingImageData',
   }),
 };
 </script>

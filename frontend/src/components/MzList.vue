@@ -165,6 +165,9 @@ export default {
     mzClicked: function() {
       console.log(`Selected mz: ${this.localSelectedMz.join(', ')}`);
       store.commit('OPTIONS_MZLIST_UPDATE_SELECTED_MZ', this.localSelectedMz);
+      let imageMz =
+        this.localSelectedMz.length === 1 ? this.localSelectedMz[0] : null;
+      store.dispatch('imagesMzImageRender', imageMz);
     },
     sortMZ: function() {
       store.commit('OPTIONS_MZLIST_SORT_MZ');
