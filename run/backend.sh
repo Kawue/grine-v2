@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 cd backend
-python3 api.py grinev2barleytest.h5 fake_data.json
+python3 api.py barley_randomized.h5 fake_data.json
