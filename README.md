@@ -11,8 +11,8 @@ yarn serve
 
 ### Backend
 ```
-pip3 install tables pandas flask flask-cors
 cd backened
+pip3 install -r requirements.txt
 ```
 
 ## Run project
