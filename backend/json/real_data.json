@@ -1203,7 +1203,7 @@
                     }
                 }
             },
-            "dataset": "barley101",
+            "dataset": "barley101GrineV2",
             "mzs": {
                 "74.651": {
                     "hierarchy0": "h0n0",
@@ -3860,7 +3860,7 @@
                     }
                 }
             },
-            "dataset": "kidney",
+            "dataset": "kidneyGrineV2",
             "mzs": {
                 "39.097": {
                     "hierarchy0": "h0n0",
@@ -6359,7 +6359,7 @@
                     }
                 }
             },
-            "dataset": "vibrissae",
+            "dataset": "vibrissaeGrineV2",
             "mzs": {
                 "38.941": {
                     "hierarchy0": "h0n0",

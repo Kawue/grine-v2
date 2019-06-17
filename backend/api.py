@@ -4,10 +4,26 @@ import numpy as np
 import json
 from flask import Flask
 from flask_cors import CORS
+from os import listdir
+from os.path import exists, isdir, isfile
 
 # load dataframe (.h5)
-merged_dframe = pd.read_hdf('datasets/' + argv[1])
 
+merged_dframe = pd.DataFrame()
+
+for path in argv[2:]:
+    if len(argv[2:]) == 1:
+        if isdir(path):
+            for f in listdir(path):
+                if f.split(".")[1] == "h5":
+                    merged_dframe = merged_dframe.append(pd.read_hdf(f))
+        else:
+            merged_dframe = pd.read_hdf('datasets/' + path)
+    else:
+        for path in argv[2:]:
+            merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))        
+
+merged_dframe = merged_dframe.fillna(value=0)
 
 # returns names of all available datasets
 def dataset_names():
@@ -65,7 +81,7 @@ def image_data_all_datasets():
 
 # generates json file for graph
 def graph_data_all_datasets():
-    with open('json/' + argv[2], 'r') as file:
+    with open('json/' + argv[1], 'r') as file:
         try:
             data = json.load(file)
         except:
