@@ -40,8 +40,5 @@
     "sass": "^1.17.2",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.5.21"
-  },
-  "resolutions": {
-    "**/**/fsevents": "^1.2.9"
   }
 }

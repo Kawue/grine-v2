@@ -68,10 +68,14 @@ export default new Vuex.Store({
       if (state.loadingGraphData) {
         return;
       }
-      return state.originalGraphData.graphs['graph' + state.options.data.graph].mzs;
+      return state.originalGraphData.graphs['graph' + state.options.data.graph]
+        .mzs;
     },
     getGraphData: state => {
       return state.originalGraphData.graphs;
+    },
+    getGraph: state => {
+      return state.originalGraphData.graphs['graph' + state.options.data.graph];
     },
     getImageDataPoints: state => {
       return state.images.imageData.points;
