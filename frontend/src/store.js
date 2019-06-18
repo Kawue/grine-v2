@@ -75,7 +75,8 @@ export default new Vuex.Store({
       return state.originalGraphData.graphs;
     },
     getGraph: state => {
-      return state.originalGraphData.graphs['graph' + state.options.data.graph];
+      return state.originalGraphData.graphs['graph' + state.options.data.graph]
+        .graph;
     },
     getImageDataPoints: state => {
       return state.images.imageData.points;
@@ -218,6 +219,7 @@ export default new Vuex.Store({
         context.commit('OPTIONS_MZLIST_LOAD_GRAPH');
         context.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
         context.commit('SET_LOADING_GRAPH_DATA', false);
+        context.commit('OPTIONS_MZLIST_SORT_MZ');
         context.dispatch('fetchImageData');
       });
     },

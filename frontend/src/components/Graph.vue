@@ -227,7 +227,7 @@ export default {
       }
     },
   },
-  created() {
+  mounted() {
     window.addEventListener('keyup', this.keyUpHandler);
     window.addEventListener('keydown', this.keyDownHandler);
     const n = [];
