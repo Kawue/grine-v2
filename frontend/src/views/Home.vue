@@ -2,7 +2,7 @@
   <div class="home">
     <SidebarLeft />
     <SidebarRight v-if="showPanels" />
-    <Graph />
+    <Graph v-if="showPanels" />
   </div>
 </template>
 
