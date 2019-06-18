@@ -1,21 +1,5 @@
 <template>
   <div class="graph">
-    <ol
-      multiple
-      style="position: absolute; top: 10px;left: 100px;height: 80vh; overflow: auto; background: white; color: black; width: 150px; z-index: 10"
-      start="0"
-    >
-      <li
-        v-for="(link, index) of optionsV.series[0].links"
-        class="text-center"
-        v-bind:class="{
-          orga: index === selectIndex,
-          brog: index === trueIndex,
-        }"
-      >
-        {{ link.source }} -> {{ link.target }}
-      </li>
-    </ol>
     <!-- Press Ctrl and click on node to expand community -->
     <!-- Press Ctrl+Alt and click node to shrink community -->
     <v-chart
@@ -29,6 +13,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+
 export default {
   name: 'Graph',
   data: function() {
@@ -43,18 +28,16 @@ export default {
         title: {
           text: 'Graph Test',
         },
-        tooltip: {},
         animationDurationUpdate: 1500,
         animationEasingUpdate: 'quinticInOut',
         series: [
           {
             type: 'graph',
-            symbolSize: 50,
             layout: 'force',
             roam: true,
             label: {
               normal: {
-                show: true,
+                show: false,
               },
             },
             categories: [
@@ -95,17 +78,9 @@ export default {
                 name: 'Community 12',
               },
             ],
-            edgeSymbol: ['circle', 'arrow'],
             edgeSymbolSize: [4, 10],
             force: {
               repulsion: 1000,
-            },
-            edgeLabel: {
-              normal: {
-                textStyle: {
-                  fontSize: 20,
-                },
-              },
             },
             data: [],
             // links: [],
@@ -128,20 +103,6 @@ export default {
     }),
   },
   methods: {
-    addLowNode: function() {
-      this.optionsV.series[0].data.push({
-        name: 'n' + this.counter.toString(),
-        x: null,
-        y: null,
-        draggable: true,
-        category: 2,
-      });
-      this.optionsV.series[0].links.push({
-        source: 'n' + this.counter.toString(),
-        target: 'n' + this.randCalc(),
-      });
-      this.counter++;
-    },
     onClickGraph(event) {
       if (event.dataType === 'node' && event.value != null) {
         // Expand community
@@ -158,6 +119,12 @@ export default {
                 x: null,
                 y: null,
                 draggable: true,
+                label: {
+                  formatter: function(params) {
+                    return params.data.category.toString();
+                  },
+                },
+                symbolSize: 50 - (30 / this.numHier) * nextHierarchy,
                 category: event.data.category,
                 value: {
                   mzs: this.graph['hierarchy' + nextHierarchy].nodes[
@@ -193,6 +160,12 @@ export default {
               name: nextNodeName,
               x: null,
               y: null,
+              label: {
+                formatter: function(params) {
+                  return params.data.category.toString();
+                },
+              },
+              symbolSize: 50 - (30 / this.numHier) * previousHierarchy,
               draggable: true,
               category: event.data.category,
               value: {
@@ -231,28 +204,6 @@ export default {
         return link.source === source && link.target === target;
       });
     },
-    addHighNode: function() {
-      this.optionsV.series[0].data.push({
-        name: 'n' + this.counter.toString(),
-        x: null,
-        y: null,
-        draggable: true,
-        category: 2,
-      });
-      this.optionsV.series[0].links.push({
-        source: 'n' + this.counter.toString(),
-        target: 'n' + this.randCalc(),
-      });
-      this.optionsV.series[0].links.push({
-        target: 'n' + this.counter.toString(),
-        source: 'n' + this.randCalc(),
-      });
-      this.counter++;
-    },
-    randCalc: function() {
-      let numb = Math.round(Math.random() * 1000) % (this.counter - 1);
-      return numb.toString();
-    },
     keyDownHandler: function(event) {
       switch (event.which) {
         case 17:
@@ -287,6 +238,12 @@ export default {
         x: null,
         y: null,
         draggable: true,
+        symbolSize: 50,
+        label: {
+          formatter: function(params) {
+            return params.data.category.toString();
+          },
+        },
         category: parseInt(nodeKey.toString().split('n')[1], 10),
         value: {
           childs: this.graph['hierarchy0'].nodes[nodeKey].childs,
@@ -320,13 +277,5 @@ export default {
   background-color: lightblue;
   z-index: 100;
   color: white;
-}
-
-.orga {
-  color: #dc8534;
-}
-
-.brog {
-  border: 1px solid black;
 }
 </style>
