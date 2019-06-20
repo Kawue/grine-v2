@@ -2,27 +2,37 @@
   <div class="network">
     <div class="row">
       <div class="col-md-12">
-        <b-form-group>
-          <b-form-checkbox-group
-            v-model="selected"
-            :options="options"
-            name="buttons-1"
-            buttons
-          ></b-form-checkbox-group>
-        </b-form-group>
-      </div>
-    </div>
-    <hr />
-    <div class="row">
-      <div class="col-md-3">
-        <input type="checkbox" id="1" /><label for="1">Option 1</label><br />
-        <input type="checkbox" id="2" /><label for="1">Option 2</label><br />
-        <input type="checkbox" id="3" /><label for="1">Option 3</label>
-      </div>
-      <div class="col-md-3">
-        <input type="checkbox" id="1" /><label for="1">Option 1</label><br />
-        <input type="checkbox" id="2" /><label for="1">Option 2</label><br />
-        <input type="checkbox" id="3" /><label for="1">Option 3</label>
+        <b-form-select
+          v-on:change="updateRepulsion"
+          v-model="selectedRepulsion"
+          class="mb-3"
+        >
+          <option value="500">500</option>
+          <option selected value="1000">1000</option>
+          <option value="2000">2000</option>
+          <option value="5000">5000</option>
+        </b-form-select>
+        <b-form-select
+          v-on:change="updateGravity"
+          v-model="selectedGravity"
+          class="mb-3"
+        >
+          <option value="0.01">0.01</option>
+          <option selected value="0.1">0.1</option>
+          <option value="0.3">0.3</option>
+          <option value="0.5">0.5</option>
+        </b-form-select>
+        <b-form-select
+          v-on:change="updateEdgeLength"
+          v-model="selectedEdgeLength"
+          class="mb-3"
+        >
+          <option value="10">10</option>
+          <option selected value="30">30</option>
+          <option value="50">50</option>
+          <option value="70">70</option>
+        </b-form-select>
+        <b-button variant="outline-danger" @click="clearList">Clear</b-button>
       </div>
     </div>
     <hr />
@@ -30,18 +40,36 @@
 </template>
 
 <script>
+import store from '@/store';
+
 export default {
   name: 'OptionsNetwork',
   data() {
     return {
-      selected: [], // Must be an array reference!
-      options: [
-        { text: 'Orange', value: 'orange' },
-        { text: 'Apple', value: 'apple' },
-        { text: 'Pineapple', value: 'pineapple' },
-        { text: 'Grape', value: 'grape' },
-      ],
+      selectedRepulsion: 1000,
+      selectedGravity: 0.1,
+      selectedEdgeLength: 30,
     };
+  },
+  methods: {
+    clearList() {
+      store.commit('OPTIONS_MZLIST_RESET_HIGHLIGHTED_MZ');
+    },
+    updateRepulsion() {
+      store.commit(
+        'SET_NETWORK_REPULSION',
+        parseInt(this.selectedRepulsion, 10)
+      );
+    },
+    updateGravity() {
+      store.commit('SET_NETWORK_REPULSION', parseFloat(this.selectedGravity));
+    },
+    updateEdgeLength() {
+      store.commit(
+        'SET_NETWORK_EDGELENGTH',
+        parseInt(this.selectedEdgeLength, 10)
+      );
+    },
   },
 };
 </script>

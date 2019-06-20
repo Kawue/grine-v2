@@ -249,15 +249,15 @@ export default new Vuex.Store({
       state.options.data.graph = 0;
     },
     SET_NETWORK_REPULSION: (state, repulsion) => {
-      state.options.network.repulsion = repulsion;
+      state.options.network.force.repulsion = repulsion;
       state.network.series[0].force = state.options.network.force;
     },
     SET_NETWORK_GRAVITY: (state, gravity) => {
-      state.options.network.gravity = gravity;
+      state.options.network.force.gravity = gravity;
       state.network.series[0].force = state.options.network.force;
     },
     SET_NETWORK_EDGELENGTH: (state, edgeLength) => {
-      state.options.network.edgeLength = edgeLength;
+      state.options.network.force.edgeLength = edgeLength;
       state.network.series[0].force = state.options.network.force;
     },
     NETWORK_LOAD: state => {
@@ -349,8 +349,11 @@ export default new Vuex.Store({
         state.options.mzList.showAll,
         state.options.mzList.asc
       );
-      state.options.mzList.visibleMz = tuple[0];
       state.options.mzList.notVisibleMz = tuple[1];
+      state.options.mzList.visibleMz = mzListService.sortMzList(
+        tuple[0],
+        state.options.mzList.asc
+      );
     },
     OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(

@@ -47,11 +47,11 @@ class MzListService {
 
   resetHighlightedMz(visibleMz, notVisibleMz, showAll, asc) {
     const localMzlist = [...visibleMz];
-    localMzlist.append(...notVisibleMz);
+    localMzlist.push(...notVisibleMz);
     for (const mzObject of localMzlist) {
-      mzObject.hightlight = true;
+      mzObject.highlight = true;
     }
-    this.calculateVisibleMz(showAll, [], localMzlist, asc);
+    return this.calculateVisibleMz(showAll, [], localMzlist, asc);
   }
 
   updateHighlightedMz(visibleMz, notVisibleMz, mzValues, showAll, asc) {
