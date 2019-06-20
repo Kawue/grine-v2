@@ -13,7 +13,7 @@ class MzListService {
     const t = [];
     Object.keys(orgData[graphString].mzs).forEach(function(mz) {
       t.push({
-        highlight: Math.random() > 0.3,
+        highlight: true,
         ...orgData[graphString].mzs[mz],
         name: orgData[graphString].graph['hierarchy' + numberOfLayers].nodes[
           orgData[graphString].mzs[mz]['hierarchy' + numberOfLayers]
@@ -43,6 +43,26 @@ class MzListService {
       }
     }
     return [localVisible, localNotVisible];
+  }
+
+  resetHighlightedMz(visibleMz, notVisibleMz, showAll, asc) {
+    const localMzlist = [...visibleMz];
+    localMzlist.append(...notVisibleMz);
+    for (const mzObject of localMzlist) {
+      mzObject.hightlight = true;
+    }
+    this.calculateVisibleMz(showAll, [], localMzlist, asc);
+  }
+
+  updateHighlightedMz(visibleMz, notVisibleMz, mzValues, showAll, asc) {
+    let localVisible = [...visibleMz];
+    localVisible.push(...notVisibleMz);
+    const mzValuesStrings = mzValues.map(mz => mz.toString());
+    for (const mzObject of localVisible) {
+      mzObject.highlight =
+        mzValuesStrings.findIndex(mz => mz === mzObject.mz) > -1;
+    }
+    return this.calculateVisibleMz(showAll, [], localVisible, asc);
   }
 }
 export default MzListService;

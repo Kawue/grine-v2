@@ -7,9 +7,11 @@ Vue.config.devtools = true;
 import OptionsService from './services/OptionsService';
 import MzListService from './services/MzListService';
 import ImageService from './services/ImageService';
-let optionsService = new OptionsService();
-let mzListService = new MzListService();
-let imageService = new ImageService();
+import NetworkService from './services/NetworkService';
+const optionsService = new OptionsService();
+const mzListService = new MzListService();
+const imageService = new ImageService();
+const networkService = new NetworkService();
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000';
@@ -32,6 +34,79 @@ export default new Vuex.Store({
       mzValue: null, // mzValue of which the image is rendered
       loadingImageData: true, // api fetch for image data is running
     },
+    network: {
+      title: {
+        text: 'Graph Test',
+      },
+      animationDurationUpdate: 1500,
+      animationEasingUpdate: 'quinticInOut',
+      series: [
+        {
+          type: 'graph',
+          layout: 'force',
+          roam: true,
+          label: {
+            normal: {
+              show: false,
+            },
+          },
+          categories: [
+            {
+              name: 'Community 1',
+            },
+            {
+              name: 'Community 2',
+            },
+            {
+              name: 'Community 3',
+            },
+            {
+              name: 'Community 4',
+            },
+            {
+              name: 'Community 5',
+            },
+            {
+              name: 'Community 6',
+            },
+            {
+              name: 'Community 7',
+            },
+            {
+              name: 'Community 8',
+            },
+            {
+              name: 'Community 9',
+            },
+            {
+              name: 'Community 10',
+            },
+            {
+              name: 'Community 11',
+            },
+            {
+              name: 'Community 12',
+            },
+          ],
+          edgeSymbolSize: [4, 10],
+          force: {
+            repulsion: 1000,
+            edgeLength: 30,
+            gravity: 0.1,
+          },
+          data: [],
+          // links: [],
+          links: [],
+          lineStyle: {
+            normal: {
+              opacity: 0.9,
+              width: 2,
+              curveness: 0,
+            },
+          },
+        },
+      ],
+    },
     options: {
       state: {
         // state of options widget
@@ -39,7 +114,13 @@ export default new Vuex.Store({
         tabLocked: null,
         tabsExpanded: false,
       },
-      network: {},
+      network: {
+        force: {
+          repulsion: 1000,
+          gravity: 0.1,
+          edgeLength: 30,
+        },
+      },
       image: {
         showMz: true,
       },
@@ -117,6 +198,12 @@ export default new Vuex.Store({
     mzListOptionsAsc: state => {
       return state.options.mzList.asc;
     },
+    network: state => {
+      return state.network;
+    },
+    networkOptions: state => {
+      return state.options.network;
+    },
     stateOptionsGraph: state => {
       return state.options.data.graph;
     },
@@ -161,6 +248,51 @@ export default new Vuex.Store({
       }
       state.options.data.graph = 0;
     },
+    SET_NETWORK_REPULSION: (state, repulsion) => {
+      state.options.network.repulsion = repulsion;
+      state.network.series[0].force = state.options.network.force;
+    },
+    SET_NETWORK_GRAVITY: (state, gravity) => {
+      state.options.network.gravity = gravity;
+      state.network.series[0].force = state.options.network.force;
+    },
+    SET_NETWORK_EDGELENGTH: (state, edgeLength) => {
+      state.options.network.edgeLength = edgeLength;
+      state.network.series[0].force = state.options.network.force;
+    },
+    NETWORK_LOAD: state => {
+      const nodeEdges = networkService.loadGraph(
+        state.originalGraphData.graphs['graph' + state.options.data.graph].graph
+      );
+      state.network.series[0].data = nodeEdges[0];
+      state.network.series[0].links = nodeEdges[1];
+    },
+    NETWORK_EXPAND_NODE: (state, event) => {
+      const hierarchy = parseInt(event.data.name.split('n')[0].slice(1), 10);
+      if (hierarchy < 3) {
+        state.network.series[0].data.splice(event.dataIndex, 1);
+        const nextNodes = networkService.expandNode(
+          state.originalGraphData.graphs['graph' + state.options.data.graph]
+            .graph,
+          event.data
+        );
+        state.network.series[0].data.push(...nextNodes);
+      }
+    },
+    NETWORK_SHRINK_NODE: (state, oldNode) => {
+      const hierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10);
+      if (hierarchy > 0) {
+        this.network.series[0].data = this.network.series[0].data.filter(
+          item => item.value.parent !== oldNode.value.parent
+        );
+        const nextNode = networkService.shrinkNode(
+          state.originalGraphData.graphs['graph' + state.options.data.graph]
+            .graph,
+          oldNode
+        );
+        state.network.series[0].data.push(nextNode);
+      }
+    },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
     },
@@ -192,12 +324,33 @@ export default new Vuex.Store({
     OPTIONS_MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.options.mzList.selectedMz = data;
     },
+    OPTIONS_MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
+      const tuple = mzListService.updateHighlightedMz(
+        state.options.mzList.visibleMz,
+        state.options.mzList.notVisibleMz,
+        mzValues,
+        state.options.mzList.showAll,
+        state.options.mzList.asc
+      );
+      state.options.mzList.visibleMz = tuple[0];
+      state.options.mzList.notVisibleMz = tuple[1];
+    },
     OPTIONS_MZLIST_LOAD_GRAPH: state => {
       state.options.mzList.notVisibleMz = [];
       state.options.mzList.visibleMz = mzListService.loadGraph(
         state.options.data.graph,
         state.originalGraphData.graphs
       );
+    },
+    OPTIONS_MZLIST_RESET_HIGHLIGHTED_MZ: state => {
+      const tuple = mzListService.resetHighlightedMz(
+        state.options.mzList.visibleMz,
+        state.options.mzList.notVisibleMz,
+        state.options.mzList.showAll,
+        state.options.mzList.asc
+      );
+      state.options.mzList.visibleMz = tuple[0];
+      state.options.mzList.notVisibleMz = tuple[1];
     },
     OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(
