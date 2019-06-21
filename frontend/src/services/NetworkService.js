@@ -1,4 +1,9 @@
 class NetworkService {
+  highlightedNodeStyle = {
+    shadowColor: 'rgba(0, 0, 0, 0.7)',
+    shadowBlur: 15,
+  };
+
   loadGraph(graph) {
     const tupel = [[], []];
     const nodeNames = Object.keys(graph['hierarchy0'].nodes);
@@ -101,6 +106,34 @@ class NetworkService {
       nextNodes.push(nextNode);
     }
     return nextNodes;
+  }
+
+  highlightNodesByMz(nodes, mzValuesStrings) {
+    const mzValuesFloats = mzValuesStrings.map(mz => parseFloat(mz));
+    const indices = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = 0; j < mzValuesFloats.length; j++) {
+        if (nodes[i].value.mzs.findIndex(mz => mz === mzValuesFloats[j]) > -1) {
+          indices.push(i);
+          mzValuesFloats.splice(j, 1);
+          break;
+        }
+      }
+    }
+    return this.highlightNodes(nodes, indices);
+  }
+
+  highlightNodes(nodes, indices) {
+    const localNodes = [...nodes];
+    for (const node of localNodes) {
+      node.itemStyle = null;
+    }
+    if (indices.length > 0) {
+      for (const index of [...new Set(indices)]) {
+        localNodes[index].itemStyle = this.highlightedNodeStyle;
+      }
+    }
+    return localNodes;
   }
 }
 export default NetworkService;

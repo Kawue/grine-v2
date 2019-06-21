@@ -1266,507 +1266,810 @@
                         "h3n0": {
                             "index": 0,
                             "name": 74.651,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                74.651
+                            ]
                         },
                         "h3n1": {
                             "index": 1,
                             "name": 104.107,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                104.107
+                            ]
                         },
                         "h3n2": {
                             "index": 2,
                             "name": 118.277,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                118.277
+                            ]
                         },
                         "h3n3": {
                             "index": 3,
                             "name": 175.328,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                175.328
+                            ]
                         },
                         "h3n4": {
                             "index": 4,
                             "name": 184.073,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                184.073
+                            ]
                         },
                         "h3n5": {
                             "index": 5,
                             "name": 230.003,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                230.003
+                            ]
                         },
                         "h3n6": {
                             "index": 6,
                             "name": 277.166,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                277.166
+                            ]
                         },
                         "h3n7": {
                             "index": 7,
                             "name": 293.161,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                293.161
+                            ]
                         },
                         "h3n8": {
                             "index": 8,
                             "name": 307.176,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                307.176
+                            ]
                         },
                         "h3n9": {
                             "index": 9,
                             "name": 323.171,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                323.171
+                            ]
                         },
                         "h3n10": {
                             "index": 10,
                             "name": 381.079,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                381.079
+                            ]
                         },
                         "h3n11": {
                             "index": 11,
                             "name": 496.339,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                496.339
+                            ]
                         },
                         "h3n12": {
                             "index": 12,
                             "name": 518.321,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                518.321
+                            ]
                         },
                         "h3n13": {
                             "index": 13,
                             "name": 520.34,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                520.34
+                            ]
                         },
                         "h3n14": {
                             "index": 14,
                             "name": 534.089,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                534.089
+                            ]
                         },
                         "h3n15": {
                             "index": 15,
                             "name": 543.132,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                543.132
+                            ]
                         },
                         "h3n16": {
                             "index": 16,
                             "name": 551.309,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                551.309
+                            ]
                         },
                         "h3n17": {
                             "index": 17,
                             "name": 558.176,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                558.176
+                            ]
                         },
                         "h3n18": {
                             "index": 18,
                             "name": 567.304,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                567.304
+                            ]
                         },
                         "h3n19": {
                             "index": 19,
                             "name": 573.291,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                573.291
+                            ]
                         },
                         "h3n20": {
                             "index": 20,
                             "name": 581.319,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                581.319
+                            ]
                         },
                         "h3n21": {
                             "index": 21,
                             "name": 589.265,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                589.265
+                            ]
                         },
                         "h3n22": {
                             "index": 22,
                             "name": 589.286,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                589.286
+                            ]
                         },
                         "h3n23": {
                             "index": 23,
                             "name": 597.314,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                597.314
+                            ]
                         },
                         "h3n24": {
                             "index": 24,
                             "name": 603.301,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                603.301
+                            ]
                         },
                         "h3n25": {
                             "index": 25,
                             "name": 605.26,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                605.26
+                            ]
                         },
                         "h3n26": {
                             "index": 26,
                             "name": 611.33,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                611.33
+                            ]
                         },
                         "h3n27": {
                             "index": 27,
                             "name": 619.275,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                619.275
+                            ]
                         },
                         "h3n28": {
                             "index": 28,
                             "name": 619.296,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                619.296
+                            ]
                         },
                         "h3n29": {
                             "index": 29,
                             "name": 627.325,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                627.325
+                            ]
                         },
                         "h3n30": {
                             "index": 30,
                             "name": 635.27,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                635.27
+                            ]
                         },
                         "h3n31": {
                             "index": 31,
                             "name": 650.554,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                650.554
+                            ]
                         },
                         "h3n32": {
                             "index": 32,
                             "name": 674.375,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                674.375
+                            ]
                         },
                         "h3n33": {
                             "index": 33,
                             "name": 689.211,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                689.211
+                            ]
                         },
                         "h3n34": {
                             "index": 34,
                             "name": 705.185,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                705.185
+                            ]
                         },
                         "h3n35": {
                             "index": 35,
                             "name": 713.362,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                713.362
+                            ]
                         },
                         "h3n36": {
                             "index": 36,
                             "name": 729.357,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                729.357
+                            ]
                         },
                         "h3n37": {
                             "index": 37,
                             "name": 735.344,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                735.344
+                            ]
                         },
                         "h3n38": {
                             "index": 38,
                             "name": 743.372,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                743.372
+                            ]
                         },
                         "h3n39": {
                             "index": 39,
                             "name": 751.318,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                751.318
+                            ]
                         },
                         "h3n40": {
                             "index": 40,
                             "name": 751.339,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                751.339
+                            ]
                         },
                         "h3n41": {
                             "index": 41,
                             "name": 756.553,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                756.553
+                            ]
                         },
                         "h3n42": {
                             "index": 42,
                             "name": 758.569,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                758.569
+                            ]
                         },
                         "h3n43": {
                             "index": 43,
                             "name": 759.367,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                759.367
+                            ]
                         },
                         "h3n44": {
                             "index": 44,
                             "name": 765.354,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                765.354
+                            ]
                         },
                         "h3n45": {
                             "index": 45,
                             "name": 767.312,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                767.312
+                            ]
                         },
                         "h3n46": {
                             "index": 46,
                             "name": 773.383,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                773.383
+                            ]
                         },
                         "h3n47": {
                             "index": 47,
                             "name": 780.553,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                780.553
+                            ]
                         },
                         "h3n48": {
                             "index": 48,
                             "name": 781.328,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                781.328
+                            ]
                         },
                         "h3n49": {
                             "index": 49,
                             "name": 781.349,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                781.349
+                            ]
                         },
                         "h3n50": {
                             "index": 50,
                             "name": 782.656,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                782.656
+                            ]
                         },
                         "h3n51": {
                             "index": 51,
                             "name": 789.378,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                789.378
+                            ]
                         },
                         "h3n52": {
                             "index": 52,
                             "name": 795.365,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                795.365
+                            ]
                         },
                         "h3n53": {
                             "index": 53,
                             "name": 796.524,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                796.524
+                            ]
                         },
                         "h3n54": {
                             "index": 54,
                             "name": 797.323,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                797.323
+                            ]
                         },
                         "h3n55": {
                             "index": 55,
                             "name": 811.339,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                811.339
+                            ]
                         },
                         "h3n56": {
                             "index": 56,
                             "name": 811.36,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                811.36
+                            ]
                         },
                         "h3n57": {
                             "index": 57,
                             "name": 820.525,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                820.525
+                            ]
                         },
                         "h3n58": {
                             "index": 58,
                             "name": 827.334,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                827.334
+                            ]
                         },
                         "h3n59": {
                             "index": 59,
                             "name": 851.264,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                851.264
+                            ]
                         },
                         "h3n60": {
                             "index": 60,
                             "name": 867.238,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                867.238
+                            ]
                         },
                         "h3n61": {
                             "index": 61,
                             "name": 875.415,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                875.415
+                            ]
                         },
                         "h3n62": {
                             "index": 62,
                             "name": 891.409,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                891.409
+                            ]
                         },
                         "h3n63": {
                             "index": 63,
                             "name": 897.396,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                897.396
+                            ]
                         },
                         "h3n64": {
                             "index": 64,
                             "name": 897.73,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                897.73
+                            ]
                         },
                         "h3n65": {
                             "index": 65,
                             "name": 905.425,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                905.425
+                            ]
                         },
                         "h3n66": {
                             "index": 66,
                             "name": 913.37,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                913.37
+                            ]
                         },
                         "h3n67": {
                             "index": 67,
                             "name": 913.391,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                913.391
+                            ]
                         },
                         "h3n68": {
                             "index": 68,
                             "name": 921.42,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                921.42
+                            ]
                         },
                         "h3n69": {
                             "index": 69,
                             "name": 927.407,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                927.407
+                            ]
                         },
                         "h3n70": {
                             "index": 70,
                             "name": 929.365,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                929.365
+                            ]
                         },
                         "h3n71": {
                             "index": 71,
                             "name": 935.436,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                935.436
+                            ]
                         },
                         "h3n72": {
                             "index": 72,
                             "name": 943.381,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                943.381
+                            ]
                         },
                         "h3n73": {
                             "index": 73,
                             "name": 943.402,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                943.402
+                            ]
                         },
                         "h3n74": {
                             "index": 74,
                             "name": 951.431,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                951.431
+                            ]
                         },
                         "h3n75": {
                             "index": 75,
                             "name": 955.573,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                955.573
+                            ]
                         },
                         "h3n76": {
                             "index": 76,
                             "name": 957.418,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                957.418
+                            ]
                         },
                         "h3n77": {
                             "index": 77,
                             "name": 959.376,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                959.376
+                            ]
                         },
                         "h3n78": {
                             "index": 78,
                             "name": 963.604,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                963.604
+                            ]
                         },
                         "h3n79": {
                             "index": 79,
                             "name": 973.392,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                973.392
+                            ]
                         },
                         "h3n80": {
                             "index": 80,
                             "name": 973.413,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                973.413
+                            ]
                         },
                         "h3n81": {
                             "index": 81,
                             "name": 979.574,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                979.574
+                            ]
                         },
                         "h3n82": {
                             "index": 82,
                             "name": 989.386,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                989.386
+                            ]
                         },
                         "h3n83": {
                             "index": 83,
                             "name": 1006.576,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                1006.576
+                            ]
                         },
                         "h3n84": {
                             "index": 84,
                             "name": 1013.314,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1013.314
+                            ]
                         },
                         "h3n85": {
                             "index": 85,
                             "name": 1029.291,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                1029.291
+                            ]
                         },
                         "h3n86": {
                             "index": 86,
                             "name": 1175.37,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1175.37
+                            ]
                         },
                         "h3n87": {
                             "index": 87,
                             "name": 1191.343,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1191.343
+                            ]
                         },
                         "h3n88": {
                             "index": 88,
                             "name": 1337.422,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                1337.422
+                            ]
                         },
                         "h3n89": {
                             "index": 89,
                             "name": 1353.398,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                1353.398
+                            ]
                         },
                         "h3n90": {
                             "index": 90,
                             "name": 1499.473,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                1499.473
+                            ]
                         },
                         "h3n91": {
                             "index": 91,
                             "name": 1515.45,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1515.45
+                            ]
                         },
                         "h3n92": {
                             "index": 92,
                             "name": 1661.531,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                1661.531
+                            ]
                         },
                         "h3n93": {
                             "index": 93,
                             "name": 1677.505,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                1677.505
+                            ]
                         },
                         "h3n94": {
                             "index": 94,
                             "name": 1823.583,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1823.583
+                            ]
                         },
                         "h3n95": {
                             "index": 95,
                             "name": 1839.557,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1839.557
+                            ]
                         },
                         "h3n96": {
                             "index": 96,
                             "name": 1986.101,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1986.101
+                            ]
                         },
                         "h3n97": {
                             "index": 97,
                             "name": 2001.743,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                2001.743
+                            ]
                         },
                         "h3n98": {
                             "index": 98,
                             "name": 2148.048,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                2148.048
+                            ]
                         },
                         "h3n99": {
                             "index": 99,
                             "name": 2163.914,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                2163.914
+                            ]
                         },
                         "h3n100": {
                             "index": 100,
                             "name": 2200.687,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                2200.687
+                            ]
                         }
                     },
                     "edges": {
@@ -2130,7 +2433,7 @@
                     }
                 }
             },
-            "dataset": "barley101_1",
+            "dataset": "barley101GrineV2",
             "mzs": {
                 "74.651": {
                     "hierarchy0": "h0n0",
@@ -4006,507 +4309,810 @@
                         "h3n0": {
                             "index": 0,
                             "name": 74.651,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                74.651
+                            ]
                         },
                         "h3n1": {
                             "index": 1,
                             "name": 104.107,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                104.107
+                            ]
                         },
                         "h3n2": {
                             "index": 2,
                             "name": 118.277,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                118.277
+                            ]
                         },
                         "h3n3": {
                             "index": 3,
                             "name": 175.328,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                175.328
+                            ]
                         },
                         "h3n4": {
                             "index": 4,
                             "name": 184.073,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                184.073
+                            ]
                         },
                         "h3n5": {
                             "index": 5,
                             "name": 230.003,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                230.003
+                            ]
                         },
                         "h3n6": {
                             "index": 6,
                             "name": 277.166,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                277.166
+                            ]
                         },
                         "h3n7": {
                             "index": 7,
                             "name": 293.161,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                293.161
+                            ]
                         },
                         "h3n8": {
                             "index": 8,
                             "name": 307.176,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                307.176
+                            ]
                         },
                         "h3n9": {
                             "index": 9,
                             "name": 323.171,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                323.171
+                            ]
                         },
                         "h3n10": {
                             "index": 10,
                             "name": 381.079,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                381.079
+                            ]
                         },
                         "h3n11": {
                             "index": 11,
                             "name": 496.339,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                496.339
+                            ]
                         },
                         "h3n12": {
                             "index": 12,
                             "name": 518.321,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                518.321
+                            ]
                         },
                         "h3n13": {
                             "index": 13,
                             "name": 520.34,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                520.34
+                            ]
                         },
                         "h3n14": {
                             "index": 14,
                             "name": 534.089,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                534.089
+                            ]
                         },
                         "h3n15": {
                             "index": 15,
                             "name": 543.132,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                543.132
+                            ]
                         },
                         "h3n16": {
                             "index": 16,
                             "name": 551.309,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                551.309
+                            ]
                         },
                         "h3n17": {
                             "index": 17,
                             "name": 558.176,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                558.176
+                            ]
                         },
                         "h3n18": {
                             "index": 18,
                             "name": 567.304,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                567.304
+                            ]
                         },
                         "h3n19": {
                             "index": 19,
                             "name": 573.291,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                573.291
+                            ]
                         },
                         "h3n20": {
                             "index": 20,
                             "name": 581.319,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                581.319
+                            ]
                         },
                         "h3n21": {
                             "index": 21,
                             "name": 589.265,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                589.265
+                            ]
                         },
                         "h3n22": {
                             "index": 22,
                             "name": 589.286,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                589.286
+                            ]
                         },
                         "h3n23": {
                             "index": 23,
                             "name": 597.314,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                597.314
+                            ]
                         },
                         "h3n24": {
                             "index": 24,
                             "name": 603.301,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                603.301
+                            ]
                         },
                         "h3n25": {
                             "index": 25,
                             "name": 605.26,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                605.26
+                            ]
                         },
                         "h3n26": {
                             "index": 26,
                             "name": 611.33,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                611.33
+                            ]
                         },
                         "h3n27": {
                             "index": 27,
                             "name": 619.275,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                619.275
+                            ]
                         },
                         "h3n28": {
                             "index": 28,
                             "name": 619.296,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                619.296
+                            ]
                         },
                         "h3n29": {
                             "index": 29,
                             "name": 627.325,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                627.325
+                            ]
                         },
                         "h3n30": {
                             "index": 30,
                             "name": 635.27,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                635.27
+                            ]
                         },
                         "h3n31": {
                             "index": 31,
                             "name": 650.554,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                650.554
+                            ]
                         },
                         "h3n32": {
                             "index": 32,
                             "name": 674.375,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                674.375
+                            ]
                         },
                         "h3n33": {
                             "index": 33,
                             "name": 689.211,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                689.211
+                            ]
                         },
                         "h3n34": {
                             "index": 34,
                             "name": 705.185,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                705.185
+                            ]
                         },
                         "h3n35": {
                             "index": 35,
                             "name": 713.362,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                713.362
+                            ]
                         },
                         "h3n36": {
                             "index": 36,
                             "name": 729.357,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                729.357
+                            ]
                         },
                         "h3n37": {
                             "index": 37,
                             "name": 735.344,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                735.344
+                            ]
                         },
                         "h3n38": {
                             "index": 38,
                             "name": 743.372,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                743.372
+                            ]
                         },
                         "h3n39": {
                             "index": 39,
                             "name": 751.318,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                751.318
+                            ]
                         },
                         "h3n40": {
                             "index": 40,
                             "name": 751.339,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                751.339
+                            ]
                         },
                         "h3n41": {
                             "index": 41,
                             "name": 756.553,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                756.553
+                            ]
                         },
                         "h3n42": {
                             "index": 42,
                             "name": 758.569,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                758.569
+                            ]
                         },
                         "h3n43": {
                             "index": 43,
                             "name": 759.367,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                759.367
+                            ]
                         },
                         "h3n44": {
                             "index": 44,
                             "name": 765.354,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                765.354
+                            ]
                         },
                         "h3n45": {
                             "index": 45,
                             "name": 767.312,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                767.312
+                            ]
                         },
                         "h3n46": {
                             "index": 46,
                             "name": 773.383,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                773.383
+                            ]
                         },
                         "h3n47": {
                             "index": 47,
                             "name": 780.553,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                780.553
+                            ]
                         },
                         "h3n48": {
                             "index": 48,
                             "name": 781.328,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                781.328
+                            ]
                         },
                         "h3n49": {
                             "index": 49,
                             "name": 781.349,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                781.349
+                            ]
                         },
                         "h3n50": {
                             "index": 50,
                             "name": 782.656,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                782.656
+                            ]
                         },
                         "h3n51": {
                             "index": 51,
                             "name": 789.378,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                789.378
+                            ]
                         },
                         "h3n52": {
                             "index": 52,
                             "name": 795.365,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                795.365
+                            ]
                         },
                         "h3n53": {
                             "index": 53,
                             "name": 796.524,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                796.524
+                            ]
                         },
                         "h3n54": {
                             "index": 54,
                             "name": 797.323,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                797.323
+                            ]
                         },
                         "h3n55": {
                             "index": 55,
                             "name": 811.339,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                811.339
+                            ]
                         },
                         "h3n56": {
                             "index": 56,
                             "name": 811.36,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                811.36
+                            ]
                         },
                         "h3n57": {
                             "index": 57,
                             "name": 820.525,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                820.525
+                            ]
                         },
                         "h3n58": {
                             "index": 58,
                             "name": 827.334,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                827.334
+                            ]
                         },
                         "h3n59": {
                             "index": 59,
                             "name": 851.264,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                851.264
+                            ]
                         },
                         "h3n60": {
                             "index": 60,
                             "name": 867.238,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                867.238
+                            ]
                         },
                         "h3n61": {
                             "index": 61,
                             "name": 875.415,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                875.415
+                            ]
                         },
                         "h3n62": {
                             "index": 62,
                             "name": 891.409,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                891.409
+                            ]
                         },
                         "h3n63": {
                             "index": 63,
                             "name": 897.396,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                897.396
+                            ]
                         },
                         "h3n64": {
                             "index": 64,
                             "name": 897.73,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                897.73
+                            ]
                         },
                         "h3n65": {
                             "index": 65,
                             "name": 905.425,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                905.425
+                            ]
                         },
                         "h3n66": {
                             "index": 66,
                             "name": 913.37,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                913.37
+                            ]
                         },
                         "h3n67": {
                             "index": 67,
                             "name": 913.391,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                913.391
+                            ]
                         },
                         "h3n68": {
                             "index": 68,
                             "name": 921.42,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                921.42
+                            ]
                         },
                         "h3n69": {
                             "index": 69,
                             "name": 927.407,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                927.407
+                            ]
                         },
                         "h3n70": {
                             "index": 70,
                             "name": 929.365,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                929.365
+                            ]
                         },
                         "h3n71": {
                             "index": 71,
                             "name": 935.436,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                935.436
+                            ]
                         },
                         "h3n72": {
                             "index": 72,
                             "name": 943.381,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                943.381
+                            ]
                         },
                         "h3n73": {
                             "index": 73,
                             "name": 943.402,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                943.402
+                            ]
                         },
                         "h3n74": {
                             "index": 74,
                             "name": 951.431,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                951.431
+                            ]
                         },
                         "h3n75": {
                             "index": 75,
                             "name": 955.573,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                955.573
+                            ]
                         },
                         "h3n76": {
                             "index": 76,
                             "name": 957.418,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                957.418
+                            ]
                         },
                         "h3n77": {
                             "index": 77,
                             "name": 959.376,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                959.376
+                            ]
                         },
                         "h3n78": {
                             "index": 78,
                             "name": 963.604,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                963.604
+                            ]
                         },
                         "h3n79": {
                             "index": 79,
                             "name": 973.392,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                973.392
+                            ]
                         },
                         "h3n80": {
                             "index": 80,
                             "name": 973.413,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                973.413
+                            ]
                         },
                         "h3n81": {
                             "index": 81,
                             "name": 979.574,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                979.574
+                            ]
                         },
                         "h3n82": {
                             "index": 82,
                             "name": 989.386,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                989.386
+                            ]
                         },
                         "h3n83": {
                             "index": 83,
                             "name": 1006.576,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                1006.576
+                            ]
                         },
                         "h3n84": {
                             "index": 84,
                             "name": 1013.314,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1013.314
+                            ]
                         },
                         "h3n85": {
                             "index": 85,
                             "name": 1029.291,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                1029.291
+                            ]
                         },
                         "h3n86": {
                             "index": 86,
                             "name": 1175.37,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1175.37
+                            ]
                         },
                         "h3n87": {
                             "index": 87,
                             "name": 1191.343,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1191.343
+                            ]
                         },
                         "h3n88": {
                             "index": 88,
                             "name": 1337.422,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                1337.422
+                            ]
                         },
                         "h3n89": {
                             "index": 89,
                             "name": 1353.398,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                1353.398
+                            ]
                         },
                         "h3n90": {
                             "index": 90,
                             "name": 1499.473,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                1499.473
+                            ]
                         },
                         "h3n91": {
                             "index": 91,
                             "name": 1515.45,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1515.45
+                            ]
                         },
                         "h3n92": {
                             "index": 92,
                             "name": 1661.531,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                1661.531
+                            ]
                         },
                         "h3n93": {
                             "index": 93,
                             "name": 1677.505,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                1677.505
+                            ]
                         },
                         "h3n94": {
                             "index": 94,
                             "name": 1823.583,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1823.583
+                            ]
                         },
                         "h3n95": {
                             "index": 95,
                             "name": 1839.557,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1839.557
+                            ]
                         },
                         "h3n96": {
                             "index": 96,
                             "name": 1986.101,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1986.101
+                            ]
                         },
                         "h3n97": {
                             "index": 97,
                             "name": 2001.743,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                2001.743
+                            ]
                         },
                         "h3n98": {
                             "index": 98,
                             "name": 2148.048,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                2148.048
+                            ]
                         },
                         "h3n99": {
                             "index": 99,
                             "name": 2163.914,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                2163.914
+                            ]
                         },
                         "h3n100": {
                             "index": 100,
                             "name": 2200.687,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                2200.687
+                            ]
                         }
                     },
                     "edges": {
@@ -4870,7 +5476,7 @@
                     }
                 }
             },
-            "dataset": "barley101_2",
+            "dataset": "barley101GrineV2",
             "mzs": {
                 "74.651": {
                     "hierarchy0": "h0n0",
@@ -6746,507 +7352,810 @@
                         "h3n0": {
                             "index": 0,
                             "name": 74.651,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                74.651
+                            ]
                         },
                         "h3n1": {
                             "index": 1,
                             "name": 104.107,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                104.107
+                            ]
                         },
                         "h3n2": {
                             "index": 2,
                             "name": 118.277,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                118.277
+                            ]
                         },
                         "h3n3": {
                             "index": 3,
                             "name": 175.328,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                175.328
+                            ]
                         },
                         "h3n4": {
                             "index": 4,
                             "name": 184.073,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                184.073
+                            ]
                         },
                         "h3n5": {
                             "index": 5,
                             "name": 230.003,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                230.003
+                            ]
                         },
                         "h3n6": {
                             "index": 6,
                             "name": 277.166,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                277.166
+                            ]
                         },
                         "h3n7": {
                             "index": 7,
                             "name": 293.161,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                293.161
+                            ]
                         },
                         "h3n8": {
                             "index": 8,
                             "name": 307.176,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                307.176
+                            ]
                         },
                         "h3n9": {
                             "index": 9,
                             "name": 323.171,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                323.171
+                            ]
                         },
                         "h3n10": {
                             "index": 10,
                             "name": 381.079,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                381.079
+                            ]
                         },
                         "h3n11": {
                             "index": 11,
                             "name": 496.339,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                496.339
+                            ]
                         },
                         "h3n12": {
                             "index": 12,
                             "name": 518.321,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                518.321
+                            ]
                         },
                         "h3n13": {
                             "index": 13,
                             "name": 520.34,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                520.34
+                            ]
                         },
                         "h3n14": {
                             "index": 14,
                             "name": 534.089,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                534.089
+                            ]
                         },
                         "h3n15": {
                             "index": 15,
                             "name": 543.132,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                543.132
+                            ]
                         },
                         "h3n16": {
                             "index": 16,
                             "name": 551.309,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                551.309
+                            ]
                         },
                         "h3n17": {
                             "index": 17,
                             "name": 558.176,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                558.176
+                            ]
                         },
                         "h3n18": {
                             "index": 18,
                             "name": 567.304,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                567.304
+                            ]
                         },
                         "h3n19": {
                             "index": 19,
                             "name": 573.291,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                573.291
+                            ]
                         },
                         "h3n20": {
                             "index": 20,
                             "name": 581.319,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                581.319
+                            ]
                         },
                         "h3n21": {
                             "index": 21,
                             "name": 589.265,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                589.265
+                            ]
                         },
                         "h3n22": {
                             "index": 22,
                             "name": 589.286,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                589.286
+                            ]
                         },
                         "h3n23": {
                             "index": 23,
                             "name": 597.314,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                597.314
+                            ]
                         },
                         "h3n24": {
                             "index": 24,
                             "name": 603.301,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                603.301
+                            ]
                         },
                         "h3n25": {
                             "index": 25,
                             "name": 605.26,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                605.26
+                            ]
                         },
                         "h3n26": {
                             "index": 26,
                             "name": 611.33,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                611.33
+                            ]
                         },
                         "h3n27": {
                             "index": 27,
                             "name": 619.275,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                619.275
+                            ]
                         },
                         "h3n28": {
                             "index": 28,
                             "name": 619.296,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                619.296
+                            ]
                         },
                         "h3n29": {
                             "index": 29,
                             "name": 627.325,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                627.325
+                            ]
                         },
                         "h3n30": {
                             "index": 30,
                             "name": 635.27,
-                            "membership": 1
+                            "membership": 1,
+                            "mzs": [
+                                635.27
+                            ]
                         },
                         "h3n31": {
                             "index": 31,
                             "name": 650.554,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                650.554
+                            ]
                         },
                         "h3n32": {
                             "index": 32,
                             "name": 674.375,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                674.375
+                            ]
                         },
                         "h3n33": {
                             "index": 33,
                             "name": 689.211,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                689.211
+                            ]
                         },
                         "h3n34": {
                             "index": 34,
                             "name": 705.185,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                705.185
+                            ]
                         },
                         "h3n35": {
                             "index": 35,
                             "name": 713.362,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                713.362
+                            ]
                         },
                         "h3n36": {
                             "index": 36,
                             "name": 729.357,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                729.357
+                            ]
                         },
                         "h3n37": {
                             "index": 37,
                             "name": 735.344,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                735.344
+                            ]
                         },
                         "h3n38": {
                             "index": 38,
                             "name": 743.372,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                743.372
+                            ]
                         },
                         "h3n39": {
                             "index": 39,
                             "name": 751.318,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                751.318
+                            ]
                         },
                         "h3n40": {
                             "index": 40,
                             "name": 751.339,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                751.339
+                            ]
                         },
                         "h3n41": {
                             "index": 41,
                             "name": 756.553,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                756.553
+                            ]
                         },
                         "h3n42": {
                             "index": 42,
                             "name": 758.569,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                758.569
+                            ]
                         },
                         "h3n43": {
                             "index": 43,
                             "name": 759.367,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                759.367
+                            ]
                         },
                         "h3n44": {
                             "index": 44,
                             "name": 765.354,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                765.354
+                            ]
                         },
                         "h3n45": {
                             "index": 45,
                             "name": 767.312,
-                            "membership": 2
+                            "membership": 2,
+                            "mzs": [
+                                767.312
+                            ]
                         },
                         "h3n46": {
                             "index": 46,
                             "name": 773.383,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                773.383
+                            ]
                         },
                         "h3n47": {
                             "index": 47,
                             "name": 780.553,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                780.553
+                            ]
                         },
                         "h3n48": {
                             "index": 48,
                             "name": 781.328,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                781.328
+                            ]
                         },
                         "h3n49": {
                             "index": 49,
                             "name": 781.349,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                781.349
+                            ]
                         },
                         "h3n50": {
                             "index": 50,
                             "name": 782.656,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                782.656
+                            ]
                         },
                         "h3n51": {
                             "index": 51,
                             "name": 789.378,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                789.378
+                            ]
                         },
                         "h3n52": {
                             "index": 52,
                             "name": 795.365,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                795.365
+                            ]
                         },
                         "h3n53": {
                             "index": 53,
                             "name": 796.524,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                796.524
+                            ]
                         },
                         "h3n54": {
                             "index": 54,
                             "name": 797.323,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                797.323
+                            ]
                         },
                         "h3n55": {
                             "index": 55,
                             "name": 811.339,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                811.339
+                            ]
                         },
                         "h3n56": {
                             "index": 56,
                             "name": 811.36,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                811.36
+                            ]
                         },
                         "h3n57": {
                             "index": 57,
                             "name": 820.525,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                820.525
+                            ]
                         },
                         "h3n58": {
                             "index": 58,
                             "name": 827.334,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                827.334
+                            ]
                         },
                         "h3n59": {
                             "index": 59,
                             "name": 851.264,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                851.264
+                            ]
                         },
                         "h3n60": {
                             "index": 60,
                             "name": 867.238,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                867.238
+                            ]
                         },
                         "h3n61": {
                             "index": 61,
                             "name": 875.415,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                875.415
+                            ]
                         },
                         "h3n62": {
                             "index": 62,
                             "name": 891.409,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                891.409
+                            ]
                         },
                         "h3n63": {
                             "index": 63,
                             "name": 897.396,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                897.396
+                            ]
                         },
                         "h3n64": {
                             "index": 64,
                             "name": 897.73,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                897.73
+                            ]
                         },
                         "h3n65": {
                             "index": 65,
                             "name": 905.425,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                905.425
+                            ]
                         },
                         "h3n66": {
                             "index": 66,
                             "name": 913.37,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                913.37
+                            ]
                         },
                         "h3n67": {
                             "index": 67,
                             "name": 913.391,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                913.391
+                            ]
                         },
                         "h3n68": {
                             "index": 68,
                             "name": 921.42,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                921.42
+                            ]
                         },
                         "h3n69": {
                             "index": 69,
                             "name": 927.407,
-                            "membership": 10
+                            "membership": 10,
+                            "mzs": [
+                                927.407
+                            ]
                         },
                         "h3n70": {
                             "index": 70,
                             "name": 929.365,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                929.365
+                            ]
                         },
                         "h3n71": {
                             "index": 71,
                             "name": 935.436,
-                            "membership": 8
+                            "membership": 8,
+                            "mzs": [
+                                935.436
+                            ]
                         },
                         "h3n72": {
                             "index": 72,
                             "name": 943.381,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                943.381
+                            ]
                         },
                         "h3n73": {
                             "index": 73,
                             "name": 943.402,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                943.402
+                            ]
                         },
                         "h3n74": {
                             "index": 74,
                             "name": 951.431,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                951.431
+                            ]
                         },
                         "h3n75": {
                             "index": 75,
                             "name": 955.573,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                955.573
+                            ]
                         },
                         "h3n76": {
                             "index": 76,
                             "name": 957.418,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                957.418
+                            ]
                         },
                         "h3n77": {
                             "index": 77,
                             "name": 959.376,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                959.376
+                            ]
                         },
                         "h3n78": {
                             "index": 78,
                             "name": 963.604,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                963.604
+                            ]
                         },
                         "h3n79": {
                             "index": 79,
                             "name": 973.392,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                973.392
+                            ]
                         },
                         "h3n80": {
                             "index": 80,
                             "name": 973.413,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                973.413
+                            ]
                         },
                         "h3n81": {
                             "index": 81,
                             "name": 979.574,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                979.574
+                            ]
                         },
                         "h3n82": {
                             "index": 82,
                             "name": 989.386,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                989.386
+                            ]
                         },
                         "h3n83": {
                             "index": 83,
                             "name": 1006.576,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                1006.576
+                            ]
                         },
                         "h3n84": {
                             "index": 84,
                             "name": 1013.314,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1013.314
+                            ]
                         },
                         "h3n85": {
                             "index": 85,
                             "name": 1029.291,
-                            "membership": 5
+                            "membership": 5,
+                            "mzs": [
+                                1029.291
+                            ]
                         },
                         "h3n86": {
                             "index": 86,
                             "name": 1175.37,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1175.37
+                            ]
                         },
                         "h3n87": {
                             "index": 87,
                             "name": 1191.343,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1191.343
+                            ]
                         },
                         "h3n88": {
                             "index": 88,
                             "name": 1337.422,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                1337.422
+                            ]
                         },
                         "h3n89": {
                             "index": 89,
                             "name": 1353.398,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                1353.398
+                            ]
                         },
                         "h3n90": {
                             "index": 90,
                             "name": 1499.473,
-                            "membership": 9
+                            "membership": 9,
+                            "mzs": [
+                                1499.473
+                            ]
                         },
                         "h3n91": {
                             "index": 91,
                             "name": 1515.45,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1515.45
+                            ]
                         },
                         "h3n92": {
                             "index": 92,
                             "name": 1661.531,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                1661.531
+                            ]
                         },
                         "h3n93": {
                             "index": 93,
                             "name": 1677.505,
-                            "membership": 3
+                            "membership": 3,
+                            "mzs": [
+                                1677.505
+                            ]
                         },
                         "h3n94": {
                             "index": 94,
                             "name": 1823.583,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1823.583
+                            ]
                         },
                         "h3n95": {
                             "index": 95,
                             "name": 1839.557,
-                            "membership": 6
+                            "membership": 6,
+                            "mzs": [
+                                1839.557
+                            ]
                         },
                         "h3n96": {
                             "index": 96,
                             "name": 1986.101,
-                            "membership": 0
+                            "membership": 0,
+                            "mzs": [
+                                1986.101
+                            ]
                         },
                         "h3n97": {
                             "index": 97,
                             "name": 2001.743,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                2001.743
+                            ]
                         },
                         "h3n98": {
                             "index": 98,
                             "name": 2148.048,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                2148.048
+                            ]
                         },
                         "h3n99": {
                             "index": 99,
                             "name": 2163.914,
-                            "membership": 4
+                            "membership": 4,
+                            "mzs": [
+                                2163.914
+                            ]
                         },
                         "h3n100": {
                             "index": 100,
                             "name": 2200.687,
-                            "membership": 7
+                            "membership": 7,
+                            "mzs": [
+                                2200.687
+                            ]
                         }
                     },
                     "edges": {
@@ -7610,7 +8519,7 @@
                     }
                 }
             },
-            "dataset": "barley101_3",
+            "dataset": "barley101GrineV2",
             "mzs": {
                 "74.651": {
                     "hierarchy0": "h0n0",

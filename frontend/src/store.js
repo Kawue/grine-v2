@@ -201,8 +201,8 @@ export default new Vuex.Store({
     network: state => {
       return state.network;
     },
-    networkOptions: state => {
-      return state.options.network;
+    networkForceOptions: state => {
+      return state.options.network.force;
     },
     stateOptionsGraph: state => {
       return state.options.data.graph;
@@ -282,7 +282,7 @@ export default new Vuex.Store({
     NETWORK_SHRINK_NODE: (state, oldNode) => {
       const hierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10);
       if (hierarchy > 0) {
-        this.network.series[0].data = this.network.series[0].data.filter(
+        state.network.series[0].data = state.network.series[0].data.filter(
           item => item.value.parent !== oldNode.value.parent
         );
         const nextNode = networkService.shrinkNode(
@@ -292,6 +292,37 @@ export default new Vuex.Store({
         );
         state.network.series[0].data.push(nextNode);
       }
+    },
+    NETWORK_HIGHLIGHT_NODE: (state, indices) => {
+      /*
+      // console.log(indices);
+      for (let i = 0; i < state.network.series[0].data.length; i++) {
+        state.network.series[0].data[i]['itemStyle'] =
+          indices.findIndex(index => index === i) > -1
+            ? {
+                shadowColor: 'rgba(0, 0, 0, 0.6)',
+                shadowBlur: 10,
+              }
+            : null;
+      }
+      // console.log(state.network.series[0].data[indices[0]]);
+      */
+      /*
+      for (const node of state.network.series[0].data) {
+        node.itemStyle = null;
+      }
+      if (indices.length > 0) {
+        for (const index of indices) {
+          state.network.series[0].data[index].itemStyle = {
+            shadowColor: 'rgba(0, 0, 0, 0.6)',
+            shadowBlur: 10,
+          };
+        }
+      }*/
+      state.network.series[0].data = networkService.highlightNodes(
+        state.network.series[0].data,
+        indices
+      );
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -323,6 +354,10 @@ export default new Vuex.Store({
     },
     OPTIONS_MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.options.mzList.selectedMz = data;
+      state.network.series[0].data = networkService.highlightNodesByMz(
+        state.network.series[0].data,
+        data
+      );
     },
     OPTIONS_MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
       const tuple = mzListService.updateHighlightedMz(
@@ -353,6 +388,10 @@ export default new Vuex.Store({
       state.options.mzList.visibleMz = mzListService.sortMzList(
         tuple[0],
         state.options.mzList.asc
+      );
+      state.network.series[0].data = networkService.highlightNodes(
+        state.network.series[0].data,
+        []
       );
     },
     OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ: state => {

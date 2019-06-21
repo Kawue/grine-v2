@@ -37,9 +37,10 @@ export default {
           store.commit('NETWORK_EXPAND_NODE', event);
         } // shrink community
         else if (this.alt && this.ctrl) {
-          store.commit('NETWORK_EXPAND_NODE', event.data);
+          store.commit('NETWORK_SHRINK_NODE', event.data);
         } else {
           store.commit('OPTIONS_MZLIST_UPDATE_HIGHLIGHTED_MZ', event.value.mzs);
+          store.commit('NETWORK_HIGHLIGHT_NODE', [event.dataIndex]);
         }
       } /*else if (event.dataType === 'edge') {
 
