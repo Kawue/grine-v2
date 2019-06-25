@@ -169,11 +169,8 @@ export default new Vuex.Store({
       return state.originalGraphData.graphs['graph' + state.options.data.graph]
         .graph;
     },
-    getMzImageDataPoints: state => {
-      return state.images.imageData[1].points;
-    },
-    getMzImageDataMax: state => {
-      return state.images.imageData[1].max;
+    getImageData: state => index => {
+      return state.images.imageData[index];
     },
     getOptionsImage: state => {
       return state.options.image;
@@ -228,8 +225,10 @@ export default new Vuex.Store({
     SET_LOADING_IMAGE_DATA: (state, loading) => {
       state.images.loadingImageData = loading;
     },
-    SET_IMAGE_DATA_MZ_VALUES: (state, data) => {
-      let mzImageData = state.images.imageData[1];
+    SET_IMAGE_DATA_VALUES: (state, payload) => {
+      let index = payload[0];
+      let data = payload[1];
+      let mzImageData = state.images.imageData[index];
       mzImageData.points = data;
 
       let max = 0;
@@ -431,10 +430,13 @@ export default new Vuex.Store({
       let calculatedImageOptions = optionsService.calculateImageOptions(data);
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
-    fetchImageData: context => {
+    fetchImageData: (context, index) => {
       let mzValues = context.state.options.mzList.selectedMz;
+      if (index === 0) {
+        mzValues = [];
+      }
       // do an api fetch for a combination image of multiple mz values
-      context.commit('SET_IMAGE_DATA_MZ_VALUES', []);
+      context.commit('SET_IMAGE_DATA_VALUES', [index, []]);
       if (mzValues.length > 0) {
         context.commit('SET_LOADING_IMAGE_DATA', true);
         const datasetName =
@@ -453,23 +455,24 @@ export default new Vuex.Store({
           .post(url, postData)
           .then(response => {
             let imageData = imageService.calculateColors(response.data);
-            context.commit('SET_IMAGE_DATA_MZ_VALUES', imageData);
+            context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
             context.commit('SET_LOADING_IMAGE_DATA', false);
           })
           .catch(function() {
             context.commit('SET_LOADING_IMAGE_DATA', false);
           });
       }
-      context.commit('SET_IMAGE_DATA_MZ_VALUES', []);
-      context.dispatch('imagesMzImageSelectPoints', []);
+      context.dispatch('imagesSelectPoints', [index, []]);
     },
-    imagesMzImageSelectPoints: (context, selectedPoints) => {
+    imagesSelectPoints: (context, payload) => {
+      let index = payload[0];
+      let selectedPoints = payload[1];
       let imageData = imageService.markSelectedPoints(
-        context.state.images.imageData[1].points,
+        context.state.images.imageData[index].points,
         selectedPoints
       );
       imageData = imageService.calculateColors(imageData);
-      context.commit('SET_IMAGE_DATA_MZ_VALUES', imageData);
+      context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
     },
   },
 });

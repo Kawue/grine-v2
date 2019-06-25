@@ -11,8 +11,16 @@
           <OptionsImageMergeMethod></OptionsImageMergeMethod>
         </div>
       </div>
-
-      <mz-image></mz-image>
+      <div class="row" style="margin-top: 30px">
+        <div class="col-md-12">
+          <mz-image :imageDataIndex="0"></mz-image>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 30px">
+        <div class="col-md-12">
+          <mz-image :imageDataIndex="1"></mz-image>
+        </div>
+      </div>
     </div>
   </SidebarWidget>
 </template>
@@ -35,7 +43,7 @@ export default {
       switch (mutation.type) {
         case 'OPTIONS_MZLIST_UPDATE_SELECTED_MZ':
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
-          this.$store.dispatch('fetchImageData');
+          this.$store.dispatch('fetchImageData', 1);
           break;
       }
     });

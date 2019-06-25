@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-bind:style="widgetStyle()" v-bind:id="widgetUniqueId()">
     <div class="canvas-root" style="position: relative;">
       <ScaleOut class="spinner" v-if="loading"></ScaleOut>
       <canvas
@@ -28,6 +28,12 @@ export default {
   components: {
     ScaleOut,
   },
+  props: {
+    imageDataIndex: {
+      type: Number,
+      required: true,
+    },
+  },
   data() {
     return {
       width: 250,
@@ -37,8 +43,9 @@ export default {
     };
   },
   mounted: function() {
-    this.canvas = d3.select('.canvas-root canvas');
-    const interactionSvg = d3.select('.canvas-root svg');
+    let componentId = '#' + this.widgetUniqueId();
+    this.canvas = d3.select(componentId + ' .canvas-root canvas');
+    const interactionSvg = d3.select(componentId + ' .canvas-root svg');
 
     const lassoInstance = lasso()
       .on('end', this.handleLassoEnd)
@@ -47,7 +54,7 @@ export default {
     interactionSvg.call(lassoInstance);
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
-        case 'SET_IMAGE_DATA_MZ_VALUES':
+        case 'SET_IMAGE_DATA_VALUES':
           this.drawPoints();
           break;
       }
@@ -55,9 +62,13 @@ export default {
     this.drawPoints();
   },
   computed: {
+    points: function() {
+      return this.$store.getters.getImageData(this.imageDataIndex).points;
+    },
+    max: function() {
+      return this.$store.getters.getImageData(this.imageDataIndex).max;
+    },
     ...mapGetters({
-      points: 'getMzImageDataPoints',
-      max: 'getMzImageDataMax',
       loading: 'getLoadingImageData',
     }),
     domainX: function() {
@@ -90,6 +101,12 @@ export default {
     },
   },
   methods: {
+    widgetUniqueId() {
+      return 'component-' + this._uid;
+    },
+    widgetStyle() {
+      return 'height: ' + this.height + 'px';
+    },
     handleLassoEnd(lassoPolygon) {
       const selectedPoints = this.points.filter(d => {
         let x = this.getPosX(d.x);
@@ -97,10 +114,13 @@ export default {
         return d3.polygonContains(lassoPolygon, [x, y]);
       });
 
-      store.dispatch('imagesMzImageSelectPoints', selectedPoints);
+      store.dispatch('imagesSelectPoints', [
+        this.imageDataIndex,
+        selectedPoints,
+      ]);
     },
     handleLassoStart() {
-      store.dispatch('imagesMzImageSelectPoints', []);
+      store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
     drawPoints() {
       const context = this.canvas.node().getContext('2d');
