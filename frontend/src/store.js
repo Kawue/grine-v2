@@ -240,20 +240,22 @@ export default new Vuex.Store({
       let calculatedImageOptions = optionsService.calculateImageOptions(data);
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
-    imagesMzImageRender: (context, mzValue) => {
-      context.state.images.mzValue = mzValue;
-      if (
-        typeof context.state.images.originalImageData[
-          context.state.images.mzValue
-        ] === 'undefined'
-      ) {
+    imagesMzImageRender: (context, mzValues) => {
+      if (mzValues.length === 1) {
+        context.state.images.mzValue = mzValues[0];
+        if (
+          typeof context.state.images.originalImageData[context.state.images.mzValue] === 'undefined') {
+          context.commit('SET_IMAGE_DATA', []);
+          return;
+        }
+        let imageData = imageService.calculateColors(
+          context.state.images.originalImageData[context.state.images.mzValue]
+        );
+        context.commit('SET_IMAGE_DATA', imageData);
+        context.dispatch('imagesMzImageSelectPoints', []);
+      } else {
         context.commit('SET_IMAGE_DATA', []);
-        return;
       }
-      let imageData = imageService.calculateColors(
-        context.state.images.originalImageData[context.state.images.mzValue]
-      );
-      context.commit('SET_IMAGE_DATA', imageData);
       context.dispatch('imagesMzImageSelectPoints', []);
     },
     imagesMzImageSelectPoints: (context, selectedPoints) => {
