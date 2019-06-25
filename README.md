@@ -51,9 +51,12 @@ get mz values of dataset:
 /datasets/<dataset_name>/mzvalues
 /datasets/barley101_1/mzvalues
 
-get mz image data for dataset and mz value:
+get mz image data for dataset and single mz value:
 /datasets/<dataset_name>/mzvalues/<mz_value_id>/imagedata
 /datasets/barley101_1/mzvalues/0/imagedata
+
+get mz image data for dataset and mz values, mz values are passed via post request
+/datasets/<dataset_name>/mzvalues/imagedata
 
 get mz image data for dataset for all mz values:
 /datasets/<dataset_name>/imagedata

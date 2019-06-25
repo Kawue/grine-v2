@@ -25,6 +25,7 @@ for path in argv[2:]:
 
 merged_dframe = merged_dframe.fillna(value=0)
 
+
 # returns names of all available datasets
 def dataset_names():
     dt_names = set(merged_dframe.index.get_level_values("dataset"))
@@ -96,34 +97,49 @@ app = Flask(__name__)
 CORS(app)
 
 
+# get all dataset names
 @app.route('/datasets')
 def datasets_action():
     return json.dumps(dataset_names())
 
 
+# get mz values of dataset
 @app.route('/datasets/<dataset_name>/mzvalues')
 def datasets_mzvalues_action(dataset_name):
     return json.dumps(mz_values(dataset_name))
 
 
+# get mz image data for dataset and single mz value
+# the mz_value_id is provided by /datasets/<dataset_name>/mzvalues
 @app.route('/datasets/<dataset_name>/mzvalues/<mz_value_id>/imagedata')
-def datasets_mzvalues_imagedata_action(dataset_name, mz_value_id):
+def datasets_imagedata_single_mz_action(dataset_name, mz_value_id):
     mz_value = mz_values(dataset_name)[int(mz_value_id)]
     return json.dumps(image_data_for_dataset_and_mz(dataset_name, mz_value))
 
 
+# get mz image data for dataset and mz values
+# mz values are passed via post request
+@app.route('/datasets/<dataset_name>/mzvalues/imagedata')
+def datasets_imagedata_multiple_mz_action(dataset_name, mz_value_id):
+    mz_value = mz_values(dataset_name)[int(mz_value_id)]
+    return json.dumps(image_data_for_dataset_and_mz(dataset_name, mz_value))
+
+
+# get mz image data for dataset for all mz values
 @app.route('/datasets/<dataset_name>/imagedata')
-def datasets_imagedata_action(dataset_name):
+def datasets_imagedata_all_mz_action(dataset_name):
     return json.dumps(image_data_for_dataset(dataset_name))
 
 
+# get all image data for all datasets and all mz values
 @app.route('/datasets/imagedata')
-def datasets_all_imagedata_action():
+def datasets_all_datasets_all_imagedata_action():
     return json.dumps(image_data_all_datasets())
 
 
+# get graph data for all datasets
 @app.route('/datasets/graphdata')
-def datasets_graphdata_action():
+def datasets_all_datasets_all_graphdata_action():
     return json.dumps(graph_data_all_datasets())
 
 
