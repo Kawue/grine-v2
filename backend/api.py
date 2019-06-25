@@ -27,6 +27,11 @@ for path in argv[2:]:
 merged_dframe = merged_dframe.fillna(value=0)
 
 
+# returns list of allowed merge methods for mz intensizties
+def allowed_merge_methods():
+    return ['min', 'max', 'median']
+
+
 # returns names of all available datasets
 def dataset_names():
     dt_names = set(merged_dframe.index.get_level_values("dataset"))
@@ -67,8 +72,8 @@ def norm(val, min, max):
 #     ]
 
 
-# provides data to render image for passed dataset and multiple mz_values
-def image_data_for_dataset_and_mzs(ds_name, mz_values):
+# provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
+def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
@@ -78,7 +83,8 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values):
 
     if len(mz_values) > 1:
         # merge the intensities into a single one with specified method and on specified axis
-        intensity = intensity.max(1)
+        merge_method_dynamic_call = getattr(np, merge_method)
+        intensity = merge_method_dynamic_call(intensity, 1)
 
     intensity_min = min(intensity)
     intensity_max = max(intensity)
@@ -93,7 +99,7 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values):
 def image_data_for_dataset(ds_name):
     object = {}
     for key, mz in mz_values(ds_name).items():
-        object[mz] = image_data_for_dataset_and_mzs(ds_name, [mz])
+        object[mz] = image_data_for_dataset_and_mzs(ds_name, [mz], None)
     return object
 
 
@@ -142,14 +148,14 @@ def datasets_imagedata_single_mz_action(dataset_name, mz_value_id):
         return abort(400)
 
     mz_value = mz_values(dataset_name)[int(mz_value_id)]
-    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, [mz_value]))
+    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, [mz_value], None))
 
 
 # get mz image data for dataset and mz values
 # specified merge method is passed via GET parameter
 # mz values are passed via post request
-@app.route('/datasets/<dataset_name>/mzvalues/imagedata')
-def datasets_imagedata_multiple_mz_action(dataset_name):
+@app.route('/datasets/<dataset_name>/mzvalues/imagedata/method/<method>')
+def datasets_imagedata_multiple_mz_action(dataset_name, method):
     #  74.651, 104.107,
     #mz_value = 74.651
     #mz_value = 1823.583
@@ -158,7 +164,10 @@ def datasets_imagedata_multiple_mz_action(dataset_name):
     if dataset_name not in dataset_names():
         return abort(400)
 
-    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, mz_values))
+    if method not in allowed_merge_methods():
+        return abort(400)
+
+    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, mz_values, method))
 
 
 # get mz image data for dataset for all mz values
