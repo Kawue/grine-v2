@@ -69,7 +69,7 @@ export default {
     },
     domainY: function() {
       let domain = [];
-      for (let i = 0; i < this.max.y; i++) {
+      for (let i = this.max.y; i >= 0; i--) {
         domain.push(i);
       }
       return domain;
@@ -106,6 +106,7 @@ export default {
       const context = this.canvas.node().getContext('2d');
       context.save();
       context.clearRect(0, 0, this.width, this.height);
+
       let data = this.points;
 
       for (let i = 0; i < data.length; ++i) {
@@ -118,7 +119,6 @@ export default {
           this.getHeight()
         );
       }
-
       context.restore();
     },
     getPosX(x) {
