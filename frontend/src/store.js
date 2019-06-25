@@ -90,7 +90,7 @@ export default new Vuex.Store({
           ],
           edgeSymbolSize: [4, 10],
           force: {
-            repulsion: 1000,
+            repulsion: 2000,
             edgeLength: 30,
             gravity: 0.1,
           },
@@ -283,7 +283,22 @@ export default new Vuex.Store({
       const hierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10);
       if (hierarchy > 0) {
         state.network.series[0].data = state.network.series[0].data.filter(
-          item => item.value.parent !== oldNode.value.parent
+          item => {
+            const itemHierarchy = parseInt(
+              item.name.split('n')[0].slice(1),
+              10
+            );
+            if (
+              item.value.parent === oldNode.value.parent &&
+              hierarchy === itemHierarchy
+            ) {
+              return false;
+            } else {
+              return !(
+                oldNode.category === item.category && hierarchy < itemHierarchy
+              );
+            }
+          }
         );
         const nextNode = networkService.shrinkNode(
           state.originalGraphData.graphs['graph' + state.options.data.graph]
@@ -294,31 +309,6 @@ export default new Vuex.Store({
       }
     },
     NETWORK_HIGHLIGHT_NODE: (state, indices) => {
-      /*
-      // console.log(indices);
-      for (let i = 0; i < state.network.series[0].data.length; i++) {
-        state.network.series[0].data[i]['itemStyle'] =
-          indices.findIndex(index => index === i) > -1
-            ? {
-                shadowColor: 'rgba(0, 0, 0, 0.6)',
-                shadowBlur: 10,
-              }
-            : null;
-      }
-      // console.log(state.network.series[0].data[indices[0]]);
-      */
-      /*
-      for (const node of state.network.series[0].data) {
-        node.itemStyle = null;
-      }
-      if (indices.length > 0) {
-        for (const index of indices) {
-          state.network.series[0].data[index].itemStyle = {
-            shadowColor: 'rgba(0, 0, 0, 0.6)',
-            shadowBlur: 10,
-          };
-        }
-      }*/
       state.network.series[0].data = networkService.highlightNodes(
         state.network.series[0].data,
         indices

@@ -102,7 +102,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: lightblue;
+  background-color: rgba(231, 231, 231, 0.51);
   z-index: 100;
   color: white;
 }

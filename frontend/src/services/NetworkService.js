@@ -1,8 +1,11 @@
 class NetworkService {
   highlightedNodeStyle = {
-    shadowColor: 'rgba(0, 0, 0, 0.7)',
+    shadowColor: 'rgba(0, 0, 0, 1)',
     shadowBlur: 15,
   };
+
+  biggestNodeRadius = 65;
+  smallestNodeRadius = 35;
 
   loadGraph(graph) {
     const tupel = [[], []];
@@ -13,16 +16,17 @@ class NetworkService {
         x: null,
         y: null,
         draggable: true,
-        symbolSize: 50,
+        symbolSize: this.biggestNodeRadius,
         label: {
-          formatter: function(params) {
-            return params.data.category.toString();
+          formatter: function() {
+            return '';
           },
         },
         category: parseInt(nodeKey.toString().split('n')[1], 10),
         value: {
           childs: graph['hierarchy0'].nodes[nodeKey].childs,
           mzs: graph['hierarchy0'].nodes[nodeKey].mzs,
+          parentIntraCommunityNumbers: [],
         },
       });
     });
@@ -52,10 +56,12 @@ class NetworkService {
       y: null,
       label: {
         formatter: function(params) {
-          return params.data.category.toString();
+          return params.data.value.intraCommunityNumber;
         },
       },
-      symbolSize: 50 - (30 / 3) * previousHierarchy,
+      symbolSize:
+        this.biggestNodeRadius -
+        (this.smallestNodeRadius / 3) * previousHierarchy,
       draggable: true,
       category: oldNode.category,
       value: {
@@ -69,6 +75,14 @@ class NetworkService {
         graph['hierarchy' + previousHierarchy].nodes[nextNodeName][
           'membership'
         ];
+      nextNode.value[
+        'intraCommunityNumber'
+      ] = oldNode.value.parentIntraCommunityNumbers.pop();
+      nextNode.value['parentIntraCommunityNumbers'] = [
+        ...oldNode.value.parentIntraCommunityNumbers,
+      ];
+    } else {
+      nextNode.value['parentIntraCommunityNumbers'] = [];
     }
     return nextNode;
   }
@@ -76,7 +90,9 @@ class NetworkService {
   expandNode(graph, oldNode) {
     const nextHierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10) + 1;
     const nextNodes = [];
+    let counter = 0;
     for (let child of oldNode.value.childs) {
+      counter++;
       const nextNodeName =
         'h' + nextHierarchy.toString() + 'n' + child.toString();
       const nextNode = {
@@ -86,10 +102,13 @@ class NetworkService {
         draggable: true,
         label: {
           formatter: function(params) {
-            return params.data.category.toString();
+            return params.data.value.intraCommunityNumber;
           },
         },
-        symbolSize: 50 - (30 / 3) * nextHierarchy,
+        itemStyle: oldNode.itemStyle,
+        symbolSize:
+          this.biggestNodeRadius -
+          (this.smallestNodeRadius / 3) * nextHierarchy,
         category: oldNode.category,
         value: {
           mzs: graph['hierarchy' + nextHierarchy].nodes[nextNodeName].mzs,
@@ -97,11 +116,20 @@ class NetworkService {
             graph['hierarchy' + nextHierarchy].nodes[nextNodeName][
               'membership'
             ],
+          intraCommunityNumber: counter,
+          parentIntraCommunityNumbers: [
+            ...oldNode.value['parentIntraCommunityNumbers'],
+          ],
         },
       };
       if (nextHierarchy < 3) {
         nextNode.value['childs'] =
           graph['hierarchy' + nextHierarchy].nodes[nextNodeName].childs;
+      }
+      if (nextHierarchy > 1) {
+        nextNode.value['parentIntraCommunityNumbers'].push(
+          oldNode.value.intraCommunityNumber
+        );
       }
       nextNodes.push(nextNode);
     }

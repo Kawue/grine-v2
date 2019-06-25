@@ -8,8 +8,8 @@
           class="mb-3"
         >
           <option value="500">500</option>
-          <option selected value="1000">1000</option>
-          <option value="2000">2000</option>
+          <option value="1000">1000</option>
+          <option selected value="2000">2000</option>
           <option value="5000">5000</option>
         </b-form-select>
         <b-form-select
@@ -46,7 +46,7 @@ export default {
   name: 'OptionsNetwork',
   data() {
     return {
-      selectedRepulsion: 1000,
+      selectedRepulsion: 2000,
       selectedGravity: 0.1,
       selectedEdgeLength: 30,
     };
