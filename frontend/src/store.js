@@ -145,7 +145,7 @@ export default new Vuex.Store({
         asc: true,
       },
       data: {
-        graph: 0, // selected graph
+        graph: 2, // selected graph
         graphChoices: {}, // available graphs for selection
       },
     },
@@ -165,9 +165,15 @@ export default new Vuex.Store({
         .mzs;
     },
     getGraphData: state => {
+      if (state.loadingGraphData) {
+        return;
+      }
       return state.originalGraphData.graphs;
     },
     getGraph: state => {
+      if (state.loadingGraphData) {
+        return;
+      }
       return state.originalGraphData.graphs['graph' + state.options.data.graph]
         .graph;
     },
@@ -258,7 +264,7 @@ export default new Vuex.Store({
             originalData['graphs'][graph]['dataset'];
         }
       }
-      state.options.data.graph = 0;
+      //state.options.data.graph = 0;
     },
     SET_NETWORK_REPULSION: (state, repulsion) => {
       state.options.network.force.repulsion = repulsion;
@@ -444,10 +450,6 @@ export default new Vuex.Store({
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
     fetchImageData: (context, index) => {
-      /*let mzValues = context.state.options.mzList.selectedMz;
-      if (index === 0) {
-        mzValues = [381.079];
-      }*/
       let mzValues = context.state.images.imageData[index].mzValues;
       // do an api fetch for a combination image of multiple mz values
       context.commit('SET_IMAGE_DATA_VALUES', [index, []]);
