@@ -4,9 +4,11 @@ import numpy as np
 import json
 from flask import Flask
 from flask import abort
+from flask import request
 from flask_cors import CORS
 from os import listdir
 from os.path import exists, isdir, isfile
+import pprint
 
 # load dataframe (.h5)
 
@@ -140,20 +142,19 @@ def datasets_imagedata_single_mz_action(dataset_name, mz_value_id):
 # get mz image data for dataset and mz values
 # specified merge method is passed via GET parameter
 # mz values are passed via post request
-@app.route('/datasets/<dataset_name>/mzvalues/imagedata/method/<method>')
+@app.route('/datasets/<dataset_name>/mzvalues/imagedata/method/<method>', methods=['POST'])
 def datasets_imagedata_multiple_mz_action(dataset_name, method):
-    #  74.651, 104.107,
-    #mz_value = 74.651
-    #mz_value = 1823.583
-    mz_values = [74.651, 1823.583]
-
     if dataset_name not in dataset_names():
         return abort(400)
 
     if method not in allowed_merge_methods():
         return abort(400)
 
-    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, mz_values, method))
+    post_data = request.get_data()
+    post_data_json = json.loads(post_data)
+    post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
+
+    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, post_data_mz_values, method))
 
 
 # get mz image data for dataset for all mz values

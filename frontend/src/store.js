@@ -242,6 +242,7 @@ export default new Vuex.Store({
     },
     imagesMzImageRender: (context, mzValues) => {
       if (mzValues.length === 1) {
+        // display image of single mz value based on pre-loaded data
         context.state.images.mzValue = mzValues[0];
         if (
           typeof context.state.images.originalImageData[context.state.images.mzValue] === 'undefined') {
@@ -254,6 +255,24 @@ export default new Vuex.Store({
         context.commit('SET_IMAGE_DATA', imageData);
         context.dispatch('imagesMzImageSelectPoints', []);
       } else {
+        // do an api fetch for a combination image of multiple mz values
+        context.commit('SET_LOADING_IMAGE_DATA', true);
+        context.commit('SET_IMAGE_DATA', []);
+        const datasetName =
+          context.state.options.data.graphChoices[
+            context.state.options.data.graph
+          ];
+        const postData = { mzValues: mzValues };
+        const url =
+          API_URL +
+          '/datasets/' +
+          datasetName +
+          '/mzvalues/imagedata/method/min';
+        axios.post(url, postData).then(response => {
+          let imageData = imageService.calculateColors(response.data);
+          context.commit('SET_IMAGE_DATA', imageData);
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+        });
         context.commit('SET_IMAGE_DATA', []);
       }
       context.dispatch('imagesMzImageSelectPoints', []);

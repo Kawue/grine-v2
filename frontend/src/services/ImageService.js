@@ -6,11 +6,20 @@ class ImageService {
   }
 
   /**
+   * @param src
+   * @returns {any}
+   */
+  jsonCopy(src) {
+    return JSON.parse(JSON.stringify(src));
+  }
+
+  /**
    * assigns colors to image points
-   * @param imageData
+   * @param imageDataPassed
    * return []
    */
-  calculateColors(imageData) {
+  calculateColors(imageDataPassed) {
+    let imageData = this.jsonCopy(imageDataPassed);
     for (let imagePoint in imageData) {
       if (imageData.hasOwnProperty(imagePoint)) {
         let intensity = imageData[imagePoint].intensity;

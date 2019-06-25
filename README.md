@@ -45,25 +45,26 @@ https://nguyenvanduocit.github.io/vue-loading-spinner/
 
 ### Api Endpoints
 get all dataset names:
-/datasets
+GET /datasets
 
 get mz values of dataset:
-/datasets/<dataset_name>/mzvalues
-/datasets/barley101_1/mzvalues
+GET /datasets/<dataset_name>/mzvalues
+GET /datasets/barley101_1/mzvalues
 
 get mz image data for dataset and single mz value:
-/datasets/<dataset_name>/mzvalues/<mz_value_id>/imagedata
-/datasets/barley101_1/mzvalues/0/imagedata
+GET /datasets/<dataset_name>/mzvalues/<mz_value_id>/imagedata
+GET /datasets/barley101_1/mzvalues/0/imagedata
 
 get mz image data for dataset and mz values, mz values are passed via post request
-/datasets/<dataset_name>/mzvalues/imagedata
+POST /datasets/<dataset_name>/mzvalues/imagedata
+POST /datasets/barley101_1/mzvalues/imagedata
 
 get mz image data for dataset for all mz values:
-/datasets/<dataset_name>/imagedata
-/datasets/barley101_1/imagedata
+GET /datasets/<dataset_name>/imagedata
+GET /datasets/barley101_1/imagedata
 
 get all image data for all datasets and all mz values:
-/datasets/mzimagedata
+GET /datasets/mzimagedata
 
 get graph data for all datasets
-/datasets/graphdata
+GET /datasets/graphdata
