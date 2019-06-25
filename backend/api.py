@@ -149,9 +149,15 @@ def datasets_imagedata_multiple_mz_action(dataset_name, method):
     if method not in allowed_merge_methods():
         return abort(400)
 
-    post_data = request.get_data()
-    post_data_json = json.loads(post_data)
-    post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
+    try:
+        post_data = request.get_data()
+        post_data_json = json.loads(post_data)
+        post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
+    except:
+        return abort(400)
+
+    if len(post_data_mz_values) == 0:
+        return abort(400)
 
     return json.dumps(image_data_for_dataset_and_mzs(dataset_name, post_data_mz_values, method))
 
