@@ -21,15 +21,26 @@ export default new Vuex.Store({
     loadingGraphData: true, // api fetch for graph data is running
     originalGraphData: {}, // graph data api return
     images: {
-      imageData: {
-        // data used to render the current mz image
-        points: [], // points that are displayed as mz image
-        max: {
-          // max image coors, used to scale image according
-          x: null,
-          y: null,
+      imageData: [
+        {
+          // data used to render community image
+          points: [], // points that are displayed as mz image
+          max: {
+            // max image coors, used to scale image according
+            x: null,
+            y: null,
+          },
         },
-      },
+        {
+          // data used to render image from selected mz values
+          points: [], // points that are displayed as mz image
+          max: {
+            // max image coors, used to scale image according
+            x: null,
+            y: null,
+          },
+        },
+      ],
       loadingImageData: false, // api fetch for image data is running
     },
     network: {
@@ -158,11 +169,11 @@ export default new Vuex.Store({
       return state.originalGraphData.graphs['graph' + state.options.data.graph]
         .graph;
     },
-    getImageDataPoints: state => {
-      return state.images.imageData.points;
+    getMzImageDataPoints: state => {
+      return state.images.imageData[1].points;
     },
-    getImageDataMax: state => {
-      return state.images.imageData.max;
+    getMzImageDataMax: state => {
+      return state.images.imageData[1].max;
     },
     getOptionsImage: state => {
       return state.options.image;
@@ -217,8 +228,9 @@ export default new Vuex.Store({
     SET_LOADING_IMAGE_DATA: (state, loading) => {
       state.images.loadingImageData = loading;
     },
-    SET_IMAGE_DATA: (state, data) => {
-      state.images.imageData.points = data;
+    SET_IMAGE_DATA_MZ_VALUES: (state, data) => {
+      let mzImageData = state.images.imageData[1];
+      mzImageData.points = data;
 
       let max = 0;
       for (let point in data) {
@@ -229,8 +241,8 @@ export default new Vuex.Store({
         }
       }
       max += 10;
-      state.images.imageData.max.x = max;
-      state.images.imageData.max.y = max;
+      mzImageData.max.x = max;
+      mzImageData.max.y = max;
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
@@ -422,7 +434,7 @@ export default new Vuex.Store({
     fetchImageData: context => {
       let mzValues = context.state.options.mzList.selectedMz;
       // do an api fetch for a combination image of multiple mz values
-      context.commit('SET_IMAGE_DATA', []);
+      context.commit('SET_IMAGE_DATA_MZ_VALUES', []);
       if (mzValues.length > 0) {
         context.commit('SET_LOADING_IMAGE_DATA', true);
         const datasetName =
@@ -441,23 +453,23 @@ export default new Vuex.Store({
           .post(url, postData)
           .then(response => {
             let imageData = imageService.calculateColors(response.data);
-            context.commit('SET_IMAGE_DATA', imageData);
+            context.commit('SET_IMAGE_DATA_MZ_VALUES', imageData);
             context.commit('SET_LOADING_IMAGE_DATA', false);
           })
           .catch(function() {
             context.commit('SET_LOADING_IMAGE_DATA', false);
           });
       }
-      context.commit('SET_IMAGE_DATA', []);
+      context.commit('SET_IMAGE_DATA_MZ_VALUES', []);
       context.dispatch('imagesMzImageSelectPoints', []);
     },
     imagesMzImageSelectPoints: (context, selectedPoints) => {
       let imageData = imageService.markSelectedPoints(
-        context.state.images.imageData.points,
+        context.state.images.imageData[1].points,
         selectedPoints
       );
       imageData = imageService.calculateColors(imageData);
-      context.commit('SET_IMAGE_DATA', imageData);
+      context.commit('SET_IMAGE_DATA_MZ_VALUES', imageData);
     },
   },
 });

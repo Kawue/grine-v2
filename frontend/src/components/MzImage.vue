@@ -47,7 +47,7 @@ export default {
     interactionSvg.call(lassoInstance);
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
-        case 'SET_IMAGE_DATA':
+        case 'SET_IMAGE_DATA_MZ_VALUES':
           this.drawPoints();
           break;
       }
@@ -56,8 +56,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      points: 'getImageDataPoints',
-      max: 'getImageDataMax',
+      points: 'getMzImageDataPoints',
+      max: 'getMzImageDataMax',
       loading: 'getLoadingImageData',
     }),
     domainX: function() {
