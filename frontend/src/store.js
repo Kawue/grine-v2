@@ -23,12 +23,11 @@ export default new Vuex.Store({
         // data used to render the current mz image
         points: [], // points that are displayed as mz image
         max: {
-          // max image coors
+          // max image coors, used to scale image according
           x: null,
           y: null,
         },
       },
-      mzValue: null, // mzValue of which the image is rendered
       loadingImageData: false, // api fetch for image data is running
     },
     options: {
@@ -40,7 +39,8 @@ export default new Vuex.Store({
       },
       network: {},
       image: {
-        showMz: true,
+        mergeMethod: 'max',
+        mergeMethods: ['min', 'max', 'median'],
       },
       mzList: {
         selectedMz: [],
@@ -122,6 +122,9 @@ export default new Vuex.Store({
     optionsDataGraphChoices: state => {
       return state.options.data.graphChoices;
     },
+    optionsImageMergeMethodChoices: state => {
+      return state.options.image.mergeMethods;
+    },
   },
   mutations: {
     SET_LOADING_IMAGE_DATA: (state, loading) => {
@@ -179,6 +182,9 @@ export default new Vuex.Store({
     OPTIONS_DATA_CHANGE_GRAPH: (state, graph) => {
       state.options.data.graph = graph;
     },
+    OPTIONS_IMAGE_CHANGE_MERGE_METHOD: (state, mergeMethod) => {
+      state.options.image.mergeMethod = mergeMethod;
+    },
     OPTIONS_MZLIST_SORT_MZ: state => {
       state.options.mzList.visibleMz = mzListService.sortMzList(
         state.options.mzList.visibleMz,
@@ -228,7 +234,8 @@ export default new Vuex.Store({
       let calculatedImageOptions = optionsService.calculateImageOptions(data);
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
-    imagesMzImageRender: (context, mzValues) => {
+    fetchImageData: context => {
+      let mzValues = context.state.options.mzList.selectedMz;
       // do an api fetch for a combination image of multiple mz values
       context.commit('SET_IMAGE_DATA', []);
       if (mzValues.length > 0) {
@@ -237,12 +244,14 @@ export default new Vuex.Store({
           context.state.options.data.graphChoices[
             context.state.options.data.graph
           ];
-        const postData = { mzValues: mzValues };
+        const mergeMethod = context.state.options.image.mergeMethod;
         const url =
           API_URL +
           '/datasets/' +
           datasetName +
-          '/mzvalues/imagedata/method/min';
+          '/mzvalues/imagedata/method/' +
+          mergeMethod;
+        const postData = { mzValues: mzValues };
         axios
           .post(url, postData)
           .then(response => {
