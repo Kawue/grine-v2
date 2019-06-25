@@ -19,7 +19,6 @@ export default new Vuex.Store({
     loadingGraphData: true, // api fetch for graph data is running
     originalGraphData: {}, // graph data api return
     images: {
-      originalImageData: {}, // image data api return
       imageData: {
         // data used to render the current mz image
         points: [], // points that are displayed as mz image
@@ -30,7 +29,7 @@ export default new Vuex.Store({
         },
       },
       mzValue: null, // mzValue of which the image is rendered
-      loadingImageData: true, // api fetch for image data is running
+      loadingImageData: false, // api fetch for image data is running
     },
     options: {
       state: {
@@ -128,9 +127,6 @@ export default new Vuex.Store({
     SET_LOADING_IMAGE_DATA: (state, loading) => {
       state.images.loadingImageData = loading;
     },
-    SET_ORIGINAL_IMAGE_DATA: (state, originalData) => {
-      state.images.originalImageData = originalData;
-    },
     SET_IMAGE_DATA: (state, data) => {
       state.images.imageData.points = data;
 
@@ -220,20 +216,6 @@ export default new Vuex.Store({
         context.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
         context.commit('SET_LOADING_GRAPH_DATA', false);
         context.commit('OPTIONS_MZLIST_SORT_MZ');
-        context.dispatch('fetchImageData');
-      });
-    },
-    fetchImageData: context => {
-      context.commit('SET_LOADING_IMAGE_DATA', true);
-      context.commit('SET_IMAGE_DATA', []);
-      const datasetName =
-        context.state.options.data.graphChoices[
-          context.state.options.data.graph
-        ];
-      const url = API_URL + '/datasets/' + datasetName + '/imagedata';
-      axios.get(url).then(response => {
-        context.commit('SET_ORIGINAL_IMAGE_DATA', response.data);
-        context.commit('SET_LOADING_IMAGE_DATA', false);
       });
     },
     updateOptionsImage: (context, data) => {
@@ -241,40 +223,22 @@ export default new Vuex.Store({
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
     imagesMzImageRender: (context, mzValues) => {
-      if (mzValues.length === 1) {
-        // display image of single mz value based on pre-loaded data
-        context.state.images.mzValue = mzValues[0];
-        if (
-          typeof context.state.images.originalImageData[context.state.images.mzValue] === 'undefined') {
-          context.commit('SET_IMAGE_DATA', []);
-          return;
-        }
-        let imageData = imageService.calculateColors(
-          context.state.images.originalImageData[context.state.images.mzValue]
-        );
+      // do an api fetch for a combination image of multiple mz values
+      context.commit('SET_LOADING_IMAGE_DATA', true);
+      context.commit('SET_IMAGE_DATA', []);
+      const datasetName =
+        context.state.options.data.graphChoices[
+          context.state.options.data.graph
+      ];
+      const postData = { mzValues: mzValues };
+      const url =
+        API_URL + '/datasets/' + datasetName + '/mzvalues/imagedata/method/min';
+      axios.post(url, postData).then(response => {
+        let imageData = imageService.calculateColors(response.data);
         context.commit('SET_IMAGE_DATA', imageData);
-        context.dispatch('imagesMzImageSelectPoints', []);
-      } else {
-        // do an api fetch for a combination image of multiple mz values
-        context.commit('SET_LOADING_IMAGE_DATA', true);
-        context.commit('SET_IMAGE_DATA', []);
-        const datasetName =
-          context.state.options.data.graphChoices[
-            context.state.options.data.graph
-          ];
-        const postData = { mzValues: mzValues };
-        const url =
-          API_URL +
-          '/datasets/' +
-          datasetName +
-          '/mzvalues/imagedata/method/min';
-        axios.post(url, postData).then(response => {
-          let imageData = imageService.calculateColors(response.data);
-          context.commit('SET_IMAGE_DATA', imageData);
-          context.commit('SET_LOADING_IMAGE_DATA', false);
-        });
-        context.commit('SET_IMAGE_DATA', []);
-      }
+        context.commit('SET_LOADING_IMAGE_DATA', false);
+      });
+      context.commit('SET_IMAGE_DATA', []);
       context.dispatch('imagesMzImageSelectPoints', []);
     },
     imagesMzImageSelectPoints: (context, selectedPoints) => {

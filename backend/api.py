@@ -8,7 +8,6 @@ from flask import request
 from flask_cors import CORS
 from os import listdir
 from os.path import exists, isdir, isfile
-import pprint
 
 # load dataframe (.h5)
 
