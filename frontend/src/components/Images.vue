@@ -41,8 +41,13 @@ export default {
   mounted: function() {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
-        case 'OPTIONS_MZLIST_UPDATE_SELECTED_MZ':
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
+        case 'OPTIONS_MZLIST_RESET_HIGHLIGHTED_MZ':
+        case 'NETWORK_HIGHLIGHT_NODE':
+          this.$store.dispatch('fetchImageData', 0);
+          this.$store.dispatch('fetchImageData', 1);
+          break;
+        case 'OPTIONS_MZLIST_UPDATE_SELECTED_MZ':
           this.$store.dispatch('fetchImageData', 1);
           break;
       }

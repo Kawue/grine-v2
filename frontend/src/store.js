@@ -24,6 +24,7 @@ export default new Vuex.Store({
       imageData: [
         {
           // data used to render community image
+          mzValues: [],
           points: [], // points that are displayed as mz image
           max: {
             // max image coors, used to scale image according
@@ -33,6 +34,7 @@ export default new Vuex.Store({
         },
         {
           // data used to render image from selected mz values
+          mzValues: [],
           points: [], // points that are displayed as mz image
           max: {
             // max image coors, used to scale image according
@@ -323,6 +325,14 @@ export default new Vuex.Store({
         state.network.series[0].data,
         indices
       );
+      // we need a list of all visible mz values to render the community image
+      let visibleMz = state.options.mzList.visibleMz;
+      let mzValues = [];
+      for (let i in visibleMz) {
+        mzValues.push(visibleMz[i].mz);
+      }
+      state.images.imageData[0].mzValues = mzValues;
+      state.images.imageData[1].mzValues = [];
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -357,6 +367,7 @@ export default new Vuex.Store({
     },
     OPTIONS_MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.options.mzList.selectedMz = data;
+      state.images.imageData[1].mzValues = data;
       state.network.series[0].data = networkService.highlightNodesByMz(
         state.network.series[0].data,
         data
@@ -396,6 +407,8 @@ export default new Vuex.Store({
         state.network.series[0].data,
         []
       );
+      state.images.imageData[0].mzValues = [];
+      state.images.imageData[1].mzValues = [];
     },
     OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(
@@ -431,10 +444,11 @@ export default new Vuex.Store({
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
     fetchImageData: (context, index) => {
-      let mzValues = context.state.options.mzList.selectedMz;
+      /*let mzValues = context.state.options.mzList.selectedMz;
       if (index === 0) {
-        mzValues = [];
-      }
+        mzValues = [381.079];
+      }*/
+      let mzValues = context.state.images.imageData[index].mzValues;
       // do an api fetch for a combination image of multiple mz values
       context.commit('SET_IMAGE_DATA_VALUES', [index, []]);
       if (mzValues.length > 0) {
