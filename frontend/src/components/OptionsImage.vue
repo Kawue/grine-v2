@@ -3,40 +3,22 @@
     <div class="row">
       <div class="col-md-12">
         Merge Method:
-        <b-form-select
-          v-model="mergeMethod"
-          :options="optionsImageMergeMethodChoices"
-          size="sm"
-        >
-        </b-form-select>
+        <OptionsImageMergeMethod></OptionsImageMergeMethod>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 
 export default {
-  name: 'OptionsData',
-  computed: {
-    ...mapGetters({
-      optionsImageMergeMethodChoices: 'optionsImageMergeMethodChoices',
-      state: 'getOptionsImage',
-    }),
-    mergeMethod: {
-      get() {
-        return this.state.mergeMethod;
-      },
-      set(value) {
-        this.$store.commit('OPTIONS_IMAGE_CHANGE_MERGE_METHOD', value);
-      },
-    },
+  name: 'OptionsImage',
+  components: {
+    OptionsImageMergeMethod,
   },
 };
 </script>
 
 <style scoped lang="scss">
-.network {
-}
 </style>

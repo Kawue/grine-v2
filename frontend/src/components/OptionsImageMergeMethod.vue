@@ -1,0 +1,33 @@
+<template>
+  <b-form-select
+    v-model="mergeMethod"
+    :options="optionsImageMergeMethodChoices"
+    size="sm"
+  >
+  </b-form-select>
+</template>
+
+<script>
+import { mapGetters } from 'vuex';
+
+export default {
+  name: 'OptionsImageMergeMethod',
+  computed: {
+    ...mapGetters({
+      optionsImageMergeMethodChoices: 'optionsImageMergeMethodChoices',
+      state: 'getOptionsImage',
+    }),
+    mergeMethod: {
+      get() {
+        return this.state.mergeMethod;
+      },
+      set(value) {
+        this.$store.commit('OPTIONS_IMAGE_CHANGE_MERGE_METHOD', value);
+      },
+    },
+  },
+};
+</script>
+
+<style scoped lang="scss">
+</style>

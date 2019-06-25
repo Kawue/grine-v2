@@ -5,6 +5,13 @@
     title="Images"
   >
     <div slot="content">
+      <div class="row" style="margin-top: 30px">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <OptionsImageMergeMethod></OptionsImageMergeMethod>
+        </div>
+      </div>
+
       <mz-image></mz-image>
     </div>
   </SidebarWidget>
@@ -14,12 +21,14 @@
 import SidebarWidget from './SidebarWidget';
 import MzImage from './MzImage';
 import { mapGetters } from 'vuex';
+import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 
 export default {
   extends: SidebarWidget,
   components: {
     SidebarWidget,
     MzImage,
+    OptionsImageMergeMethod,
   },
   mounted: function() {
     this.$store.subscribe(mutation => {
