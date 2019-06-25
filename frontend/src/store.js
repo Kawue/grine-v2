@@ -145,7 +145,7 @@ export default new Vuex.Store({
         asc: true,
       },
       data: {
-        graph: 2, // selected graph
+        graph: 0, // selected graph
         graphChoices: {}, // available graphs for selection
       },
     },
@@ -361,6 +361,8 @@ export default new Vuex.Store({
     },
     OPTIONS_DATA_CHANGE_GRAPH: (state, graph) => {
       state.options.data.graph = graph;
+      state.images.imageData[0].mzValues = [];
+      state.images.imageData[1].mzValues = [];
     },
     OPTIONS_IMAGE_CHANGE_MERGE_METHOD: (state, mergeMethod) => {
       state.options.image.mergeMethod = mergeMethod;

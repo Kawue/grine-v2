@@ -44,6 +44,7 @@ export default {
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'OPTIONS_MZLIST_RESET_HIGHLIGHTED_MZ':
         case 'NETWORK_HIGHLIGHT_NODE':
+        case 'OPTIONS_DATA_CHANGE_GRAPH':
           this.$store.dispatch('fetchImageData', 0);
           this.$store.dispatch('fetchImageData', 1);
           break;
