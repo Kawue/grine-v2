@@ -53,14 +53,36 @@ def norm(val, min, max):
         return 0
 
 
-# provides data to render image for passed mz_value and dataset
-def image_data_for_dataset_and_mz(ds_name, mz_value):
+# # provides data to render image for passed dataset and single mz_value
+# def image_data_for_dataset_and_mz(ds_name, mz_value):
+#     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
+#     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
+#     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
+#     intensity = list(np.array(single_dframe[mz_value]).astype(float))
+#     intensity_min = min(intensity)
+#     intensity_max = max(intensity)
+#     return [
+#         {'x': int(x), 'y': int(y), 'intensity': float(norm(i, intensity_min, intensity_max))}
+#         for x, y, i in zip(pos_x, pos_y, intensity)
+#     ]
+
+
+# provides data to render image for passed dataset and multiple mz_values
+def image_data_for_dataset_and_mzs(ds_name, mz_values):
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
-    intensity = list(np.array(single_dframe[mz_value]).astype(float))
+
+    # holds the intensities of all mz_values in an array
+    intensity = np.array(single_dframe[mz_values])
+
+    if len(mz_values) > 1:
+        # merge the intensities into a single one with specified method and on specified axis
+        intensity = intensity.max(1)
+
     intensity_min = min(intensity)
     intensity_max = max(intensity)
+
     return [
         {'x': int(x), 'y': int(y), 'intensity': float(norm(i, intensity_min, intensity_max))}
         for x, y, i in zip(pos_x, pos_y, intensity)
@@ -71,8 +93,7 @@ def image_data_for_dataset_and_mz(ds_name, mz_value):
 def image_data_for_dataset(ds_name):
     object = {}
     for key, mz in mz_values(ds_name).items():
-        print(mz)
-        object[mz] = image_data_for_dataset_and_mz(ds_name, mz)
+        object[mz] = image_data_for_dataset_and_mzs(ds_name, [mz])
     return object
 
 
@@ -121,20 +142,23 @@ def datasets_imagedata_single_mz_action(dataset_name, mz_value_id):
         return abort(400)
 
     mz_value = mz_values(dataset_name)[int(mz_value_id)]
-    return json.dumps(image_data_for_dataset_and_mz(dataset_name, mz_value))
+    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, [mz_value]))
 
 
 # get mz image data for dataset and mz values
+# specified merge method is passed via GET parameter
 # mz values are passed via post request
 @app.route('/datasets/<dataset_name>/mzvalues/imagedata')
 def datasets_imagedata_multiple_mz_action(dataset_name):
     #  74.651, 104.107,
-    mz_value = 1823.583
+    #mz_value = 74.651
+    #mz_value = 1823.583
+    mz_values = [74.651, 1823.583]
 
     if dataset_name not in dataset_names():
         return abort(400)
 
-    return json.dumps(image_data_for_dataset_and_mz(dataset_name, mz_value))
+    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, mz_values))
 
 
 # get mz image data for dataset for all mz values
