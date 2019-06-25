@@ -44,7 +44,11 @@ def mz_values(ds_name):
 
 
 def norm(val, min, max):
-    return (val - min) / (max - min)
+    if max > 0:
+        val = (val - min) / (max - min)
+        return val 
+    else:
+        return 0
 
 
 # provides data to render image for passed mz_value and dataset
@@ -56,7 +60,6 @@ def image_data_for_dataset_and_mz(ds_name, mz_value):
 
     intensity_min = min(intensity)
     intensity_max = max(intensity)
-
     return [
         {'x': int(x), 'y': int(y), 'intensity': float(norm(i, intensity_min, intensity_max))}
         for x, y, i in zip(pos_x, pos_y, intensity)
