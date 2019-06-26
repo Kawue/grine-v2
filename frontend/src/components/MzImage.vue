@@ -30,6 +30,8 @@ export default {
   },
   props: {
     imageDataIndex: {
+      // this prob defines which image data from the store is displayed
+      // store.images.imageData[imageDataIndex]
       type: Number,
       required: true,
     },
