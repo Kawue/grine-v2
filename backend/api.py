@@ -23,14 +23,14 @@ for path in argv[2:]:
             merged_dframe = pd.read_hdf('datasets/' + path)
     else:
         for path in argv[2:]:
-            merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))        
+            merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))
 
 merged_dframe = merged_dframe.fillna(value=0)
 
 
 # returns list of allowed merge methods for mz intensizties
-def allowed_merge_methods():
-    return ['min', 'max', 'median']
+def merge_methods():
+    return ['min', 'max', 'median', 'mean']
 
 
 # returns names of all available datasets
@@ -54,7 +54,7 @@ def mz_values(ds_name):
 def norm(val, min, max):
     if max > 0:
         val = (val - min) / (max - min)
-        return val 
+        return val
     else:
         return 0
 
@@ -112,6 +112,12 @@ app = Flask(__name__)
 CORS(app)
 
 
+# get available merge methods if mz image of multiple images is queried
+@app.route('/mz-merge-methods')
+def merge_methods_action():
+    return json.dumps(merge_methods())
+
+
 # get all dataset names
 @app.route('/datasets')
 def datasets_action():
@@ -126,18 +132,6 @@ def datasets_mzvalues_action(dataset_name):
 
     return json.dumps(mz_values(dataset_name))
 
-
-# get mz image data for dataset and single mz value
-# the mz_value_id is provided by /datasets/<dataset_name>/mzvalues
-@app.route('/datasets/<dataset_name>/mzvalues/<mz_value_id>/imagedata')
-def datasets_imagedata_single_mz_action(dataset_name, mz_value_id):
-    if dataset_name not in dataset_names():
-        return abort(400)
-
-    mz_value = mz_values(dataset_name)[int(mz_value_id)]
-    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, [mz_value], None))
-
-
 # get mz image data for dataset and mz values
 # specified merge method is passed via GET parameter
 # mz values are passed via post request
@@ -146,7 +140,7 @@ def datasets_imagedata_multiple_mz_action(dataset_name, method):
     if dataset_name not in dataset_names():
         return abort(400)
 
-    if method not in allowed_merge_methods():
+    if method not in merge_methods():
         return abort(400)
 
     try:

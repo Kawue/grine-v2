@@ -133,8 +133,8 @@ export default new Vuex.Store({
         },
       },
       image: {
-        mergeMethod: 'max',
-        mergeMethods: ['min', 'max', 'median'],
+        mergeMethod: null, // default will be first in array returned from api
+        mergeMethods: [], // queries from api
       },
       mzList: {
         selectedMz: [],
@@ -349,6 +349,10 @@ export default new Vuex.Store({
         ...data,
       };
     },
+    OPTIONS_IMAGE_MERGE_METHODS_UPDATE: (state, data) => {
+      state.options.image.mergeMethods = data;
+      state.options.image.mergeMethod = data[0];
+    },
     OPTIONS_MZLIST_TOOGLE_ASC: state => {
       state.options.mzList.asc = !state.options.mzList.asc;
     },
@@ -430,6 +434,17 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    fetchMergeMethods: context => {
+      const url = API_URL + '/mz-merge-methods';
+      axios
+        .get(url)
+        .then(response => {
+          context.commit('OPTIONS_IMAGE_MERGE_METHODS_UPDATE', response.data);
+        })
+        .catch(function() {
+          alert('Error while loading available mz merge methods from api.');
+        });
+    },
     fetchGraphData: context => {
       context.commit('SET_LOADING_GRAPH_DATA', true);
       const url = API_URL + '/datasets/graphdata';

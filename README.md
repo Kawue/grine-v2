@@ -44,16 +44,15 @@ https://nguyenvanduocit.github.io/vue-loading-spinner/
 ## Backend
 
 ### Api Endpoints
+returns available merge methods if mz image of multiple images is queried
+GET /mz-merge-methods
+
 get all dataset names:
 GET /datasets
 
 get mz values of dataset:
 GET /datasets/<dataset_name>/mzvalues
 GET /datasets/barley101_1/mzvalues
-
-get mz image data for dataset and single mz value:
-GET /datasets/<dataset_name>/mzvalues/<mz_value_id>/imagedata
-GET /datasets/barley101_1/mzvalues/0/imagedata
 
 get mz image data for dataset and mz values, mz values are passed via post request
 POST /datasets/<dataset_name>/mzvalues/imagedata
