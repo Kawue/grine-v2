@@ -82,7 +82,7 @@ export default {
     },
     domainY: function() {
       let domain = [];
-      for (let i = this.max.y; i >= 0; i--) {
+      for (let i = this.max.x; i >= 0; i--) {
         domain.push(i);
       }
       return domain;

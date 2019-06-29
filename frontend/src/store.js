@@ -27,7 +27,12 @@ export default new Vuex.Store({
           mzValues: [],
           points: [], // points that are displayed as mz image
           max: {
-            // max image coors, used to scale image according
+            // max image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          min: {
+            // min image coors, used to scale/cut image according
             x: null,
             y: null,
           },
@@ -37,7 +42,12 @@ export default new Vuex.Store({
           mzValues: [],
           points: [], // points that are displayed as mz image
           max: {
-            // max image coors, used to scale image according
+            // max image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          min: {
+            // min image coors, used to scale/cut image according
             x: null,
             y: null,
           },
@@ -239,17 +249,20 @@ export default new Vuex.Store({
       let mzImageData = state.images.imageData[index];
       mzImageData.points = data;
 
-      let max = 0;
+      let maxX = 0;
+      let maxY = 0;
       for (let point in data) {
         if (data.hasOwnProperty(point)) {
-          if (data[point].x > max) {
-            max = data[point].x;
+          if (data[point].x > maxX) {
+            maxX = data[point].x;
+          }
+          if (data[point].y > maxY) {
+            maxY = data[point].y;
           }
         }
       }
-      max += 10;
-      mzImageData.max.x = max;
-      mzImageData.max.y = max;
+      mzImageData.max.x = maxX;
+      mzImageData.max.y = maxY;
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
