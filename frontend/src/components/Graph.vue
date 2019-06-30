@@ -39,7 +39,7 @@ export default {
         else if (this.alt && this.ctrl) {
           store.commit('NETWORK_SHRINK_NODE', event.data);
         } else {
-          store.commit('OPTIONS_MZLIST_UPDATE_HIGHLIGHTED_MZ', event.value.mzs);
+          store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', event.value.mzs);
           store.commit('NETWORK_HIGHLIGHT_NODE', [event.dataIndex]);
         }
       } /*else if (event.dataType === 'edge') {
@@ -56,7 +56,7 @@ export default {
         );
         // this.optionsV.series[0].links.splice(this.trueIndex, 1);
       } */ else {
-        store.commit('OPTIONS_MZLIST_RESET_HIGHLIGHTED_MZ');
+        store.commit('MZLIST_RESET_HIGHLIGHTED_MZ');
       }
     },
     getEdgeIndex: function(source, target) {

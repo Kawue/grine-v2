@@ -128,6 +128,11 @@ export default new Vuex.Store({
         },
       ],
     },
+    mzList: {
+      selectedMz: [],
+      visibleMz: [],
+      notVisibleMz: [],
+    },
     options: {
       state: {
         // state of options widget
@@ -147,9 +152,6 @@ export default new Vuex.Store({
         mergeMethods: [], // queries from api
       },
       mzList: {
-        selectedMz: [],
-        visibleMz: [],
-        notVisibleMz: [],
         showAll: false,
         showAnnotation: true,
         asc: true,
@@ -206,13 +208,13 @@ export default new Vuex.Store({
       return state.options.graph;
     },
     mzListOptionsSelectedMz: state => {
-      return state.options.mzList.selectedMz;
+      return state.mzList.selectedMz;
     },
     mzListOptionsVisibleMz: state => {
-      return state.options.mzList.visibleMz;
+      return state.mzList.visibleMz;
     },
     mzListOptionsNotVisibleMz: state => {
-      return state.options.mzList.notVisibleMz;
+      return state.mzList.notVisibleMz;
     },
     mzListOptionsShowAll: state => {
       return state.options.mzList.showAll;
@@ -345,7 +347,7 @@ export default new Vuex.Store({
         indices
       );
       // we need a list of all visible mz values to render the community image
-      let visibleMz = state.options.mzList.visibleMz;
+      let visibleMz = state.mzList.visibleMz;
       let mzValues = [];
       for (let i in visibleMz) {
         mzValues.push(visibleMz[i].mz);
@@ -384,47 +386,47 @@ export default new Vuex.Store({
     OPTIONS_IMAGE_CHANGE_MERGE_METHOD: (state, mergeMethod) => {
       state.options.image.mergeMethod = mergeMethod;
     },
-    OPTIONS_MZLIST_SORT_MZ: state => {
-      state.options.mzList.visibleMz = mzListService.sortMzList(
-        state.options.mzList.visibleMz,
+    MZLIST_SORT_MZ: state => {
+      state.mzList.visibleMz = mzListService.sortMzList(
+        state.mzList.visibleMz,
         state.options.mzList.asc
       );
     },
-    OPTIONS_MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
-      state.options.mzList.selectedMz = data;
+    MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
+      state.mzList.selectedMz = data;
       state.images.imageData[1].mzValues = data;
       state.network.series[0].data = networkService.highlightNodesByMz(
         state.network.series[0].data,
         data
       );
     },
-    OPTIONS_MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
+    MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
       const tuple = mzListService.updateHighlightedMz(
-        state.options.mzList.visibleMz,
-        state.options.mzList.notVisibleMz,
+        state.mzList.visibleMz,
+        state.mzList.notVisibleMz,
         mzValues,
         state.options.mzList.showAll,
         state.options.mzList.asc
       );
-      state.options.mzList.visibleMz = tuple[0];
-      state.options.mzList.notVisibleMz = tuple[1];
+      state.mzList.visibleMz = tuple[0];
+      state.mzList.notVisibleMz = tuple[1];
     },
-    OPTIONS_MZLIST_LOAD_GRAPH: state => {
-      state.options.mzList.notVisibleMz = [];
-      state.options.mzList.visibleMz = mzListService.loadGraph(
+    MZLIST_LOAD_GRAPH: state => {
+      state.mzList.notVisibleMz = [];
+      state.mzList.visibleMz = mzListService.loadGraph(
         state.options.data.graph,
         state.originalGraphData.graphs
       );
     },
-    OPTIONS_MZLIST_RESET_HIGHLIGHTED_MZ: state => {
+    MZLIST_RESET_HIGHLIGHTED_MZ: state => {
       const tuple = mzListService.resetHighlightedMz(
-        state.options.mzList.visibleMz,
-        state.options.mzList.notVisibleMz,
+        state.mzList.visibleMz,
+        state.mzList.notVisibleMz,
         state.options.mzList.showAll,
         state.options.mzList.asc
       );
-      state.options.mzList.notVisibleMz = tuple[1];
-      state.options.mzList.visibleMz = mzListService.sortMzList(
+      state.mzList.notVisibleMz = tuple[1];
+      state.mzList.visibleMz = mzListService.sortMzList(
         tuple[0],
         state.options.mzList.asc
       );
@@ -435,15 +437,15 @@ export default new Vuex.Store({
       state.images.imageData[0].mzValues = [];
       state.images.imageData[1].mzValues = [];
     },
-    OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ: state => {
+    MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(
         state.options.mzList.showAll,
-        state.options.mzList.notVisibleMz,
-        state.options.mzList.visibleMz,
+        state.mzList.notVisibleMz,
+        state.mzList.visibleMz,
         state.options.mzList.asc
       );
-      state.options.mzList.visibleMz = tuple[0];
-      state.options.mzList.notVisibleMz = tuple[1];
+      state.mzList.visibleMz = tuple[0];
+      state.mzList.notVisibleMz = tuple[1];
     },
   },
   actions: {
@@ -465,10 +467,10 @@ export default new Vuex.Store({
         .get(url)
         .then(response => {
           context.commit('SET_ORIGINAL_GRAPH_DATA', response.data);
-          context.commit('OPTIONS_MZLIST_LOAD_GRAPH');
-          context.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
+          context.commit('MZLIST_LOAD_GRAPH');
+          context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
           context.commit('SET_LOADING_GRAPH_DATA', false);
-          context.commit('OPTIONS_MZLIST_SORT_MZ');
+          context.commit('MZLIST_SORT_MZ');
         })
         .catch(function() {
           alert('Error while loading graph data from api.');

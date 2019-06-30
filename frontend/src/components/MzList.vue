@@ -160,8 +160,8 @@ export default {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'OPTIONS_DATA_CHANGE_GRAPH':
-          store.commit('OPTIONS_MZLIST_LOAD_GRAPH');
-          store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
+          store.commit('MZLIST_LOAD_GRAPH');
+          store.commit('MZLIST_CALCULATE_VISIBLE_MZ');
           break;
       }
     });
@@ -169,10 +169,10 @@ export default {
   methods: {
     mzClicked: function() {
       console.log(`Selected mz: ${this.localSelectedMz.join(', ')}`);
-      store.commit('OPTIONS_MZLIST_UPDATE_SELECTED_MZ', this.localSelectedMz);
+      store.commit('MZLIST_UPDATE_SELECTED_MZ', this.localSelectedMz);
     },
     sortMZ: function() {
-      store.commit('OPTIONS_MZLIST_SORT_MZ');
+      store.commit('MZLIST_SORT_MZ');
     },
     toggleAsc: function() {
       store.commit('OPTIONS_MZLIST_TOOGLE_ASC');
@@ -206,7 +206,9 @@ export default {
         return val.mz === mz;
       });
       this.currentMz[index].name = this.nameModalMz.name;
-      store.getters.getGraphData['graph' + this.graph].graph['hierarchy' + 3].nodes[
+      store.getters.getGraphData['graph' + this.graph].graph[
+        'hierarchy' + 3
+      ].nodes[
         this.currentMz[index]['hierarchy' + 3]
       ].name = this.nameModalMz.name;
       this.$nextTick(() => {
@@ -238,7 +240,7 @@ export default {
       }, 1000);
     },
     calculateCurrentMz: function() {
-      store.commit('OPTIONS_MZLIST_CALCULATE_VISIBLE_MZ');
+      store.commit('MZLIST_CALCULATE_VISIBLE_MZ');
     },
   },
 };

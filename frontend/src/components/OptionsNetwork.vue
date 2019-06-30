@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     clearList() {
-      store.commit('OPTIONS_MZLIST_RESET_HIGHLIGHTED_MZ');
+      store.commit('MZLIST_RESET_HIGHLIGHTED_MZ');
     },
     updateRepulsion() {
       store.commit(
