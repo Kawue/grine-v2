@@ -60,6 +60,16 @@ export default new Vuex.Store({
       visibleMz: [],
       notVisibleMz: [],
     },
+    network: {
+      svgElements: {
+        svg: null,
+        nodeElements: null,
+        linkElements: null,
+      },
+      simulation: null,
+      nodes: [],
+      edges: [],
+    },
     options: {
       state: {
         // state of options widget
@@ -155,6 +165,18 @@ export default new Vuex.Store({
     networkForceOptions: state => {
       return state.options.network.force;
     },
+    networkSVGElements: state => {
+      return state.network.svgElements;
+    },
+    networkSimulation: state => {
+      return state.network.simulation;
+    },
+    networkEdges: state => {
+      return state.network.edges;
+    },
+    networkNodes: state => {
+      return state.network.nodes;
+    },
     stateOptionsGraph: state => {
       return state.options.data.graph;
     },
@@ -213,6 +235,19 @@ export default new Vuex.Store({
     },
     SET_NETWORK_EDGELENGTH: (state, edgeLength) => {
       state.options.network.force.edgeLength = edgeLength;
+    },
+    NETWORK_INIT_SVG: (state, elements) => {
+      state.network.svgElements = elements;
+    },
+    NETWORK_SIMULATION_INIT: (state, simulation) => {
+      state.network.simulation = simulation;
+    },
+    NETWORK_LOAD_GRAPH: state => {
+      const tupel = networkService.loadGraph(
+        state.originalGraphData.graphs['graph' + state.options.data.graph].graph
+      );
+      state.network.nodes = tupel[0];
+      state.network.edges = tupel[1];
     },
     NETWORK_EXPAND_NODE: (state, event) => {
       const hierarchy = parseInt(event.data.name.split('n')[0].slice(1), 10);

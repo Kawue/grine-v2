@@ -12,7 +12,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-// import store from '@/store';
+import store from '@/store';
 import * as d3 from 'd3';
 import * as d3annotate from '../../node_modules/d3-svg-annotation';
 
@@ -22,13 +22,6 @@ export default {
     return {
       height: window.innerHeight,
       width: window.innerWidth,
-      simulation: null,
-      links: [],
-      nodes: [],
-      link: null,
-      node: null,
-      svg: null,
-      radius: 10,
       flag: true,
       annotations: null,
     };
@@ -37,11 +30,15 @@ export default {
     ...mapGetters({
       graph: 'getGraph',
       selMz: 'mzListOptionsSelectedMz',
+      networkSvg: 'networkSVGElements',
+      simulation: 'networkSimulation',
+      links: 'networkEdges',
+      nodes: 'networkNodes',
     }),
   },
   methods: {
     simulationUpdate: function() {
-      this.link
+      this.networkSvg.linkElements
         .attr('x1', function(d) {
           return d.source.x;
         })
@@ -55,7 +52,7 @@ export default {
           return d.target.y;
         });
 
-      this.node
+      this.networkSvg.nodeElements
         .attr('cx', function(d) {
           return d.x;
         })
@@ -81,12 +78,12 @@ export default {
               wrapSplitter: '\n',
             },
             subject: {
-              radius: 20,
+              radius: selected.data()[0].radius + 10,
             },
             x: selected.data()[0].x,
             y: selected.data()[0].y,
-            dx: 40,
-            dy: 40,
+            dx: selected.data()[0].radius + 20,
+            dy: selected.data()[0].radius + 20,
             color: 'teal',
             type: d3annotate.annotationCalloutCircle,
           },
@@ -101,13 +98,13 @@ export default {
 
       d.fx = d3.event.x;
       d.fy = d3.event.y;
-      this.link
+      this.networkSvg.linkElements
         .filter(function(l) {
           return l.source === d;
         })
         .attr('x1', d.x)
         .attr('y1', d.y);
-      this.link
+      this.networkSvg.linkElements
         .filter(function(l) {
           return l.target === d;
         })
@@ -117,13 +114,13 @@ export default {
     dragged: function(d) {
       d.fx = d3.event.x;
       d.fy = d3.event.y;
-      this.link
+      this.networkSvg.linkElements
         .filter(function(l) {
           return l.source === d;
         })
         .attr('x1', d.x)
         .attr('y1', d.y);
-      this.link
+      this.networkSvg.linkElements
         .filter(function(l) {
           return l.target === d;
         })
@@ -136,7 +133,7 @@ export default {
       d.fy = null;
     },
     zoomed: function() {
-      this.svg.attr(
+      this.networkSvg.svg.attr(
         'transform',
         'translate(' +
           d3.event.transform.x +
@@ -152,47 +149,21 @@ export default {
         this.nodes[i]['selected'] = false;
       }
       d.selected = true;
-      this.node.style('fill', function(d) {
+      this.networkSvg.nodeElements.style('fill', function(d) {
         return d.selected ? '#f00' : d.color;
       });
       this.simulationUpdate();
     },
   },
   mounted() {
-    const nodeKeys = Object.keys(this.graph['hierarchy0']['nodes']);
-    let counter = -1;
-    this.nodes.push(
-      ...nodeKeys.map(d => {
-        counter += 1;
-        return {
-          id: this.graph['hierarchy0']['nodes'][d].name,
-          selected: false,
-          mzs: this.graph['hierarchy0']['nodes'][d].mzs,
-          childs: this.graph['hierarchy0']['nodes'][d].childs,
-          color: d3.interpolateRainbow(counter / nodeKeys.length),
-        };
-      })
-    );
+    store.commit('NETWORK_LOAD_GRAPH');
 
-    this.links.push(
-      ...Object.keys(this.graph['hierarchy0']['edges']).map(l => {
-        return {
-          source: this.nodes.find(d => {
-            return d.id === this.graph['hierarchy0']['edges'][l].source;
-          }),
-          target: this.nodes.find(d => {
-            return d.id === this.graph['hierarchy0']['edges'][l].target;
-          }),
-        };
-      })
-    );
-
-    this.svg = d3
+    const lSvg = d3
       .select('.graphd3')
       .append('g')
       .attr('class', 'beepboop');
 
-    this.link = this.svg
+    const lLink = lSvg
       .append('g')
       .attr('class', 'links')
       .selectAll('line')
@@ -200,24 +171,22 @@ export default {
       .enter()
       .append('line');
 
-    this.node = this.svg
+    const lNode = lSvg
       .append('g')
       .attr('class', 'nodes')
       .selectAll('circle')
       .data(this.nodes)
       .enter()
       .append('circle')
-      .attr('r', 10)
-      .style('fill', function(d) {
-        return d.color;
-      })
+      .attr('r', d => d.radius)
+      .style('fill', d => d.color)
       .attr('numMz', d => d.mzs)
       .attr('childs', d => d.childs)
       .on('click', this.testClick)
       .on('mouseover', function() {
         // console.log('mouse over')
         d3.select(this)
-          .attr('r', d3.select(this).attr('r') * 1.4)
+          .attr('r', this['__data__'].radius + 5)
           .attr('class', 'selected');
         let annotationText =
           'numMzs: ' +
@@ -233,12 +202,12 @@ export default {
               wrapSplitter: '\n',
             },
             subject: {
-              radius: 20,
+              radius: this['__data__'].radius + 10,
             },
             x: this['__data__'].x,
             y: this['__data__'].y,
-            dx: 40,
-            dy: 40,
+            dx: this['__data__'].radius + 20,
+            dy: this['__data__'].radius + 20,
             color: 'teal',
             type: d3annotate.annotationCalloutCircle,
           },
@@ -256,7 +225,7 @@ export default {
         // console.log('mouse out')
         d3.select(this)
           .style('fill', d => (d.selected ? '#f00' : d.color))
-          .attr('r', 10)
+          .attr('r', d => d.radius)
           .attr('class', '');
         d3.select('.annotation-group').remove();
         this.annotations = null;
@@ -269,18 +238,26 @@ export default {
           .on('end', this.dragended)
       );
 
-    this.simulation = d3
+    store.commit('NETWORK_INIT_SVG', {
+      svg: lSvg,
+      nodeElements: lNode,
+      linkElements: lLink,
+    });
+
+    const lSimulation = d3
       .forceSimulation(this.nodes)
-      .force('charge', d3.forceManyBody().strength(-20))
-      .force('link', d3.forceLink(this.links))
+      .force('charge', d3.forceManyBody().strength(-50))
+      .force('link', d3.forceLink(this.links).id(l => l.name))
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
-      .force('forceCollide', d3.forceCollide().radius(this.radius))
+      .force('forceCollide', d3.forceCollide().radius(d => d.radius))
       .on('tick', this.simulationUpdate);
+
+    store.commit('NETWORK_SIMULATION_INIT', lSimulation);
 
     d3.select('.graphd3').call(
       d3
         .zoom()
-        .scaleExtent([1 / 2, 20])
+        .scaleExtent([1 / 3, 8])
         .on('zoom', this.zoomed)
     );
     console.log('svg fertig');

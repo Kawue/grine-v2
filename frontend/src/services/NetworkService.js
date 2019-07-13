@@ -1,48 +1,48 @@
-class NetworkService {
-  highlightedNodeStyle = {
-    shadowColor: 'rgba(0, 0, 0, 1)',
-    shadowBlur: 15,
-  };
+import * as d3 from 'd3';
 
-  biggestNodeRadius = 65;
-  smallestNodeRadius = 35;
+class NetworkService {
+  biggestNodeRadius = 25;
+  smallestNodeRadius = 10;
 
   loadGraph(graph) {
     const tupel = [[], []];
-    const nodeNames = Object.keys(graph['hierarchy0'].nodes);
-    nodeNames.forEach(nodeKey => {
-      tupel[0].push({
-        name: nodeKey.toString(),
-        x: null,
-        y: null,
-        draggable: true,
-        symbolSize: this.biggestNodeRadius,
-        label: {
-          formatter: function() {
-            return '';
-          },
-        },
-        category: parseInt(nodeKey.toString().split('n')[1], 10),
-        value: {
+    let counter = -1;
+    const nodeKeys = Object.keys(graph['hierarchy0'].nodes);
+    tupel[0].push(
+      ...nodeKeys.map(nodeKey => {
+        counter += 1;
+        return {
+          name: nodeKey.toString(),
+          x: null,
+          y: null,
+          selected: false,
+          radius: this.biggestNodeRadius,
+          color: d3.interpolateRainbow(counter / nodeKeys.length),
           childs: graph['hierarchy0'].nodes[nodeKey].childs,
           mzs: graph['hierarchy0'].nodes[nodeKey].mzs,
           parentIntraCommunityNumbers: [],
-        },
-      });
-    });
-    Object.keys(graph).forEach(hierarchy => {
-      Object.keys(graph[hierarchy]['edges']).forEach(edgeKey => {
-        tupel[1].push({
-          source: graph[hierarchy].edges[edgeKey]['source'],
-          target: graph[hierarchy].edges[edgeKey]['target'],
-          value: graph[hierarchy].edges[edgeKey]['weight'],
-        });
-      });
-    });
+        };
+      })
+    );
+    tupel[1].push(
+      ...Object.keys(graph['hierarchy0']['edges']).map(l => {
+        return {
+          source: tupel[0].find(d => {
+            return d.name === graph['hierarchy0']['edges'][l].source;
+          }),
+          target: tupel[0].find(d => {
+            return d.name === graph['hierarchy0']['edges'][l].target;
+          }),
+          weight: graph['hierarchy0'].edges[l]['weight'],
+          name: graph['hierarchy0'].edges[l]['name'],
+        };
+      })
+    );
     return tupel;
   }
 
   shrinkNode(graph, oldNode) {
+    /*
     const previousHierarchy =
       parseInt(oldNode.name.split('n')[0].slice(1), 10) - 1;
     const nextNodeName =
@@ -85,9 +85,11 @@ class NetworkService {
       nextNode.value['parentIntraCommunityNumbers'] = [];
     }
     return nextNode;
+     */
   }
 
   expandNode(graph, oldNode) {
+    /*
     const nextHierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10) + 1;
     const nextNodes = [];
     let counter = 0;
@@ -134,9 +136,11 @@ class NetworkService {
       nextNodes.push(nextNode);
     }
     return nextNodes;
+     */
   }
 
   highlightNodesByMz(nodes, mzValuesStrings) {
+    /*
     const mzValuesFloats = mzValuesStrings.map(mz => parseFloat(mz));
     const indices = [];
     for (let i = 0; i < nodes.length; i++) {
@@ -149,9 +153,11 @@ class NetworkService {
       }
     }
     return this.highlightNodes(nodes, indices);
+     */
   }
 
   highlightNodes(nodes, indices) {
+    /*
     const localNodes = [...nodes];
     for (const node of localNodes) {
       node.itemStyle = null;
@@ -162,6 +168,8 @@ class NetworkService {
       }
     }
     return localNodes;
+
+     */
   }
 }
 export default NetworkService;
