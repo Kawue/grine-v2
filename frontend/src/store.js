@@ -55,79 +55,6 @@ export default new Vuex.Store({
       ],
       loadingImageData: false, // api fetch for image data is running
     },
-    network: {
-      title: {
-        text: 'Graph Test',
-      },
-      animationDurationUpdate: 1500,
-      animationEasingUpdate: 'quinticInOut',
-      series: [
-        {
-          type: 'graph',
-          layout: 'force',
-          roam: true,
-          label: {
-            normal: {
-              show: false,
-            },
-          },
-          categories: [
-            {
-              name: 'Community 1',
-            },
-            {
-              name: 'Community 2',
-            },
-            {
-              name: 'Community 3',
-            },
-            {
-              name: 'Community 4',
-            },
-            {
-              name: 'Community 5',
-            },
-            {
-              name: 'Community 6',
-            },
-            {
-              name: 'Community 7',
-            },
-            {
-              name: 'Community 8',
-            },
-            {
-              name: 'Community 9',
-            },
-            {
-              name: 'Community 10',
-            },
-            {
-              name: 'Community 11',
-            },
-            {
-              name: 'Community 12',
-            },
-          ],
-          edgeSymbolSize: [4, 10],
-          force: {
-            repulsion: 2000,
-            edgeLength: 30,
-            gravity: 0.1,
-          },
-          data: [],
-          // links: [],
-          links: [],
-          lineStyle: {
-            normal: {
-              opacity: 0.9,
-              width: 2,
-              curveness: 0,
-            },
-          },
-        },
-      ],
-    },
     mzList: {
       selectedMz: [],
       visibleMz: [],
@@ -225,9 +152,6 @@ export default new Vuex.Store({
     mzListOptionsAsc: state => {
       return state.options.mzList.asc;
     },
-    network: state => {
-      return state.network;
-    },
     networkForceOptions: state => {
       return state.options.network.force;
     },
@@ -283,22 +207,12 @@ export default new Vuex.Store({
     },
     SET_NETWORK_REPULSION: (state, repulsion) => {
       state.options.network.force.repulsion = repulsion;
-      state.network.series[0].force = state.options.network.force;
     },
     SET_NETWORK_GRAVITY: (state, gravity) => {
       state.options.network.force.gravity = gravity;
-      state.network.series[0].force = state.options.network.force;
     },
     SET_NETWORK_EDGELENGTH: (state, edgeLength) => {
       state.options.network.force.edgeLength = edgeLength;
-      state.network.series[0].force = state.options.network.force;
-    },
-    NETWORK_LOAD: state => {
-      const nodeEdges = networkService.loadGraph(
-        state.originalGraphData.graphs['graph' + state.options.data.graph].graph
-      );
-      state.network.series[0].data = nodeEdges[0];
-      state.network.series[0].links = nodeEdges[1];
     },
     NETWORK_EXPAND_NODE: (state, event) => {
       const hierarchy = parseInt(event.data.name.split('n')[0].slice(1), 10);
