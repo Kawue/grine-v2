@@ -82,11 +82,9 @@ export default new Vuex.Store({
         tabsExpanded: false,
       },
       network: {
-        force: {
-          repulsion: 1000,
-          gravity: 0.1,
-          edgeLength: 30,
-        },
+        repulsion: -50,
+        iterations: 300,
+        edgeLength: 30,
       },
       image: {
         mergeMethod: null, // default will be first in array returned from api
@@ -169,8 +167,8 @@ export default new Vuex.Store({
     mzListOptionsAsc: state => {
       return state.options.mzList.asc;
     },
-    networkForceOptions: state => {
-      return state.options.network.force;
+    networkOptions: state => {
+      return state.options.network;
     },
     networkSVGElements: state => {
       return state.network.svgElements;
@@ -234,14 +232,12 @@ export default new Vuex.Store({
       }
       //state.options.data.graph = 0;
     },
-    SET_NETWORK_REPULSION: (state, repulsion) => {
-      state.options.network.force.repulsion = repulsion;
-    },
-    SET_NETWORK_GRAVITY: (state, gravity) => {
-      state.options.network.force.gravity = gravity;
-    },
-    SET_NETWORK_EDGELENGTH: (state, edgeLength) => {
-      state.options.network.force.edgeLength = edgeLength;
+    SET_NETWORK_OPTIONS: (state, options) => {
+      state.options.network = options;
+      networkService.updateSimulationParameters(
+        state.network.simulation,
+        options
+      );
     },
     NETWORK_INIT_SVG: state => {
       state.network.svgElements = networkService.initSVG(
@@ -253,7 +249,8 @@ export default new Vuex.Store({
       state.network.simulation = networkService.initSimulation(
         state.network.simulation,
         state.network.nodes,
-        state.network.edges
+        state.network.edges,
+        state.options.network
       );
     },
     NETWORK_LOAD_GRAPH: state => {

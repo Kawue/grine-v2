@@ -234,16 +234,33 @@ class NetworkService {
     };
   }
 
-  initSimulation(oldSimulation, nodes, edges) {
+  updateSimulationParameters(simulation, parameters) {
+    simulation.force('charge').strength(parameters.repulsion);
+    simulation.force('link').distance(parameters.edgeLength);
+    simulation
+      .alphaDecay(1 - Math.pow(0.001, 1 / parameters.iterations))
+      .alpha(0.5)
+      .alphaTarget(0)
+      .restart();
+  }
+
+  initSimulation(oldSimulation, nodes, edges, parameters) {
     if (oldSimulation != null) {
       oldSimulation.stop();
     }
     return d3
       .forceSimulation(nodes)
-      .force('charge', d3.forceManyBody().strength(-50))
-      .force('link', d3.forceLink(edges).id(l => l.name))
+      .force('charge', d3.forceManyBody().strength(parameters.repulsion))
+      .force(
+        'link',
+        d3
+          .forceLink(edges)
+          .id(l => l.name)
+          .distance(parameters.edgeLength)
+      )
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
       .force('forceCollide', d3.forceCollide().radius(d => d.radius))
+      .alphaDecay(1 - Math.pow(0.001, 1 / parameters.iterations))
       .on('tick', this.simulationUpdate);
   }
 
