@@ -154,17 +154,8 @@ export default {
       showAnnotation: 'mzListOptionsShowAnnotation',
       asc: 'mzListOptionsAsc',
       graph: 'stateOptionsGraph',
+      meta: 'meta',
     }),
-  },
-  mounted: function() {
-    this.$store.subscribe(mutation => {
-      switch (mutation.type) {
-        case 'OPTIONS_DATA_CHANGE_GRAPH':
-          store.commit('MZLIST_LOAD_GRAPH');
-          store.commit('MZLIST_CALCULATE_VISIBLE_MZ');
-          break;
-      }
-    });
   },
   methods: {
     mzClicked: function() {
@@ -206,11 +197,10 @@ export default {
         return val.mz === mz;
       });
       this.currentMz[index].name = this.nameModalMz.name;
-      store.getters.getGraphData['graph' + this.graph].graph[
-        'hierarchy' + 3
-      ].nodes[
-        this.currentMz[index]['hierarchy' + 3]
-      ].name = this.nameModalMz.name;
+      store.commit('MZLIST_UPDATE_NAME', {
+        nodeKey: this.currentMz[index]['hierarchy' + this.meta.maxHierarchy],
+        name: this.nameModalMz.name,
+      });
       this.$nextTick(() => {
         this.$refs['nameModal'].hide();
       });
@@ -223,15 +213,12 @@ export default {
     },
     handleCancel: function() {
       const mz = this.nameModalMz.mz;
-      const index = this.currentMz.findIndex(function(val) {
-        return val.mz === mz;
-      });
+      const index = this.currentMz.findIndex(val => val.mz === mz);
       this.currentMz[index].name = this.nameModalMz.mz.toString();
-      store.getters.getGraphData['graph' + this.graph.toString()].graph[
-        'hierarchy' + 3
-      ].nodes[
-        this.currentMz[index]['hierarchy' + 3]
-      ].name = this.nameModalMz.mz.toString();
+      store.commit('MZLIST_UPDATE_NAME', {
+        nodeKey: this.currentMz[index]['hierarchy' + this.meta.maxHierarchy],
+        name: this.nameModalMz.mz.toString(),
+      });
       setTimeout(() => {
         this.nameModalMz = {
           name: '',

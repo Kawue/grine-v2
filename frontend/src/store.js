@@ -20,6 +20,10 @@ export default new Vuex.Store({
   state: {
     loadingGraphData: true, // api fetch for graph data is running
     originalGraphData: {}, // graph data api return
+    meta: {
+      maxHierarchy: 1,
+      maxGraphs: 1,
+    },
     images: {
       imageData: [
         {
@@ -138,6 +142,9 @@ export default new Vuex.Store({
     getOptionsData: state => {
       return state.options.data;
     },
+    meta: state => {
+      return state.meta;
+    },
     mzListGraph: state => {
       return state.options.mzList;
     },
@@ -236,11 +243,18 @@ export default new Vuex.Store({
     SET_NETWORK_EDGELENGTH: (state, edgeLength) => {
       state.options.network.force.edgeLength = edgeLength;
     },
-    NETWORK_INIT_SVG: (state, elements) => {
-      state.network.svgElements = elements;
+    NETWORK_INIT_SVG: state => {
+      state.network.svgElements = networkService.initSVG(
+        state.network.nodes,
+        state.network.edges
+      );
     },
-    NETWORK_SIMULATION_INIT: (state, simulation) => {
-      state.network.simulation = simulation;
+    NETWORK_SIMULATION_INIT: state => {
+      state.network.simulation = networkService.initSimulation(
+        state.network.simulation,
+        state.network.nodes,
+        state.network.edges
+      );
     },
     NETWORK_LOAD_GRAPH: state => {
       const tupel = networkService.loadGraph(
@@ -327,11 +341,6 @@ export default new Vuex.Store({
       state.options.mzList.showAnnotation = !state.options.mzList
         .showAnnotation;
     },
-    OPTIONS_DATA_CHANGE_GRAPH: (state, graph) => {
-      state.options.data.graph = graph;
-      state.images.imageData[0].mzValues = [];
-      state.images.imageData[1].mzValues = [];
-    },
     OPTIONS_IMAGE_CHANGE_MERGE_METHOD: (state, mergeMethod) => {
       state.options.image.mergeMethod = mergeMethod;
     },
@@ -348,6 +357,11 @@ export default new Vuex.Store({
         state.network.series[0].data,
         data
       );
+    },
+    MZLIST_UPDATE_NAME: (state, data) => {
+      state.originalGraphData.graphs['graph' + state.options.data.graph].graph[
+        'hierarchy' + state.meta.maxHierarchy
+      ].nodes[data.nodeKey].name = data.name;
     },
     MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
       const tuple = mzListService.updateHighlightedMz(
@@ -416,6 +430,12 @@ export default new Vuex.Store({
         .get(url)
         .then(response => {
           context.commit('SET_ORIGINAL_GRAPH_DATA', response.data);
+          context.state.meta.maxHierarchy =
+            Object.keys(
+              context.state.originalGraphData.graphs[
+                'graph' + context.state.options.data.graph
+              ].graph
+            ).length - 1;
           context.commit('MZLIST_LOAD_GRAPH');
           context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
           context.commit('SET_LOADING_GRAPH_DATA', false);
@@ -429,6 +449,23 @@ export default new Vuex.Store({
     updateOptionsImage: (context, data) => {
       let calculatedImageOptions = optionsService.calculateImageOptions(data);
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
+    },
+    changeGraph: (context, graph) => {
+      context.state.options.data.graph = graph;
+      context.state.images.imageData[0].mzValues = [];
+      context.state.images.imageData[1].mzValues = [];
+      context.state.meta.maxHierarchy =
+        Object.keys(
+          context.state.originalGraphData.graphs[
+            'graph' + context.state.options.data.graph
+          ].graph
+        ).length - 1;
+      context.commit('MZLIST_LOAD_GRAPH');
+      context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
+      context.commit('MZLIST_SORT_MZ');
+      context.commit('NETWORK_LOAD_GRAPH');
+      context.commit('NETWORK_INIT_SVG');
+      context.commit('NETWORK_SIMULATION_INIT');
     },
     fetchImageData: (context, index) => {
       let mzValues = context.state.images.imageData[index].mzValues;

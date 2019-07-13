@@ -20,11 +20,9 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'OptionsData',
   mounted: function() {
-    this.$store.subscribe(mutation => {
-      switch (mutation.type) {
-        case 'OPTIONS_DATA_CHANGE_GRAPH':
-          this.$store.dispatch('fetchImageData');
-          break;
+    this.$store.subscribeAction(action => {
+      if (action.type === 'changeGraph') {
+        this.$store.dispatch('fetchImageData');
       }
     });
   },
@@ -38,7 +36,7 @@ export default {
         return this.state.graph;
       },
       set(value) {
-        this.$store.commit('OPTIONS_DATA_CHANGE_GRAPH', value);
+        this.$store.dispatch('changeGraph', value);
       },
     },
   },
