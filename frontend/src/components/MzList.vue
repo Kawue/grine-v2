@@ -159,7 +159,6 @@ export default {
   },
   methods: {
     mzClicked: function() {
-      console.log(`Selected mz: ${this.localSelectedMz.join(', ')}`);
       store.commit('MZLIST_UPDATE_SELECTED_MZ', this.localSelectedMz);
     },
     sortMZ: function() {

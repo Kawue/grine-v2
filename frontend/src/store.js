@@ -84,7 +84,7 @@ export default new Vuex.Store({
       network: {
         repulsion: -50,
         iterations: 300,
-        edgeLength: 30,
+        edgeLength: 150,
       },
       image: {
         mergeMethod: null, // default will be first in array returned from api
@@ -301,19 +301,8 @@ export default new Vuex.Store({
         state.network.series[0].data.push(nextNode);
       }
     },
-    NETWORK_HIGHLIGHT_NODE: (state, indices) => {
-      state.network.series[0].data = networkService.highlightNodes(
-        state.network.series[0].data,
-        indices
-      );
-      // we need a list of all visible mz values to render the community image
-      let visibleMz = state.mzList.visibleMz;
-      let mzValues = [];
-      for (let i in visibleMz) {
-        mzValues.push(visibleMz[i].mz);
-      }
-      state.images.imageData[0].mzValues = mzValues;
-      state.images.imageData[1].mzValues = [];
+    NETWORK_HIGHLIGHT_NODE_BY_MZ: state => {
+      networkService.highlightNodesByMz(state.network.nodes);
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -350,10 +339,7 @@ export default new Vuex.Store({
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.mzList.selectedMz = data;
       state.images.imageData[1].mzValues = data;
-      state.network.series[0].data = networkService.highlightNodesByMz(
-        state.network.series[0].data,
-        data
-      );
+      networkService.highlightNodesByMz(state.network.nodes, data);
     },
     MZLIST_UPDATE_NAME: (state, data) => {
       state.originalGraphData.graphs['graph' + state.options.data.graph].graph[
@@ -390,10 +376,7 @@ export default new Vuex.Store({
         tuple[0],
         state.options.mzList.asc
       );
-      state.network.series[0].data = networkService.highlightNodes(
-        state.network.series[0].data,
-        []
-      );
+      networkService.clearHighlight(state.network.nodes);
       state.images.imageData[0].mzValues = [];
       state.images.imageData[1].mzValues = [];
     },

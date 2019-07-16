@@ -61,11 +61,11 @@ class NetworkService {
       });
 
     store.getters.networkSVGElements.nodeElements
-      .attr('cx', function(d) {
-        return d.x;
+      .attr('x', function(d) {
+        return d.x - d.radius;
       })
-      .attr('cy', function(d) {
-        return d.y;
+      .attr('y', function(d) {
+        return d.y - d.radius;
       });
 
     let selected = d3.select('.selected');
@@ -167,8 +167,13 @@ class NetworkService {
       .selectAll('circle')
       .data(nodes)
       .enter()
-      .append('circle')
-      .attr('r', d => d.radius)
+      .append('rect')
+      .attr('class', 'node')
+      .attr('rx', d => d.radius)
+      .attr('id', d => d.name)
+      .attr('ry', d => d.radius)
+      .attr('width', d => 2 * d.radius)
+      .attr('height', d => 2 * d.radius)
       .style('fill', d => d.color)
       .attr('numMz', d => d.mzs)
       .attr('childs', d => d.childs)
@@ -214,7 +219,7 @@ class NetworkService {
         // Add interactivity
         // console.log('mouse out')
         d3.select(this)
-          .style('fill', d => (d.selected ? '#f00' : d.color))
+          .style('fill', d => d.color)
           .attr('r', d => d.radius)
           .attr('class', '');
         d3.select('.annotation-group').remove();
@@ -264,19 +269,60 @@ class NetworkService {
       .on('tick', this.simulationUpdate);
   }
 
-  nodeClick(d) {
+  nodeClick(n) {
     if (d3.event.ctrlKey && d3.event.shiftKey) {
       console.log('Shrink');
     } else if (d3.event.ctrlKey) {
       console.log('Expand');
     } else {
-      for (let i = 0; i < this.nodes.length; i++) {
-        this.nodes[i]['selected'] = false;
+      for (let i = 0; i < store.getters.networkNodes.length; i++) {
+        if (store.getters.networkNodes[i].name === n.name) {
+          if (!n.selected) {
+            n.selected = true;
+            store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
+            d3.select('#' + n.name)
+              .transition()
+              .duration(250)
+              .attr('rx', 0)
+              .attrTween('transform', function() {
+                return d3.interpolateString(
+                  'rotate(0 ' + n.x + ' ' + n.y + ')',
+                  'rotate(90 ' + n.x + ' ' + n.y + ')'
+                );
+              })
+              .attr('ry', 0)
+              .on('end', function() {
+                d3.select(this).attr('transform', null);
+              });
+          }
+        } else {
+          if (store.getters.networkNodes[i]['selected']) {
+            store.getters.networkNodes[i]['selected'] = false;
+            d3.select('#' + store.getters.networkNodes[i].name)
+              .transition()
+              .duration(250)
+              .attr('rx', store.getters.networkNodes[i].radius)
+              .attr('ry', store.getters.networkNodes[i].radius)
+              .attrTween('transform', function() {
+                return d3.interpolateString(
+                  'rotate(0 ' +
+                    store.getters.networkNodes[i].x +
+                    ' ' +
+                    store.getters.networkNodes[i].y +
+                    ')',
+                  'rotate(-90 ' +
+                    store.getters.networkNodes[i].x +
+                    ' ' +
+                    store.getters.networkNodes[i].y +
+                    ')'
+                );
+              })
+              .on('end', function() {
+                d3.select(this).attr('transform', null);
+              });
+          }
+        }
       }
-      d.selected = true;
-      store.getters.networkSVGElements.nodeElements.style('fill', function(d) {
-        return d.selected ? '#f00' : d.color;
-      });
     }
   }
 
@@ -379,36 +425,76 @@ class NetworkService {
   }
 
   highlightNodesByMz(nodes, mzValuesStrings) {
-    /*
     const mzValuesFloats = mzValuesStrings.map(mz => parseFloat(mz));
-    const indices = [];
     for (let i = 0; i < nodes.length; i++) {
+      let hit = false;
       for (let j = 0; j < mzValuesFloats.length; j++) {
-        if (nodes[i].value.mzs.findIndex(mz => mz === mzValuesFloats[j]) > -1) {
-          indices.push(i);
+        if (nodes[i].mzs.findIndex(mz => mz === mzValuesFloats[j]) > -1) {
+          hit = true;
           mzValuesFloats.splice(j, 1);
           break;
         }
       }
-    }
-    return this.highlightNodes(nodes, indices);
-     */
-  }
-
-  highlightNodes(nodes, indices) {
-    /*
-    const localNodes = [...nodes];
-    for (const node of localNodes) {
-      node.itemStyle = null;
-    }
-    if (indices.length > 0) {
-      for (const index of [...new Set(indices)]) {
-        localNodes[index].itemStyle = this.highlightedNodeStyle;
+      if (hit) {
+        if (!nodes[i].selected) {
+          nodes[i].selected = true;
+          d3.select('#' + nodes[i].name)
+            .transition()
+            .duration(250)
+            .attr('rx', 0)
+            .attr('ry', 0)
+            .attrTween('transform', function() {
+              return d3.interpolateString(
+                'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
+                'rotate(90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
+              );
+            })
+            .on('end', function() {
+              d3.select(this).attr('transform', null);
+            });
+        }
+      } else {
+        if (nodes[i].selected) {
+          nodes[i].selected = false;
+          d3.select('#' + nodes[i].name)
+            .transition()
+            .duration(250)
+            .attr('rx', nodes[i].radius)
+            .attr('ry', nodes[i].radius)
+            .attrTween('transform', function() {
+              return d3.interpolateString(
+                'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
+                'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
+              );
+            })
+            .on('end', function() {
+              d3.select(this).attr('transform', null);
+            });
+        }
       }
     }
-    return localNodes;
+  }
 
-     */
+  clearHighlight(nodes) {
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].selected) {
+        nodes[i].selected = false;
+        d3.select('#' + nodes[i].name)
+          .transition()
+          .duration(250)
+          .attr('rx', nodes[i].radius)
+          .attr('ry', nodes[i].radius)
+          .attrTween('transform', function() {
+            return d3.interpolateString(
+              'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
+              'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
+            );
+          })
+          .on('end', function() {
+            d3.select(this).attr('transform', null);
+          });
+      }
+    }
   }
 }
 export default NetworkService;
