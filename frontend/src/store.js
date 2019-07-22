@@ -260,16 +260,22 @@ export default new Vuex.Store({
       state.network.nodes = tupel[0];
       state.network.edges = tupel[1];
     },
-    NETWORK_EXPAND_NODE: (state, event) => {
-      const hierarchy = parseInt(event.data.name.split('n')[0].slice(1), 10);
-      if (hierarchy < 3) {
-        state.network.series[0].data.splice(event.dataIndex, 1);
-        const nextNodes = networkService.expandNode(
+    NETWORK_EXPAND_NODE: (state, node) => {
+      const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      if (hierarchy < state.meta.maxHierarchy) {
+        networkService.expandNode(
           state.originalGraphData.graphs['graph' + state.options.data.graph]
             .graph,
-          event.data
+          node,
+          state.network.nodes,
+          state.network.edges
         );
-        state.network.series[0].data.push(...nextNodes);
+        state.network.simulation = networkService.initSimulation(
+          state.network.simulation,
+          state.network.nodes,
+          state.network.edges,
+          state.options.network
+        );
       }
     },
     NETWORK_SHRINK_NODE: (state, oldNode) => {

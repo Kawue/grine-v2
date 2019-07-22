@@ -5,7 +5,7 @@
     <svg
       v-bind:width="this.width"
       v-bind:height="this.height"
-      class="graphd3 links"
+      class="graphd3 link-color"
     ></svg>
   </div>
 </template>
@@ -48,7 +48,7 @@ export default {
     d3.select('.graphd3').call(
       d3
         .zoom()
-        .scaleExtent([1 / 3, 5])
+        .scaleExtent([1 / 4, 5])
         .on('zoom', this.zoomed)
     );
     console.log('svg fertig');
@@ -68,7 +68,7 @@ export default {
   color: white;
 }
 
-.links {
+.link-color {
   stroke: #999;
 }
 </style>
