@@ -87,6 +87,38 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
     ]
 
 
+# pass image_data of a node, pass selected_points which probably comes from frontend lasso selection
+# calculate how much the area of the selected_points matches with the passed image_data
+# returns boolean
+def calculate_match_percentage(image_data, selected_points, min_intensity=0.01, min_overlap=0.7):
+    matches = 0
+    for p1 in image_data:
+        for p2 in selected_points:
+            if p1['x'] == p2['x'] and p1['y'] == p2['y'] and p1['intensity'] > min_intensity:
+                matches = matches + 1
+                break
+
+    overlap = matches / len(selected_points)
+    # print(matches)
+    # print(len(selected_points))
+    # print(overlap)
+    return overlap >= min_overlap
+
+
+# returns the names of nodes which are matching based on provided min_intensity and max_overlap
+# from frontend
+def check_nodes_for_match(ds_name, node_data, selected_points, merge_method):
+    node_names = []
+
+    for node in node_data:
+        node_image_data = image_data_for_dataset_and_mzs(ds_name, node['mzs'], merge_method)
+        match = calculate_match_percentage(node_image_data, selected_points)
+        if match:
+            node_names.append(node['name'])
+
+    return node_names
+
+
 # provides data to render all mz images for passed dataset
 def image_data_for_dataset(ds_name):
     object = {}
@@ -141,8 +173,8 @@ def datasets_mzvalues_action(dataset_name):
 # gets a list of visible nodes from the frontend
 # get a list of selected points
 # returns which nodes are similar
-@app.route('/datasets/<dataset_name>/imagedata/method/<method>/find-similar', methods=['POST'])
-def datasets_imagedata_find_similar_action(dataset_name, method):
+@app.route('/datasets/<dataset_name>/imagedata/method/<method>/match', methods=['POST'])
+def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
     if dataset_name not in dataset_names():
         return abort(400)
 
@@ -153,15 +185,17 @@ def datasets_imagedata_find_similar_action(dataset_name, method):
         post_data = request.get_data()
         post_data_json = json.loads(post_data)
         post_data_selected_points = post_data_json['selectedPoints']
-        post_data_visible_nodes = post_data_json['visibleNodes']
-        # post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
+        post_data_visible_node_data = post_data_json['visibleNodes']
     except:
         return abort(400)
 
-    # if len(post_data_mz_values) == 0:
-    #     return abort(400)
-
-    return json.dumps(post_data_visible_nodes)
+    ret = check_nodes_for_match(
+        dataset_name,
+        post_data_visible_node_data,
+        post_data_selected_points,
+        method
+    )
+    return json.dumps(ret)
 
 
 # get mz image data for dataset and mz values

@@ -515,10 +515,12 @@ export default new Vuex.Store({
           datasetName +
           '/imagedata/method/' +
           mergeMethod +
-          '/find-similar';
+          '/match';
         const visibleNodes = [];
         context.state.network.nodes.forEach(function(node) {
-          visibleNodes.push(node.name);
+          visibleNodes.push({ name: node.name, mzs: node.mzs });
+          //visibleNodes = [...visibleNodes, node.name];
+          //visibleNodes = [...visibleNodes, { name: node.name, mzs: node.mzs }];
         });
         const postData = {
           selectedPoints: selectedPoints,
