@@ -90,7 +90,7 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
 # pass image_data of a node, pass selected_points which probably comes from frontend lasso selection
 # calculate how much the area of the selected_points matches with the passed image_data
 # returns boolean
-def calculate_match_percentage(image_data, selected_points, min_intensity=0.01, min_overlap=0.7):
+def calculate_match_percentage(image_data, selected_points, min_intensity, min_overlap):
     matches = 0
     for p1 in image_data:
         for p2 in selected_points:
@@ -107,12 +107,12 @@ def calculate_match_percentage(image_data, selected_points, min_intensity=0.01, 
 
 # returns the names of nodes which are matching based on provided min_intensity and max_overlap
 # from frontend
-def check_nodes_for_match(ds_name, node_data, selected_points, merge_method):
+def check_nodes_for_match(ds_name, node_data, selected_points, merge_method, min_intensity, min_overlap):
     node_names = []
 
     for node in node_data:
         node_image_data = image_data_for_dataset_and_mzs(ds_name, node['mzs'], merge_method)
-        match = calculate_match_percentage(node_image_data, selected_points)
+        match = calculate_match_percentage(node_image_data, selected_points, min_intensity, min_overlap)
         if match:
             node_names.append(node['name'])
 
@@ -186,6 +186,8 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
         post_data_json = json.loads(post_data)
         post_data_selected_points = post_data_json['selectedPoints']
         post_data_visible_node_data = post_data_json['visibleNodes']
+        post_data_min_intensity = float(post_data_json['minIntensity'])
+        post_data_min_overlap = float(post_data_json['minOverlap'])
     except:
         return abort(400)
 
@@ -193,7 +195,9 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
         dataset_name,
         post_data_visible_node_data,
         post_data_selected_points,
-        method
+        method,
+        post_data_min_intensity,
+        post_data_min_overlap
     )
     return json.dumps(ret)
 

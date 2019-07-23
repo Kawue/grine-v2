@@ -6,8 +6,9 @@
   >
     <div slot="content">
       <div class="row" style="margin-top: 30px">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+          Merge method:
           <OptionsImageMergeMethod></OptionsImageMergeMethod>
         </div>
       </div>

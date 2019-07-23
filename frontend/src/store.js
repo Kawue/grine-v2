@@ -91,6 +91,8 @@ export default new Vuex.Store({
       image: {
         mergeMethod: null, // default will be first in array returned from api
         mergeMethods: [], // queries from api
+        minIntensity: 0.2,
+        minOverlap: 0.8,
       },
       mzList: {
         showAll: false,
@@ -333,6 +335,12 @@ export default new Vuex.Store({
     OPTIONS_IMAGE_CHANGE_MERGE_METHOD: (state, mergeMethod) => {
       state.options.image.mergeMethod = mergeMethod;
     },
+    OPTIONS_IMAGE_CHANGE_MIN_INTENSITY: (state, data) => {
+      state.options.image.minIntensity = data;
+    },
+    OPTIONS_IMAGE_CHANGE_MIN_OVERLAP: (state, data) => {
+      state.options.image.minOverlap = data;
+    },
     MZLIST_SORT_MZ: state => {
       state.mzList.visibleMz = mzListService.sortMzList(
         state.mzList.visibleMz,
@@ -519,12 +527,12 @@ export default new Vuex.Store({
         const visibleNodes = [];
         context.state.network.nodes.forEach(function(node) {
           visibleNodes.push({ name: node.name, mzs: node.mzs });
-          //visibleNodes = [...visibleNodes, node.name];
-          //visibleNodes = [...visibleNodes, { name: node.name, mzs: node.mzs }];
         });
         const postData = {
           selectedPoints: selectedPoints,
           visibleNodes: visibleNodes,
+          minIntensity: context.state.options.image.minIntensity,
+          minOverlap: context.state.options.image.minOverlap,
         };
         axios
           .post(url, postData)
