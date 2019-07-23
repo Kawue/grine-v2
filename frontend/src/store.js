@@ -91,8 +91,8 @@ export default new Vuex.Store({
       image: {
         mergeMethod: null, // default will be first in array returned from api
         mergeMethods: [], // queries from api
-        minIntensity: 0.2,
-        minOverlap: 0.8,
+        minIntensity: 20, // in %
+        minOverlap: 80, // in %
       },
       mzList: {
         showAll: false,

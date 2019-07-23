@@ -186,8 +186,8 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
         post_data_json = json.loads(post_data)
         post_data_selected_points = post_data_json['selectedPoints']
         post_data_visible_node_data = post_data_json['visibleNodes']
-        post_data_min_intensity = float(post_data_json['minIntensity'])
-        post_data_min_overlap = float(post_data_json['minOverlap'])
+        post_data_min_intensity = float(post_data_json['minIntensity']) / 100
+        post_data_min_overlap = float(post_data_json['minOverlap']) / 100
     except:
         return abort(400)
 

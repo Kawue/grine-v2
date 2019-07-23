@@ -1,5 +1,8 @@
 <template>
-  <input type="text" v-model="minOverlap" />
+  <div>
+    <input type="range" min="0" max="100" v-model="minOverlap" />
+    <span class="percentage">{{ minOverlap }}</span>
+  </div>
 </template>
 
 <script>
@@ -24,4 +27,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.percentage {
+  margin-left: 10px;
+}
 </style>

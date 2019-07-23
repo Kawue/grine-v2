@@ -1,11 +1,8 @@
 <template>
-  <!--<b-form-select-->
-    <!--v-model="mergeMethod"-->
-    <!--:options="optionsImageMergeMethodChoices"-->
-    <!--size="sm"-->
-  <!--&gt;-->
-  <!--</b-form-select>-->
-  <input type="text" v-model="minIntensity" />
+  <div>
+    <input type="range" min="0" max="100" v-model="minIntensity" />
+    <span class="percentage">{{ minIntensity }}</span>
+  </div>
 </template>
 
 <script>
@@ -30,4 +27,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.percentage {
+  margin-left: 10px;
+}
 </style>
