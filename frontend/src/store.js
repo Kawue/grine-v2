@@ -431,6 +431,10 @@ export default new Vuex.Store({
       context.state.options.data.graph = graph;
       context.state.images.imageData[0].mzValues = [];
       context.state.images.imageData[1].mzValues = [];
+      context.state.images.imageData[0].points = [];
+      context.state.images.imageData[1].points = [];
+      context.dispatch('fetchImageData', 0);
+      context.dispatch('fetchImageData', 1);
       context.state.meta.maxHierarchy =
         Object.keys(
           context.state.originalGraphData.graphs[
@@ -445,6 +449,9 @@ export default new Vuex.Store({
       context.commit('NETWORK_SIMULATION_INIT');
     },
     fetchImageData: (context, index) => {
+      if (!context.state.images.imageData[index]) {
+        return;
+      }
       let mzValues = context.state.images.imageData[index].mzValues;
       // do an api fetch for a combination image of multiple mz values
       context.commit('SET_IMAGE_DATA_VALUES', [index, []]);

@@ -53,12 +53,6 @@ export default {
           break;
       }
     });
-    this.$store.subscribeAction(action => {
-      if (action.type === 'changeGraph') {
-        this.$store.dispatch('fetchImageData', 0);
-        this.$store.dispatch('fetchImageData', 1);
-      }
-    });
   },
   name: 'Images',
   computed: mapGetters({
