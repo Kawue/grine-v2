@@ -352,6 +352,7 @@ export default new Vuex.Store({
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
       state.images.imageData[0].mzValues = mzValues;
+      state.images.imageData[1].mzValues = [];
     },
     MZLIST_LOAD_GRAPH: state => {
       state.mzList.notVisibleMz = [];

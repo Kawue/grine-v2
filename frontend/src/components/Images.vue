@@ -42,6 +42,7 @@ export default {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
+        case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
           this.$store.dispatch('fetchImageData', 0);
           this.$store.dispatch('fetchImageData', 1);
           break;
@@ -49,9 +50,6 @@ export default {
         case 'NETWORK_HIGHLIGHT_NODE':
         case 'MZLIST_UPDATE_SELECTED_MZ':
           this.$store.dispatch('fetchImageData', 1);
-          break;
-        case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
-          this.$store.dispatch('fetchImageData', 0);
           break;
       }
     });
