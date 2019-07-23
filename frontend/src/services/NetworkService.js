@@ -287,7 +287,7 @@ class NetworkService {
   nodeClick(n) {
     if (d3.event.ctrlKey && d3.event.shiftKey) {
       store.commit('NETWORK_SHRINK_NODE', n);
-    } else if (d3.event.shiftKey) {
+    } else if (d3.event.ctrlKey) {
       store.commit('NETWORK_EXPAND_NODE', n);
     } else {
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
@@ -584,12 +584,12 @@ class NetworkService {
 
   highlightNodesByName(nodes, nodeNames) {
     this.clearHighlight(nodes);
-    nodes.forEach(function(node) {
-      if (nodeNames.indexOf(node.name) !== -1) {
-        //this.highlightNode(node);
-        console.log(node.name);
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodeNames.indexOf(nodes[i].name) !== -1) {
+        this.highlightNode(nodes[i]);
+        console.log(nodes[i].name);
       }
-    });
+    }
   }
 
   highlightNodesByMz(nodes, mzValuesStrings) {
