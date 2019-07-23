@@ -597,9 +597,14 @@ class NetworkService {
         if (!nodes[i].selected) {
           nodes[i].selected = true;
           const selection = d3.select('#' + nodes[i].name);
+          const scalingConstant = this.biggestNodeRadius + 5;
           selection
             .transition()
             .duration(250)
+            .ease(function(t) {
+              // quadratic easing
+              return d3.easePolyIn(t, 2);
+            })
             .attr('rx', nodes[i].radius * 0.5)
             .attr('ry', nodes[i].radius * 0.5)
             .attrTween('transform', function() {
@@ -613,9 +618,11 @@ class NetworkService {
                   beta: 0° to 90°
                  */
                 const kTimesCosBeta =
-                  (1 + 0.5 * t) * Math.cos(Math.PI * t * 0.5);
+                  (1 + (scalingConstant / nodes[i].radius - 1) * t) *
+                  Math.cos(Math.PI * t * 0.5);
                 const kTimesSinBeta =
-                  (1 + 0.5 * t) * Math.sin(Math.PI * t * 0.5);
+                  (1 + (scalingConstant / nodes[i].radius - 1) * t) *
+                  Math.sin(Math.PI * t * 0.5);
                 return (
                   'matrix(' +
                   kTimesCosBeta +
@@ -645,8 +652,8 @@ class NetworkService {
             .attr('rx', 0)
             .attr('ry', 0)
             .ease(function(t) {
-              // inverse of cubic easing
-              return Math.pow(t, 1 / 3);
+              // inverse of quadratic easing
+              return d3.easePolyOut(t, 2);
             })
             .attrTween('transform', function() {
               return function(t) {
@@ -659,9 +666,13 @@ class NetworkService {
                   beta: 90° to 180°
                  */
                 const kTimesCosBeta =
-                  (1.5 - 0.5 * t) * Math.cos(Math.PI * 0.5 * (1 + t));
+                  (scalingConstant / nodes[i].radius -
+                    (scalingConstant / nodes[i].radius - 1) * t) *
+                  Math.cos(Math.PI * 0.5 * (1 + t));
                 const kTimesSinBeta =
-                  (1.5 - 0.5 * t) * Math.sin(Math.PI * 0.5 * (1 + t));
+                  (scalingConstant / nodes[i].radius -
+                    (scalingConstant / nodes[i].radius - 1) * t) *
+                  Math.sin(Math.PI * 0.5 * (1 + t));
                 return (
                   'matrix(' +
                   kTimesCosBeta +
