@@ -151,8 +151,9 @@ def datasets_imagedata_find_similar_action(dataset_name, method):
 
     try:
         post_data = request.get_data()
-        print(post_data)
-        # post_data_json = json.loads(post_data)
+        post_data_json = json.loads(post_data)
+        post_data_selected_points = post_data_json['selectedPoints']
+        post_data_visible_nodes = post_data_json['visibleNodes']
         # post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
     except:
         return abort(400)
@@ -160,7 +161,7 @@ def datasets_imagedata_find_similar_action(dataset_name, method):
     # if len(post_data_mz_values) == 0:
     #     return abort(400)
 
-    return json.dumps([1, 2, 3])
+    return json.dumps(post_data_visible_nodes)
 
 
 # get mz image data for dataset and mz values

@@ -527,8 +527,15 @@ export default new Vuex.Store({
         axios
           .post(url, postData)
           .then(response => {
+            networkService.highlightNodesByName(
+              context.state.network.nodes,
+              response.data
+            );
           })
           .catch(function() {
+            alert(
+              'Error while loading similar nodes based on lasso selection from api.'
+            );
           });
       }
     },

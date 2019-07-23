@@ -582,6 +582,16 @@ class NetworkService {
       .selectAll('rect');
   }
 
+  highlightNodesByName(nodes, nodeNames) {
+    this.clearHighlight(nodes);
+    nodes.forEach(function(node) {
+      if (nodeNames.indexOf(node.name) !== -1) {
+        //this.highlightNode(node);
+        console.log(node.name);
+      }
+    });
+  }
+
   highlightNodesByMz(nodes, mzValuesStrings) {
     const mzValuesFloats = mzValuesStrings.map(mz => parseFloat(mz));
     for (let i = 0; i < nodes.length; i++) {
@@ -594,99 +604,7 @@ class NetworkService {
         }
       }
       if (hit) {
-        if (!nodes[i].selected) {
-          nodes[i].selected = true;
-          const selection = d3.select('#' + nodes[i].name);
-          selection
-            .transition()
-            .duration(250)
-            .attr('rx', nodes[i].radius * 0.5)
-            .attr('ry', nodes[i].radius * 0.5)
-            .attrTween('transform', function() {
-              return function(t) {
-                /*
-                  interpolate linear between two values
-                  t between 0 and 1
-                  startValue + (endValue - startValue) * t
-                  scaling factor k and rotation angle beta
-                  k: 1 to 1.5
-                  beta: 0° to 90°
-                 */
-                const kTimesCosBeta =
-                  (1 + 0.5 * t) * Math.cos(Math.PI * t * 0.5);
-                const kTimesSinBeta =
-                  (1 + 0.5 * t) * Math.sin(Math.PI * t * 0.5);
-                return (
-                  'matrix(' +
-                  kTimesCosBeta +
-                  ' ' +
-                  kTimesSinBeta +
-                  ' ' +
-                  -kTimesSinBeta +
-                  ' ' +
-                  kTimesCosBeta +
-                  ' ' +
-                  (-nodes[i].x * kTimesCosBeta +
-                    nodes[i].y * kTimesSinBeta +
-                    nodes[i].x) +
-                  ' ' +
-                  (-nodes[i].x * kTimesSinBeta -
-                    nodes[i].y * kTimesCosBeta +
-                    nodes[i].y) +
-                  ')'
-                );
-              };
-            });
-
-          selection
-            .transition()
-            .duration(250)
-            .delay(250)
-            .attr('rx', 0)
-            .attr('ry', 0)
-            .ease(function(t) {
-              // inverse of cubic easing
-              return Math.pow(t, 1 / 3);
-            })
-            .attrTween('transform', function() {
-              return function(t) {
-                /*
-                  interpolate linear between two values
-                  t between 0 and 1
-                  startValue + (endValue - startValue) * t
-                  scaling factor k and rotation angle beta
-                  k: 1.5 to 1
-                  beta: 90° to 180°
-                 */
-                const kTimesCosBeta =
-                  (1.5 - 0.5 * t) * Math.cos(Math.PI * 0.5 * (1 + t));
-                const kTimesSinBeta =
-                  (1.5 - 0.5 * t) * Math.sin(Math.PI * 0.5 * (1 + t));
-                return (
-                  'matrix(' +
-                  kTimesCosBeta +
-                  ' ' +
-                  kTimesSinBeta +
-                  ' ' +
-                  -kTimesSinBeta +
-                  ' ' +
-                  kTimesCosBeta +
-                  ' ' +
-                  (-nodes[i].x * kTimesCosBeta +
-                    nodes[i].y * kTimesSinBeta +
-                    nodes[i].x) +
-                  ' ' +
-                  (-nodes[i].x * kTimesSinBeta -
-                    nodes[i].y * kTimesCosBeta +
-                    nodes[i].y) +
-                  ')'
-                );
-              };
-            })
-            .on('end', function() {
-              d3.select(this).attr('transform', null);
-            });
-        }
+        this.highlightNode(nodes[i]);
       } else {
         if (nodes[i].selected) {
           nodes[i].selected = false;
@@ -706,6 +624,100 @@ class NetworkService {
             });
         }
       }
+    }
+  }
+
+  highlightNode(node) {
+    if (!node.selected) {
+      node.selected = true;
+      const selection = d3.select('#' + node.name);
+      selection
+        .transition()
+        .duration(250)
+        .attr('rx', node.radius * 0.5)
+        .attr('ry', node.radius * 0.5)
+        .attrTween('transform', function() {
+          return function(t) {
+            /*
+              interpolate linear between two values
+              t between 0 and 1
+              startValue + (endValue - startValue) * t
+              scaling factor k and rotation angle beta
+              k: 1 to 1.5
+              beta: 0° to 90°
+             */
+            const kTimesCosBeta = (1 + 0.5 * t) * Math.cos(Math.PI * t * 0.5);
+            const kTimesSinBeta = (1 + 0.5 * t) * Math.sin(Math.PI * t * 0.5);
+            return (
+              'matrix(' +
+              kTimesCosBeta +
+              ' ' +
+              kTimesSinBeta +
+              ' ' +
+              -kTimesSinBeta +
+              ' ' +
+              kTimesCosBeta +
+              ' ' +
+              (-node.x * kTimesCosBeta +
+                node.y * kTimesSinBeta +
+                node.x) +
+              ' ' +
+              (-node.x * kTimesSinBeta -
+                node.y * kTimesCosBeta +
+                node.y) +
+              ')'
+            );
+          };
+        });
+
+      selection
+        .transition()
+        .duration(250)
+        .delay(250)
+        .attr('rx', 0)
+        .attr('ry', 0)
+        .ease(function(t) {
+          // inverse of cubic easing
+          return Math.pow(t, 1 / 3);
+        })
+        .attrTween('transform', function() {
+          return function(t) {
+            /*
+              interpolate linear between two values
+              t between 0 and 1
+              startValue + (endValue - startValue) * t
+              scaling factor k and rotation angle beta
+              k: 1.5 to 1
+              beta: 90° to 180°
+             */
+            const kTimesCosBeta =
+              (1.5 - 0.5 * t) * Math.cos(Math.PI * 0.5 * (1 + t));
+            const kTimesSinBeta =
+              (1.5 - 0.5 * t) * Math.sin(Math.PI * 0.5 * (1 + t));
+            return (
+              'matrix(' +
+              kTimesCosBeta +
+              ' ' +
+              kTimesSinBeta +
+              ' ' +
+              -kTimesSinBeta +
+              ' ' +
+              kTimesCosBeta +
+              ' ' +
+              (-node.x * kTimesCosBeta +
+                node.y * kTimesSinBeta +
+                node.x) +
+              ' ' +
+              (-node.x * kTimesSinBeta -
+                node.y * kTimesCosBeta +
+                node.y) +
+              ')'
+            );
+          };
+        })
+        .on('end', function() {
+          d3.select(this).attr('transform', null);
+        });
     }
   }
 
