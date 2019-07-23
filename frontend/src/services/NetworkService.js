@@ -287,7 +287,7 @@ class NetworkService {
   nodeClick(n) {
     if (d3.event.ctrlKey && d3.event.shiftKey) {
       store.commit('NETWORK_SHRINK_NODE', n);
-    } else if (d3.event.ctrlKey) {
+    } else if (d3.event.shiftKey) {
       store.commit('NETWORK_EXPAND_NODE', n);
     } else {
       for (let i = 0; i < store.getters.networkNodes.length; i++) {

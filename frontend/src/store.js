@@ -500,6 +500,37 @@ export default new Vuex.Store({
       imageData = imageService.calculateColors(imageData);
       context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
       context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
+      context.dispatch('fetchLassoSimilar', selectedPoints);
+    },
+    fetchLassoSimilar: (context, selectedPoints) => {
+      if (selectedPoints.length > 0) {
+        const mergeMethod = context.state.options.image.mergeMethod;
+        const datasetName =
+          context.state.options.data.graphChoices[
+            context.state.options.data.graph
+          ];
+        const url =
+          API_URL +
+          '/datasets/' +
+          datasetName +
+          '/imagedata/method/' +
+          mergeMethod +
+          '/find-similar';
+        const visibleNodes = [];
+        context.state.network.nodes.forEach(function(node) {
+          visibleNodes.push(node.name);
+        });
+        const postData = {
+          selectedPoints: selectedPoints,
+          visibleNodes: visibleNodes,
+        };
+        axios
+          .post(url, postData)
+          .then(response => {
+          })
+          .catch(function() {
+          });
+      }
     },
   },
 });

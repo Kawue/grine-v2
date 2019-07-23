@@ -137,6 +137,32 @@ def datasets_mzvalues_action(dataset_name):
 
     return json.dumps(mz_values(dataset_name))
 
+
+# gets a list of visible nodes from the frontend
+# get a list of selected points
+# returns which nodes are similar
+@app.route('/datasets/<dataset_name>/imagedata/method/<method>/find-similar', methods=['POST'])
+def datasets_imagedata_find_similar_action(dataset_name, method):
+    if dataset_name not in dataset_names():
+        return abort(400)
+
+    if method not in merge_methods():
+        return abort(400)
+
+    try:
+        post_data = request.get_data()
+        print(post_data)
+        # post_data_json = json.loads(post_data)
+        # post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
+    except:
+        return abort(400)
+
+    # if len(post_data_mz_values) == 0:
+    #     return abort(400)
+
+    return json.dumps([1, 2, 3])
+
+
 # get mz image data for dataset and mz values
 # specified merge method is passed via GET parameter
 # mz values are passed via post request
