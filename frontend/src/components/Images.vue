@@ -4,20 +4,51 @@
     v-bind:initial-expanded="initialExpanded"
     title="Images"
   >
-    <div slot="content">
-      <div class="row" style="margin-top: 30px">
-        <div class="col-md-1"></div>
-        <div class="col-md-10">
-          Merge method:
-          <OptionsImageMergeMethod></OptionsImageMergeMethod>
+    <div slot="content" style="margin-top: 30px">
+      <div class="image-options text-left">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-4">
+                <span class="font12px">Merge by:</span>
+              </div>
+              <div class="col-md-7">
+                <OptionsImageMergeMethod></OptionsImageMergeMethod>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 10px">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-4">
+                <span class="font12px">Min Intensity:</span>
+              </div>
+              <div class="col-md-8 font12px">
+                <OptionsImageMinIntensity></OptionsImageMinIntensity>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-4">
+                <span class="font12px">Min Overlap:</span>
+              </div>
+              <div class="col-md-8 font12px">
+                <OptionsImageMinOverlap></OptionsImageMinOverlap>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="row" style="margin-top: 30px">
+      <div class="row">
         <div class="col-md-12">
           <mz-image :imageDataIndex="0"></mz-image>
         </div>
       </div>
-      <div class="row" style="margin-top: 30px">
+      <div class="row">
         <div class="col-md-12">
           <mz-image :imageDataIndex="1"></mz-image>
         </div>
@@ -31,6 +62,8 @@ import SidebarWidget from './SidebarWidget';
 import MzImage from './MzImage';
 import { mapGetters } from 'vuex';
 import OptionsImageMergeMethod from './OptionsImageMergeMethod';
+import OptionsImageMinIntensity from './OptionsImageMinIntensity';
+import OptionsImageMinOverlap from './OptionsImageMinOverlap';
 
 export default {
   extends: SidebarWidget,
@@ -38,6 +71,8 @@ export default {
     SidebarWidget,
     MzImage,
     OptionsImageMergeMethod,
+    OptionsImageMinIntensity,
+    OptionsImageMinOverlap,
   },
   mounted: function() {
     this.$store.subscribe(mutation => {
@@ -64,6 +99,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.image-options {
+  margin-left: 10px;
+}
+
+.font12px {
+  font-size: 12px;
+}
+
 .sidebar-widget {
   background-color: white;
 }
