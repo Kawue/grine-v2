@@ -3,8 +3,8 @@ import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import store from '@/store';
 
 class NetworkService {
-  biggestNodeRadius = 30;
-  smallestNodeRadius = 15;
+  biggestNodeRadius = 25;
+  smallestNodeRadius = 10;
   height = window.innerHeight;
   width = window.innerWidth;
 
@@ -516,16 +516,92 @@ class NetworkService {
       if (hit) {
         if (!nodes[i].selected) {
           nodes[i].selected = true;
-          d3.select('#' + nodes[i].name)
+          const selection = d3.select('#' + nodes[i].name);
+          selection
             .transition()
             .duration(250)
+            .attr('rx', nodes[i].radius * 0.5)
+            .attr('ry', nodes[i].radius * 0.5)
+            .attrTween('transform', function() {
+              return function(t) {
+                /*
+                  interpolate linear between two values
+                  t between 0 and 1
+                  startValue + (endValue - startValue) * t
+                  scaling factor k and rotation angle beta
+                  k: 1 to 1.5
+                  beta: 0° to 90°
+                 */
+                const kTimesCosBeta =
+                  (1 + 0.5 * t) * Math.cos(Math.PI * t * 0.5);
+                const kTimesSinBeta =
+                  (1 + 0.5 * t) * Math.sin(Math.PI * t * 0.5);
+                return (
+                  'matrix(' +
+                  kTimesCosBeta +
+                  ' ' +
+                  kTimesSinBeta +
+                  ' ' +
+                  -kTimesSinBeta +
+                  ' ' +
+                  kTimesCosBeta +
+                  ' ' +
+                  (-nodes[i].x * kTimesCosBeta +
+                    nodes[i].y * kTimesSinBeta +
+                    nodes[i].x) +
+                  ' ' +
+                  (-nodes[i].x * kTimesSinBeta -
+                    nodes[i].y * kTimesCosBeta +
+                    nodes[i].y) +
+                  ')'
+                );
+              };
+            });
+
+          selection
+            .transition()
+            .duration(250)
+            .delay(250)
             .attr('rx', 0)
             .attr('ry', 0)
+            .ease(function(t) {
+              // inverse of cubic easing
+              return Math.pow(t, 1 / 3);
+            })
             .attrTween('transform', function() {
-              return d3.interpolateString(
-                'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
-                'rotate(90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
-              );
+              return function(t) {
+                /*
+                  interpolate linear between two values
+                  t between 0 and 1
+                  startValue + (endValue - startValue) * t
+                  scaling factor k and rotation angle beta
+                  k: 1.5 to 1
+                  beta: 90° to 180°
+                 */
+                const kTimesCosBeta =
+                  (1.5 - 0.5 * t) * Math.cos(Math.PI * 0.5 * (1 + t));
+                const kTimesSinBeta =
+                  (1.5 - 0.5 * t) * Math.sin(Math.PI * 0.5 * (1 + t));
+                return (
+                  'matrix(' +
+                  kTimesCosBeta +
+                  ' ' +
+                  kTimesSinBeta +
+                  ' ' +
+                  -kTimesSinBeta +
+                  ' ' +
+                  kTimesCosBeta +
+                  ' ' +
+                  (-nodes[i].x * kTimesCosBeta +
+                    nodes[i].y * kTimesSinBeta +
+                    nodes[i].x) +
+                  ' ' +
+                  (-nodes[i].x * kTimesSinBeta -
+                    nodes[i].y * kTimesCosBeta +
+                    nodes[i].y) +
+                  ')'
+                );
+              };
             })
             .on('end', function() {
               d3.select(this).attr('transform', null);
@@ -536,7 +612,7 @@ class NetworkService {
           nodes[i].selected = false;
           d3.select('#' + nodes[i].name)
             .transition()
-            .duration(250)
+            .duration(500)
             .attr('rx', nodes[i].radius)
             .attr('ry', nodes[i].radius)
             .attrTween('transform', function() {
