@@ -198,6 +198,12 @@ export default new Vuex.Store({
     SET_LOADING_IMAGE_DATA: (state, loading) => {
       state.images.loadingImageData = loading;
     },
+    SET_IMAGE_DATA_SELECTED_POINTS: (state, payload) => {
+      let index = payload[0];
+      let data = payload[1];
+      let mzImageData = state.images.imageData[index];
+      mzImageData.selectedPoints = data;
+    },
     SET_IMAGE_DATA_VALUES: (state, payload) => {
       let index = payload[0];
       let data = payload[1];
@@ -493,6 +499,7 @@ export default new Vuex.Store({
       );
       imageData = imageService.calculateColors(imageData);
       context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
+      context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
     },
   },
 });
