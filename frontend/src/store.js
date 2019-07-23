@@ -30,6 +30,7 @@ export default new Vuex.Store({
           // data used to render community image
           mzValues: [],
           points: [], // points that are displayed as mz image
+          selectedPoints: [], // points that are selected by the lasso
           max: {
             // max image coors, used to scale/cut image according
             x: null,
@@ -45,6 +46,7 @@ export default new Vuex.Store({
           // data used to render image from selected mz values
           mzValues: [],
           points: [], // points that are displayed as mz image
+          selectedPoints: [], // points that are selected by the lasso
           max: {
             // max image coors, used to scale/cut image according
             x: null,
