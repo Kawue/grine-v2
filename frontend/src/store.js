@@ -262,7 +262,7 @@ export default new Vuex.Store({
     },
     NETWORK_EXPAND_NODE: (state, node) => {
       const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
-      if (hierarchy < state.meta.maxHierarchy) {
+      if (hierarchy < state.meta.maxHierarchy && node.mzs.length > 1) {
         networkService.expandNode(
           state.originalGraphData.graphs['graph' + state.options.data.graph]
             .graph,
@@ -278,33 +278,22 @@ export default new Vuex.Store({
         );
       }
     },
-    NETWORK_SHRINK_NODE: (state, oldNode) => {
-      const hierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10);
+    NETWORK_SHRINK_NODE: (state, node) => {
+      const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
       if (hierarchy > 0) {
-        state.network.series[0].data = state.network.series[0].data.filter(
-          item => {
-            const itemHierarchy = parseInt(
-              item.name.split('n')[0].slice(1),
-              10
-            );
-            if (
-              item.value.parent === oldNode.value.parent &&
-              hierarchy === itemHierarchy
-            ) {
-              return false;
-            } else {
-              return !(
-                oldNode.category === item.category && hierarchy < itemHierarchy
-              );
-            }
-          }
-        );
-        const nextNode = networkService.shrinkNode(
+        networkService.shrinkNode(
           state.originalGraphData.graphs['graph' + state.options.data.graph]
             .graph,
-          oldNode
+          node,
+          state.network.nodes,
+          state.network.edges
         );
-        state.network.series[0].data.push(nextNode);
+        state.network.simulation = networkService.initSimulation(
+          state.network.simulation,
+          state.network.nodes,
+          state.network.edges,
+          state.options.network
+        );
       }
     },
     NETWORK_HIGHLIGHT_NODE_BY_MZ: state => {

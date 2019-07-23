@@ -20,7 +20,10 @@ class NetworkService {
           x: null,
           y: null,
           selected: false,
-          radius: this.biggestNodeRadius,
+          radius:
+            graph['hierarchy0'].nodes[nodeKey].mzs.length > 1
+              ? this.biggestNodeRadius
+              : this.smallestNodeRadius,
           color: d3.interpolateRainbow(counter / nodeKeys.length),
           childs: graph['hierarchy0'].nodes[nodeKey].childs,
           mzs: graph['hierarchy0'].nodes[nodeKey].mzs,
@@ -72,7 +75,10 @@ class NetworkService {
     if (!selected.empty()) {
       d3.select('.annotations').remove();
       let annotationText = '';
-      if (selected.data()[0].childs != null) {
+      if (
+        selected.data()[0].childs != null &&
+        selected.data()[0].mzs.length > 1
+      ) {
         annotationText =
           'numMzs: ' +
           selected.data()[0].mzs.length +
@@ -154,7 +160,7 @@ class NetworkService {
       .attr('r', d.radius + 5)
       .attr('class', 'selected');
     let annotationText = '';
-    if (d.childs != null) {
+    if (d.childs != null && d.mzs.length > 1) {
       annotationText =
         'numMzs: ' + d.mzs.length + '\n' + 'numChilds: ' + d.childs.length;
     } else {
@@ -211,6 +217,7 @@ class NetworkService {
       .data(edges)
       .enter()
       .append('line')
+      .attr('class', 'edge')
       .attr('id', l => l.name);
 
     const lNode = lSvg
@@ -279,7 +286,7 @@ class NetworkService {
 
   nodeClick(n) {
     if (d3.event.ctrlKey && d3.event.shiftKey) {
-      console.log('Shrink');
+      store.commit('NETWORK_SHRINK_NODE', n);
     } else if (d3.event.ctrlKey) {
       store.commit('NETWORK_EXPAND_NODE', n);
     } else {
@@ -334,51 +341,129 @@ class NetworkService {
     }
   }
 
-  shrinkNode(graph, oldNode) {
-    /*
+  shrinkNode(graph, oldNode, nodes, edges) {
+    d3.select('.annotation-group').remove();
     const previousHierarchy =
       parseInt(oldNode.name.split('n')[0].slice(1), 10) - 1;
     const nextNodeName =
-      'h' +
-      previousHierarchy.toString() +
-      'n' +
-      oldNode.value.parent.toString();
+      'h' + previousHierarchy.toString() + 'n' + oldNode.parent.toString();
+    const maxH = store.getters.meta.maxHierarchy;
     const nextNode = {
       name: nextNodeName,
-      x: null,
-      y: null,
-      label: {
-        formatter: function(params) {
-          return params.data.value.intraCommunityNumber;
-        },
-      },
-      symbolSize:
+      x: oldNode.x,
+      y: oldNode.y,
+      selected: false,
+      radius:
         this.biggestNodeRadius -
-        (this.smallestNodeRadius / 3) * previousHierarchy,
-      draggable: true,
-      category: oldNode.category,
-      value: {
-        mzs: graph['hierarchy' + previousHierarchy].nodes[nextNodeName].mzs,
-        childs:
-          graph['hierarchy' + previousHierarchy].nodes[nextNodeName].childs,
-      },
+        (this.smallestNodeRadius / maxH) * previousHierarchy,
+      color: oldNode.color,
+      mzs: graph['hierarchy' + previousHierarchy].nodes[nextNodeName].mzs,
+      childs: graph['hierarchy' + previousHierarchy].nodes[nextNodeName].childs,
     };
     if (previousHierarchy > 0) {
-      nextNode.value['parent'] =
+      nextNode['parent'] =
         graph['hierarchy' + previousHierarchy].nodes[nextNodeName][
           'membership'
         ];
-      nextNode.value[
-        'intraCommunityNumber'
-      ] = oldNode.value.parentIntraCommunityNumbers.pop();
-      nextNode.value['parentIntraCommunityNumbers'] = [
-        ...oldNode.value.parentIntraCommunityNumbers,
-      ];
-    } else {
-      nextNode.value['parentIntraCommunityNumbers'] = [];
     }
-    return nextNode;
-     */
+    let selectNextNode = false;
+    const nodesToRemove = [];
+
+    // remove all removable nodes from datastructure and svg
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      if (nodes[i].color === oldNode.color) {
+        const nodeHierarchy = parseInt(
+          nodes[i].name.split('n')[0].slice(1),
+          10
+        );
+        if (nodeHierarchy > previousHierarchy) {
+          nodesToRemove.push(nodes[i].name);
+          selectNextNode = selectNextNode || nodes[i].selected;
+          d3.select('#' + nodes[i].name).remove();
+          nodes.splice(i, 1);
+        }
+      }
+    }
+    nextNode.selected = selectNextNode;
+    nodes.push(nextNode);
+
+    // remove old edges from datastructure and svg
+    for (let i = edges.length - 1; i >= 0; i--) {
+      if (
+        nodesToRemove.findIndex(n => n === edges[i].source.name) >= 0 ||
+        nodesToRemove.findIndex(n => n === edges[i].target.name) >= 0
+      ) {
+        d3.select('#' + edges[i].name).remove();
+        edges.splice(i, 1);
+      }
+    }
+
+    // add new edges to datastructure
+    const newEdges = [];
+    Object.keys(graph['hierarchy' + previousHierarchy]['edges']).forEach(l => {
+      const sourceIndex = nodes.findIndex(d => {
+        return (
+          d.name === graph['hierarchy' + previousHierarchy]['edges'][l].source
+        );
+      });
+      if (sourceIndex >= 0) {
+        const targetIndex = nodes.findIndex(d => {
+          return (
+            d.name === graph['hierarchy' + previousHierarchy]['edges'][l].target
+          );
+        });
+        if (targetIndex >= 0) {
+          newEdges.push({
+            source: nodes[sourceIndex],
+            target: nodes[targetIndex],
+            weight: graph['hierarchy' + previousHierarchy].edges[l]['weight'],
+            name: graph['hierarchy' + previousHierarchy].edges[l]['name'],
+          });
+        }
+      }
+    });
+    edges.push(...newEdges);
+
+    // add new edges to svg
+    d3.select('#link-container')
+      .selectAll('newEdges')
+      .data(newEdges)
+      .enter()
+      .append('line')
+      .attr('class', 'edge')
+      .attr('id', l => l.name);
+    store.getters.networkSVGElements.linkElements = d3
+      .select('#link-container')
+      .selectAll('line');
+
+    // add new node to svg
+    d3.select('#node-container')
+      .selectAll('newNodes')
+      .data([nextNode])
+      .enter()
+      .append('rect')
+      .attr('class', 'node')
+      .attr('rx', nextNode.selected ? 0 : nextNode.radius)
+      .attr('id', nextNode.name)
+      .attr('ry', nextNode.selected ? 0 : nextNode.radius)
+      .attr('width', 2 * nextNode.radius)
+      .attr('height', 2 * nextNode.radius)
+      .style('fill', nextNode.color)
+      .attr('numMz', nextNode.mzs)
+      .attr('childs', nextNode.childs)
+      .on('click', this.nodeClick)
+      .on('mouseover', this.mouseOver)
+      .on('mouseout', this.mouseOut)
+      .call(
+        d3
+          .drag()
+          .on('start', this.dragstarted)
+          .on('drag', this.dragged)
+          .on('end', this.dragended)
+      );
+    store.getters.networkSVGElements.nodeElements = d3
+      .select('#node-container')
+      .selectAll('rect');
   }
 
   expandNode(graph, oldNode, nodes, edges) {
@@ -387,14 +472,6 @@ class NetworkService {
     // remove old node from datastructure and svg
     nodes.splice(index, 1);
     d3.select('.annotation-group').remove();
-    /*
-    console.log(d3.select('#' + oldNode.name));
-    console.log(d3.selectAll('rect').select('#' + oldNode.name));
-    console.log(d3.selectAll('rect'));
-    console.log(d3.select('rect, #' + oldNode.name));
-    debugger;
-
-     */
     d3.select('#' + oldNode.name).remove();
     const newNodes = [];
     const nextHierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10) + 1;
@@ -410,8 +487,10 @@ class NetworkService {
         y: oldNode.y + Math.random() * 10,
         selected: oldNode.selected,
         radius:
-          this.biggestNodeRadius -
-          (this.smallestNodeRadius / maxH) * nextHierarchy,
+          graph['hierarchy' + nextHierarchy].nodes[nextNodeName].mzs.length > 1
+            ? this.biggestNodeRadius -
+              (this.smallestNodeRadius / maxH) * nextHierarchy
+            : this.smallestNodeRadius,
         color: oldNode.color,
         mzs: graph['hierarchy' + nextHierarchy].nodes[nextNodeName].mzs,
         parent:
@@ -465,6 +544,7 @@ class NetworkService {
     // add new edges to svg
     d3.select('#link-container')
       .selectAll('newEdges')
+      .attr('class', 'edge')
       .data(newEdges)
       .enter()
       .append('line')
