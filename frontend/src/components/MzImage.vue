@@ -35,6 +35,10 @@ export default {
       type: Number,
       required: true,
     },
+    enableLasso: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -51,11 +55,13 @@ export default {
     this.canvas = d3.select(componentId + ' .canvas-root canvas');
     const interactionSvg = d3.select(componentId + ' .canvas-root svg');
 
-    this.lassoInstance = lasso()
-      .on('end', this.handleLassoEnd)
-      .on('start', this.handleLassoStart);
-
-    interactionSvg.call(this.lassoInstance);
+    this.lassoInstance = lasso();
+    if (this.enableLasso) {
+      this.lassoInstance
+        .on('end', this.handleLassoEnd)
+        .on('start', this.handleLassoStart);
+      interactionSvg.call(this.lassoInstance);
+    }
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'SET_IMAGE_DATA_VALUES':
@@ -161,8 +167,9 @@ export default {
       }
       context.restore();
       if (this.removeLassoAfterPointsDrawn) {
-        console.log('clear: ' + this.imageDataIndex);
-        this.lassoInstance.reset();
+        if (this.enableLasso) {
+          this.lassoInstance.reset();
+        }
       } else {
         this.removeLassoAfterPointsDrawn = true;
       }

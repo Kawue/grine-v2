@@ -50,7 +50,7 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <mz-image :imageDataIndex="1"></mz-image>
+          <mz-image :imageDataIndex="1" v-bind:enable-lasso="true"></mz-image>
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 # todo kim
-lasso weg machen
 visuell lasso feedback
 refresh lasso matched nodes when changing merge_method, intensity and overlap
 
