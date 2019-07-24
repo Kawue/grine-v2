@@ -23,6 +23,25 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      updateValue: null,
+    };
+  },
+  mounted: function() {
+    this.$store.subscribe(mutation => {
+      if (mutation.type === 'OPTIONS_IMAGE_CHANGE_MIN_OVERLAP') {
+        let self = this;
+        const value = this.minOverlap;
+        this.updatedValue = value;
+        setTimeout(function() {
+          if (self.updatedValue === value) {
+            self.$store.dispatch('fetchLassoSimilar', 1);
+          }
+        }, 500);
+      }
+    });
+  },
 };
 </script>
 

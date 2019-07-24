@@ -1,6 +1,5 @@
 # todo kim
 visuell lasso feedback
-refresh lasso matched nodes when changing merge_method, intensity and overlap
 
 lasso selection von graph -> neues aggregated bild
 drei farbskalen auswaehlen
