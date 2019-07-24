@@ -87,10 +87,61 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
     ]
 
 
+# does binarization of the selected dataset and a node dataset, keeps only points > min_intensity
+# checks for overlap (amount datapoints with 1 in multiplied dataset) higher min_overlap
+def selection_match(dframe_selected, dframe_node, min_intensity, min_overlap):
+    # merge all columns (mzs) my merge method into one column
+    dframe_selected = dframe_selected.max(axis=1)
+    print(dframe_selected)
+    # get the maximum for each column and multiply by the min_intensity
+    t = np.max(dframe_selected) * min_intensity
+    dframe_selected[dframe_selected < t] = 0  # binarization
+    dframe_selected[dframe_selected >= t] = 1
+    print(dframe_selected)
+
+    # merge all columns (mzs) my merge method into one column
+    dframe_node = dframe_node.max(axis=1)
+    print(dframe_node)
+    # get the maximum for each column and multiply by the min_intensity
+    t = np.max(dframe_node) * min_intensity
+    dframe_node[dframe_node < t] = 0  # binarization
+    dframe_node[dframe_node >= t] = 1
+    print(dframe_node)
+
+    # find amount of common entries in selected and node dataset
+    dframe_multiplied = dframe_selected * dframe_node
+    overlap = dframe_multiplied.sum() / len(dframe_selected)
+    return overlap >= min_overlap
+
+
+# returns the names of nodes which are matching based on provided min_intensity and max_overlap
+# from frontend
+def check_nodes_for_match(ds_name, node_data, selected_mzs, merge_method, min_intensity, min_overlap):
+    single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
+
+    keys = [(23, 25), (27, 22), (28, 22), (5, 33), (5, 35), (110, 30), (110, 27)]
+    keys = [(a, b, ds_name) for a, b, in keys]
+    dframe_selected = single_dframe.loc[keys]
+    dframe_selected = dframe_selected[selected_mzs]
+    # print(dframe_selected)
+    # return
+
+    # dframe_selected = single_dframe[selected_mzs]
+    node_names = []
+    for node in node_data:
+        dframe_node = single_dframe[node['mzs']]
+        match = selection_match(dframe_selected, dframe_node, min_intensity, min_overlap)
+        if match:
+            node_names.append(node['name'])
+        break
+
+    return node_names
+
+
 # pass image_data of a node, pass selected_points which probably comes from frontend lasso selection
 # calculate how much the area of the selected_points matches with the passed image_data
 # returns boolean
-def calculate_match_percentage(image_data, selected_points, min_intensity, min_overlap):
+def selection_match_slow(image_data, selected_points, min_intensity, min_overlap):
     matches = 0
     for p1 in image_data:
         for p2 in selected_points:
@@ -103,20 +154,6 @@ def calculate_match_percentage(image_data, selected_points, min_intensity, min_o
     # print(len(selected_points))
     # print(overlap)
     return overlap >= min_overlap
-
-
-# returns the names of nodes which are matching based on provided min_intensity and max_overlap
-# from frontend
-def check_nodes_for_match(ds_name, node_data, selected_points, merge_method, min_intensity, min_overlap):
-    node_names = []
-
-    for node in node_data:
-        node_image_data = image_data_for_dataset_and_mzs(ds_name, node['mzs'], merge_method)
-        match = calculate_match_percentage(node_image_data, selected_points, min_intensity, min_overlap)
-        if match:
-            node_names.append(node['name'])
-
-    return node_names
 
 
 # provides data to render all mz images for passed dataset
@@ -184,7 +221,8 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
     try:
         post_data = request.get_data()
         post_data_json = json.loads(post_data)
-        post_data_selected_points = post_data_json['selectedPoints']
+        # post_data_selected_points = post_data_json['selectedPoints']
+        post_data_selected_mzs = [float(i) for i in post_data_json['selectedMzs']]
         post_data_visible_node_data = post_data_json['visibleNodes']
         post_data_min_intensity = float(post_data_json['minIntensity']) / 100
         post_data_min_overlap = float(post_data_json['minOverlap']) / 100
@@ -194,7 +232,7 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
     ret = check_nodes_for_match(
         dataset_name,
         post_data_visible_node_data,
-        post_data_selected_points,
+        post_data_selected_mzs,
         method,
         post_data_min_intensity,
         post_data_min_overlap

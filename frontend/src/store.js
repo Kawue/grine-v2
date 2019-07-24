@@ -508,9 +508,11 @@ export default new Vuex.Store({
       imageData = imageService.calculateColors(imageData);
       context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
       context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
-      context.dispatch('fetchLassoSimilar', selectedPoints);
+      context.dispatch('fetchLassoSimilar', index);
     },
-    fetchLassoSimilar: (context, selectedPoints) => {
+    fetchLassoSimilar: (context, index) => {
+      const selectedPoints =
+        context.state.images.imageData[index].selectedPoints;
       if (selectedPoints.length > 0) {
         const mergeMethod = context.state.options.image.mergeMethod;
         const datasetName =
@@ -529,7 +531,8 @@ export default new Vuex.Store({
           visibleNodes.push({ name: node.name, mzs: node.mzs });
         });
         const postData = {
-          selectedPoints: selectedPoints,
+          // selectedPoints: selectedPoints,
+          selectedMzs: context.state.images.imageData[index].mzValues,
           visibleNodes: visibleNodes,
           minIntensity: context.state.options.image.minIntensity,
           minOverlap: context.state.options.image.minOverlap,
