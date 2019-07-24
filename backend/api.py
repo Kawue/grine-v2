@@ -2,14 +2,13 @@ from sys import argv
 import pandas as pd
 import numpy as np
 import json
+import time
 from flask import Flask
 from flask import abort
 from flask import request
 from flask_cors import CORS
 from os import listdir
 from os.path import exists, isdir, isfile
-
-# load dataframe (.h5)
 
 merged_dframe = pd.DataFrame()
 

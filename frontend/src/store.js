@@ -41,6 +41,7 @@ export default new Vuex.Store({
             x: null,
             y: null,
           },
+          lassoFetching: false, // true during api call of lasso matching
         },
         {
           // data used to render image from selected mz values
@@ -57,6 +58,7 @@ export default new Vuex.Store({
             x: null,
             y: null,
           },
+          lassoFetching: false, // true during api call of lasso matching
         },
       ],
       loadingImageData: false, // api fetch for image data is running
@@ -526,6 +528,7 @@ export default new Vuex.Store({
       const selectedPoints =
         context.state.images.imageData[index].selectedPoints;
       if (selectedPoints.length > 0) {
+        context.state.images.imageData[index].lassoFetching = true;
         const mergeMethod = context.state.options.image.mergeMethod;
         const datasetName =
           context.state.options.data.graphChoices[
@@ -552,6 +555,7 @@ export default new Vuex.Store({
         axios
           .post(url, postData)
           .then(response => {
+            context.state.images.imageData[index].lassoFetching = false;
             networkService.highlightNodesByName(
               context.state.network.nodes,
               response.data
@@ -559,6 +563,7 @@ export default new Vuex.Store({
             context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
           })
           .catch(function() {
+            context.state.images.imageData[index].lassoFetching = false;
             alert(
               'Error while loading similar nodes based on lasso selection from api.'
             );

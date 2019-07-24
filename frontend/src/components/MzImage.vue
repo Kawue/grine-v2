@@ -6,6 +6,7 @@
         v-bind:width="width"
         v-bind:height="height"
         style="position: absolute;top: 0; left: 0;"
+        :class="{ pulse: lassoFetching === true }"
       ></canvas>
       <svg
         v-bind:width="width"
@@ -85,6 +86,10 @@ export default {
     },
     max: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).max;
+    },
+    lassoFetching: function() {
+      return this.$store.getters.getImageData(this.imageDataIndex)
+        .lassoFetching;
     },
     ...mapGetters({
       loading: 'getLoadingImageData',
@@ -207,6 +212,17 @@ export default {
     top: 0;
     margin: 0 auto;
     margin-left: -20px;
+  }
+}
+.pulse {
+  animation: pulsating 1s infinite; /* IE 10+, Fx 29+ */
+}
+@keyframes pulsating {
+  0% {
+    border-color: lightgrey;
+  }
+  80% {
+    border-color: darkcyan;
   }
 }
 </style>

@@ -1,6 +1,4 @@
 # todo kim
-visuell lasso feedback
-
 lasso selection von graph -> neues aggregated bild
 drei farbskalen auswaehlen
 
