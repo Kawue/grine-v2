@@ -531,7 +531,7 @@ export default new Vuex.Store({
           visibleNodes.push({ name: node.name, mzs: node.mzs });
         });
         const postData = {
-          // selectedPoints: selectedPoints,
+          selectedPoints: selectedPoints,
           selectedMzs: context.state.images.imageData[index].mzValues,
           visibleNodes: visibleNodes,
           minIntensity: context.state.options.image.minIntensity,

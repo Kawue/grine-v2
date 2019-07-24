@@ -1,3 +1,16 @@
+# todo kim
+bild rahmen skalieren je nach bildgröse
+lasso weg machen
+visuell lasso feedback
+wenn nur ein mz in node dann beide bilder anzeigen
+mz value selektiert -> andere community -> zeige community bild
+
+lasso selection von graph -> neues bild
+drei farbskalen auswaehlen
+
+multiple graphen? evtl anderes projekt
+
+
 # Grine v2
 
 ## Project setup

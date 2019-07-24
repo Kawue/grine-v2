@@ -285,9 +285,9 @@ class NetworkService {
   }
 
   nodeClick(n) {
-    if (d3.event.ctrlKey && d3.event.shiftKey) {
+    if ((d3.event.ctrlKey || d3.event.metaKey) && d3.event.shiftKey) {
       store.commit('NETWORK_SHRINK_NODE', n);
-    } else if (d3.event.shiftKey) { // TODO
+    } else if (d3.event.ctrlKey || d3.event.metaKey) {
       store.commit('NETWORK_EXPAND_NODE', n);
     } else {
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
@@ -587,7 +587,6 @@ class NetworkService {
     for (let i = 0; i < nodes.length; i++) {
       if (nodeNames.indexOf(nodes[i].name) !== -1) {
         this.highlightNode(nodes[i]);
-        console.log(nodes[i].name);
       }
     }
   }
