@@ -1,5 +1,4 @@
 # todo kim
-bild rahmen skalieren je nach bildgröse
 lasso weg machen
 visuell lasso feedback
 wenn nur ein mz in node dann beide bilder anzeigen

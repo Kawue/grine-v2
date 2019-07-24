@@ -39,7 +39,7 @@ export default {
   data() {
     return {
       width: 250,
-      height: 250,
+      heightLast: 200,
       render: false,
       canvas: null,
     };
@@ -57,7 +57,13 @@ export default {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'SET_IMAGE_DATA_VALUES':
-          this.drawPoints();
+          if (this.height) {
+            this.heightLast = this.height;
+            let self = this;
+            setTimeout(function() {
+              self.drawPoints();
+            }, 10);
+          }
           break;
       }
     });
@@ -73,6 +79,13 @@ export default {
     ...mapGetters({
       loading: 'getLoadingImageData',
     }),
+    height: function() {
+      let height = this.$store.getters.getImageData(0).max.y;
+      height = height ? height : this.$store.getters.getImageData(1).max.y;
+      // height = height ? height : this.$store.getters.getImageData(2).max.y;
+      height = height ? height : this.heightLast;
+      return height;
+    },
     domainX: function() {
       let domain = [];
       for (let i = 0; i < this.max.x; i++) {
