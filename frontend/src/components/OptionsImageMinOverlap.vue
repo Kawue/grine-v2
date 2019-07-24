@@ -1,7 +1,7 @@
 <template>
   <div>
     <input type="range" min="0" max="100" v-model="minOverlap" />
-    <span class="percentage">{{ minOverlap }}</span>
+    <span class="percentage">{{ minOverlap }}%</span>
   </div>
 </template>
 
