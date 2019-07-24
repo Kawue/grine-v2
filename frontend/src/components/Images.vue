@@ -116,6 +116,7 @@ export default {
             'fetchImageData',
             constants.IMAGE_INDEX_AGGREGATED
           );
+          break;
       }
     });
   },

@@ -294,7 +294,7 @@ class NetworkService {
         if (store.getters.networkNodes[i].name === n.name) {
           if (!n.selected) {
             n.selected = true;
-            store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
+            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
             d3.select('#' + n.name)
               .transition()
               .duration(250)
@@ -745,7 +745,7 @@ class NetworkService {
   getSelectedNodes(nodes) {
     let nodesSelected = [];
     for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].selected) {
+      if (nodes[i].selected === true) {
         nodesSelected.push(nodes[i]);
       }
     }

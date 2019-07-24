@@ -269,9 +269,9 @@ export default new Vuex.Store({
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
           state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
         } else if (nodesSelected.length === 1) {
+          state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
             nodesSelected[0].mzs;
-          state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
         } else if (nodesSelected.length > 1) {
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
           let mzs = [];
@@ -502,12 +502,15 @@ export default new Vuex.Store({
     },
     changeGraph: (context, graph) => {
       context.state.options.data.graph = graph;
-      context.state.images.imageData[0].mzValues = [];
-      context.state.images.imageData[1].mzValues = [];
-      context.state.images.imageData[0].points = [];
-      context.state.images.imageData[1].points = [];
-      context.dispatch('fetchImageData', 0);
-      context.dispatch('fetchImageData', 1);
+      context.state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+      context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+      context.state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+      context.state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
+      context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
+      context.state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
+      context.dispatch('fetchImageData', IMAGE_INDEX_COMMUNITY);
+      context.dispatch('fetchImageData', IMAGE_INDEX_SELECTED_MZ);
+      context.dispatch('fetchImageData', IMAGE_INDEX_AGGREGATED);
       context.state.meta.maxHierarchy =
         Object.keys(
           context.state.originalGraphData.graphs[
@@ -621,7 +624,15 @@ export default new Vuex.Store({
     },
     mzlistUpdatedMzs: (context, data) => {
       context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
-      context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
+      setTimeout(function() {
+        context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
+      }, 300);
+    },
+    mzlistUpdateHighlightedMz: (context, data) => {
+      context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);
+      setTimeout(function() {
+        context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
+      }, 300);
     },
   },
 });

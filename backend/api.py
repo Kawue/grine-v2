@@ -119,10 +119,10 @@ def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, mer
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
 
     # extract keys/points (x, y) from selected_points
-    keys = []
+    keys_selected = []
     for i in selected_points:
-        keys.append((i['x'], i['y']))
-    keys = [(a, b, ds_name) for a, b, in keys]
+        keys_selected.append((i['x'], i['y']))
+    keys = [(a, b, ds_name) for a, b, in keys_selected]
     dframe_selected = single_dframe.loc[keys]
     dframe_selected = dframe_selected[selected_mzs]
 
