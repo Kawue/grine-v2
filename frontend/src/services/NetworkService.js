@@ -741,5 +741,15 @@ class NetworkService {
       }
     }
   }
+
+  getSelectedNodes(nodes) {
+    let nodesSelected = [];
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].selected) {
+        nodesSelected.push(nodes[i]);
+      }
+    }
+    return nodesSelected;
+  }
 }
 export default NetworkService;

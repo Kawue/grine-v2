@@ -227,6 +227,14 @@ export default new Vuex.Store({
       mzImageData.max.x = maxX;
       mzImageData.max.y = maxY;
     },
+    IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
+      let nodesSelected = networkService.getSelectedNodes(state.network.nodes);
+      if (nodesSelected && nodesSelected.length === 1) {
+        state.images.imageData[0].mzValues = nodesSelected[0].mzs;
+      } else {
+        state.images.imageData[0].mzValues = [];
+      }
+    },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
     },
@@ -548,6 +556,7 @@ export default new Vuex.Store({
               context.state.network.nodes,
               response.data
             );
+            context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
           })
           .catch(function() {
             alert(
@@ -555,6 +564,10 @@ export default new Vuex.Store({
             );
           });
       }
+    },
+    mzlistUpdatedMzs: (context, data) => {
+      context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
+      context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
     },
   },
 });

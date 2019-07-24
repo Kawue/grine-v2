@@ -87,6 +87,9 @@ export default {
         case 'MZLIST_UPDATE_SELECTED_MZ':
           this.$store.dispatch('fetchImageData', 1);
           break;
+        case 'IMAGE_DATA_UPDATE_FROM_SELECTED_NODES':
+          this.$store.dispatch('fetchImageData', 0);
+          // this.$store.dispatch('fetchImageData', 2);
       }
     });
   },

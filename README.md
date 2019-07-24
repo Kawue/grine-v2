@@ -1,9 +1,9 @@
 # todo kim
 lasso weg machen
 visuell lasso feedback
-mz value selektiert -> andere community -> zeige community bild
+refresh lasso matched nodes when changing merge_method, intensity and overlap
 
-lasso selection von graph -> neues bild
+lasso selection von graph -> neues aggregated bild
 drei farbskalen auswaehlen
 
 multiple graphen? evtl anderes projekt
