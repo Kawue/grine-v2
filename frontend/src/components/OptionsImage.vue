@@ -30,6 +30,16 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-4">Color Scale:</div>
+          <div class="col-md-4">
+            <OptionsImageColorScale></OptionsImageColorScale>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -37,6 +47,7 @@
 import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
+import OptionsImageColorScale from './OptionsImageColorScale';
 
 export default {
   name: 'OptionsImage',
@@ -44,6 +55,7 @@ export default {
     OptionsImageMergeMethod,
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
+    OptionsImageColorScale,
   },
 };
 </script>

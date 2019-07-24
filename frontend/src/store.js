@@ -13,6 +13,7 @@ const mzListService = new MzListService();
 const imageService = new ImageService();
 const networkService = new NetworkService();
 import axios from 'axios';
+import * as d3 from 'd3';
 
 const API_URL = 'http://localhost:5000';
 export const IMAGE_INDEX_COMMUNITY = 0;
@@ -115,6 +116,15 @@ export default new Vuex.Store({
         mergeMethods: [], // queries from api
         minIntensity: 20, // in %
         minOverlap: 80, // in %
+        colorScale: 'interpolateMagma',
+        colorScales: {
+          interpolateMagma: 'Magma',
+          interpolateCool: 'Cool',
+          interpolatePiYG: 'PiYG',
+          interpolateViridis: 'Viridis',
+          interpolatePlasma: 'Plasma',
+          interpolateInferno: 'Inferno',
+        },
       },
       mzList: {
         showAll: false,
@@ -216,6 +226,9 @@ export default new Vuex.Store({
     },
     optionsImageMergeMethodChoices: state => {
       return state.options.image.mergeMethods;
+    },
+    optionsImageColorScaleChoices: state => {
+      return state.options.image.colorScales;
     },
   },
   mutations: {
@@ -377,6 +390,9 @@ export default new Vuex.Store({
     OPTIONS_IMAGE_CHANGE_MERGE_METHOD: (state, mergeMethod) => {
       state.options.image.mergeMethod = mergeMethod;
     },
+    OPTIONS_IMAGE_CHANGE_COLOR_SCALE: (state, colorScale) => {
+      state.options.image.colorScale = colorScale;
+    },
     OPTIONS_IMAGE_CHANGE_MIN_INTENSITY: (state, data) => {
       state.options.image.minIntensity = data;
     },
@@ -529,7 +545,10 @@ export default new Vuex.Store({
         axios
           .post(url, postData)
           .then(response => {
-            let imageData = imageService.calculateColors(response.data);
+            let imageData = imageService.calculateColors(
+              response.data,
+              context.state.options.image.colorScale
+            );
             context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
             context.commit('SET_LOADING_IMAGE_DATA', false);
           })
@@ -546,7 +565,10 @@ export default new Vuex.Store({
         context.state.images.imageData[index].points,
         selectedPoints
       );
-      imageData = imageService.calculateColors(imageData);
+      imageData = imageService.calculateColors(
+        imageData,
+        context.state.options.image.colorScale
+      );
       context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
       context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
       context.dispatch('fetchLassoSimilar', index);

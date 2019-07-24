@@ -1,9 +1,3 @@
-# todo kim
-drei farbskalen auswaehlen
-
-multiple graphen? evtl anderes projekt
-
-
 # Grine v2
 
 ## Project setup

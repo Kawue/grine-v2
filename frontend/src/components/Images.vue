@@ -85,6 +85,7 @@ export default {
       switch (mutation.type) {
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
+        case 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE':
           this.$store.dispatch(
             'fetchImageData',
             constants.IMAGE_INDEX_COMMUNITY
