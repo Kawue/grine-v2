@@ -1,5 +1,4 @@
 # todo kim
-lasso selection von graph -> neues aggregated bild
 drei farbskalen auswaehlen
 
 multiple graphen? evtl anderes projekt

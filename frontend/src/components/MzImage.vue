@@ -97,7 +97,7 @@ export default {
     height: function() {
       let height = this.$store.getters.getImageData(0).max.y;
       height = height ? height : this.$store.getters.getImageData(1).max.y;
-      // height = height ? height : this.$store.getters.getImageData(2).max.y;
+      height = height ? height : this.$store.getters.getImageData(2).max.y;
       height = height ? height : this.heightLast;
       return height;
     },

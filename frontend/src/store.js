@@ -15,6 +15,9 @@ const networkService = new NetworkService();
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000';
+export const IMAGE_INDEX_COMMUNITY = 0;
+export const IMAGE_INDEX_SELECTED_MZ = 1;
+export const IMAGE_INDEX_AGGREGATED = 2;
 
 export default new Vuex.Store({
   state: {
@@ -27,7 +30,7 @@ export default new Vuex.Store({
     images: {
       imageData: [
         {
-          // data used to render community image
+          // IMAGE_INDEX_COMMUNITY data used to render community image
           mzValues: [],
           points: [], // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -44,7 +47,24 @@ export default new Vuex.Store({
           lassoFetching: false, // true during api call of lasso matching
         },
         {
-          // data used to render image from selected mz values
+          // IMAGE_INDEX_SELECTED_MZ data used to render image from selected mz values
+          mzValues: [],
+          points: [], // points that are displayed as mz image
+          selectedPoints: [], // points that are selected by the lasso
+          max: {
+            // max image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          min: {
+            // min image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          lassoFetching: false, // true during api call of lasso matching
+        },
+        {
+          // IMAGE_INDEX_AGGREGATED data used to render image from multiple selected nodes
           mzValues: [],
           points: [], // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -231,10 +251,22 @@ export default new Vuex.Store({
     },
     IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
       let nodesSelected = networkService.getSelectedNodes(state.network.nodes);
-      if (nodesSelected && nodesSelected.length === 1) {
-        state.images.imageData[0].mzValues = nodesSelected[0].mzs;
-      } else {
-        state.images.imageData[0].mzValues = [];
+      if (nodesSelected) {
+        if (nodesSelected.length === 0) {
+          state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+          state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+        } else if (nodesSelected.length === 1) {
+          state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
+            nodesSelected[0].mzs;
+          state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+        } else if (nodesSelected.length > 1) {
+          state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+          let mzs = [];
+          nodesSelected.forEach(function(node) {
+            mzs = mzs.concat(node.mzs);
+          });
+          state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = mzs;
+        }
       }
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
@@ -359,7 +391,7 @@ export default new Vuex.Store({
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.mzList.selectedMz = data;
-      state.images.imageData[1].mzValues = data;
+      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
       networkService.highlightNodesByMz(state.network.nodes, data);
     },
     MZLIST_UPDATE_NAME: (state, data) => {
@@ -377,12 +409,7 @@ export default new Vuex.Store({
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
-      state.images.imageData[0].mzValues = mzValues;
-      if (mzValues.length === 1) {
-        state.images.imageData[1].mzValues = mzValues;
-      } else {
-        state.images.imageData[1].mzValues = [];
-      }
+      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
     },
     MZLIST_LOAD_GRAPH: state => {
       state.mzList.notVisibleMz = [];

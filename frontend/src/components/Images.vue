@@ -53,6 +53,11 @@
           <mz-image :imageDataIndex="1" v-bind:enable-lasso="true"></mz-image>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12">
+          <mz-image :imageDataIndex="2"></mz-image>
+        </div>
+      </div>
     </div>
   </SidebarWidget>
 </template>
@@ -64,6 +69,7 @@ import { mapGetters } from 'vuex';
 import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
+import * as constants from '../store';
 
 export default {
   extends: SidebarWidget,
@@ -79,17 +85,36 @@ export default {
       switch (mutation.type) {
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
-          this.$store.dispatch('fetchImageData', 0);
-          this.$store.dispatch('fetchImageData', 1);
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_COMMUNITY
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_SELECTED_MZ
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_AGGREGATED
+          );
           break;
         case 'MZLIST_RESET_HIGHLIGHTED_MZ':
         case 'NETWORK_HIGHLIGHT_NODE':
         case 'MZLIST_UPDATE_SELECTED_MZ':
-          this.$store.dispatch('fetchImageData', 1);
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_SELECTED_MZ
+          );
           break;
         case 'IMAGE_DATA_UPDATE_FROM_SELECTED_NODES':
-          this.$store.dispatch('fetchImageData', 0);
-          // this.$store.dispatch('fetchImageData', 2);
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_COMMUNITY
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_AGGREGATED
+          );
       }
     });
   },
