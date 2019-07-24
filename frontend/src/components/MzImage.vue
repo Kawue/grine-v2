@@ -42,6 +42,8 @@ export default {
       heightLast: 200,
       render: false,
       canvas: null,
+      lassoInstance: null,
+      removeLassoAfterPointsDrawn: true,
     };
   },
   mounted: function() {
@@ -49,20 +51,22 @@ export default {
     this.canvas = d3.select(componentId + ' .canvas-root canvas');
     const interactionSvg = d3.select(componentId + ' .canvas-root svg');
 
-    const lassoInstance = lasso()
+    this.lassoInstance = lasso()
       .on('end', this.handleLassoEnd)
       .on('start', this.handleLassoStart);
 
-    interactionSvg.call(lassoInstance);
+    interactionSvg.call(this.lassoInstance);
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'SET_IMAGE_DATA_VALUES':
-          if (this.height) {
-            this.heightLast = this.height;
-            let self = this;
-            setTimeout(function() {
-              self.drawPoints();
-            }, 10);
+          if (mutation.payload[0] === this.imageDataIndex) {
+            if (this.height) {
+              this.heightLast = this.height;
+              let self = this;
+              setTimeout(function() {
+                self.drawPoints();
+              }, 10);
+            }
           }
           break;
       }
@@ -128,13 +132,14 @@ export default {
         let y = this.getPosY(d.y);
         return d3.polygonContains(lassoPolygon, [x, y]);
       });
-
+      this.removeLassoAfterPointsDrawn = false;
       store.dispatch('imagesSelectPoints', [
         this.imageDataIndex,
         selectedPoints,
       ]);
     },
     handleLassoStart() {
+      this.removeLassoAfterPointsDrawn = false;
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
     drawPoints() {
@@ -155,6 +160,12 @@ export default {
         );
       }
       context.restore();
+      if (this.removeLassoAfterPointsDrawn) {
+        console.log('clear: ' + this.imageDataIndex);
+        this.lassoInstance.reset();
+      } else {
+        this.removeLassoAfterPointsDrawn = true;
+      }
     },
     getPosX(x) {
       let scaleBand = this.scaleBandX;

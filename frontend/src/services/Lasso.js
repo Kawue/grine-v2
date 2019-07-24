@@ -100,7 +100,6 @@ export default function lasso() {
         lassoPolygon = null;
       }
     }
-
     lasso.reset = () => {
       if (lassoPath) {
         lassoPath.remove();
