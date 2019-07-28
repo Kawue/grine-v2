@@ -249,6 +249,8 @@ export default new Vuex.Store({
 
       let maxX = 0;
       let maxY = 0;
+      let minX = Number.MAX_SAFE_INTEGER;
+      let minY = Number.MAX_SAFE_INTEGER;
       for (let point in data) {
         if (data.hasOwnProperty(point)) {
           if (data[point].x > maxX) {
@@ -257,10 +259,18 @@ export default new Vuex.Store({
           if (data[point].y > maxY) {
             maxY = data[point].y;
           }
+          if (data[point].x < minX) {
+            minX = data[point].x;
+          }
+          if (data[point].y < minY) {
+            minY = data[point].y;
+          }
         }
       }
       mzImageData.max.x = maxX;
       mzImageData.max.y = maxY;
+      mzImageData.min.x = minX;
+      mzImageData.min.y = minY;
     },
     IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
       let nodesSelected = networkService.getSelectedNodes(state.network.nodes);

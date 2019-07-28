@@ -87,6 +87,9 @@ export default {
     max: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).max;
     },
+    min: function() {
+      return this.$store.getters.getImageData(this.imageDataIndex).min;
+    },
     lassoFetching: function() {
       return this.$store.getters.getImageData(this.imageDataIndex)
         .lassoFetching;
@@ -104,14 +107,14 @@ export default {
     },
     domainX: function() {
       let domain = [];
-      for (let i = 0; i < this.max.x; i++) {
+      for (let i = this.min.x; i < this.max.x; i++) {
         domain.push(i);
       }
       return domain;
     },
     domainY: function() {
       let domain = [];
-      for (let i = this.max.y; i >= 0; i--) {
+      for (let i = this.max.y; i >= this.min.y; i--) {
         domain.push(i);
       }
       return domain;
