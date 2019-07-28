@@ -3,10 +3,12 @@ import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import store from '@/store';
 
 class NetworkService {
-  biggestNodeRadius = 25;
-  smallestNodeRadius = 10;
+  biggestNodeRadius = 30;
+  smallestNodeRadius = 15;
   height = window.innerHeight;
   width = window.innerWidth;
+  normalEdgeColor = '#111';
+  hybridEdgeColor = '#999';
 
   loadGraph(graph) {
     const tupel = [[], []];
@@ -39,7 +41,6 @@ class NetworkService {
           target: tupel[0].find(d => {
             return d.name === graph['hierarchy0']['edges'][l].target;
           }),
-          weight: graph['hierarchy0'].edges[l]['weight'],
           name: graph['hierarchy0'].edges[l]['name'],
         };
       })
@@ -88,6 +89,8 @@ class NetworkService {
       } else {
         annotationText = 'mz Value: ' + selected.data()[0].mzs[0];
       }
+      annotationText = annotationText + '\n' + selected.data()[0].name;
+
       const annotations = [
         {
           note: {
@@ -166,6 +169,7 @@ class NetworkService {
     } else {
       annotationText = 'mz Value: ' + d.mzs[0];
     }
+    annotationText = annotationText + '\n' + d.name;
 
     const annotations = [
       {
@@ -218,7 +222,8 @@ class NetworkService {
       .enter()
       .append('line')
       .attr('class', 'edge')
-      .attr('id', l => l.name);
+      .attr('id', l => l.name)
+      .attr('stroke', this.normalEdgeColor);
 
     const lNode = lSvg
       .append('g')
@@ -276,6 +281,9 @@ class NetworkService {
           .forceLink(edges)
           .id(l => l.name)
           .distance(parameters.edgeLength)
+          .strength(function strength(link) {
+            return link.name.startsWith('edge') ? 0.001 : 1;
+          })
       )
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
       .force('forceCollide', d3.forceCollide().radius(d => d.radius))
@@ -376,16 +384,35 @@ class NetworkService {
           nodes[i].name.split('n')[0].slice(1),
           10
         );
-        if (nodeHierarchy > previousHierarchy) {
-          nodesToRemove.push(nodes[i].name);
-          selectNextNode = selectNextNode || nodes[i].selected;
-          d3.select('#' + nodes[i].name).remove();
-          nodes.splice(i, 1);
+        if (nodeHierarchy === previousHierarchy + 1) {
+          if (nodes[i].parent === oldNode.parent) {
+            nodesToRemove.push(nodes[i].name);
+            selectNextNode = selectNextNode || nodes[i].selected;
+            d3.select('#' + nodes[i].name).remove();
+            nodes.splice(i, 1);
+          }
+        } else if (nodeHierarchy > previousHierarchy + 1) {
+          let hierarchyCounter = 0;
+          let parent = nodes[i].parent;
+          while (nodeHierarchy - hierarchyCounter > previousHierarchy + 1) {
+            hierarchyCounter++;
+            const investigatedNodePrefix =
+              'h' + (nodeHierarchy - hierarchyCounter) + 'n';
+            parent =
+              graph['hierarchy' + (nodeHierarchy - hierarchyCounter)].nodes[
+                investigatedNodePrefix + parent
+              ].membership;
+          }
+          if (parent === oldNode.parent) {
+            nodesToRemove.push(nodes[i].name);
+            selectNextNode = selectNextNode || nodes[i].selected;
+            d3.select('#' + nodes[i].name).remove();
+            nodes.splice(i, 1);
+          }
         }
       }
     }
     nextNode.selected = selectNextNode;
-    nodes.push(nextNode);
 
     // remove old edges from datastructure and svg
     for (let i = edges.length - 1; i >= 0; i--) {
@@ -398,8 +425,124 @@ class NetworkService {
       }
     }
 
-    // add new edges to datastructure
     const newEdges = [];
+
+    // hybrid edges
+    // go through all nodes
+    for (const node of nodes) {
+      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      let hierarchyCounter = 1;
+      // hierarchy of current node is less than hierarchy of next node
+      if (nodeHierarchy < previousHierarchy) {
+        let childs = [...node.childs];
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const investigatesNodePrefix =
+            'h' + (nodeHierarchy + hierarchyCounter) + 'n';
+          // hierarchy of current node is still less than hierarchy of next node
+          // go one hierarchy deeper
+          if (nodeHierarchy + hierarchyCounter < previousHierarchy) {
+            childs.map(c => {
+              return graph['hierarchy' + (nodeHierarchy + hierarchyCounter)]
+                .nodes[investigatesNodePrefix + c].childs;
+            });
+            childs = childs.flat();
+            hierarchyCounter++;
+          } else {
+            // current hierarchy is equal with hierarchy of nextNode
+            let hit = false;
+            const edgeKeys = Object.keys(
+              graph['hierarchy' + previousHierarchy]['edges']
+            );
+            for (const l of edgeKeys) {
+              if (hit) break;
+              // search all edges where source or target is nextNode
+              if (
+                graph['hierarchy' + previousHierarchy]['edges'][l].target ===
+                  nextNode.name ||
+                graph['hierarchy' + previousHierarchy]['edges'][l].source ===
+                  nextNode.name
+              ) {
+                for (const c of childs) {
+                  // search all edges where source or target is a child of current node in current hierarchy
+                  if (
+                    graph['hierarchy' + previousHierarchy]['edges'][l]
+                      .target ===
+                      investigatesNodePrefix + c ||
+                    graph['hierarchy' + previousHierarchy]['edges'][l]
+                      .source ===
+                      investigatesNodePrefix + c
+                  ) {
+                    /// draw hybrid edge
+                    newEdges.push({
+                      source: node,
+                      target: nextNode,
+                      name: 'edge' + Math.round(Math.random() * 1000),
+                    });
+                    hit = true;
+                    break;
+                  }
+                }
+              }
+            }
+            break;
+          }
+        }
+      } else if (nodeHierarchy > previousHierarchy) {
+        let childs = [...nextNode.childs];
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const investigatesNodePrefix =
+            'h' + (previousHierarchy + hierarchyCounter) + 'n';
+          // hierarchy of nextNode is still less than hierarchy of current node
+          // go one hierarchy deeper
+          if (previousHierarchy + hierarchyCounter < nodeHierarchy) {
+            childs = childs.map(c => {
+              return graph['hierarchy' + (previousHierarchy + hierarchyCounter)]
+                .nodes[investigatesNodePrefix + c].childs;
+            });
+            childs = childs.flat();
+            hierarchyCounter++;
+          } else {
+            // current hierarchy is equal with hierarchy of current node
+            const edgeKeys = Object.keys(
+              graph['hierarchy' + nodeHierarchy]['edges']
+            );
+            for (const l of edgeKeys) {
+              // search all edges where source or target is current node
+              if (
+                graph['hierarchy' + nodeHierarchy]['edges'][l].target ===
+                  node.name ||
+                graph['hierarchy' + nodeHierarchy]['edges'][l].source ===
+                  node.name
+              ) {
+                for (const c of childs) {
+                  // search all edges where source or target is a child of nextNode in current hierarchy
+                  if (
+                    graph['hierarchy' + nodeHierarchy]['edges'][l].target ===
+                      investigatesNodePrefix + c ||
+                    graph['hierarchy' + nodeHierarchy]['edges'][l].source ===
+                      investigatesNodePrefix + c
+                  ) {
+                    //draw hybrid edge
+                    newEdges.push({
+                      source: node,
+                      target: nextNode,
+                      name: 'edge' + Math.round(Math.random() * 1000),
+                    });
+                    break;
+                  }
+                }
+              }
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    nodes.push(nextNode);
+    // add new edges to datastructure
     Object.keys(graph['hierarchy' + previousHierarchy]['edges']).forEach(l => {
       const sourceIndex = nodes.findIndex(d => {
         return (
@@ -416,7 +559,6 @@ class NetworkService {
           newEdges.push({
             source: nodes[sourceIndex],
             target: nodes[targetIndex],
-            weight: graph['hierarchy' + previousHierarchy].edges[l]['weight'],
             name: graph['hierarchy' + previousHierarchy].edges[l]['name'],
           });
         }
@@ -431,7 +573,11 @@ class NetworkService {
       .enter()
       .append('line')
       .attr('class', 'edge')
-      .attr('id', l => l.name);
+      .attr('id', l => l.name)
+      .attr('stroke-dasharray', l => (l.name.startsWith('edge') ? 4 : 0))
+      .attr('stroke', l =>
+        l.name.startsWith('edge') ? this.hybridEdgeColor : this.normalEdgeColor
+      );
     store.getters.networkSVGElements.linkElements = d3
       .select('#link-container')
       .selectAll('line');
@@ -503,9 +649,6 @@ class NetworkService {
       newNodes.push(nextNode);
     }
 
-    // add new nodes to datastructure
-    nodes.push(...newNodes);
-
     // remove old edges from datastructure and svg
     for (let i = edges.length - 1; i >= 0; i--) {
       if (
@@ -517,8 +660,126 @@ class NetworkService {
       }
     }
 
-    // add new edges to datastructure
     const newEdges = [];
+
+    // hybrid edges
+    // go through all nodes
+    for (const node of nodes) {
+      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      let hierarchyCounter = 1;
+      if (nodeHierarchy < nextHierarchy) {
+        let childs = [...node.childs];
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          // hierarchy of current node is still less than hierarchy of newNodes
+          // go one hierarchy deeper
+          const investigatesNodePrefix =
+            'h' + (nodeHierarchy + hierarchyCounter) + 'n';
+          if (nodeHierarchy + hierarchyCounter < nextHierarchy) {
+            childs = childs.map(c => {
+              return graph['hierarchy' + (nodeHierarchy + hierarchyCounter)]
+                .nodes[investigatesNodePrefix + c].childs;
+            });
+            childs = childs.flat();
+            hierarchyCounter++;
+          } else {
+            // current hierarchy is equal with hierarchy of newNodes
+            const edgeKeys = Object.keys(
+              graph['hierarchy' + nextHierarchy]['edges']
+            );
+            for (const l of edgeKeys) {
+              for (const newNode of newNodes) {
+                // search all edges where source or target is a newNode
+                if (
+                  graph['hierarchy' + nextHierarchy]['edges'][l].target ===
+                    newNode.name ||
+                  graph['hierarchy' + nextHierarchy]['edges'][l].source ===
+                    newNode.name
+                ) {
+                  for (const c of childs) {
+                    // search all edges where source or target is a child of current node in current hierarchy
+                    if (
+                      graph['hierarchy' + nextHierarchy]['edges'][l].target ===
+                        investigatesNodePrefix + c ||
+                      graph['hierarchy' + nextHierarchy]['edges'][l].source ===
+                        investigatesNodePrefix + c
+                    ) {
+                      newEdges.push({
+                        source: node,
+                        target: newNode,
+                        name: 'edge' + Math.round(Math.random() * 1000),
+                      });
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+            break;
+          }
+        }
+      } else if (nodeHierarchy > nextHierarchy) {
+        for (const newNode of newNodes) {
+          let childs = [...newNode.childs];
+          // eslint-disable-next-line no-constant-condition
+          while (true) {
+            const investigatesNodePrefix =
+              'h' + (nextHierarchy + hierarchyCounter) + 'n';
+            // hierarchy of newNodes is still less than hierarchy of current node
+            // go one hierarchy deeper
+            if (nextHierarchy + hierarchyCounter < nodeHierarchy) {
+              childs.map(c => {
+                return graph['hierarchy' + (nextHierarchy + hierarchyCounter)]
+                  .nodes[investigatesNodePrefix + c].childs;
+              });
+              childs = childs.flat();
+              hierarchyCounter++;
+            } else {
+              // current hierarchy is equal with hierarchy of current node
+              let hit = false;
+              const edgeKeys = Object.keys(
+                graph['hierarchy' + nodeHierarchy]['edges']
+              );
+              // search all edges where source or target is current node
+              for (const l of edgeKeys) {
+                if (hit) break;
+                if (
+                  graph['hierarchy' + nodeHierarchy]['edges'][l].target ===
+                    node.name ||
+                  graph['hierarchy' + nodeHierarchy]['edges'][l].source ===
+                    node.name
+                ) {
+                  for (const c of childs) {
+                    // search all edges where source or target is a child of a newNode in current hierarchy
+                    if (
+                      graph['hierarchy' + nodeHierarchy]['edges'][l].target ===
+                        investigatesNodePrefix + c ||
+                      graph['hierarchy' + nodeHierarchy]['edges'][l].source ===
+                        investigatesNodePrefix + c
+                    ) {
+                      // draw hybrid edge
+                      newEdges.push({
+                        source: node,
+                        target: newNode,
+                        name: 'edge' + Math.round(Math.random() * 1000),
+                      });
+                      hit = true;
+                      break;
+                    }
+                  }
+                }
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // add new nodes to datastructure
+    nodes.push(...newNodes);
+
+    // add new edges to datastructure
     Object.keys(graph['hierarchy' + nextHierarchy]['edges']).forEach(l => {
       const sourceIndex = nodes.findIndex(d => {
         return d.name === graph['hierarchy' + nextHierarchy]['edges'][l].source;
@@ -533,7 +794,6 @@ class NetworkService {
           newEdges.push({
             source: nodes[sourceIndex],
             target: nodes[targetIndex],
-            weight: graph['hierarchy' + nextHierarchy].edges[l]['weight'],
             name: graph['hierarchy' + nextHierarchy].edges[l]['name'],
           });
         }
@@ -548,7 +808,11 @@ class NetworkService {
       .data(newEdges)
       .enter()
       .append('line')
-      .attr('id', l => l.name);
+      .attr('id', l => l.name)
+      .attr('stroke-dasharray', l => (l.name.startsWith('edge') ? 4 : 0))
+      .attr('stroke', l =>
+        l.name.startsWith('edge') ? this.hybridEdgeColor : this.normalEdgeColor
+      );
     store.getters.networkSVGElements.linkElements = d3
       .select('#link-container')
       .selectAll('line');
@@ -627,97 +891,110 @@ class NetworkService {
   }
 
   highlightNode(node) {
-    if (!node.selected) {
-      node.selected = true;
-      const selection = d3.select('#' + node.name);
-      selection
-        .transition()
-        .duration(250)
-        .attr('rx', node.radius * 0.5)
-        .attr('ry', node.radius * 0.5)
-        .attrTween('transform', function() {
-          return function(t) {
-            /*
-              interpolate linear between two values
-              t between 0 and 1
-              startValue + (endValue - startValue) * t
-              scaling factor k and rotation angle beta
-              k: 1 to 1.5
-              beta: 0° to 90°
-             */
-            const kTimesCosBeta = (1 + 0.5 * t) * Math.cos(Math.PI * t * 0.5);
-            const kTimesSinBeta = (1 + 0.5 * t) * Math.sin(Math.PI * t * 0.5);
-            return (
-              'matrix(' +
-              kTimesCosBeta +
-              ' ' +
-              kTimesSinBeta +
-              ' ' +
-              -kTimesSinBeta +
-              ' ' +
-              kTimesCosBeta +
-              ' ' +
-              (-node.x * kTimesCosBeta +
-                node.y * kTimesSinBeta +
-                node.x) +
-              ' ' +
-              (-node.x * kTimesSinBeta -
-                node.y * kTimesCosBeta +
-                node.y) +
-              ')'
-            );
-          };
-        });
+    if(!node.selected) {
+    node.selected = true;
+    const selection = d3.select('#' + node.name);
+    const scalingConstant = this.biggestNodeRadius + 10;
+    selection
+      .transition()
+      .duration(250)
+      .ease(function(t) {
+        // quadratic easing
+        return d3.easePolyIn(t, 2);
+      })
+      .attr('rx', node.radius * 0.5)
+      .attr('ry', node.radius * 0.5)
+      .attrTween('transform', function() {
+        return function(t) {
+          /*
+            interpolate linear between two values
+            t between 0 and 1
+            startValue + (endValue - startValue) * t
+            scaling factor k and rotation angle beta
+            k: 1 to 1.5
+            beta: 0° to 90°
+           */
+          const kTimesCosBeta =
+            (1 + (scalingConstant / node.radius - 1) * t) *
+            Math.cos(Math.PI * t * 0.5);
+          const kTimesSinBeta =
+            (1 + (scalingConstant / node.radius - 1) * t) *
+            Math.sin(Math.PI * t * 0.5);
+          return (
+            'matrix(' +
+            kTimesCosBeta +
+            ' ' +
+            kTimesSinBeta +
+            ' ' +
+            -kTimesSinBeta +
+            ' ' +
+            kTimesCosBeta +
+            ' ' +
+            (-node.x * kTimesCosBeta +
+              node.y * kTimesSinBeta +
+              node.x) +
+            ' ' +
+            (-node.x * kTimesSinBeta -
+              node.y * kTimesCosBeta +
+              node.y) +
+            ')'
+          );
+        };
+      });
 
-      selection
-        .transition()
-        .duration(250)
-        .delay(250)
-        .attr('rx', 0)
-        .attr('ry', 0)
-        .ease(function(t) {
-          // inverse of cubic easing
-          return Math.pow(t, 1 / 3);
-        })
-        .attrTween('transform', function() {
-          return function(t) {
-            /*
-              interpolate linear between two values
-              t between 0 and 1
-              startValue + (endValue - startValue) * t
-              scaling factor k and rotation angle beta
-              k: 1.5 to 1
-              beta: 90° to 180°
-             */
-            const kTimesCosBeta =
-              (1.5 - 0.5 * t) * Math.cos(Math.PI * 0.5 * (1 + t));
-            const kTimesSinBeta =
-              (1.5 - 0.5 * t) * Math.sin(Math.PI * 0.5 * (1 + t));
-            return (
-              'matrix(' +
-              kTimesCosBeta +
-              ' ' +
-              kTimesSinBeta +
-              ' ' +
-              -kTimesSinBeta +
-              ' ' +
-              kTimesCosBeta +
-              ' ' +
-              (-node.x * kTimesCosBeta +
-                node.y * kTimesSinBeta +
-                node.x) +
-              ' ' +
-              (-node.x * kTimesSinBeta -
-                node.y * kTimesCosBeta +
-                node.y) +
-              ')'
-            );
-          };
-        })
-        .on('end', function() {
-          d3.select(this).attr('transform', null);
-        });
-    }
+    selection
+      .transition()
+      .duration(250)
+      .delay(250)
+      .attr('rx', 0)
+      .attr('ry', 0)
+      .ease(function(t) {
+        // inverse of quadratic easing
+        return d3.easePolyOut(t, 2);
+      })
+      .attrTween('transform', function() {
+        return function(t) {
+          /*
+            interpolate linear between two values
+            t between 0 and 1
+            startValue + (endValue - startValue) * t
+            scaling factor k and rotation angle beta
+            k: 1.5 to 1
+            beta: 90° to 180°
+           */
+          const kTimesCosBeta =
+            (scalingConstant / nodes[i].radius -
+              (scalingConstant / node.radius - 1) * t) *
+            Math.cos(Math.PI * 0.5 * (1 + t));
+          const kTimesSinBeta =
+            (scalingConstant / node.radius -
+              (scalingConstant / node.radius - 1) * t) *
+            Math.sin(Math.PI * 0.5 * (1 + t));
+          return (
+            'matrix(' +
+            kTimesCosBeta +
+            ' ' +
+            kTimesSinBeta +
+            ' ' +
+            -kTimesSinBeta +
+            ' ' +
+            kTimesCosBeta +
+            ' ' +
+            (-node.x * kTimesCosBeta +
+              node.y * kTimesSinBeta +
+              node.x) +
+            ' ' +
+            (-node.x * kTimesSinBeta -
+              node.y * kTimesCosBeta +
+              node.y) +
+            ')'
+          );
+        };
+      })
+      .on('end', function() {
+        d3.select(this).attr('transform', null);
+      });
+  }
   }
 
   clearHighlight(nodes) {

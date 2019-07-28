@@ -5,7 +5,7 @@
     <svg
       v-bind:width="this.width"
       v-bind:height="this.height"
-      class="graphd3 link-color"
+      class="graphd3"
     ></svg>
   </div>
 </template>
@@ -66,9 +66,5 @@ export default {
   background-color: rgba(231, 231, 231, 0.51);
   z-index: 100;
   color: white;
-}
-
-.link-color {
-  stroke: #999;
 }
 </style>
