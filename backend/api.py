@@ -229,7 +229,7 @@ def datasets_imagedata_multiple_mz_action(dataset_name, method):
 
     try:
         post_data = request.get_data()
-        post_data_json = json.loads(post_data)
+        post_data_json = json.loads(post_data.decode('utf-8')
         post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
     except:
         return abort(400)
