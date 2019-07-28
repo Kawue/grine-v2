@@ -64,11 +64,6 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
 
-    pos_x_min = pos_x.min()
-    pos_y_min = pos_y.min()
-    pos_x[:] = [x - pos_x_min for x in pos_x]
-    pos_y[:] = [y - pos_y_min for y in pos_y]
-
     # holds the intensities of all mz_values in an array
     intensity = np.array(single_dframe[mz_values])
 
