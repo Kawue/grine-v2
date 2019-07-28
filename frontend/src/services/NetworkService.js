@@ -891,22 +891,22 @@ class NetworkService {
   }
 
   highlightNode(node) {
-    if(!node.selected) {
-    node.selected = true;
-    const selection = d3.select('#' + node.name);
-    const scalingConstant = this.biggestNodeRadius + 10;
-    selection
-      .transition()
-      .duration(250)
-      .ease(function(t) {
-        // quadratic easing
-        return d3.easePolyIn(t, 2);
-      })
-      .attr('rx', node.radius * 0.5)
-      .attr('ry', node.radius * 0.5)
-      .attrTween('transform', function() {
-        return function(t) {
-          /*
+    if (!node.selected) {
+      node.selected = true;
+      const selection = d3.select('#' + node.name);
+      const scalingConstant = this.biggestNodeRadius + 10;
+      selection
+        .transition()
+        .duration(250)
+        .ease(function(t) {
+          // quadratic easing
+          return d3.easePolyIn(t, 2);
+        })
+        .attr('rx', node.radius * 0.5)
+        .attr('ry', node.radius * 0.5)
+        .attrTween('transform', function() {
+          return function(t) {
+            /*
             interpolate linear between two values
             t between 0 and 1
             startValue + (endValue - startValue) * t
@@ -914,47 +914,43 @@ class NetworkService {
             k: 1 to 1.5
             beta: 0° to 90°
            */
-          const kTimesCosBeta =
-            (1 + (scalingConstant / node.radius - 1) * t) *
-            Math.cos(Math.PI * t * 0.5);
-          const kTimesSinBeta =
-            (1 + (scalingConstant / node.radius - 1) * t) *
-            Math.sin(Math.PI * t * 0.5);
-          return (
-            'matrix(' +
-            kTimesCosBeta +
-            ' ' +
-            kTimesSinBeta +
-            ' ' +
-            -kTimesSinBeta +
-            ' ' +
-            kTimesCosBeta +
-            ' ' +
-            (-node.x * kTimesCosBeta +
-              node.y * kTimesSinBeta +
-              node.x) +
-            ' ' +
-            (-node.x * kTimesSinBeta -
-              node.y * kTimesCosBeta +
-              node.y) +
-            ')'
-          );
-        };
-      });
+            const kTimesCosBeta =
+              (1 + (scalingConstant / node.radius - 1) * t) *
+              Math.cos(Math.PI * t * 0.5);
+            const kTimesSinBeta =
+              (1 + (scalingConstant / node.radius - 1) * t) *
+              Math.sin(Math.PI * t * 0.5);
+            return (
+              'matrix(' +
+              kTimesCosBeta +
+              ' ' +
+              kTimesSinBeta +
+              ' ' +
+              -kTimesSinBeta +
+              ' ' +
+              kTimesCosBeta +
+              ' ' +
+              (-node.x * kTimesCosBeta + node.y * kTimesSinBeta + node.x) +
+              ' ' +
+              (-node.x * kTimesSinBeta - node.y * kTimesCosBeta + node.y) +
+              ')'
+            );
+          };
+        });
 
-    selection
-      .transition()
-      .duration(250)
-      .delay(250)
-      .attr('rx', 0)
-      .attr('ry', 0)
-      .ease(function(t) {
-        // inverse of quadratic easing
-        return d3.easePolyOut(t, 2);
-      })
-      .attrTween('transform', function() {
-        return function(t) {
-          /*
+      selection
+        .transition()
+        .duration(250)
+        .delay(250)
+        .attr('rx', 0)
+        .attr('ry', 0)
+        .ease(function(t) {
+          // inverse of quadratic easing
+          return d3.easePolyOut(t, 2);
+        })
+        .attrTween('transform', function() {
+          return function(t) {
+            /*
             interpolate linear between two values
             t between 0 and 1
             startValue + (endValue - startValue) * t
@@ -962,39 +958,35 @@ class NetworkService {
             k: 1.5 to 1
             beta: 90° to 180°
            */
-          const kTimesCosBeta =
-            (scalingConstant / nodes[i].radius -
-              (scalingConstant / node.radius - 1) * t) *
-            Math.cos(Math.PI * 0.5 * (1 + t));
-          const kTimesSinBeta =
-            (scalingConstant / node.radius -
-              (scalingConstant / node.radius - 1) * t) *
-            Math.sin(Math.PI * 0.5 * (1 + t));
-          return (
-            'matrix(' +
-            kTimesCosBeta +
-            ' ' +
-            kTimesSinBeta +
-            ' ' +
-            -kTimesSinBeta +
-            ' ' +
-            kTimesCosBeta +
-            ' ' +
-            (-node.x * kTimesCosBeta +
-              node.y * kTimesSinBeta +
-              node.x) +
-            ' ' +
-            (-node.x * kTimesSinBeta -
-              node.y * kTimesCosBeta +
-              node.y) +
-            ')'
-          );
-        };
-      })
-      .on('end', function() {
-        d3.select(this).attr('transform', null);
-      });
-  }
+            const kTimesCosBeta =
+              (scalingConstant / node.radius -
+                (scalingConstant / node.radius - 1) * t) *
+              Math.cos(Math.PI * 0.5 * (1 + t));
+            const kTimesSinBeta =
+              (scalingConstant / node.radius -
+                (scalingConstant / node.radius - 1) * t) *
+              Math.sin(Math.PI * 0.5 * (1 + t));
+            return (
+              'matrix(' +
+              kTimesCosBeta +
+              ' ' +
+              kTimesSinBeta +
+              ' ' +
+              -kTimesSinBeta +
+              ' ' +
+              kTimesCosBeta +
+              ' ' +
+              (-node.x * kTimesCosBeta + node.y * kTimesSinBeta + node.x) +
+              ' ' +
+              (-node.x * kTimesSinBeta - node.y * kTimesCosBeta + node.y) +
+              ')'
+            );
+          };
+        })
+        .on('end', function() {
+          d3.select(this).attr('transform', null);
+        });
+    }
   }
 
   clearHighlight(nodes) {
