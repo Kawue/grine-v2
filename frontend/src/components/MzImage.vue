@@ -99,6 +99,7 @@ export default {
       height = height ? height : this.$store.getters.getImageData(1).max.y;
       height = height ? height : this.$store.getters.getImageData(2).max.y;
       height = height ? height : this.heightLast;
+      height = height < 100 ? 100 : height;
       return height;
     },
     domainX: function() {
@@ -110,7 +111,7 @@ export default {
     },
     domainY: function() {
       let domain = [];
-      for (let i = this.max.x; i >= 0; i--) {
+      for (let i = this.max.y; i >= 0; i--) {
         domain.push(i);
       }
       return domain;
