@@ -20,6 +20,14 @@ export default {
       },
       set(value) {
         this.$store.commit('OPTIONS_IMAGE_CHANGE_MIN_INTENSITY', value);
+
+        let self = this;
+        this.updatedValue = value;
+        setTimeout(function() {
+          if (self.updatedValue === value) {
+            self.$store.dispatch('fetchLassoSimilar', 1);
+          }
+        }, 500);
       },
     },
   },
@@ -27,20 +35,6 @@ export default {
     return {
       updateValue: null,
     };
-  },
-  mounted: function() {
-    this.$store.subscribe(mutation => {
-      if (mutation.type === 'OPTIONS_IMAGE_CHANGE_MIN_INTENSITY') {
-        let self = this;
-        const value = this.minIntensity;
-        this.updatedValue = value;
-        setTimeout(function() {
-          if (self.updatedValue === value) {
-            self.$store.dispatch('fetchLassoSimilar', 1);
-          }
-        }, 500);
-      }
-    });
   },
 };
 </script>
