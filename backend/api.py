@@ -195,7 +195,7 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
 
     try:
         post_data = request.get_data()
-        post_data_json = json.loads(post_data)
+        post_data_json = json.loads(post_data.decode('utf-8'))
         post_data_selected_points = post_data_json['selectedPoints']
         post_data_selected_mzs = [float(i) for i in post_data_json['selectedMzs']]
         post_data_visible_node_data = post_data_json['visibleNodes']
