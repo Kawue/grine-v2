@@ -911,7 +911,7 @@ class NetworkService {
             t between 0 and 1
             startValue + (endValue - startValue) * t
             scaling factor k and rotation angle beta
-            k: 1 to 1.5
+            k: 1 to maximal radius + 10
             beta: 0° to 90°
            */
             const kTimesCosBeta =
@@ -955,7 +955,7 @@ class NetworkService {
             t between 0 and 1
             startValue + (endValue - startValue) * t
             scaling factor k and rotation angle beta
-            k: 1.5 to 1
+            k: maximal radius + 10 to 1
             beta: 90° to 180°
            */
             const kTimesCosBeta =
