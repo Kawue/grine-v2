@@ -9,6 +9,7 @@ class NetworkService {
   width = window.innerWidth;
   normalEdgeColor = '#111';
   hybridEdgeColor = '#999';
+  hybridEdgeCounter = 0;
 
   loadGraph(graph) {
     const tupel = [[], []];
@@ -477,8 +478,9 @@ class NetworkService {
                     newEdges.push({
                       source: node,
                       target: nextNode,
-                      name: 'edge' + Math.round(Math.random() * 1000),
+                      name: 'edge' + this.hybridEdgeCounter,
                     });
+                    this.hybridEdgeCounter += 1;
                     hit = true;
                     break;
                   }
@@ -528,8 +530,9 @@ class NetworkService {
                     newEdges.push({
                       source: node,
                       target: nextNode,
-                      name: 'edge' + Math.round(Math.random() * 1000),
+                      name: 'edge' + this.hybridEdgeCounter,
                     });
+                    this.hybridEdgeCounter += 1;
                     break;
                   }
                 }
@@ -707,8 +710,9 @@ class NetworkService {
                       newEdges.push({
                         source: node,
                         target: newNode,
-                        name: 'edge' + Math.round(Math.random() * 1000),
+                        name: 'edge' + this.hybridEdgeCounter,
                       });
+                      this.hybridEdgeCounter += 1;
                       break;
                     }
                   }
@@ -761,9 +765,10 @@ class NetworkService {
                       newEdges.push({
                         source: node,
                         target: newNode,
-                        name: 'edge' + Math.round(Math.random() * 1000),
+                        name: 'edge' + this.hybridEdgeCounter,
                       });
                       hit = true;
+                      this.hybridEdgeCounter += 1;
                       break;
                     }
                   }
