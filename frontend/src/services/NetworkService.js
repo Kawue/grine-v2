@@ -329,7 +329,8 @@ class NetworkService {
     }
     this.centerCamera(zoom);
 
-    d3.selectAll('.edge')
+    d3.select('#link-container')
+      .selectAll('line')
       .transition()
       .duration(this.centerTransitionTime)
       .attr('x1', center[0])
