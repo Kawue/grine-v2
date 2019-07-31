@@ -93,6 +93,7 @@ export default new Vuex.Store({
         svg: null,
         nodeElements: null,
         linkElements: null,
+        zoom: null,
       },
       simulation: null,
       nodes: [],
@@ -369,6 +370,16 @@ export default new Vuex.Store({
           state.options.network
         );
       }
+    },
+    NETWORK_CENTER_NODES: state => {
+      networkService.centerNodes(
+        state.network.nodes,
+        state.network.simulation,
+        state.network.svgElements.zoom
+      );
+    },
+    NETWORK_CENTER_CAMERA: state => {
+      networkService.centerCamera(state.network.svgElements.zoom);
     },
     NETWORK_HIGHLIGHT_NODE_BY_MZ: state => {
       networkService.highlightNodesByMz(state.network.nodes);

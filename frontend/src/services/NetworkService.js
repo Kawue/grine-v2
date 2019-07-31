@@ -10,6 +10,7 @@ class NetworkService {
   normalEdgeColor = '#111';
   hybridEdgeColor = '#999';
   hybridEdgeCounter = 0;
+  centerTransitionTime = 1000;
 
   loadGraph(graph) {
     const tupel = [[], []];
@@ -252,11 +253,30 @@ class NetworkService {
           .on('drag', this.dragged)
           .on('end', this.dragended)
       );
+
+    const zoom = d3.zoom().scaleExtent([1 / 4, 5]);
+
+    d3.select('.graphd3').call(zoom.on('zoom', this.zoomed));
+
     return {
       svg: lSvg,
       nodeElements: lNode,
       linkElements: lLink,
+      zoom: zoom,
     };
+  }
+
+  zoomed() {
+    store.getters.networkSVGElements.svg.attr(
+      'transform',
+      'translate(' +
+        d3.event.transform.x +
+        ', ' +
+        d3.event.transform.y +
+        ') scale(' +
+        d3.event.transform.k +
+        ')'
+    );
   }
 
   updateSimulationParameters(simulation, parameters) {
@@ -291,6 +311,42 @@ class NetworkService {
       .alphaDecay(1 - Math.pow(0.001, 1 / parameters.iterations))
       .alpha(1)
       .on('tick', this.simulationUpdate);
+  }
+
+  centerCamera(zoom) {
+    d3.select('.graphd3')
+      .transition()
+      .duration(this.centerTransitionTime - 500)
+      .call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1));
+  }
+
+  centerNodes(nodes, simulation, zoom) {
+    const center = [this.width * 0.5, this.height * 0.5];
+    simulation.stop();
+    for (let i = 0; i < nodes.length; i++) {
+      nodes[i].x = center[0];
+      nodes[i].y = center[1];
+    }
+    this.centerCamera(zoom);
+
+    d3.selectAll('.edge')
+      .transition()
+      .duration(this.centerTransitionTime)
+      .attr('x1', center[0])
+      .attr('x2', center[0])
+      .attr('y1', center[1])
+      .attr('y2', center[1]);
+    d3.selectAll('.node')
+      .transition()
+      .duration(this.centerTransitionTime)
+      .attr('x', d => center[0] - d.radius)
+      .attr('y', d => center[1] - d.radius)
+      .on('end', function() {
+        simulation
+          .alpha(0.5)
+          .alphaTarget(0)
+          .restart();
+      });
   }
 
   nodeClick(n) {

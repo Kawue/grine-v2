@@ -22,8 +22,15 @@
           v-bind="optionsEdgelengthSlider"
           @change="updateParameters"
           class="slider"
-          style="margin-bottom: 20px !important"
         ></vue-slider>
+        <div class="button-container">
+          <b-button variant="warning" @click="centerNodes">
+            Center Nodes
+          </b-button>
+          <b-button variant="primary" @click="centerCamera">
+            Center Camera
+          </b-button>
+        </div>
       </div>
     </div>
     <hr />
@@ -89,6 +96,12 @@ export default {
     updateParameters() {
       store.commit('SET_NETWORK_OPTIONS', this.parameters);
     },
+    centerNodes() {
+      store.commit('NETWORK_CENTER_NODES');
+    },
+    centerCamera() {
+      store.commit('NETWORK_CENTER_CAMERA');
+    },
   },
   mounted() {
     this.parameters = _.cloneDeep(this.force);
@@ -106,5 +119,10 @@ export default {
 }
 .slider {
   margin: 0 15px 70px 15px;
+}
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 20px;
 }
 </style>

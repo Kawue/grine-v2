@@ -12,7 +12,6 @@
 
 <script>
 import store from '@/store';
-import * as d3 from 'd3';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -26,31 +25,10 @@ export default {
   computed: mapGetters({
     networkSvg: 'networkSVGElements',
   }),
-  methods: {
-    zoomed: function() {
-      this.networkSvg.svg.attr(
-        'transform',
-        'translate(' +
-          d3.event.transform.x +
-          ', ' +
-          d3.event.transform.y +
-          ') scale(' +
-          d3.event.transform.k +
-          ')'
-      );
-    },
-  },
   mounted() {
     store.commit('NETWORK_LOAD_GRAPH');
     store.commit('NETWORK_INIT_SVG');
     store.commit('NETWORK_SIMULATION_INIT');
-
-    d3.select('.graphd3').call(
-      d3
-        .zoom()
-        .scaleExtent([1 / 4, 5])
-        .on('zoom', this.zoomed)
-    );
     console.log('svg fertig');
   },
 };
