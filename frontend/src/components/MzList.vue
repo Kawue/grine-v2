@@ -7,22 +7,25 @@
     <div slot="content">
       <div style="padding: 4px 8px 0 8px;">
         <span
-          style="float: left; color: #dc3b9e"
+          style="float: left;"
+          class="text-primary"
           v-on:click="
             toggleShowAll();
             calculateCurrentMz();
           "
           v-b-tooltip.hover.top="'Show all'"
         >
-          <v-icon name="bong" v-bind:class="{ inactive: !showAll }"></v-icon>
+          <v-icon name="eye" v-if="showAll"></v-icon>
+          <v-icon name="eye-slash" v-else class="inactive"></v-icon>
         </span>
         <span
-          style="float: left;margin-left: 15px; color: #dc3b9e"
+          style="float: left;margin-left: 15px;"
+          class="text-primary"
           v-on:click="toggleShowAnnotation"
           v-b-tooltip.hover.top="'Show Annotations'"
         >
           <v-icon
-            name="jedi"
+            name="sticky-note"
             v-bind:class="{ inactive: !showAnnotation }"
           ></v-icon>
         </span>
