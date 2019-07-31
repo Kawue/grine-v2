@@ -86,9 +86,6 @@ export default {
     },
   },
   methods: {
-    clearList() {
-      store.commit('MZLIST_RESET_HIGHLIGHTED_MZ');
-    },
     updateParameters() {
       store.commit('SET_NETWORK_OPTIONS', this.parameters);
     },

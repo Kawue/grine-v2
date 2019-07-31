@@ -13,7 +13,6 @@ const mzListService = new MzListService();
 const imageService = new ImageService();
 const networkService = new NetworkService();
 import axios from 'axios';
-import * as d3 from 'd3';
 
 const API_URL = 'http://localhost:5000';
 export const IMAGE_INDEX_COMMUNITY = 0;
@@ -444,7 +443,7 @@ export default new Vuex.Store({
         state.originalGraphData.graphs
       );
     },
-    MZLIST_RESET_HIGHLIGHTED_MZ: state => {
+    RESET_SELECTION: state => {
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,

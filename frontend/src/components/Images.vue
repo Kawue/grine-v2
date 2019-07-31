@@ -99,7 +99,7 @@ export default {
             constants.IMAGE_INDEX_AGGREGATED
           );
           break;
-        case 'MZLIST_RESET_HIGHLIGHTED_MZ':
+        case 'RESET_SELECTION':
         case 'NETWORK_HIGHLIGHT_NODE':
         case 'MZLIST_UPDATE_SELECTED_MZ':
           this.$store.dispatch(

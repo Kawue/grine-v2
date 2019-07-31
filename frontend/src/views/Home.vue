@@ -3,6 +3,13 @@
     <SidebarLeft />
     <SidebarRight v-if="!loading" />
     <Graph v-if="!loading" />
+    <b-button
+      id="clear-button"
+      variant="warning"
+      size="lg"
+      @click="clearSelection"
+      >Clear</b-button
+    >
   </div>
 </template>
 
@@ -30,5 +37,19 @@ export default {
     store.dispatch('fetchGraphData');
     store.dispatch('fetchMergeMethods');
   },
+  methods: {
+    clearSelection() {
+      store.commit('RESET_SELECTION');
+    },
+  },
 };
 </script>
+<style scoped lang="scss">
+#clear-button {
+  position: absolute;
+  left: 3vw;
+  bottom: 5vh;
+  font-size: 1.2em;
+  z-index: 100;
+}
+</style>
