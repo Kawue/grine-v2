@@ -1,14 +1,23 @@
 <template>
-  <div>
-    <input type="range" min="0" max="100" v-model="minOverlap" />
+  <div class="flex-container">
+    <vue-slider
+      v-model="minOverlap"
+      v-bind="sliderOptions"
+      class="slider"
+    ></vue-slider>
     <span class="percentage">{{ minOverlap }}%</span>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import VueSlider from 'vue-slider-component';
+import 'vue-slider-component/theme/default.css';
 
 export default {
+  components: {
+    VueSlider,
+  },
   name: 'OptionsImageMinOverlap',
   computed: {
     ...mapGetters({
@@ -34,6 +43,11 @@ export default {
   data() {
     return {
       updateValue: null,
+      sliderOptions: {
+        min: 0,
+        max: 100,
+        tooltipFormatter: '{value}%',
+      },
     };
   },
 };
@@ -42,5 +56,12 @@ export default {
 <style scoped lang="scss">
 .percentage {
   margin-left: 10px;
+}
+.slider {
+  width: 75% !important;
+}
+.flex-container {
+  display: flex;
+  flex-direction: row;
 }
 </style>
