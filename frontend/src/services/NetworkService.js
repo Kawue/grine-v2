@@ -317,6 +317,7 @@ class NetworkService {
     d3.select('.graphd3')
       .transition()
       .duration(this.centerTransitionTime - 500)
+      .ease(d3.easeCubicInOut)
       .call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1));
   }
 
@@ -333,6 +334,7 @@ class NetworkService {
       .selectAll('line')
       .transition()
       .duration(this.centerTransitionTime)
+      .ease(d3.easeCubicInOut)
       .attr('x1', center[0])
       .attr('x2', center[0])
       .attr('y1', center[1])
@@ -340,6 +342,7 @@ class NetworkService {
     d3.selectAll('.node')
       .transition()
       .duration(this.centerTransitionTime)
+      .ease(d3.easeCubicInOut)
       .attr('x', d => center[0] - d.radius)
       .attr('y', d => center[1] - d.radius)
       .on('end', function() {
