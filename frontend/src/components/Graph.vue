@@ -34,7 +34,9 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
 .graph {
   position: absolute;
   top: 0;
@@ -44,5 +46,20 @@ export default {
   background-color: rgba(231, 231, 231, 0.51);
   z-index: 100;
   color: white;
+}
+.lasso path {
+  stroke: rgb(80, 80, 80);
+  stroke-width: 2px;
+}
+.lasso .drawn {
+  fill-opacity: 0.05;
+}
+.lasso .loop_close {
+  fill: none;
+  stroke-dasharray: 4, 4;
+}
+.lasso .origin {
+  fill: $primary;
+  fill-opacity: 0.5;
 }
 </style>

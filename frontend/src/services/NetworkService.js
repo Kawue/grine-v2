@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import * as d3lasso from 'd3-lasso';
 import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import store from '@/store';
 
@@ -208,7 +209,7 @@ class NetworkService {
     d.annotations = null;
   }
 
-  initSVG(nodes, edges) {
+  initSVG(nodes, edges, zoomMode) {
     d3.select('#graph-container').remove();
 
     const lSvg = d3
@@ -254,16 +255,41 @@ class NetworkService {
           .on('end', this.dragended)
       );
 
+    if (zoomMode) {
+      return {
+        svg: lSvg,
+        nodeElements: lNode,
+        linkElements: lLink,
+        zoom: this.initZoom(),
+        lasso: null,
+      };
+    } else {
+      const lasso = this.initLasso(lNode);
+      return {
+        svg: lSvg,
+        nodeElements: lNode,
+        linkElements: lLink,
+        zoom: null,
+        lasso: lasso,
+      };
+    }
+  }
+
+  toogleNetworkMode(zoomMode, networkSVG) {
+    zoomMode = !zoomMode;
+    if (zoomMode) {
+      networkSVG.lasso = null;
+      networkSVG.zoom = this.initZoom();
+    } else {
+      networkSVG.zoom = null;
+      networkSVG.lasso = this.initLasso(networkSVG.nodeElements);
+    }
+  }
+
+  initZoom() {
     const zoom = d3.zoom().scaleExtent([1 / 4, 5]);
-
     d3.select('.graphd3').call(zoom.on('zoom', this.zoomed));
-
-    return {
-      svg: lSvg,
-      nodeElements: lNode,
-      linkElements: lLink,
-      zoom: zoom,
-    };
+    return zoom;
   }
 
   zoomed() {
@@ -351,6 +377,74 @@ class NetworkService {
           .alphaTarget(0)
           .restart();
       });
+  }
+
+  // Lasso functions
+  lassoStart() {
+    const lasso = store.getters.networkSVGElements.lasso;
+
+    lasso.items().style('fill', n =>
+      d3
+        .color(n.color)
+        .darker(1)
+        .toString()
+    );
+
+    console.log('lasso start');
+  }
+
+  lassoDraw() {
+    const lasso = store.getters.networkSVGElements.lasso;
+
+    // Style the possible dots
+    lasso.possibleItems().style('fill', n =>
+      d3
+        .color(n.color)
+        .darker(0.2)
+        .toString()
+    );
+
+    // Style the not possible dot
+    lasso.notPossibleItems().style('fill', n =>
+      d3
+        .color(n.color)
+        .darker(1)
+        .toString()
+    );
+  }
+
+  lassoEnd() {
+    // Reset the color of all dots
+    const lasso = store.getters.networkSVGElements.lasso;
+    lasso.items().style('fill', n => n.color);
+
+    const mzs = lasso
+      .selectedItems()
+      .data()
+      .map(d => d.mzs)
+      .flat();
+
+    store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
+    store.dispatch('mzlistUpdateHighlightedMz', mzs);
+
+    console.log('lasso end');
+  }
+
+  initLasso(nodes) {
+    const svg = d3.select('.graphd3');
+    const lasso = d3lasso
+      .lasso()
+      .closePathSelect(true)
+      .closePathDistance(100)
+      .items(nodes)
+      .targetArea(svg)
+      .on('start', this.lassoStart)
+      .on('draw', this.lassoDraw)
+      .on('end', this.lassoEnd);
+
+    svg.call(lasso);
+    console.log('lasso erfolgreich');
+    return lasso;
   }
 
   nodeClick(n) {
@@ -921,13 +1015,16 @@ class NetworkService {
   }
 
   highlightNodesByMz(nodes, mzValuesStrings) {
-    const mzValuesFloats = mzValuesStrings.map(mz => parseFloat(mz));
+    let mzValuesFloats = mzValuesStrings.map(mz => parseFloat(mz));
     for (let i = 0; i < nodes.length; i++) {
       let hit = false;
       for (let j = 0; j < mzValuesFloats.length; j++) {
         if (nodes[i].mzs.findIndex(mz => mz === mzValuesFloats[j]) > -1) {
+          // remove all mz values in the array which are from the current node
+          mzValuesFloats = mzValuesFloats.filter(
+            f => nodes[i].mzs.findIndex(m => m === f) === -1
+          );
           hit = true;
-          mzValuesFloats.splice(j, 1);
           break;
         }
       }

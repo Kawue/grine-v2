@@ -98,6 +98,7 @@ export default new Vuex.Store({
       simulation: null,
       nodes: [],
       edges: [],
+      zoomMode: true,
     },
     options: {
       state: {
@@ -314,10 +315,17 @@ export default new Vuex.Store({
         options
       );
     },
+    NETWORK_TOGGLE_MODE: state => {
+      networkService.toogleNetworkMode(
+        state.network.zoomMode,
+        state.network.svgElements
+      );
+    },
     NETWORK_INIT_SVG: state => {
       state.network.svgElements = networkService.initSVG(
         state.network.nodes,
-        state.network.edges
+        state.network.edges,
+        state.network.zoomMode
       );
     },
     NETWORK_SIMULATION_INIT: state => {
@@ -380,9 +388,6 @@ export default new Vuex.Store({
     },
     NETWORK_CENTER_CAMERA: state => {
       networkService.centerCamera(state.network.svgElements.zoom);
-    },
-    NETWORK_HIGHLIGHT_NODE_BY_MZ: state => {
-      networkService.highlightNodesByMz(state.network.nodes);
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
