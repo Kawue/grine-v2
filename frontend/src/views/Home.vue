@@ -10,6 +10,14 @@
       @click="clearSelection"
       >Clear</b-button
     >
+    <div class="mode-container text-center">
+      <div v-if="this.lassoMode" class="selected-mode">
+        Free Mode
+      </div>
+      <div v-else class="selected-mode">
+        Lasso Mode
+      </div>
+    </div>
   </div>
 </template>
 
@@ -30,6 +38,7 @@ export default {
   computed: {
     ...mapGetters({
       loading: 'getLoadingGraphData',
+      lassoMode: 'networkLassoMode',
     }),
   },
   mounted: function() {
@@ -50,6 +59,19 @@ export default {
   left: 3vw;
   bottom: 5vh;
   font-size: 1.2em;
+  z-index: 100;
+}
+.selected-mode {
+  width: 150px;
+  font-size: 1.4em;
+  border: 1px solid black;
+  padding-bottom: 5px;
+}
+.mode-container {
+  position: absolute;
+  left: 4vw;
+  background-color: rgba(231, 231, 231, 0.5);
+  top: 0;
   z-index: 100;
 }
 </style>

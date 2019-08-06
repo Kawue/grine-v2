@@ -390,8 +390,6 @@ class NetworkService {
         .darker(1)
         .toString()
     );
-
-    console.log('lasso start');
   }
 
   lassoDraw() {
@@ -429,8 +427,6 @@ class NetworkService {
       store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
       store.dispatch('mzlistUpdateHighlightedMz', mzs);
     }
-
-    console.log('lasso end');
   }
 
   initLasso(nodes) {
@@ -446,7 +442,6 @@ class NetworkService {
       .on('end', this.lassoEnd);
 
     svg.call(lasso);
-    console.log('lasso erfolgreich');
     return lasso;
   }
 

@@ -25,22 +25,32 @@
         ></vue-slider>
         <div class="button-container">
           <b-button
-            variant="warning"
-            @click="centerNodes"
-            v-bind:disabled="!this.zoomMode"
-          >
-            Center Nodes
-          </b-button>
-          <b-button
+            class="center-buttons"
             variant="primary"
             @click="centerCamera"
-            v-bind:disabled="!this.zoomMode"
+            v-bind:disabled="!this.lassoMode"
           >
             Center Camera
           </b-button>
-          <b-button variant="primary" @click="toggleMode">
-            {{ this.zoomMode ? 'Lasso' : 'Zoom' }}
+          <b-button
+            class="center-buttons"
+            variant="warning"
+            @click="centerNodes"
+            v-bind:disabled="!this.lassoMode"
+          >
+            Center Nodes
           </b-button>
+          <b-button variant="primary" @click="toggleMode" id="toggle-button">
+            Toggle Mode
+          </b-button>
+        </div>
+        <div class="mode-container text-center">
+          <div v-if="this.lassoMode" class="selected-mode">
+            Free Mode
+          </div>
+          <div v-else class="selected-mode">
+            Lasso Mode
+          </div>
         </div>
       </div>
     </div>
@@ -93,7 +103,7 @@ export default {
   computed: {
     ...mapGetters({
       force: 'networkOptions',
-      zoomMode: 'networkLassoMode',
+      lassoMode: 'networkLassoMode',
     }),
     repulsion: {
       get() {
@@ -133,11 +143,29 @@ export default {
   font-size: 1.2em;
 }
 .slider {
-  margin: 0 15px 70px 15px;
+  margin: 0 15px 50px 15px;
 }
 .button-container {
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 20px;
+}
+.center-buttons {
+  margin-left: -30px;
+}
+.selected-mode {
+  width: 175px;
+  font-size: 1.5em;
+  border: 1px solid white;
+  padding-bottom: 5px;
+}
+.mode-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  margin-right: 15px;
+}
+#toggle-button {
+  margin-left: 30px;
 }
 </style>
