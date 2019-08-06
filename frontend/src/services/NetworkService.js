@@ -608,7 +608,7 @@ class NetworkService {
           // hierarchy of current node is still less than hierarchy of next node
           // go one hierarchy deeper
           if (nodeHierarchy + hierarchyCounter < previousHierarchy) {
-            childs.map(c => {
+            childs = childs.map(c => {
               return graph['hierarchy' + (nodeHierarchy + hierarchyCounter)]
                 .nodes[investigatesNodePrefix + c].childs;
             });
@@ -897,7 +897,7 @@ class NetworkService {
             // hierarchy of newNodes is still less than hierarchy of current node
             // go one hierarchy deeper
             if (nextHierarchy + hierarchyCounter < nodeHierarchy) {
-              childs.map(c => {
+              childs = childs.map(c => {
                 return graph['hierarchy' + (nextHierarchy + hierarchyCounter)]
                   .nodes[investigatesNodePrefix + c].childs;
               });
