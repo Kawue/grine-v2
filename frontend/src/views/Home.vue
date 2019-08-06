@@ -10,8 +10,16 @@
       @click="clearSelection"
       >Clear</b-button
     >
+    <b-button
+      id="nodeTrix-button"
+      variant="primary"
+      size="lg"
+      v-if="nodeTrix"
+      @click="computeNodeTrix"
+      >NodeTrix</b-button
+    >
     <div class="mode-container text-center">
-      <div v-if="this.lassoMode" class="selected-mode">
+      <div v-if="lassoMode" class="selected-mode">
         Free Mode
       </div>
       <div v-else class="selected-mode">
@@ -39,6 +47,7 @@ export default {
     ...mapGetters({
       loading: 'getLoadingGraphData',
       lassoMode: 'networkLassoMode',
+      nodeTrix: 'networkNodeTrixPossible',
     }),
   },
   mounted: function() {
@@ -49,6 +58,9 @@ export default {
   methods: {
     clearSelection() {
       store.commit('RESET_SELECTION');
+    },
+    computeNodeTrix() {
+      store.commit('NETWORK_COMPUTE_NODETRIX');
     },
   },
 };
@@ -69,9 +81,16 @@ export default {
 }
 .mode-container {
   position: absolute;
-  left: 4vw;
+  left: 3vw;
   background-color: rgba(231, 231, 231, 0.5);
   top: 0;
+  z-index: 100;
+}
+#nodeTrix-button {
+  position: absolute;
+  left: 3vw;
+  top: 55vh;
+  font-size: 1.2em;
   z-index: 100;
 }
 </style>

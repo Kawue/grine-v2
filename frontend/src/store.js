@@ -100,6 +100,7 @@ export default new Vuex.Store({
       nodes: [],
       edges: [],
       lassoMode: true,
+      nodeTrixPossible: false,
     },
     options: {
       state: {
@@ -222,6 +223,9 @@ export default new Vuex.Store({
     },
     networkNodes: state => {
       return state.network.nodes;
+    },
+    networkNodeTrixPossible: state => {
+      return state.network.nodeTrixPossible;
     },
     stateOptionsGraph: state => {
       return state.options.data.graph;
@@ -400,6 +404,14 @@ export default new Vuex.Store({
     NETWORK_CENTER_CAMERA: state => {
       networkService.centerCamera(state.network.svgElements.zoom);
     },
+    NETWORK_COMPUTE_NODETRIX: state => {
+      networkService.computeNodeTrix(
+        state.originalGraphData.graphs['graph' + state.options.data.graph]
+          .graph,
+        state.network.nodes,
+        state.meta.maxHierarchy
+      );
+    },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
     },
@@ -442,6 +454,7 @@ export default new Vuex.Store({
       );
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
+      state.network.nodeTrixPossible = true;
       state.mzList.selectedMz = data;
       state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
       networkService.highlightNodesByMz(state.network.nodes, data);
@@ -452,6 +465,7 @@ export default new Vuex.Store({
       ].nodes[data.nodeKey].name = data.name;
     },
     MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
+      state.network.nodeTrixPossible = true;
       const tuple = mzListService.updateHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -471,6 +485,7 @@ export default new Vuex.Store({
       );
     },
     RESET_SELECTION: state => {
+      state.network.nodeTrixPossible = false;
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -553,6 +568,7 @@ export default new Vuex.Store({
             'graph' + context.state.options.data.graph
           ].graph
         ).length - 1;
+      context.state.network.nodeTrixPossible = false;
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
       context.commit('MZLIST_SORT_MZ');

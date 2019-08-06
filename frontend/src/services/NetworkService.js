@@ -437,6 +437,32 @@ class NetworkService {
         .map(d => d.mzs)
         .flat();
 
+      // check if only nodes from the deepest hierarchy are selected
+      lasso.selectedItems().attr('class', 'node nodeTrix');
+      lasso.notSelectedItems().attr('class', 'node');
+      /*
+        const firstHierarchy = parseInt(
+        lasso
+          .selectedItems()
+          .data()[0]
+          .name.split('n')[0]
+          .slice(1),
+        10
+      );
+      if (
+        lasso
+          .selectedItems()
+          .data()
+          .map(
+            d => parseInt(d.name.split('n')[0].slice(1), 10) === firstHierarchy
+          )
+          .reduce((acc, val) => acc && val)
+      ) {
+        console.log('Only deepest nodes in lasso');
+      }
+
+ */
+
       store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
       store.dispatch('mzlistUpdateHighlightedMz', mzs);
     }
@@ -456,6 +482,33 @@ class NetworkService {
 
     svg.call(lasso);
     return lasso;
+  }
+
+  computeNodeTrix(graph, nodes, deepestHierarchy) {
+    const sel = this.getSelectedNodes(nodes);
+    const indices = [];
+    for (const node of sel) {
+      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      if (nodeHierarchy === deepestHierarchy) {
+        indices.push(parseInt(node.name.split('n')[1], 10));
+      } else {
+        let childs = [...node.childs];
+        let hierarchyCounter = 1;
+        // eslint-disable-next-line no-constant-condition
+        while (nodeHierarchy + hierarchyCounter < deepestHierarchy) {
+          const investigatesNodePrefix =
+            'h' + (nodeHierarchy + hierarchyCounter) + 'n';
+          childs = childs.map(c => {
+            return graph['hierarchy' + (nodeHierarchy + hierarchyCounter)]
+              .nodes[investigatesNodePrefix + c].childs;
+          });
+          childs = childs.flat();
+          hierarchyCounter++;
+        }
+        indices.push(...childs);
+      }
+    }
+    console.log(indices);
   }
 
   nodeClick(n) {
@@ -608,7 +661,7 @@ class NetworkService {
           // hierarchy of current node is still less than hierarchy of next node
           // go one hierarchy deeper
           if (nodeHierarchy + hierarchyCounter < previousHierarchy) {
-            childs.map(c => {
+            childs = childs.map(c => {
               return graph['hierarchy' + (nodeHierarchy + hierarchyCounter)]
                 .nodes[investigatesNodePrefix + c].childs;
             });
@@ -897,7 +950,7 @@ class NetworkService {
             // hierarchy of newNodes is still less than hierarchy of current node
             // go one hierarchy deeper
             if (nextHierarchy + hierarchyCounter < nodeHierarchy) {
-              childs.map(c => {
+              childs = childs.map(c => {
                 return graph['hierarchy' + (nextHierarchy + hierarchyCounter)]
                   .nodes[investigatesNodePrefix + c].childs;
               });
@@ -1178,7 +1231,9 @@ class NetworkService {
             );
           })
           .on('end', function() {
-            d3.select(this).attr('transform', null);
+            d3.select(this)
+              .attr('transform', null)
+              .attr('class', 'node');
           });
       }
     }
