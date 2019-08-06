@@ -357,6 +357,8 @@ class NetworkService {
     }
     this.centerCamera(zoom);
 
+    let functionFlag = true;
+
     d3.select('#link-container')
       .selectAll('line')
       .transition()
@@ -373,10 +375,21 @@ class NetworkService {
       .attr('x', d => center[0] - d.radius)
       .attr('y', d => center[1] - d.radius)
       .on('end', function() {
-        simulation
-          .alpha(0.5)
-          .alphaTarget(0)
-          .restart();
+        if (functionFlag) {
+          functionFlag = false;
+          simulation.force('forceCollide').strength(0.01);
+          simulation.force('charge').strength(50);
+          simulation
+            .alpha(0.5)
+            .alphaDecay(1 - Math.pow(0.001, 1 / 100))
+            .alphaTarget(0)
+            .restart()
+            .on('end', () => {
+              simulation.force('forceCollide').strength(0.7);
+              simulation.on('end', null);
+              store.commit('SET_NETWORK_OPTIONS', store.getters.networkOptions);
+            });
+        }
       });
   }
 
