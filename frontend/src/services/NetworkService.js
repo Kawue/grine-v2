@@ -485,12 +485,16 @@ class NetworkService {
   }
 
   computeNodeTrix(graph, nodes, deepestHierarchy) {
+    if (!d3.select('#heatmap').empty()) {
+      d3.select('#heatmap').remove();
+    }
     const sel = this.getSelectedNodes(nodes);
-    const indices = [];
+    let deepNodes = [];
+    // compute nodes of the deepest hierarchy of selected nodes
     for (const node of sel) {
       const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
       if (nodeHierarchy === deepestHierarchy) {
-        indices.push(parseInt(node.name.split('n')[1], 10));
+        deepNodes.push(parseInt(node.name.split('n')[1], 10));
       } else {
         let childs = [...node.childs];
         let hierarchyCounter = 1;
@@ -505,10 +509,85 @@ class NetworkService {
           childs = childs.flat();
           hierarchyCounter++;
         }
-        indices.push(...childs);
+        deepNodes.push(...childs);
       }
     }
-    console.log(indices);
+
+    // sort nodes by parents
+    // TODO Sorting really necessary?
+    const maxHierarchyPrefix = 'h' + deepestHierarchy + 'n';
+    deepNodes = deepNodes
+      .map(n => {
+        return {
+          name: maxHierarchyPrefix + n,
+          parent:
+            graph['hierarchy' + deepestHierarchy].nodes[maxHierarchyPrefix + n]
+              .membership,
+        };
+      })
+      .sort((a, b) => a.parent - b.parent);
+    const map = {};
+    let heatmap = [];
+    // construct empty heatmap and data structure to map from node name to index in heatmap
+    for (let i = 0; i < deepNodes.length; i++) {
+      map[deepNodes[i].name] = i;
+      const tempArray = [];
+      for (let j = 0; j < deepNodes.length - i; j++) {
+        tempArray.push(false);
+      }
+      heatmap.push(tempArray);
+    }
+    heatmap = heatmap.reverse();
+    const edgeKeys = Object.keys(
+      graph['hierarchy' + deepestHierarchy]['edges']
+    );
+    // compute heatmap
+    for (const edge of edgeKeys) {
+      const sourceIndex =
+        map[graph['hierarchy' + deepestHierarchy]['edges'][edge].source];
+      const targetIndex =
+        map[graph['hierarchy' + deepestHierarchy]['edges'][edge].target];
+      if (sourceIndex != null && targetIndex != null) {
+        if (sourceIndex <= targetIndex) {
+          heatmap[targetIndex][sourceIndex] = true;
+        } else {
+          heatmap[sourceIndex][targetIndex] = true;
+        }
+      }
+    }
+    console.log(heatmap);
+    const heatMapSVG = d3
+      .select('#graph-container')
+      .append('g')
+      .attr('id', 'heatmap');
+    const center = [this.width * 0.5, this.height * 0.5];
+    const size = 2000 / heatmap.length;
+    for (let i = 0; i < heatmap.length; i++) {
+      const tempArray = [];
+      for (let j = 0; j < heatmap.length; j++) {
+        tempArray.push({
+          row: i,
+          column: j,
+          value: false,
+        });
+        if (i < j) {
+          tempArray[j].value = heatmap[j][i];
+        } else {
+          tempArray[j].value = heatmap[i][j];
+        }
+      }
+      heatMapSVG
+        .selectAll('newHeatCells')
+        .data(tempArray)
+        .enter()
+        .append('rect')
+        .attr('class', 'node')
+        .attr('x', n => center[0] + n.column * size)
+        .attr('y', n => center[1] + n.row * size)
+        .attr('width', size)
+        .attr('height', size)
+        .style('fill', n => (n.value ? 'green' : 'red'));
+    }
   }
 
   nodeClick(n) {
@@ -1216,6 +1295,9 @@ class NetworkService {
   }
 
   clearHighlight(nodes) {
+    if (!d3.select('#heatmap').empty()) {
+      d3.select('#heatmap').remove();
+    }
     for (let i = 0; i < nodes.length; i++) {
       if (nodes[i].selected) {
         nodes[i].selected = false;

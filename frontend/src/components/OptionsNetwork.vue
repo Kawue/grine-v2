@@ -28,7 +28,6 @@
             class="center-buttons"
             variant="primary"
             @click="centerCamera"
-            v-bind:disabled="!lassoMode"
           >
             Center Camera
           </b-button>
@@ -36,7 +35,6 @@
             class="center-buttons"
             variant="warning"
             @click="centerNodes"
-            v-bind:disabled="!lassoMode"
           >
             Center Nodes
           </b-button>
