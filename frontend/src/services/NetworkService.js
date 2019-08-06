@@ -419,14 +419,16 @@ class NetworkService {
     const lasso = store.getters.networkSVGElements.lasso;
     lasso.items().style('fill', n => n.color);
 
-    const mzs = lasso
-      .selectedItems()
-      .data()
-      .map(d => d.mzs)
-      .flat();
+    if (!lasso.selectedItems().empty()) {
+      const mzs = lasso
+        .selectedItems()
+        .data()
+        .map(d => d.mzs)
+        .flat();
 
-    store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
-    store.dispatch('mzlistUpdateHighlightedMz', mzs);
+      store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
+      store.dispatch('mzlistUpdateHighlightedMz', mzs);
+    }
 
     console.log('lasso end');
   }
