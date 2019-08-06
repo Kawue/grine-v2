@@ -364,6 +364,9 @@ export default new Vuex.Store({
           state.network.edges,
           state.options.network
         );
+        state.network.svgElements.lasso.items(
+          state.network.svgElements.nodeElements
+        );
       }
     },
     NETWORK_SHRINK_NODE: (state, node) => {
@@ -381,6 +384,9 @@ export default new Vuex.Store({
           state.network.nodes,
           state.network.edges,
           state.options.network
+        );
+        state.network.svgElements.lasso.items(
+          state.network.svgElements.nodeElements
         );
       }
     },
@@ -552,6 +558,7 @@ export default new Vuex.Store({
       context.commit('MZLIST_SORT_MZ');
       context.commit('NETWORK_LOAD_GRAPH');
       context.commit('NETWORK_INIT_SVG');
+      context.commit('NETWORK_CENTER_CAMERA');
       context.commit('NETWORK_SIMULATION_INIT');
     },
     fetchImageData: (context, index) => {
