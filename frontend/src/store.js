@@ -94,11 +94,12 @@ export default new Vuex.Store({
         nodeElements: null,
         linkElements: null,
         zoom: null,
+        lasso: null,
       },
       simulation: null,
       nodes: [],
       edges: [],
-      zoomMode: true,
+      lassoMode: true,
     },
     options: {
       state: {
@@ -206,6 +207,9 @@ export default new Vuex.Store({
     },
     networkOptions: state => {
       return state.options.network;
+    },
+    networkLassoMode: state => {
+      return state.network.lassoMode;
     },
     networkSVGElements: state => {
       return state.network.svgElements;
@@ -316,8 +320,9 @@ export default new Vuex.Store({
       );
     },
     NETWORK_TOGGLE_MODE: state => {
-      networkService.toogleNetworkMode(
-        state.network.zoomMode,
+      state.network.lassoMode = !state.network.lassoMode;
+      networkService.toggleNetworkMode(
+        state.network.lassoMode,
         state.network.svgElements
       );
     },
@@ -325,7 +330,7 @@ export default new Vuex.Store({
       state.network.svgElements = networkService.initSVG(
         state.network.nodes,
         state.network.edges,
-        state.network.zoomMode
+        state.network.lassoMode
       );
     },
     NETWORK_SIMULATION_INIT: state => {

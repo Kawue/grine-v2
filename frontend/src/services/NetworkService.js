@@ -209,7 +209,7 @@ class NetworkService {
     d.annotations = null;
   }
 
-  initSVG(nodes, edges, zoomMode) {
+  initSVG(nodes, edges, lassoMode) {
     d3.select('#graph-container').remove();
 
     const lSvg = d3
@@ -255,40 +255,41 @@ class NetworkService {
           .on('end', this.dragended)
       );
 
-    if (zoomMode) {
+    if (lassoMode) {
       return {
         svg: lSvg,
         nodeElements: lNode,
         linkElements: lLink,
         zoom: this.initZoom(),
-        lasso: null,
+        lasso: this.initLasso(lNode),
       };
     } else {
-      const lasso = this.initLasso(lNode);
       return {
         svg: lSvg,
         nodeElements: lNode,
         linkElements: lLink,
-        zoom: null,
-        lasso: lasso,
+        lasso: this.initLasso(lNode),
+        zoom: this.initZoom(),
       };
     }
   }
 
-  toogleNetworkMode(zoomMode, networkSVG) {
-    zoomMode = !zoomMode;
-    if (zoomMode) {
-      networkSVG.lasso = null;
+  toggleNetworkMode(lassoMode, networkSVG) {
+    /*
+    DO NOT TOUCH !!!
+    Mode is reversed because of event queue by d3
+     */
+    if (!lassoMode) {
       networkSVG.zoom = this.initZoom();
     } else {
-      networkSVG.zoom = null;
       networkSVG.lasso = this.initLasso(networkSVG.nodeElements);
     }
   }
 
   initZoom() {
+    const svg = d3.select('.graphd3');
     const zoom = d3.zoom().scaleExtent([1 / 4, 5]);
-    d3.select('.graphd3').call(zoom.on('zoom', this.zoomed));
+    svg.call(zoom.on('zoom', this.zoomed));
     return zoom;
   }
 

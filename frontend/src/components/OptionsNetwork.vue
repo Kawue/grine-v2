@@ -24,11 +24,22 @@
           class="slider"
         ></vue-slider>
         <div class="button-container">
-          <b-button variant="warning" @click="centerNodes">
+          <b-button
+            variant="warning"
+            @click="centerNodes"
+            v-bind:disabled="!this.zoomMode"
+          >
             Center Nodes
           </b-button>
-          <b-button variant="primary" @click="centerCamera">
+          <b-button
+            variant="primary"
+            @click="centerCamera"
+            v-bind:disabled="!this.zoomMode"
+          >
             Center Camera
+          </b-button>
+          <b-button variant="primary" @click="toggleMode">
+            {{ this.zoomMode ? 'Lasso' : 'Zoom' }}
           </b-button>
         </div>
       </div>
@@ -82,6 +93,7 @@ export default {
   computed: {
     ...mapGetters({
       force: 'networkOptions',
+      zoomMode: 'networkLassoMode',
     }),
     repulsion: {
       get() {
@@ -101,6 +113,9 @@ export default {
     },
     centerCamera() {
       store.commit('NETWORK_CENTER_CAMERA');
+    },
+    toggleMode() {
+      store.commit('NETWORK_TOGGLE_MODE');
     },
   },
   mounted() {
