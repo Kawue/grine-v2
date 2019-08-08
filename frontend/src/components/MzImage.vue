@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:style="widgetStyle()" v-bind:id="widgetUniqueId()" v-if="height">
+  <div v-bind:style="widgetStyle()" v-bind:id="widgetUniqueId()" v-if="height" v-on:click="imageClick()">
     <div class="canvas-root" style="position: relative;">
       <ScaleOut class="spinner" v-if="loading"></ScaleOut>
       <canvas
@@ -135,11 +135,20 @@ export default {
     },
   },
   methods: {
+    imageClick() {
+      if (!this.enableLasso) {
+        store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
+      }
+    },
     widgetUniqueId() {
       return 'component-' + this._uid;
     },
     widgetStyle() {
-      return 'height: ' + this.height + 'px';
+      let style = 'height: ' + this.height + 'px;';
+      if (!this.enableLasso) {
+        style += 'cursor: pointer';
+      }
+      return style;
     },
     handleLassoEnd(lassoPolygon) {
       const selectedPoints = this.points.filter(d => {

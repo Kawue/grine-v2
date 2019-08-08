@@ -18,6 +18,7 @@ const API_URL = 'http://localhost:5000';
 export const IMAGE_INDEX_COMMUNITY = 0;
 export const IMAGE_INDEX_SELECTED_MZ = 1;
 export const IMAGE_INDEX_AGGREGATED = 2;
+export const IMAGE_INDEX_LASSO = 3;
 
 export default new Vuex.Store({
   state: {
@@ -65,6 +66,23 @@ export default new Vuex.Store({
         },
         {
           // IMAGE_INDEX_AGGREGATED data used to render image from multiple selected nodes
+          mzValues: [],
+          points: [], // points that are displayed as mz image
+          selectedPoints: [], // points that are selected by the lasso
+          max: {
+            // max image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          min: {
+            // min image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          lassoFetching: false, // true during api call of lasso matching
+        },
+        {
+          // IMAGE_INDEX_LASSO data used to render image copied from other images
           mzValues: [],
           points: [], // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -300,6 +318,15 @@ export default new Vuex.Store({
           state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = mzs;
         }
       }
+    },
+    IMAGE_COPY_INTO_SELECTION_IMAGE: (state, index) => {
+      console.log(index);
+      state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_LASSO].points = [];
+      state.images.imageData[IMAGE_INDEX_LASSO].mzValues =
+        state.images.imageData[index].mzValues;
+      state.images.imageData[IMAGE_INDEX_LASSO].points =
+        state.images.imageData[index].points;
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
@@ -678,6 +705,9 @@ export default new Vuex.Store({
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
       }, 500);
+    },
+    imageCopyIntoSelectionImage: (context, index) => {
+      context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);
     },
   },
 });

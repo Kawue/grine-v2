@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12" style="margin-bottom: 25px">
+        <div class="col-md-12" style="margin-top: 25px; margin-bottom: 25px">
           Community:
           <mz-image :imageDataIndex="0"></mz-image>
         </div>
@@ -52,13 +52,19 @@
       <div class="row">
         <div class="col-md-12" style="margin-bottom: 25px">
           MZ:
-          <mz-image :imageDataIndex="1" v-bind:enable-lasso="true"></mz-image>
+          <mz-image :imageDataIndex="1"></mz-image>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12" style="margin-bottom: 25px">
           Aggregate:
           <mz-image :imageDataIndex="2"></mz-image>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" style="margin-bottom: 25px">
+          Lasso Selector:
+          <mz-image :imageDataIndex="3" v-bind:enable-lasso="true"></mz-image>
         </div>
       </div>
     </div>
@@ -86,6 +92,9 @@ export default {
   mounted: function() {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
+        case 'IMAGE_COPY_INTO_SELECTION_IMAGE':
+          this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
+          break;
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
         case 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE':
