@@ -27,7 +27,7 @@ for path in argv[2:]:
 merged_dframe = merged_dframe.fillna(value=0)
 
 
-# returns list of allowed merge methods for mz intensizties
+# returns list of allowed merge methods for mz intensities
 def merge_methods():
     return ['min', 'max', 'median', 'mean']
 
