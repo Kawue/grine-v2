@@ -34,7 +34,7 @@ export default {
         this.updatedValue = value;
         setTimeout(function() {
           if (self.updatedValue === value) {
-            self.$store.dispatch('fetchLassoSimilar', 1);
+            self.$store.dispatch('fetchLassoSimilar', 3);
           }
         }, 500);
       },

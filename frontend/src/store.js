@@ -320,7 +320,6 @@ export default new Vuex.Store({
       }
     },
     IMAGE_COPY_INTO_SELECTION_IMAGE: (state, index) => {
-      console.log(index);
       state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
       state.images.imageData[IMAGE_INDEX_LASSO].points = [];
       state.images.imageData[IMAGE_INDEX_LASSO].mzValues =
