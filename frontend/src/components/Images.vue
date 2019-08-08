@@ -62,8 +62,11 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12" style="margin-bottom: 25px">
+        <div class="col-md-12" style="margin-bottom: 25px;">
           Lasso Selector:
+          <span v-on:click="deleteLassoImage()">
+            <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
+          </span>
           <mz-image :imageDataIndex="3" v-bind:enable-lasso="true"></mz-image>
         </div>
       </div>
@@ -89,10 +92,16 @@ export default {
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
   },
+  methods: {
+    deleteLassoImage() {
+      this.$store.commit('CLEAR_IMAGE', 3);
+    },
+  },
   mounted: function() {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'IMAGE_COPY_INTO_SELECTION_IMAGE':
+        case 'CLEAR_IMAGE':
           this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
           break;
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':

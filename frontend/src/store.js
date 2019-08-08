@@ -269,6 +269,10 @@ export default new Vuex.Store({
       let mzImageData = state.images.imageData[index];
       mzImageData.selectedPoints = data;
     },
+    CLEAR_IMAGE: (state, index) => {
+      state.images.imageData[index].mzValues = [];
+      state.images.imageData[index].points = [];
+    },
     SET_IMAGE_DATA_VALUES: (state, payload) => {
       let index = payload[0];
       let data = payload[1];

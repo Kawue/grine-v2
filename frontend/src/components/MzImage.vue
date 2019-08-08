@@ -1,5 +1,10 @@
 <template>
-  <div v-bind:style="widgetStyle()" v-bind:id="widgetUniqueId()" v-if="height" v-on:click="imageClick()">
+  <div
+    v-bind:style="widgetStyle()"
+    v-bind:id="widgetUniqueId()"
+    v-if="height"
+    v-on:click="imageClick()"
+  >
     <div class="canvas-root" style="position: relative;">
       <ScaleOut class="spinner" v-if="loading"></ScaleOut>
       <canvas
