@@ -82,20 +82,25 @@ export default function lasso() {
 
     function handleDragEnd() {
       // remove the close path
-      closePath.remove();
+      if (closePath) {
+        closePath.remove();
+      }
       closePath = null;
 
       // succesfully closed
       if (
+        lassoPolygon &&
         distance(lassoPolygon[0], lassoPolygon[lassoPolygon.length - 1]) <
-        closeDistance
+          closeDistance
       ) {
         lassoPath.attr('d', polygonToPath(lassoPolygon) + 'Z');
         dispatch.call('end', lasso, lassoPolygon);
 
         // otherwise cancel
       } else {
-        lassoPath.remove();
+        if (lassoPath) {
+          lassoPath.remove();
+        }
         lassoPath = null;
         lassoPolygon = null;
       }

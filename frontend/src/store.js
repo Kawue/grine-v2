@@ -362,6 +362,13 @@ export default new Vuex.Store({
         options
       );
     },
+    NETWORK_FREE_MODE: state => {
+      state.network.lassoMode = true;
+      networkService.toggleNetworkMode(
+        state.network.lassoMode,
+        state.network.svgElements
+      );
+    },
     NETWORK_TOGGLE_MODE: state => {
       state.network.lassoMode = !state.network.lassoMode;
       networkService.toggleNetworkMode(

@@ -168,6 +168,7 @@ export default {
         this.imageDataIndex,
         selectedPoints,
       ]);
+      store.commit('NETWORK_FREE_MODE');
     },
     handleLassoStart() {
       this.removeLassoAfterPointsDrawn = false;
