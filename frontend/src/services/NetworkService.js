@@ -476,7 +476,7 @@ class NetworkService {
         if (store.getters.networkNodes[i].name === n.name) {
           if (!n.selected) {
             n.selected = true;
-            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
+            store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
             if (!isMzLassoSelectionActive) {
               d3.select('#' + n.name)
                 .transition()
@@ -497,7 +497,6 @@ class NetworkService {
         } else {
           if (store.getters.networkNodes[i]['selected']) {
             store.getters.networkNodes[i]['selected'] = false;
-            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
             if (!isMzLassoSelectionActive) {
               d3.select('#' + store.getters.networkNodes[i].name)
                 .transition()
