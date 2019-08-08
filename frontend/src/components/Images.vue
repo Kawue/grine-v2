@@ -44,17 +44,20 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" style="margin-bottom: 25px">
+          Community:
           <mz-image :imageDataIndex="0"></mz-image>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" style="margin-bottom: 25px">
+          MZ:
           <mz-image :imageDataIndex="1" v-bind:enable-lasso="true"></mz-image>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12" style="margin-bottom: 25px">
+          Aggregate:
           <mz-image :imageDataIndex="2"></mz-image>
         </div>
       </div>

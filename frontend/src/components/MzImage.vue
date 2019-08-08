@@ -205,7 +205,9 @@ export default {
 
 <style lang="scss" scoped>
 .canvas-root {
-  margin: 25px;
+  margin-top: 0;
+  margin-left: 25px;
+  margin-right: 25px;
 
   canvas {
     border: 1px solid lightgrey;

@@ -671,7 +671,7 @@ export default new Vuex.Store({
       context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
-      }, 300);
+      }, 500);
     },
     mzlistUpdateHighlightedMz: (context, data) => {
       context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);
