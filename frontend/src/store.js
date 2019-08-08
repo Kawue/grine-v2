@@ -320,6 +320,8 @@ export default new Vuex.Store({
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
             nodesSelected[0].mzs;
         } else if (nodesSelected.length > 1) {
+          state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+          state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
           state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
           let mzs = [];
@@ -484,7 +486,7 @@ export default new Vuex.Store({
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.mzList.selectedMz = data;
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
+      // state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
       networkService.highlightNodesByMz(state.network.nodes, data);
     },
     MZLIST_UPDATE_NAME: (state, data) => {
@@ -713,6 +715,7 @@ export default new Vuex.Store({
       }
     },
     mzlistUpdatedMzs: (context, data) => {
+      context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
       context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
