@@ -98,6 +98,19 @@ export default {
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
         case 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE':
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_COMMUNITY
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_SELECTED_MZ
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_AGGREGATED
+          );
+          break;
         case 'RESET_SELECTION':
           this.$store.dispatch(
             'fetchImageData',
@@ -111,6 +124,7 @@ export default {
             'fetchImageData',
             constants.IMAGE_INDEX_AGGREGATED
           );
+          this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
           break;
         case 'NETWORK_HIGHLIGHT_NODE':
         case 'MZLIST_UPDATE_SELECTED_MZ':

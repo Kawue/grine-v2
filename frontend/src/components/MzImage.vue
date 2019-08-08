@@ -138,6 +138,8 @@ export default {
     imageClick() {
       if (!this.enableLasso) {
         store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
+      } else {
+        store.commit('RESET_SELECTION');
       }
     },
     widgetUniqueId() {

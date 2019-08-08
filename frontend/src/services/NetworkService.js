@@ -459,57 +459,69 @@ class NetworkService {
   }
 
   nodeClick(n) {
-    if ((d3.event.ctrlKey || d3.event.metaKey) && d3.event.shiftKey) {
+    let isMzLassoSelectionActive = store.getters.isMzLassoSelectionActive;
+    if (
+      (d3.event.ctrlKey || d3.event.metaKey) &&
+      d3.event.shiftKey &&
+      !isMzLassoSelectionActive
+    ) {
       store.commit('NETWORK_SHRINK_NODE', n);
-    } else if (d3.event.ctrlKey || d3.event.metaKey) {
+    } else if (
+      (d3.event.ctrlKey || d3.event.metaKey) &&
+      !isMzLassoSelectionActive
+    ) {
       store.commit('NETWORK_EXPAND_NODE', n);
     } else {
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {
           if (!n.selected) {
             n.selected = true;
-            //store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
-            d3.select('#' + n.name)
-              .transition()
-              .duration(250)
-              .attr('rx', 0)
-              .attrTween('transform', function() {
-                return d3.interpolateString(
-                  'rotate(0 ' + n.x + ' ' + n.y + ')',
-                  'rotate(90 ' + n.x + ' ' + n.y + ')'
-                );
-              })
-              .attr('ry', 0)
-              .on('end', function() {
-                d3.select(this).attr('transform', null);
-              });
+            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
+            if (!isMzLassoSelectionActive) {
+              d3.select('#' + n.name)
+                .transition()
+                .duration(250)
+                .attr('rx', 0)
+                .attrTween('transform', function() {
+                  return d3.interpolateString(
+                    'rotate(0 ' + n.x + ' ' + n.y + ')',
+                    'rotate(90 ' + n.x + ' ' + n.y + ')'
+                  );
+                })
+                .attr('ry', 0)
+                .on('end', function() {
+                  d3.select(this).attr('transform', null);
+                });
+            }
           }
         } else {
           if (store.getters.networkNodes[i]['selected']) {
             store.getters.networkNodes[i]['selected'] = false;
-            //store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
-            d3.select('#' + store.getters.networkNodes[i].name)
-              .transition()
-              .duration(250)
-              .attr('rx', store.getters.networkNodes[i].radius)
-              .attr('ry', store.getters.networkNodes[i].radius)
-              .attrTween('transform', function() {
-                return d3.interpolateString(
-                  'rotate(0 ' +
-                    store.getters.networkNodes[i].x +
-                    ' ' +
-                    store.getters.networkNodes[i].y +
-                    ')',
-                  'rotate(-90 ' +
-                    store.getters.networkNodes[i].x +
-                    ' ' +
-                    store.getters.networkNodes[i].y +
-                    ')'
-                );
-              })
-              .on('end', function() {
-                d3.select(this).attr('transform', null);
-              });
+            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
+            if (!isMzLassoSelectionActive) {
+              d3.select('#' + store.getters.networkNodes[i].name)
+                .transition()
+                .duration(250)
+                .attr('rx', store.getters.networkNodes[i].radius)
+                .attr('ry', store.getters.networkNodes[i].radius)
+                .attrTween('transform', function() {
+                  return d3.interpolateString(
+                    'rotate(0 ' +
+                      store.getters.networkNodes[i].x +
+                      ' ' +
+                      store.getters.networkNodes[i].y +
+                      ')',
+                    'rotate(-90 ' +
+                      store.getters.networkNodes[i].x +
+                      ' ' +
+                      store.getters.networkNodes[i].y +
+                      ')'
+                  );
+                })
+                .on('end', function() {
+                  d3.select(this).attr('transform', null);
+                });
+            }
           }
         }
       }

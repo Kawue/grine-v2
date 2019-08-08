@@ -253,6 +253,11 @@ export default new Vuex.Store({
     optionsImageColorScaleChoices: state => {
       return state.options.image.colorScales;
     },
+    isMzLassoSelectionActive: state => {
+      return (
+        state.images.imageData[IMAGE_INDEX_LASSO].selectedPoints.length > 0
+      );
+    },
   },
   mutations: {
     SET_LOADING_IMAGE_DATA: (state, loading) => {
@@ -530,6 +535,9 @@ export default new Vuex.Store({
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
     },
+    MZ_IMAGE_LASSO_END: state => {
+      networkService.simulationUpdate();
+    },
   },
   actions: {
     fetchMergeMethods: context => {
@@ -575,12 +583,15 @@ export default new Vuex.Store({
       context.state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+      context.state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
       context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
       context.state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
+      context.state.images.imageData[IMAGE_INDEX_LASSO].points = [];
       context.dispatch('fetchImageData', IMAGE_INDEX_COMMUNITY);
       context.dispatch('fetchImageData', IMAGE_INDEX_SELECTED_MZ);
       context.dispatch('fetchImageData', IMAGE_INDEX_AGGREGATED);
+      context.dispatch('fetchImageData', IMAGE_INDEX_LASSO);
       context.state.meta.maxHierarchy =
         Object.keys(
           context.state.originalGraphData.graphs[
