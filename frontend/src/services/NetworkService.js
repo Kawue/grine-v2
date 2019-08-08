@@ -468,7 +468,7 @@ class NetworkService {
         if (store.getters.networkNodes[i].name === n.name) {
           if (!n.selected) {
             n.selected = true;
-            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
+            //store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
             d3.select('#' + n.name)
               .transition()
               .duration(250)
@@ -487,6 +487,7 @@ class NetworkService {
         } else {
           if (store.getters.networkNodes[i]['selected']) {
             store.getters.networkNodes[i]['selected'] = false;
+            //store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
             d3.select('#' + store.getters.networkNodes[i].name)
               .transition()
               .duration(250)
@@ -513,6 +514,8 @@ class NetworkService {
         }
       }
     }
+
+    store.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
   }
 
   shrinkNode(graph, oldNode, nodes, edges) {

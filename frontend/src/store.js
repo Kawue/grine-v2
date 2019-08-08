@@ -282,13 +282,17 @@ export default new Vuex.Store({
       if (nodesSelected) {
         if (nodesSelected.length === 0) {
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+          state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
           state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+          state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
         } else if (nodesSelected.length === 1) {
           state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+          state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
             nodesSelected[0].mzs;
         } else if (nodesSelected.length > 1) {
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+          state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
           let mzs = [];
           nodesSelected.forEach(function(node) {
             mzs = mzs.concat(node.mzs);
@@ -483,8 +487,12 @@ export default new Vuex.Store({
         state.options.mzList.asc
       );
       networkService.clearHighlight(state.network.nodes);
-      state.images.imageData[0].mzValues = [];
-      state.images.imageData[1].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
+      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
+      state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
     },
     MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(
@@ -669,7 +677,7 @@ export default new Vuex.Store({
       context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
-      }, 300);
+      }, 500);
     },
   },
 });
