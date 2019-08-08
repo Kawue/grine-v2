@@ -313,6 +313,8 @@ export default new Vuex.Store({
           state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
           state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
         } else if (nodesSelected.length === 1) {
+          state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+          state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
           state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
           state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
@@ -500,7 +502,9 @@ export default new Vuex.Store({
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
+      if (mzValues.length === 1) {
+        state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
+      }
     },
     MZLIST_LOAD_GRAPH: state => {
       state.mzList.notVisibleMz = [];
