@@ -166,6 +166,9 @@ export default {
     },
     handleLassoStart() {
       this.removeLassoAfterPointsDrawn = false;
+      if (store.getters.isMzLassoSelectionActive) {
+        store.commit('RESET_SELECTION');
+      }
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
     drawPoints() {
