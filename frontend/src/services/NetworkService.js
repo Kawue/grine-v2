@@ -459,6 +459,7 @@ class NetworkService {
   }
 
   nodeClick(n) {
+    store.commit('CLEAR_IMAGES');
     let isMzLassoSelectionActive = store.getters.isMzLassoSelectionActive;
     if (
       (d3.event.ctrlKey || d3.event.metaKey) &&
