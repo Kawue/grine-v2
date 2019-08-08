@@ -12,8 +12,8 @@ from os.path import exists, isdir, isfile
 
 merged_dframe = pd.DataFrame()
 
-for path in argv[2:]:
-    if len(argv[2:]) == 1:
+for path in argv[3:]:
+    if len(argv[3:]) == 1:
         if isdir(path):
             for f in listdir(path):
                 if f.split(".")[1] == "h5":
@@ -21,10 +21,14 @@ for path in argv[2:]:
         else:
             merged_dframe = pd.read_hdf('datasets/' + path)
     else:
-        for path in argv[2:]:
+        for path in argv[3:]:
             merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))
 
 merged_dframe = merged_dframe.fillna(value=0)
+
+pca_dframe = pd.read_hdf('datasets/' + argv[2])
+
+print(pca_dframe)
 
 
 # returns list of allowed merge methods for mz intensities
