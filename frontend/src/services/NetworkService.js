@@ -1179,23 +1179,21 @@ class NetworkService {
 
   clearHighlight(nodes) {
     for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].selected) {
-        nodes[i].selected = false;
-        d3.select('#' + nodes[i].name)
-          .transition()
-          .duration(250)
-          .attr('rx', nodes[i].radius)
-          .attr('ry', nodes[i].radius)
-          .attrTween('transform', function() {
-            return d3.interpolateString(
-              'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
-              'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
-            );
-          })
-          .on('end', function() {
-            d3.select(this).attr('transform', null);
-          });
-      }
+      nodes[i].selected = false;
+      d3.select('#' + nodes[i].name)
+        .transition()
+        .duration(250)
+        .attr('rx', nodes[i].radius)
+        .attr('ry', nodes[i].radius)
+        .attrTween('transform', function() {
+          return d3.interpolateString(
+            'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
+            'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
+          );
+        })
+        .on('end', function() {
+          d3.select(this).attr('transform', null);
+        });
     }
   }
 

@@ -1,7 +1,5 @@
 todo:
 4. Ein klick auf einen Knoten der keine Community ist sollte das Community Bild mit der Community füllen die darüber liegt und nicht mit dem MZ Bild.
-7. Verschiedene Interaktionsreihenfolgen mit aktivem Lasso Selector führt zu inkonsistenz, z.B. Lasso Selektor, dann klick auf einen nicht markierten Knoten,
-dann das Lasso auflösen, führt dazu, dass jeder Knoten seinen Lasso Selektor zustand behält.
 
 dann noch das PCA bild, das kann auch ins 4te bild
 
