@@ -1,6 +1,8 @@
 todo:
 4tes bild, wenn eins der 1ten drei angeklickt wird wird der inhalt in dieses kopiert und nur auf diesem ist das lasso
-möglich. während lasso aktiv ist können einzelne nodes im graph markiert werden (was dann auch bilder erzeugt), aber der graph
+möglich.
+
+während lasso aktiv ist können einzelne nodes im graph markiert werden (was dann auch bilder erzeugt), aber der graph
 bleibt wie er ist, also keine nodes werden "markiert dargestellt" oder ausgeklappt etc.
 
 dann noch das PCA bild, das kann auch ins 4te bild. es wird ein bild als
