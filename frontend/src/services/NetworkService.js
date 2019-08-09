@@ -475,9 +475,9 @@ class NetworkService {
     } else {
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {
+          store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
           if (!n.selected) {
             n.selected = true;
-            store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
             if (!isMzLassoSelectionActive) {
               d3.select('#' + n.name)
                 .transition()
