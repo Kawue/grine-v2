@@ -580,6 +580,8 @@ export default new Vuex.Store({
       state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
       state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
       state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
+      state.images.imageData[IMAGE_INDEX_PCA].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_PCA].points = [];
     },
     MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(
@@ -783,36 +785,32 @@ export default new Vuex.Store({
         return;
       }
       let mzValues = context.state.images.imageData[index].mzValues;
-      if (mzValues.length) {
-        context.commit('SET_LOADING_IMAGE_DATA', true);
-        const datasetName =
-          context.state.options.data.graphChoices[
-            context.state.options.data.graph
-          ];
-        const mergeMethod = context.state.options.image.mergeMethod;
-        const url =
-          API_URL +
-          '/datasets/' +
-          datasetName +
-          '/pcaimagedata/method/' +
-          mergeMethod;
-        const postData = { mzValues: mzValues };
-        axios
-          .post(url, postData)
-          .then(response => {
-            context.commit('SET_LOADING_IMAGE_DATA', false);
-            context.commit('SET_IMAGE_DATA_VALUES', [
-              IMAGE_INDEX_PCA,
-              response.data,
-            ]);
-          })
-          .catch(function() {
-            context.commit('SET_LOADING_IMAGE_DATA', false);
-            alert('Error while loading pca image data from api.');
-          });
-      } else {
-        context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
-      }
+      context.commit('SET_LOADING_IMAGE_DATA', true);
+      const datasetName =
+        context.state.options.data.graphChoices[
+          context.state.options.data.graph
+        ];
+      const mergeMethod = context.state.options.image.mergeMethod;
+      const url =
+        API_URL +
+        '/datasets/' +
+        datasetName +
+        '/pcaimagedata/method/' +
+        mergeMethod;
+      const postData = { mzValues: mzValues };
+      axios
+        .post(url, postData)
+        .then(response => {
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+          context.commit('SET_IMAGE_DATA_VALUES', [
+            IMAGE_INDEX_PCA,
+            response.data,
+          ]);
+        })
+        .catch(function() {
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+          alert('Error while loading pca image data from api.');
+        });
     },
   },
 });

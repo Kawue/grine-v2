@@ -176,12 +176,16 @@ def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method):
     g_norm = np.interp(g, (g.min(), g.max()), (0, 1))
     b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
 
-    mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-    mz_intensity = mz_raw_data[2]
+    intensity = [1]*len(r)
+    print(intensity)
+    if len(mz_values):
+        mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
+        intensity = mz_raw_data[2]
+        print(intensity)
 
     return [
         {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, i], keep_alpha=True)}
-        for x, y, r, g, b, i in zip(pos_x, pos_y, r_norm, g_norm, b_norm, mz_intensity)
+        for x, y, r, g, b, i in zip(pos_x, pos_y, r_norm, g_norm, b_norm, intensity)
     ]
 
 

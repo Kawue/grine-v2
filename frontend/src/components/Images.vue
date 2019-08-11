@@ -132,7 +132,6 @@ export default {
         case 'IMAGE_COPY_INTO_SELECTION_IMAGE':
         case 'CLEAR_IMAGE':
           this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
-          this.$store.dispatch('fetchPcaImageData');
           break;
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
@@ -164,6 +163,7 @@ export default {
             constants.IMAGE_INDEX_AGGREGATED
           );
           this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
+          this.$store.dispatch('fetchPcaImageData');
           break;
         case 'NETWORK_HIGHLIGHT_NODE':
         case 'MZLIST_UPDATE_SELECTED_MZ':
