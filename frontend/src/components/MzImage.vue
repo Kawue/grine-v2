@@ -106,6 +106,7 @@ export default {
       let height = this.$store.getters.getImageData(0).max.y;
       height = height ? height : this.$store.getters.getImageData(1).max.y;
       height = height ? height : this.$store.getters.getImageData(2).max.y;
+      height = height ? height : this.$store.getters.getImageData(3).max.y;
       height = height ? height : this.heightLast;
       height = height < 100 ? 100 : height;
       return height;
@@ -144,7 +145,7 @@ export default {
       if (!this.enableLasso) {
         store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
       } else {
-        this.$store.commit('CLEAR_IMAGE', this.imageDataIndex);
+        store.commit('RESET_SELECTION');
       }
     },
     widgetUniqueId() {
