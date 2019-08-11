@@ -64,10 +64,9 @@ def image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method):
     # holds the intensities of all mz_values in an array
     intensity = np.array(single_dframe[mz_values])
 
-    if len(mz_values) > 1:
-        # merge the intensities into a single one with specified method and on specified axis
-        merge_method_dynamic_call = getattr(np, merge_method)
-        intensity = merge_method_dynamic_call(intensity, 1)
+    # merge the intensities into a single one with specified method and on specified axis
+    merge_method_dynamic_call = getattr(np, merge_method)
+    intensity = merge_method_dynamic_call(intensity, 1)
 
     intensity = np.interp(intensity, (intensity.min(), intensity.max()), (0, 1))
 
@@ -165,9 +164,7 @@ def graph_data_all_datasets():
 
 
 # returns PCA RGB image
-def datasets_imagedata_pca_image_data(ds_name, post_data_mz_values, method):
-    print(pca_dframe)
-
+def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method):
     single_dframe = pca_dframe.loc[pca_dframe.index.get_level_values("dataset") == ds_name]
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
@@ -175,30 +172,17 @@ def datasets_imagedata_pca_image_data(ds_name, post_data_mz_values, method):
     r = np.array(single_dframe['pcaR'])
     g = np.array(single_dframe['pcaG'])
     b = np.array(single_dframe['pcaB'])
-    # r_norm = np.interp(r, (r.min(), r.max()), (0, 255))
-    # g_norm = np.interp(g, (g.min(), g.max()), (0, 255))
-    # b_norm = np.interp(b, (b.min(), b.max()), (0, 255))
-
     r_norm = np.interp(r, (r.min(), r.max()), (0, 1))
     g_norm = np.interp(g, (g.min(), g.max()), (0, 1))
     b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
 
+    mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
+    mz_intensity = mz_raw_data[2]
 
     return [
-        {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, 0.1], keep_alpha=True)}
-        for x, y, r, g, b in zip(pos_x, pos_y, r_norm, g_norm, b_norm)
+        {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, i], keep_alpha=True)}
+        for x, y, r, g, b, i in zip(pos_x, pos_y, r_norm, g_norm, b_norm, mz_intensity)
     ]
-
-    # return [
-    #     {'x': int(x), 'y': int(y), 'color': '#ff0000'}
-    #     for x, y, r, g, b in zip(pos_x, pos_y, r_norm, g_norm, b_norm)
-    # ]
-
-    # return [
-    #     {'x': int(x), 'y': int(y), 'r': int(r), 'g': int(g), 'b': int(b)}
-    #     for x, y, r, g, b in zip(pos_x, pos_y, r_norm, g_norm, b_norm)
-    # ]
-
 
 
 app = Flask(__name__)

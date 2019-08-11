@@ -782,30 +782,36 @@ export default new Vuex.Store({
         return;
       }
       let mzValues = context.state.images.imageData[index].mzValues;
-      context.commit('SET_LOADING_IMAGE_DATA', true);
-      const datasetName =
-        context.state.options.data.graphChoices[
-          context.state.options.data.graph
-        ];
-      const mergeMethod = context.state.options.image.mergeMethod;
-      const url =
-        API_URL +
-        '/datasets/' +
-        datasetName +
-        '/pcaimagedata/method/' +
-        mergeMethod;
-      const postData = { mzValues: mzValues };
-      axios
-        .post(url, postData)
-        .then(response => {
-          context.commit('SET_LOADING_IMAGE_DATA', false);
-          //let imageData = imageService.calculatePcaColors(response.data);
-          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, response.data]);
-        })
-        .catch(function() {
-          context.commit('SET_LOADING_IMAGE_DATA', false);
-          alert('Error while loading pca image data from api.');
-        });
+      if (mzValues.length) {
+        context.commit('SET_LOADING_IMAGE_DATA', true);
+        const datasetName =
+          context.state.options.data.graphChoices[
+            context.state.options.data.graph
+          ];
+        const mergeMethod = context.state.options.image.mergeMethod;
+        const url =
+          API_URL +
+          '/datasets/' +
+          datasetName +
+          '/pcaimagedata/method/' +
+          mergeMethod;
+        const postData = { mzValues: mzValues };
+        axios
+          .post(url, postData)
+          .then(response => {
+            context.commit('SET_LOADING_IMAGE_DATA', false);
+            context.commit('SET_IMAGE_DATA_VALUES', [
+              IMAGE_INDEX_PCA,
+              response.data,
+            ]);
+          })
+          .catch(function() {
+            context.commit('SET_LOADING_IMAGE_DATA', false);
+            alert('Error while loading pca image data from api.');
+          });
+      } else {
+        context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
+      }
     },
   },
 });
