@@ -56,14 +56,6 @@ def mz_values(ds_name):
     return {i: mzs[i] for i in range(0, len(mzs))}
 
 
-def norm(val, min, max):
-    if max > 0:
-        val = (val - min) / (max - min)
-        return val
-    else:
-        return 0
-
-
 # provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
 def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
@@ -78,11 +70,10 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
         merge_method_dynamic_call = getattr(np, merge_method)
         intensity = merge_method_dynamic_call(intensity, 1)
 
-    intensity_min = min(intensity)
-    intensity_max = max(intensity)
+    intensity = np.interp(intensity, (intensity.min(), intensity.max()), (0, 1))
 
     return [
-        {'x': int(x), 'y': int(y), 'intensity': float(norm(i, intensity_min, intensity_max))}
+        {'x': int(x), 'y': int(y), 'intensity': float(i)}
         for x, y, i in zip(pos_x, pos_y, intensity)
     ]
 
@@ -174,10 +165,6 @@ def datasets_imagedata_pca_image_data(ds_name, post_data_mz_values, method):
     r = np.array(single_dframe['pcaR'])
     g = np.array(single_dframe['pcaG'])
     b = np.array(single_dframe['pcaB'])
-    #r = np.array(single_dframe.index.get_level_values("grid_x"))
-    #g = np.array(single_dframe.index.get_level_values("grid_x"))
-    #b = np.array(single_dframe.index.get_level_values("grid_x"))
-
     r_norm = np.interp(r, (r.min(), r.max()), (0, 255))
     g_norm = np.interp(g, (g.min(), g.max()), (0, 255))
     b_norm = np.interp(b, (b.min(), b.max()), (0, 255))
