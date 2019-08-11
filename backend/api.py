@@ -164,7 +164,7 @@ def graph_data_all_datasets():
 
 
 # returns PCA RGB image
-def datasets_imagedata_pca_image_data(ds_name):
+def datasets_imagedata_pca_image_data(ds_name, post_data_mz_values, method):
     print(pca_dframe)
 
     single_dframe = pca_dframe.loc[pca_dframe.index.get_level_values("dataset") == ds_name]
@@ -183,9 +183,14 @@ def datasets_imagedata_pca_image_data(ds_name):
     b_norm = np.interp(b, (b.min(), b.max()), (0, 255))
 
     return [
-        {'x': int(x), 'y': int(y), 'r': int(r), 'g': int(g), 'b': int(b)}
-        for x, y, r, g, b in zip(pos_x, pos_y, r_norm, g_norm, b_norm)
+        {'x': int(x), 'y': int(y), 'color': '#ff0000'}
+        for x, y in zip(pos_x, pos_y)
     ]
+
+    # return [
+    #     {'x': int(x), 'y': int(y), 'r': int(r), 'g': int(g), 'b': int(b)}
+    #     for x, y, r, g, b in zip(pos_x, pos_y, r_norm, g_norm, b_norm)
+    # ]
 
 
 
@@ -288,12 +293,22 @@ def datasets_all_datasets_all_imagedata_action():
 
 
 # get mz image data for dataset for all mz values
-@app.route('/datasets/<dataset_name>/pcaimagedata')
-def datasets_imagedata_pca_image_data_action(dataset_name):
+@app.route('/datasets/<dataset_name>/pcaimagedata/method/<method>', methods=['POST'])
+def datasets_imagedata_pca_image_data_action(dataset_name, method):
     if dataset_name not in dataset_names():
         return abort(400)
 
-    return json.dumps(datasets_imagedata_pca_image_data(dataset_name))
+    if method not in merge_methods():
+        return abort(400)
+
+    try:
+        post_data = request.get_data()
+        post_data_json = json.loads(post_data.decode('utf-8'))
+        post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
+    except:
+        return abort(400)
+
+    return json.dumps(datasets_imagedata_pca_image_data(dataset_name, post_data_mz_values, method))
 
 
 # get graph data for all datasets

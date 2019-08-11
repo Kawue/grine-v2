@@ -30,7 +30,7 @@ class ImageService {
     return imageData;
   }
 
-  rgbToHex(rgb) {
+  /*rgbToHex(rgb) {
     let hex = Number(rgb).toString(16);
     if (hex.length < 2) {
       hex = '0' + hex;
@@ -62,7 +62,7 @@ class ImageService {
     }
     console.log(imageData);
     return imageData;
-  }
+  }*/
 
   /**
    * mark selected points

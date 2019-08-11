@@ -775,21 +775,32 @@ export default new Vuex.Store({
     },
     imageCopyIntoSelectionImage: (context, index) => {
       context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);
+      context.dispatch('fetchPcaImageData', index);
     },
-    fetchPcaImageData: context => {
+    fetchPcaImageData: (context, index) => {
+      if (!context.state.images.imageData[index]) {
+        return;
+      }
+      let mzValues = context.state.images.imageData[index].mzValues;
       context.commit('SET_LOADING_IMAGE_DATA', true);
-
       const datasetName =
         context.state.options.data.graphChoices[
           context.state.options.data.graph
         ];
-      const url = API_URL + '/datasets/' + datasetName + '/pcaimagedata';
+      const mergeMethod = context.state.options.image.mergeMethod;
+      const url =
+        API_URL +
+        '/datasets/' +
+        datasetName +
+        '/pcaimagedata/method/' +
+        mergeMethod;
+      const postData = { mzValues: mzValues };
       axios
-        .get(url)
+        .post(url, postData)
         .then(response => {
           context.commit('SET_LOADING_IMAGE_DATA', false);
-          let imageData = imageService.calculatePcaColors(response.data);
-          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, imageData]);
+          //let imageData = imageService.calculatePcaColors(response.data);
+          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, response.data]);
         })
         .catch(function() {
           context.commit('SET_LOADING_IMAGE_DATA', false);
