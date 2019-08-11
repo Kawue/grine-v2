@@ -177,14 +177,13 @@ def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_thr
     b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
 
     intensity = [1]*len(r)
-    if data_threshold is None:
-        if len(mz_values):
-            print('method no treshold')
+    if len(mz_values):
+        mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
+        intensity = mz_raw_data[2]
 
-            mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-            intensity = mz_raw_data[2]
-    else:
-        print('method threshold')
+        if data_threshold is not None:
+            intensity[intensity < data_threshold] = 0  # binarization
+            intensity[intensity >= data_threshold] = 1
 
     return [
         {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, i], keep_alpha=True)}
