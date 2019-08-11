@@ -28,6 +28,7 @@ export default {
       },
       set(value) {
         this.$store.commit('OPTIONS_IMAGE_PCA_CHANGE_RELATIVE', value);
+        this.$store.dispatch('fetchPcaImageData', 3);
       },
     },
     show: {
@@ -36,6 +37,7 @@ export default {
       },
       set(value) {
         this.$store.commit('OPTIONS_IMAGE_PCA_CHANGE_SHOW', value);
+        this.$store.dispatch('fetchPcaImageData', 3);
       },
     },
   },

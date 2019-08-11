@@ -813,7 +813,10 @@ export default new Vuex.Store({
         datasetName +
         '/pcaimagedata/method/' +
         mergeMethod;
-      const postData = { mzValues: mzValues };
+      const postData = { mzValues: mzValues, threshold: null };
+      if (!context.state.options.image.pca.relative) {
+        postData.threshold = context.state.options.image.pca.threshold;
+      }
       axios
         .post(url, postData)
         .then(response => {
