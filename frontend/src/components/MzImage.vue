@@ -45,6 +45,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    enableClickCopyToLassoImage: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -142,10 +146,14 @@ export default {
   },
   methods: {
     imageClick() {
-      if (!this.enableLasso) {
-        store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
-      } else {
+      if (this.enableLasso) {
         store.commit('RESET_SELECTION');
+      } else {
+        if (this.enableClickCopyToLassoImage) {
+          store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
+        } else {
+          store.commit('CLEAR_IMAGE', this.imageDataIndex);
+        }
       }
     },
     widgetUniqueId() {

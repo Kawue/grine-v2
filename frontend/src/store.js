@@ -779,6 +779,7 @@ export default new Vuex.Store({
     },
     fetchPcaImageData: (context, index) => {
       if (!context.state.images.imageData[index]) {
+        context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
         return;
       }
       let mzValues = context.state.images.imageData[index].mzValues;

@@ -79,13 +79,20 @@
           <span v-on:click="deleteLassoImage()">
             <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
           </span>
-          <mz-image :imageDataIndex="3" v-bind:enable-lasso="true"></mz-image>
+          <mz-image
+            :imageDataIndex="3"
+            v-bind:enable-lasso="true"
+            v-bind:enableClickCopyToLassoImage="false"
+          ></mz-image>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12" style="margin-bottom: 25px;">
           PCA:
-          <mz-image :imageDataIndex="4"></mz-image>
+          <mz-image
+            :imageDataIndex="4"
+            v-bind:enableClickCopyToLassoImage="false"
+          ></mz-image>
         </div>
       </div>
     </div>
@@ -124,6 +131,7 @@ export default {
         case 'IMAGE_COPY_INTO_SELECTION_IMAGE':
         case 'CLEAR_IMAGE':
           this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
+          this.$store.dispatch('fetchPcaImageData');
           break;
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
