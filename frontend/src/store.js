@@ -164,6 +164,7 @@ export default new Vuex.Store({
           interpolateInferno: 'Inferno',
         },
         pca: {
+          show: false,
           relative: true,
           threshold: 50, // in %
         },
@@ -528,6 +529,12 @@ export default new Vuex.Store({
     },
     OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD: (state, data) => {
       state.options.image.pca.threshold = data;
+    },
+    OPTIONS_IMAGE_PCA_CHANGE_RELATIVE: (state, data) => {
+      state.options.image.pca.relative = data;
+    },
+    OPTIONS_IMAGE_PCA_CHANGE_SHOW: (state, data) => {
+      state.options.image.pca.show = data;
     },
     OPTIONS_IMAGE_CHANGE_MIN_OVERLAP: (state, data) => {
       state.options.image.minOverlap = data;

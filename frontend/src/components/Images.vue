@@ -49,7 +49,7 @@
                 <span class="font12px">PCA:</span>
               </div>
               <div class="col-md-8 font12px">
-                <OptionsImagePcaThreshold></OptionsImagePcaThreshold>
+                <OptionsImagePca></OptionsImagePca>
               </div>
             </div>
           </div>
@@ -86,7 +86,7 @@
           ></mz-image>
         </div>
       </div>
-      <div class="row">
+      <div class="row" v-if="options.pca.show">
         <div class="col-md-12" style="margin-bottom: 25px;">
           PCA:
           <mz-image
@@ -106,7 +106,7 @@ import { mapGetters } from 'vuex';
 import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
-import OptionsImagePcaThreshold from './OptionsImagePcaThreshold';
+import OptionsImagePca from './OptionsImagePca';
 import * as constants from '../store';
 
 export default {
@@ -117,7 +117,7 @@ export default {
     OptionsImageMergeMethod,
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
-    OptionsImagePcaThreshold,
+    OptionsImagePca,
   },
   methods: {
     loadPca() {
