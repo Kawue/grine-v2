@@ -70,6 +70,12 @@
           <mz-image :imageDataIndex="3" v-bind:enable-lasso="true"></mz-image>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12" style="margin-bottom: 25px;">
+          PCA:
+          <mz-image :imageDataIndex="4"></mz-image>
+        </div>
+      </div>
     </div>
   </SidebarWidget>
 </template>

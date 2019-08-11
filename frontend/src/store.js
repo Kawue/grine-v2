@@ -19,6 +19,7 @@ export const IMAGE_INDEX_COMMUNITY = 0;
 export const IMAGE_INDEX_SELECTED_MZ = 1;
 export const IMAGE_INDEX_AGGREGATED = 2;
 export const IMAGE_INDEX_LASSO = 3;
+export const IMAGE_INDEX_PCA = 4;
 
 export default new Vuex.Store({
   state: {
@@ -83,6 +84,23 @@ export default new Vuex.Store({
         },
         {
           // IMAGE_INDEX_LASSO data used to render image copied from other images
+          mzValues: [],
+          points: [], // points that are displayed as mz image
+          selectedPoints: [], // points that are selected by the lasso
+          max: {
+            // max image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          min: {
+            // min image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          lassoFetching: false, // true during api call of lasso matching
+        },
+        {
+          // IMAGE_INDEX_PCA data used to render the pca image
           mzValues: [],
           points: [], // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
