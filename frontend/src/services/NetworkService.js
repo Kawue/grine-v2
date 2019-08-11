@@ -437,6 +437,7 @@ class NetworkService {
         .map(d => d.mzs)
         .flat();
 
+      store.commit('CLEAR_IMAGES');
       store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
       store.dispatch('mzlistUpdateHighlightedMz', mzs);
     }

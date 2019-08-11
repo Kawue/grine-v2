@@ -144,7 +144,7 @@ export default {
       if (!this.enableLasso) {
         store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
       } else {
-        store.commit('RESET_SELECTION');
+        this.$store.commit('CLEAR_IMAGE', this.imageDataIndex);
       }
     },
     widgetUniqueId() {

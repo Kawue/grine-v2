@@ -95,7 +95,6 @@ export default {
   methods: {
     deleteLassoImage() {
       this.$store.commit('CLEAR_IMAGE', 3);
-      this.$store.commit('RESET_SELECTION');
     },
   },
   mounted: function() {
