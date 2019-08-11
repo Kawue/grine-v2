@@ -1,5 +1,10 @@
 <template>
-  <div v-bind:style="widgetStyle()" v-bind:id="widgetUniqueId()" v-if="height" v-on:click="imageClick()">
+  <div
+    v-bind:style="widgetStyle()"
+    v-bind:id="widgetUniqueId()"
+    v-if="height"
+    v-on:click="imageClick()"
+  >
     <div class="canvas-root" style="position: relative;">
       <ScaleOut class="spinner" v-if="loading"></ScaleOut>
       <canvas
@@ -101,6 +106,7 @@ export default {
       let height = this.$store.getters.getImageData(0).max.y;
       height = height ? height : this.$store.getters.getImageData(1).max.y;
       height = height ? height : this.$store.getters.getImageData(2).max.y;
+      height = height ? height : this.$store.getters.getImageData(3).max.y;
       height = height ? height : this.heightLast;
       height = height < 100 ? 100 : height;
       return height;
@@ -163,9 +169,13 @@ export default {
         this.imageDataIndex,
         selectedPoints,
       ]);
+      store.commit('NETWORK_FREE_MODE');
     },
     handleLassoStart() {
       this.removeLassoAfterPointsDrawn = false;
+      if (store.getters.isMzLassoSelectionActive) {
+        store.commit('RESET_SELECTION');
+      }
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
     drawPoints() {

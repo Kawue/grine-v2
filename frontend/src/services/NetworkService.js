@@ -437,6 +437,7 @@ class NetworkService {
         .map(d => d.mzs)
         .flat();
 
+      store.commit('CLEAR_IMAGES');
       store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
       store.dispatch('mzlistUpdateHighlightedMz', mzs);
     }
@@ -459,6 +460,7 @@ class NetworkService {
   }
 
   nodeClick(n) {
+    store.commit('CLEAR_IMAGES');
     let isMzLassoSelectionActive = store.getters.isMzLassoSelectionActive;
     if (
       (d3.event.ctrlKey || d3.event.metaKey) &&
@@ -474,9 +476,9 @@ class NetworkService {
     } else {
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {
+          store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
           if (!n.selected) {
             n.selected = true;
-            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
             if (!isMzLassoSelectionActive) {
               d3.select('#' + n.name)
                 .transition()
@@ -497,7 +499,6 @@ class NetworkService {
         } else {
           if (store.getters.networkNodes[i]['selected']) {
             store.getters.networkNodes[i]['selected'] = false;
-            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
             if (!isMzLassoSelectionActive) {
               d3.select('#' + store.getters.networkNodes[i].name)
                 .transition()
@@ -1179,23 +1180,21 @@ class NetworkService {
 
   clearHighlight(nodes) {
     for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].selected) {
-        nodes[i].selected = false;
-        d3.select('#' + nodes[i].name)
-          .transition()
-          .duration(250)
-          .attr('rx', nodes[i].radius)
-          .attr('ry', nodes[i].radius)
-          .attrTween('transform', function() {
-            return d3.interpolateString(
-              'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
-              'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
-            );
-          })
-          .on('end', function() {
-            d3.select(this).attr('transform', null);
-          });
-      }
+      nodes[i].selected = false;
+      d3.select('#' + nodes[i].name)
+        .transition()
+        .duration(250)
+        .attr('rx', nodes[i].radius)
+        .attr('ry', nodes[i].radius)
+        .attrTween('transform', function() {
+          return d3.interpolateString(
+            'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
+            'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
+          );
+        })
+        .on('end', function() {
+          d3.select(this).attr('transform', null);
+        });
     }
   }
 

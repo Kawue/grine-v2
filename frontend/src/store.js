@@ -19,6 +19,7 @@ export const IMAGE_INDEX_COMMUNITY = 0;
 export const IMAGE_INDEX_SELECTED_MZ = 1;
 export const IMAGE_INDEX_AGGREGATED = 2;
 export const IMAGE_INDEX_LASSO = 3;
+export const IMAGE_INDEX_PCA = 4;
 
 export default new Vuex.Store({
   state: {
@@ -83,6 +84,23 @@ export default new Vuex.Store({
         },
         {
           // IMAGE_INDEX_LASSO data used to render image copied from other images
+          mzValues: [],
+          points: [], // points that are displayed as mz image
+          selectedPoints: [], // points that are selected by the lasso
+          max: {
+            // max image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          min: {
+            // min image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          lassoFetching: false, // true during api call of lasso matching
+        },
+        {
+          // IMAGE_INDEX_PCA data used to render the pca image
           mzValues: [],
           points: [], // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -269,6 +287,18 @@ export default new Vuex.Store({
       let mzImageData = state.images.imageData[index];
       mzImageData.selectedPoints = data;
     },
+    CLEAR_IMAGE: (state, index) => {
+      state.images.imageData[index].mzValues = [];
+      state.images.imageData[index].points = [];
+    },
+    CLEAR_IMAGES: state => {
+      state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
+      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
+      state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
+    },
     SET_IMAGE_DATA_VALUES: (state, payload) => {
       let index = payload[0];
       let data = payload[1];
@@ -311,9 +341,27 @@ export default new Vuex.Store({
         } else if (nodesSelected.length === 1) {
           state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
           state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
-          state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
-            nodesSelected[0].mzs;
+
+          if (nodesSelected[0].mzs.length > 1) {
+            state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
+              nodesSelected[0].mzs;
+          } else if (nodesSelected[0].parent) {
+            // find mzs of parent community
+            const graph =
+              state.originalGraphData.graphs['graph' + state.options.data.graph]
+                .graph;
+            const nodeHierarchy = parseInt(
+              nodesSelected[0].name.split('n')[0].slice(1),
+              10
+            );
+            const nodeParent =
+              'h' + (nodeHierarchy - 1) + 'n' + nodesSelected[0].parent;
+            state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
+              graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent].mzs;
+          }
         } else if (nodesSelected.length > 1) {
+          state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+          state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
           state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
           let mzs = [];
@@ -352,6 +400,13 @@ export default new Vuex.Store({
       networkService.updateSimulationParameters(
         state.network.simulation,
         options
+      );
+    },
+    NETWORK_FREE_MODE: state => {
+      state.network.lassoMode = true;
+      networkService.toggleNetworkMode(
+        state.network.lassoMode,
+        state.network.svgElements
       );
     },
     NETWORK_TOGGLE_MODE: state => {
@@ -478,7 +533,6 @@ export default new Vuex.Store({
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.mzList.selectedMz = data;
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
       networkService.highlightNodesByMz(state.network.nodes, data);
     },
     MZLIST_UPDATE_NAME: (state, data) => {
@@ -496,7 +550,9 @@ export default new Vuex.Store({
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
+      if (mzValues.length === 1) {
+        state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
+      }
     },
     MZLIST_LOAD_GRAPH: state => {
       state.mzList.notVisibleMz = [];
@@ -519,10 +575,10 @@ export default new Vuex.Store({
       );
       networkService.clearHighlight(state.network.nodes);
       state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
       state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
+      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
       state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
+      state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
       state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
     },
     MZLIST_CALCULATE_VISIBLE_MZ: state => {
@@ -705,16 +761,17 @@ export default new Vuex.Store({
       }
     },
     mzlistUpdatedMzs: (context, data) => {
+      context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
       context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
-      }, 500);
+      }, 700);
     },
     mzlistUpdateHighlightedMz: (context, data) => {
       context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
-      }, 500);
+      }, 700);
     },
     imageCopyIntoSelectionImage: (context, index) => {
       context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);

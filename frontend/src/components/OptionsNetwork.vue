@@ -40,7 +40,12 @@
           >
             Center Nodes
           </b-button>
-          <b-button variant="primary" @click="toggleMode" id="toggle-button">
+          <b-button
+            variant="primary"
+            @click="toggleMode"
+            id="toggle-button"
+            v-if="canToggleMode()"
+          >
             Toggle Mode
           </b-button>
         </div>
@@ -115,6 +120,9 @@ export default {
     },
   },
   methods: {
+    canToggleMode() {
+      return !store.getters.isMzLassoSelectionActive;
+    },
     updateParameters() {
       store.commit('SET_NETWORK_OPTIONS', this.parameters);
     },
