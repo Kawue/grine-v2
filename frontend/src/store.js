@@ -777,6 +777,8 @@ export default new Vuex.Store({
       context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);
     },
     fetchPcaImageData: context => {
+      context.commit('SET_LOADING_IMAGE_DATA', true);
+
       const datasetName =
         context.state.options.data.graphChoices[
           context.state.options.data.graph
@@ -785,12 +787,13 @@ export default new Vuex.Store({
       axios
         .get(url)
         .then(response => {
-          console.log(response.data);
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+          let imageData = imageService.calculatePcaColors(response.data);
+          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, imageData]);
         })
         .catch(function() {
-          alert(
-            'Error while loading pca image data from api.'
-          );
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+          alert('Error while loading pca image data from api.');
         });
     },
   },

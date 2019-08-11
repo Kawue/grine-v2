@@ -49,7 +49,7 @@ export default {
   data() {
     return {
       width: 250,
-      heightLast: 200,
+      heightLast: 100,
       render: false,
       canvas: null,
       lassoInstance: null,
