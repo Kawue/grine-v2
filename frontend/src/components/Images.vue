@@ -115,7 +115,7 @@ export default {
       this.$store.dispatch('fetchPcaImageData');
     },
     deleteLassoImage() {
-      this.$store.commit('CLEAR_IMAGE', 3);
+      this.$store.commit('RESET_SELECTION');
     },
   },
   mounted: function() {
