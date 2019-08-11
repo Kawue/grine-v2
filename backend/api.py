@@ -57,7 +57,8 @@ def mz_values(ds_name):
 
 
 # provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
-def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
+# returns x, y and normed intensities
+def image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method):
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
@@ -71,6 +72,17 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
         intensity = merge_method_dynamic_call(intensity, 1)
 
     intensity = np.interp(intensity, (intensity.min(), intensity.max()), (0, 1))
+
+    return [pos_x, pos_y, intensity]
+
+
+# provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
+# returns data ready to pass through api
+def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
+    raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
+    pos_x = raw_data[0]
+    pos_y = raw_data[1]
+    intensity = raw_data[2]
 
     return [
         {'x': int(x), 'y': int(y), 'intensity': float(i)}
