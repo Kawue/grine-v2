@@ -9,9 +9,7 @@ from flask import request
 from flask_cors import CORS
 from os import listdir
 from os.path import exists, isdir, isfile
-import umap as uumap
-import sklearn.decomposition as skd
-import matplotlib.pyplot as plt
+import matplotlib
 
 
 merged_dframe = pd.DataFrame()
@@ -177,14 +175,24 @@ def datasets_imagedata_pca_image_data(ds_name, post_data_mz_values, method):
     r = np.array(single_dframe['pcaR'])
     g = np.array(single_dframe['pcaG'])
     b = np.array(single_dframe['pcaB'])
-    r_norm = np.interp(r, (r.min(), r.max()), (0, 255))
-    g_norm = np.interp(g, (g.min(), g.max()), (0, 255))
-    b_norm = np.interp(b, (b.min(), b.max()), (0, 255))
+    # r_norm = np.interp(r, (r.min(), r.max()), (0, 255))
+    # g_norm = np.interp(g, (g.min(), g.max()), (0, 255))
+    # b_norm = np.interp(b, (b.min(), b.max()), (0, 255))
+
+    r_norm = np.interp(r, (r.min(), r.max()), (0, 1))
+    g_norm = np.interp(g, (g.min(), g.max()), (0, 1))
+    b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
+
 
     return [
-        {'x': int(x), 'y': int(y), 'color': '#ff0000'}
-        for x, y in zip(pos_x, pos_y)
+        {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, 0.1], keep_alpha=True)}
+        for x, y, r, g, b in zip(pos_x, pos_y, r_norm, g_norm, b_norm)
     ]
+
+    # return [
+    #     {'x': int(x), 'y': int(y), 'color': '#ff0000'}
+    #     for x, y, r, g, b in zip(pos_x, pos_y, r_norm, g_norm, b_norm)
+    # ]
 
     # return [
     #     {'x': int(x), 'y': int(y), 'r': int(r), 'g': int(g), 'b': int(b)}

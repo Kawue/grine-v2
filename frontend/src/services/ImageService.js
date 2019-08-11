@@ -30,40 +30,6 @@ class ImageService {
     return imageData;
   }
 
-  /*rgbToHex(rgb) {
-    let hex = Number(rgb).toString(16);
-    if (hex.length < 2) {
-      hex = '0' + hex;
-    }
-    return hex;
-  }
-
-  fullColorHex(r, g, b, a) {
-    let red = this.rgbToHex(r);
-    let green = this.rgbToHex(g);
-    let blue = this.rgbToHex(b);
-    let trans = this.rgbToHex(a);
-    return red + green + blue + trans;
-  }
-
-  calculatePcaColors(imageDataPassed) {
-    let imageData = this.jsonCopy(imageDataPassed);
-    for (let imagePoint in imageData) {
-      if (imageData.hasOwnProperty(imagePoint)) {
-        imageData[imagePoint].color =
-          '#' +
-          this.fullColorHex(
-            imageData[imagePoint].r,
-            imageData[imagePoint].g,
-            imageData[imagePoint].b,
-            255
-          );
-      }
-    }
-    console.log(imageData);
-    return imageData;
-  }*/
-
   /**
    * mark selected points
    * @param imageData
