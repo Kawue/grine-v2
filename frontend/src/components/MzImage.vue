@@ -85,6 +85,17 @@ export default {
             }
           }
           break;
+        case 'CLEAR_IMAGE':
+          if (mutation.payload === this.imageDataIndex) {
+            if (this.height) {
+              this.heightLast = this.height;
+              let self = this;
+              setTimeout(function() {
+                self.drawPoints();
+              }, 10);
+            }
+          }
+          break;
       }
     });
     this.drawPoints();

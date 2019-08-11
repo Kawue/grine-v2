@@ -123,16 +123,13 @@ export default {
     },
     deleteLassoImage() {
       this.$store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_LASSO);
-      this.$store.commit('RESET_SELECTION');
     },
   },
   mounted: function() {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'IMAGE_COPY_INTO_SELECTION_IMAGE':
-        case 'CLEAR_IMAGE':
           this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
-          this.$store.dispatch('fetchPcaImageData');
           break;
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
