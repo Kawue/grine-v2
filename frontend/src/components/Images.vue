@@ -42,6 +42,18 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-4">
+                <span class="font12px">PCA:</span>
+              </div>
+              <div class="col-md-8 font12px">
+                <span v-on:click="loadPca()">Load</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-12" style="margin-top: 25px; margin-bottom: 25px">
@@ -99,6 +111,9 @@ export default {
     OptionsImageMinOverlap,
   },
   methods: {
+    loadPca() {
+      this.$store.dispatch('fetchPcaImageData');
+    },
     deleteLassoImage() {
       this.$store.commit('CLEAR_IMAGE', 3);
     },

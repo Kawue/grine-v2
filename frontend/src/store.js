@@ -776,5 +776,22 @@ export default new Vuex.Store({
     imageCopyIntoSelectionImage: (context, index) => {
       context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);
     },
+    fetchPcaImageData: context => {
+      const datasetName =
+        context.state.options.data.graphChoices[
+          context.state.options.data.graph
+        ];
+      const url = API_URL + '/datasets/' + datasetName + '/pcaimagedata';
+      axios
+        .get(url)
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(function() {
+          alert(
+            'Error while loading pca image data from api.'
+          );
+        });
+    },
   },
 });
