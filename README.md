@@ -1,5 +1,4 @@
-todo:
-4. Ein klick auf einen Knoten der keine Community ist sollte das Community Bild mit der Community füllen die darüber liegt und nicht mit dem MZ Bild.
+kim todo:
 
 dann noch das PCA bild, das kann auch ins 4te bild
 

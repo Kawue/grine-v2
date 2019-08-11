@@ -323,8 +323,16 @@ export default new Vuex.Store({
         } else if (nodesSelected.length === 1) {
           state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
           state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
-          state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
-            nodesSelected[0].mzs;
+
+          if (nodesSelected[0].mzs.length > 1) {
+            state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = nodesSelected[0].mzs;
+          } else if (nodesSelected[0].parent) {
+            const graph = state.originalGraphData.graphs['graph' + state.options.data.graph].graph;
+            const nodeHierarchy = parseInt(nodesSelected[0].name.split('n')[0].slice(1), 10);
+            const nodeParent = 'h' + (nodeHierarchy - 1) + 'n' + nodesSelected[0].parent;
+            const parentMz = graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent].mzs;
+            state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = parentMz;
+          }
         } else if (nodesSelected.length > 1) {
           state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
           state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
