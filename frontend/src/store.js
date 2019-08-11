@@ -163,6 +163,10 @@ export default new Vuex.Store({
           interpolatePlasma: 'Plasma',
           interpolateInferno: 'Inferno',
         },
+        pca: {
+          relative: true,
+          threshold: 50, // in %
+        },
       },
       mzList: {
         showAll: false,
@@ -521,6 +525,9 @@ export default new Vuex.Store({
     },
     OPTIONS_IMAGE_CHANGE_MIN_INTENSITY: (state, data) => {
       state.options.image.minIntensity = data;
+    },
+    OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD: (state, data) => {
+      state.options.image.pca.threshold = data;
     },
     OPTIONS_IMAGE_CHANGE_MIN_OVERLAP: (state, data) => {
       state.options.image.minOverlap = data;

@@ -49,7 +49,7 @@
                 <span class="font12px">PCA:</span>
               </div>
               <div class="col-md-8 font12px">
-                <span v-on:click="loadPca()">Load</span>
+                <OptionsImagePcaThreshold></OptionsImagePcaThreshold>
               </div>
             </div>
           </div>
@@ -106,6 +106,7 @@ import { mapGetters } from 'vuex';
 import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
+import OptionsImagePcaThreshold from './OptionsImagePcaThreshold';
 import * as constants from '../store';
 
 export default {
@@ -116,6 +117,7 @@ export default {
     OptionsImageMergeMethod,
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
+    OptionsImagePcaThreshold,
   },
   methods: {
     loadPca() {
