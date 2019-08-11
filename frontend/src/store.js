@@ -642,10 +642,12 @@ export default new Vuex.Store({
       context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
+      context.state.images.imageData[IMAGE_INDEX_PCA].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
       context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
       context.state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
       context.state.images.imageData[IMAGE_INDEX_LASSO].points = [];
+      context.state.images.imageData[IMAGE_INDEX_PCA].points = [];
       context.dispatch('fetchImageData', IMAGE_INDEX_COMMUNITY);
       context.dispatch('fetchImageData', IMAGE_INDEX_SELECTED_MZ);
       context.dispatch('fetchImageData', IMAGE_INDEX_AGGREGATED);
@@ -663,6 +665,7 @@ export default new Vuex.Store({
       context.commit('NETWORK_INIT_SVG');
       context.commit('NETWORK_CENTER_CAMERA');
       context.commit('NETWORK_SIMULATION_INIT');
+      context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
     },
     fetchImageData: (context, index) => {
       if (!context.state.images.imageData[index]) {
@@ -807,6 +810,7 @@ export default new Vuex.Store({
           ]);
         })
         .catch(function() {
+          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
           context.commit('SET_LOADING_IMAGE_DATA', false);
           alert('Error while loading pca image data from api.');
         });
