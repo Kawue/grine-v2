@@ -164,7 +164,7 @@ def graph_data_all_datasets():
 
 
 # returns PCA RGB image
-def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method):
+def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_threshold):
     single_dframe = pca_dframe.loc[pca_dframe.index.get_level_values("dataset") == ds_name]
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
@@ -177,9 +177,14 @@ def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method):
     b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
 
     intensity = [1]*len(r)
-    if len(mz_values):
-        mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-        intensity = mz_raw_data[2]
+    if data_threshold is None:
+        if len(mz_values):
+            print('method no treshold')
+
+            mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
+            intensity = mz_raw_data[2]
+    else:
+        print('method threshold')
 
     return [
         {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, i], keep_alpha=True)}
@@ -298,10 +303,14 @@ def datasets_imagedata_pca_image_data_action(dataset_name, method):
         post_data = request.get_data()
         post_data_json = json.loads(post_data.decode('utf-8'))
         post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
+        if post_data_json['threshold'] is None:
+            post_data_threshold = None
+        else:
+            post_data_threshold = float(post_data_json['threshold']) / 100
     except:
         return abort(400)
 
-    return json.dumps(datasets_imagedata_pca_image_data(dataset_name, post_data_mz_values, method))
+    return json.dumps(datasets_imagedata_pca_image_data(dataset_name, post_data_mz_values, method, post_data_threshold))
 
 
 # get graph data for all datasets
