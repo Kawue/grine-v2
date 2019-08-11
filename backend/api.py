@@ -9,6 +9,10 @@ from flask import request
 from flask_cors import CORS
 from os import listdir
 from os.path import exists, isdir, isfile
+import umap as uumap
+import sklearn.decomposition as skd
+import matplotlib.pyplot as plt
+
 
 merged_dframe = pd.DataFrame()
 
@@ -27,8 +31,6 @@ for path in argv[3:]:
 merged_dframe = merged_dframe.fillna(value=0)
 
 pca_dframe = pd.read_hdf('datasets/' + argv[2])
-
-print(pca_dframe)
 
 
 # returns list of allowed merge methods for mz intensities
@@ -161,6 +163,32 @@ def graph_data_all_datasets():
     return data
 
 
+# returns PCA RGB image
+def datasets_imagedata_pca_image_data(ds_name):
+    print(pca_dframe)
+
+    single_dframe = pca_dframe.loc[pca_dframe.index.get_level_values("dataset") == ds_name]
+    pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
+    pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
+
+    r = np.array(single_dframe['pcaR'])
+    g = np.array(single_dframe['pcaG'])
+    b = np.array(single_dframe['pcaB'])
+    #r = np.array(single_dframe.index.get_level_values("grid_x"))
+    #g = np.array(single_dframe.index.get_level_values("grid_x"))
+    #b = np.array(single_dframe.index.get_level_values("grid_x"))
+
+    r_norm = np.interp(r, (r.min(), r.max()), (0, 255))
+    g_norm = np.interp(g, (g.min(), g.max()), (0, 255))
+    b_norm = np.interp(b, (b.min(), b.max()), (0, 255))
+
+    return [
+        {'x': int(x), 'y': int(y), 'r': int(r), 'g': int(g), 'b': int(b)}
+        for x, y, r, g, b in zip(pos_x, pos_y, r_norm, g_norm, b_norm)
+    ]
+
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -257,6 +285,15 @@ def datasets_imagedata_all_mz_action(dataset_name):
 @app.route('/datasets/imagedata')
 def datasets_all_datasets_all_imagedata_action():
     return json.dumps(image_data_all_datasets())
+
+
+# get mz image data for dataset for all mz values
+@app.route('/datasets/<dataset_name>/pcaimagedata')
+def datasets_imagedata_pca_image_data_action(dataset_name):
+    if dataset_name not in dataset_names():
+        return abort(400)
+
+    return json.dumps(datasets_imagedata_pca_image_data(dataset_name))
 
 
 # get graph data for all datasets
