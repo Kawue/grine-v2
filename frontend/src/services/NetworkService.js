@@ -485,8 +485,8 @@ class NetworkService {
   }
 
   computeNodeTrix(graph, nodes, deepestHierarchy) {
-    if (!d3.select('#heatmap').empty()) {
-      d3.select('#heatmap').remove();
+    if (!d3.select('#nodeTrix').empty()) {
+      d3.select('#nodeTrix').remove();
     }
     const sel = this.getSelectedNodes(nodes);
     let deepNodes = [];
@@ -555,11 +555,13 @@ class NetworkService {
         }
       }
     }
-    console.log(heatmap);
+
+    let flag = false;
+    // console.log(heatmap);
     const heatMapSVG = d3
       .select('#graph-container')
       .append('g')
-      .attr('id', 'heatmap');
+      .attr('id', 'nodeTrix');
     const center = [this.width * 0.5, this.height * 0.5];
     const size = 2000 / heatmap.length;
     for (let i = 0; i < heatmap.length; i++) {
@@ -581,12 +583,33 @@ class NetworkService {
         .data(tempArray)
         .enter()
         .append('rect')
-        .attr('class', 'node')
+        .attr('class', 'nodeTrixCell')
         .attr('x', n => center[0] + n.column * size)
         .attr('y', n => center[1] + n.row * size)
+        .attr('row', n => n.row)
+        .attr('column', n => n.column)
         .attr('width', size)
         .attr('height', size)
-        .style('fill', n => (n.value ? 'green' : 'red'));
+        .attr('fill', n => (n.value ? '#0F0' : '#F00'))
+        .on('mouseover', n => {
+          console.log('over', n);
+          flag = true;
+          d3.select('#nodeTrix')
+            .selectAll(`[row='${n.row}']`)
+            .attr('fill', n => (n.value ? '#0F0' : '#F00'))
+          d3.select('#nodeTrix')
+            .selectAll(`[column='${n.column}']`)
+            .attr('fill', n => (n.value ? '#0F0' : '#F00'))
+        })
+        .on('mouseout', n => {
+          flag = false;
+          d3.select('#nodeTrix')
+            .selectAll(`[row='${n.row}']`)
+            .attr('fill', n => (n.value ? '#0A0' : '#A00'))
+          d3.select('#nodeTrix')
+            .selectAll(`[column='${n.column}']`)
+            .attr('fill', n => (n.value ? '#0A0' : '#A00'))
+        });
     }
   }
 
@@ -1295,8 +1318,8 @@ class NetworkService {
   }
 
   clearHighlight(nodes) {
-    if (!d3.select('#heatmap').empty()) {
-      d3.select('#heatmap').remove();
+    if (!d3.select('#nodeTrix').empty()) {
+      d3.select('#nodeTrix').remove();
     }
     for (let i = 0; i < nodes.length; i++) {
       if (nodes[i].selected) {
