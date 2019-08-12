@@ -119,6 +119,10 @@ export default {
             'fetchImageData',
             constants.IMAGE_INDEX_AGGREGATED
           );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_LASSO
+          );
           break;
         case 'RESET_SELECTION':
           this.$store.dispatch(
