@@ -107,7 +107,8 @@ export default {
   width: 20px;
   min-height: 100vh;
   max-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: white;
 
   &.expanded {
