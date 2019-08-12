@@ -516,16 +516,15 @@ class NetworkService {
     // sort nodes by parents
     // TODO Sorting really necessary?
     const maxHierarchyPrefix = 'h' + deepestHierarchy + 'n';
-    deepNodes = deepNodes
-      .map(n => {
-        return {
-          name: maxHierarchyPrefix + n,
-          parent:
-            graph['hierarchy' + deepestHierarchy].nodes[maxHierarchyPrefix + n]
-              .membership,
-        };
-      })
-      .sort((a, b) => a.parent - b.parent);
+    deepNodes = deepNodes.map(n => {
+      return {
+        name: maxHierarchyPrefix + n,
+        parent:
+          graph['hierarchy' + deepestHierarchy].nodes[maxHierarchyPrefix + n]
+            .membership,
+      };
+    });
+    //.sort((a, b) => a.parent - b.parent);
     const map = {};
     let heatmap = [];
     // construct empty heatmap and data structure to map from node name to index in heatmap
@@ -533,7 +532,7 @@ class NetworkService {
       map[deepNodes[i].name] = i;
       const tempArray = [];
       for (let j = 0; j < deepNodes.length - i; j++) {
-        tempArray.push(false);
+        tempArray.push(0);
       }
       heatmap.push(tempArray);
     }
@@ -542,40 +541,74 @@ class NetworkService {
       graph['hierarchy' + deepestHierarchy]['edges']
     );
     // compute heatmap
+    let maxWeight = 0;
     for (const edge of edgeKeys) {
       const sourceIndex =
         map[graph['hierarchy' + deepestHierarchy]['edges'][edge].source];
       const targetIndex =
         map[graph['hierarchy' + deepestHierarchy]['edges'][edge].target];
       if (sourceIndex != null && targetIndex != null) {
+        const weight =
+          graph['hierarchy' + deepestHierarchy]['edges'][edge].weight;
+        if (maxWeight <= weight) {
+          maxWeight = weight;
+        }
         if (sourceIndex <= targetIndex) {
-          heatmap[targetIndex][sourceIndex] = true;
+          heatmap[targetIndex][sourceIndex] = weight;
         } else {
-          heatmap[sourceIndex][targetIndex] = true;
+          heatmap[sourceIndex][targetIndex] = weight;
         }
       }
     }
-
-    let flag = false;
+    const darkCoefficient = 0.3;
     // console.log(heatmap);
     const heatMapSVG = d3
       .select('#graph-container')
       .append('g')
-      .attr('id', 'nodeTrix');
+      .attr('id', 'nodeTrix')
+      .on('mouseover', () => {
+        if (parseInt(heatMapSVG.style('--beepboop'), 10) === 0) {
+          //console.log('Group out');
+          d3.select('#nodeTrix')
+            .selectAll('.nodeTrixCell')
+            .attr('fill', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            )
+            .attr('stroke', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            );
+        }
+      })
+      .on('mouseout', () => {
+        if (parseInt(heatMapSVG.style('--beepboop'), 10) === 0) {
+          //console.log('Group in');
+          d3.select('#nodeTrix')
+            .selectAll('.nodeTrixCell')
+            .attr('fill', n => d3.interpolateViridis(n.weight / maxWeight))
+            .attr('stroke', n => d3.interpolateViridis(n.weight / maxWeight));
+        }
+      });
+    console.log(heatMapSVG.style('--beepboop'));
     const center = [this.width * 0.5, this.height * 0.5];
-    const size = 2000 / heatmap.length;
+    const size = this.smallestNodeRadius * 2.4;
     for (let i = 0; i < heatmap.length; i++) {
       const tempArray = [];
       for (let j = 0; j < heatmap.length; j++) {
         tempArray.push({
           row: i,
           column: j,
-          value: false,
+          weight: 0,
         });
         if (i < j) {
-          tempArray[j].value = heatmap[j][i];
+          tempArray[j].weight = heatmap[j][i];
         } else {
-          tempArray[j].value = heatmap[i][j];
+          tempArray[j].weight = heatmap[i][j];
         }
       }
       heatMapSVG
@@ -588,27 +621,126 @@ class NetworkService {
         .attr('y', n => center[1] + n.row * size)
         .attr('row', n => n.row)
         .attr('column', n => n.column)
-        .attr('width', size)
-        .attr('height', size)
-        .attr('fill', n => (n.value ? '#0F0' : '#F00'))
+        .attr('width', size - 3)
+        .attr('height', size - 3)
+        .attr('stroke', n => d3.interpolateViridis(n.weight / maxWeight))
+        .attr('stroke-width', 3)
+        .attr('fill', n => d3.interpolateViridis(n.weight / maxWeight))
         .on('mouseover', n => {
-          console.log('over', n);
-          flag = true;
+          //console.log('In cell', n.row, n.column);
+          /*
+          d3.select('#nodeTrix')
+            .selectAll('.nodeTrixCell')
+            .attr('stroke', n => (n.value ? '#0A0' : '#A00'))
+            .attr('fill', n => (n.value ? '#0A0' : '#A00'));*/
           d3.select('#nodeTrix')
             .selectAll(`[row='${n.row}']`)
-            .attr('fill', n => (n.value ? '#0F0' : '#F00'))
+            .filter(d => {
+              if (n.row > n.column) {
+                return d.column <= n.column;
+              } else {
+                return d.column >= n.column;
+              }
+            })
+            .attr('stroke', 'white')
+            .attr('fill', n => d3.interpolateViridis(n.weight / maxWeight));
+          d3.select('#nodeTrix')
+            .selectAll(`[row='${n.column}']`)
+            .filter(d => {
+              if (n.row > n.column) {
+                return d.column >= n.row;
+              } else {
+                return d.column <= n.row;
+              }
+            })
+            .attr('stroke', 'white')
+            .attr('fill', n => d3.interpolateViridis(n.weight / maxWeight));
+          //.style('opacity', '1 !important');
           d3.select('#nodeTrix')
             .selectAll(`[column='${n.column}']`)
-            .attr('fill', n => (n.value ? '#0F0' : '#F00'))
+            .filter(d => {
+              if (n.row > n.column) {
+                return d.row >= n.row;
+              } else {
+                return d.row <= n.row;
+              }
+            })
+            .attr('stroke', 'white')
+            .attr('fill', n => d3.interpolateViridis(n.weight / maxWeight));
+          d3.select('#nodeTrix')
+            .selectAll(`[column='${n.row}']`)
+            .filter(d => {
+              if (n.row > n.column) {
+                return d.row <= n.column;
+              } else {
+                return d.row >= n.column;
+              }
+            })
+            .attr('stroke', 'white')
+            .attr('fill', n => d3.interpolateViridis(n.weight / maxWeight));
+          //.style('opacity', '1 !important');
         })
         .on('mouseout', n => {
-          flag = false;
+          //console.log('Cell out');
           d3.select('#nodeTrix')
             .selectAll(`[row='${n.row}']`)
-            .attr('fill', n => (n.value ? '#0A0' : '#A00'))
+            .attr('stroke', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            )
+            .attr('fill', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            );
+          d3.select('#nodeTrix')
+            .selectAll(`[row='${n.column}']`)
+            .attr('stroke', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            )
+            .attr('fill', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            );
+          //.style('opacity', '1 !important');
           d3.select('#nodeTrix')
             .selectAll(`[column='${n.column}']`)
-            .attr('fill', n => (n.value ? '#0A0' : '#A00'))
+            .attr('stroke', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            )
+            .attr('fill', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            );
+
+          d3.select('#nodeTrix')
+            .selectAll(`[column='${n.row}']`)
+            .attr('stroke', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            )
+            .attr('fill', n =>
+              d3
+                .color(d3.interpolateViridis(n.weight / maxWeight))
+                .darker(darkCoefficient)
+                .toString()
+            );
+          //.style('opacity', '1');
         });
     }
   }
