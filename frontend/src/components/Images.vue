@@ -106,6 +106,19 @@ export default {
           break;
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_COMMUNITY
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_SELECTED_MZ
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_AGGREGATED
+          );
+          break;
         case 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE':
           this.$store.dispatch(
             'fetchImageData',
