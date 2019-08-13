@@ -82,7 +82,7 @@
               <b-form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-input
                   v-model="nameModalMz.name"
-                  placeholder="Moin"
+                  placeholder="Annotation"
                   required
                   maxlength="30"
                   :state="nameModalMz.name.length > 0 ? null : false"
@@ -239,6 +239,7 @@ export default {
 .sidebar-widget {
   &.expanded {
     width: 120px !important;
+    overflow: hidden !important;
   }
 }
 
