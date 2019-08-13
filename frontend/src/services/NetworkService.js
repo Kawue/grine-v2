@@ -560,39 +560,35 @@ class NetworkService {
         }
       }
     }
-    const darkCoefficient = 0.3;
+    const darkCoefficient = 1.8;
     // console.log(heatmap);
     const heatMapSVG = d3
       .select('#graph-container')
       .append('g')
       .attr('id', 'nodeTrix')
-      .on('mouseover', () => {
-        if (parseInt(heatMapSVG.style('--beepboop'), 10) === 0) {
-          //console.log('Group out');
-          d3.select('#nodeTrix')
-            .selectAll('.nodeTrixCell')
-            .attr('fill', n =>
-              d3
-                .color(d3.interpolateViridis(n.weight / maxWeight))
-                .darker(darkCoefficient)
-                .toString()
-            )
-            .attr('stroke', n =>
-              d3
-                .color(d3.interpolateViridis(n.weight / maxWeight))
-                .darker(darkCoefficient)
-                .toString()
-            );
-        }
+      .on('mouseenter', () => {
+        console.log('Group in');
+        d3.select('#nodeTrix')
+          .selectAll('.nodeTrixCell')
+          .attr('fill', n =>
+            d3
+              .color(d3.interpolateViridis(n.weight / maxWeight))
+              .darker(darkCoefficient)
+              .toString()
+          )
+          .attr('stroke', n =>
+            d3
+              .color(d3.interpolateViridis(n.weight / maxWeight))
+              .darker(darkCoefficient)
+              .toString()
+          );
       })
-      .on('mouseout', () => {
-        if (parseInt(heatMapSVG.style('--beepboop'), 10) === 0) {
-          //console.log('Group in');
-          d3.select('#nodeTrix')
-            .selectAll('.nodeTrixCell')
-            .attr('fill', n => d3.interpolateViridis(n.weight / maxWeight))
-            .attr('stroke', n => d3.interpolateViridis(n.weight / maxWeight));
-        }
+      .on('mouseleave', () => {
+        console.log('Group out');
+        d3.select('#nodeTrix')
+          .selectAll('.nodeTrixCell')
+          .attr('fill', n => d3.interpolateViridis(n.weight / maxWeight))
+          .attr('stroke', n => d3.interpolateViridis(n.weight / maxWeight));
       });
     console.log(heatMapSVG.style('--beepboop'));
     const center = [this.width * 0.5, this.height * 0.5];
