@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import * as d3lasso from 'd3-lasso';
 import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import store from '@/store';
+import { IMAGE_INDEX_COMMUNITY } from '../store';
 
 class NetworkService {
   biggestNodeRadius = 30;
@@ -1206,6 +1207,30 @@ class NetworkService {
       }
     }
     return nodesSelected;
+  }
+
+  getParentNodeFromNode(node, graph) {
+    if (node.parent) {
+      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeParent = 'h' + (nodeHierarchy - 1) + 'n' + node.parent;
+      return graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent];
+    } else if (node.membership) {
+      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeParent = 'h' + (nodeHierarchy - 1) + 'n' + node.membership;
+      return graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent];
+    } else {
+      return null;
+    }
+  }
+
+  getRootParentNodeFromNode(node, graph) {
+    let lastParent = null;
+    let parent = node;
+    do {
+      lastParent = parent;
+      parent = this.getParentNodeFromNode(parent, graph);
+    } while (parent !== null);
+    return lastParent;
   }
 }
 export default NetworkService;

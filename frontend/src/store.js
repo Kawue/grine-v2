@@ -351,18 +351,16 @@ export default new Vuex.Store({
             state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
               nodesSelected[0].mzs;
           } else if (nodesSelected[0].parent) {
-            // find mzs of parent community
+            // find mzs of highest parent community
             const graph =
               state.originalGraphData.graphs['graph' + state.options.data.graph]
                 .graph;
-            const nodeHierarchy = parseInt(
-              nodesSelected[0].name.split('n')[0].slice(1),
-              10
+            let parentNode = networkService.getRootParentNodeFromNode(
+              nodesSelected[0],
+              graph
             );
-            const nodeParent =
-              'h' + (nodeHierarchy - 1) + 'n' + nodesSelected[0].parent;
             state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
-              graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent].mzs;
+              parentNode.mzs;
           }
         } else if (nodesSelected.length > 1) {
           state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];

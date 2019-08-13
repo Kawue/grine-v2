@@ -1,13 +1,3 @@
-kim todo:
-
-comunity auf obersten level anzeigen, nicht nur die darueber
-
-
-
-
-
-
-
 # Grine v2
 
 ## Project setup
