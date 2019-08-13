@@ -800,6 +800,9 @@ export default new Vuex.Store({
       let mzValues = [];
       if (context.state.images.imageData[index]) {
         mzValues = context.state.images.imageData[index].mzValues;
+      } else {
+        context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
+        return;
       }
       context.commit('SET_LOADING_IMAGE_DATA', true);
       const datasetName =

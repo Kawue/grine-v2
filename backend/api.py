@@ -33,7 +33,7 @@ pca_dframe = pd.read_hdf('datasets/' + argv[2])
 
 # returns list of allowed merge methods for mz intensities
 def merge_methods():
-    return ['min', 'max', 'median', 'mean']
+    return ['mean', 'median', 'max', 'min']
 
 
 # returns names of all available datasets

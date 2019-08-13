@@ -4,6 +4,7 @@
       v-model="threshold"
       v-bind="sliderOptions"
       class="slider"
+      v-bind:disabled="!state.pca.show || state.pca.relative"
     ></vue-slider>
     <span class="percentage">{{ threshold }}%</span>
   </div>

@@ -1,11 +1,17 @@
 <template>
   <div class="flex-container">
-    <b-form-checkbox v-model="show">show</b-form-checkbox>
-    <b-form-checkbox v-model="relative" v-if="show">relative</b-form-checkbox>
+    <div class="row">
+      <div class="col">
+        <b-form-checkbox v-model="show">show</b-form-checkbox>
+      </div>
+      <div class="col">
+        <b-form-checkbox v-model="relative" v-if="show"
+          >relative</b-form-checkbox
+        >
+      </div>
+    </div>
 
-    <OptionsImagePcaThreshold
-      v-if="!relative && show"
-    ></OptionsImagePcaThreshold>
+    <OptionsImagePcaThreshold></OptionsImagePcaThreshold>
   </div>
 </template>
 

@@ -46,7 +46,7 @@
           <div class="col-md-12">
             <div class="row">
               <div class="col-md-4">
-                <span class="font12px">PCA:</span>
+                <span class="font12px">DR:</span>
               </div>
               <div class="col-md-8 font12px">
                 <OptionsImagePca></OptionsImagePca>
@@ -75,7 +75,7 @@
       </div>
       <div class="row">
         <div class="col-md-12" style="margin-bottom: 25px;">
-          Lasso Selector:
+          Cache/Lasso:
           <span v-on:click="deleteLassoImage()">
             <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
           </span>
@@ -88,7 +88,7 @@
       </div>
       <div class="row" v-if="options.pca.show">
         <div class="col-md-12" style="margin-bottom: 25px;">
-          PCA:
+          DR:
           <mz-image
             :imageDataIndex="4"
             v-bind:enableClickCopyToLassoImage="false"
@@ -134,6 +134,21 @@ export default {
           this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
           break;
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_COMMUNITY
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_SELECTED_MZ
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_AGGREGATED
+          );
+          this.$store.dispatch('fetchPcaImageData');
+
+          break;
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
           this.$store.dispatch(
             'fetchImageData',
@@ -161,10 +176,7 @@ export default {
             'fetchImageData',
             constants.IMAGE_INDEX_AGGREGATED
           );
-          this.$store.dispatch(
-            'fetchImageData',
-            constants.IMAGE_INDEX_LASSO
-          );
+          this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
           break;
         case 'RESET_SELECTION':
           this.$store.dispatch(
