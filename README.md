@@ -2,6 +2,15 @@ kim todo:
 
 dann noch das PCA bild, das kann auch ins 4te bild
 
+default merge method mean
+
+comunity auf obersten level anzeigen, nicht nur die darueber
+
+PCA slider immer da aber deaktiviert + checkboxen nebeneinander
+pca mrege method aendert pca bild
+pca umbennnen DR
+
+lasso umbennenn in cache/lasso
 
 
 
