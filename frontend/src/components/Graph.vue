@@ -68,10 +68,4 @@ export default {
   fill: $primary;
   fill-opacity: 0.5;
 }
-#nodeTrix:hover {
-  --beepboop: 1;
-}
-#nodeTrix:not(:hover) {
-  --beepboop: 0;
-}
 </style>

@@ -12,7 +12,7 @@ class NetworkService {
   hybridEdgeColor = '#999';
   hybridEdgeCounter = 0;
   centerTransitionTime = 1000;
-  darkCoefficient = 0.6;
+  darkCoefficient = 1.8;
 
   loadGraph(graph) {
     const tupel = [[], []];
@@ -538,13 +538,12 @@ class NetworkService {
       .select('#graph-container')
       .append('g')
       .attr('id', 'nodeTrix')
-      .on('mouseover', () => {
+      .on('mouseenter', () => {
         this.nodeTrixMouseInContainer(colorScale);
       })
-      .on('mouseout', () => {
+      .on('mouseleave', () => {
         this.nodeTrixMouseOutContainer(colorScale);
       });
-    // console.log(heatMapSVG.style('--beepboop'));
     const center = [this.width * 0.5, this.height * 0.5];
     const size = this.smallestNodeRadius * 2.4;
     for (let i = 0; i < heatmap.length; i++) {
@@ -602,34 +601,29 @@ class NetworkService {
 
   nodeTrixMouseInContainer(colorScale) {
     const container = d3.select('#nodeTrix');
-    if (parseInt(container.style('--beepboop'), 10) === 0) {
-      //console.log('Group out');
-      container
-        .selectAll('.nodeTrixCell')
-        .attr('fill', n =>
-          d3
-            .color(colorScale(n.weight))
-            .darker(this.darkCoefficient)
-            .toString()
-        )
-        .attr('stroke', n =>
-          d3
-            .color(colorScale(n.weight))
-            .darker(this.darkCoefficient)
-            .toString()
-        );
-    }
+    container
+      .selectAll('.nodeTrixCell')
+      .attr('fill', n =>
+        d3
+          .color(colorScale(n.weight))
+          .darker(this.darkCoefficient)
+          .toString()
+      )
+      .attr('stroke', n =>
+        d3
+          .color(colorScale(n.weight))
+          .darker(this.darkCoefficient)
+          .toString()
+      );
   }
 
   nodeTrixMouseOutContainer(colorScale) {
     const container = d3.select('#nodeTrix');
-    if (parseInt(container.style('--beepboop'), 10) === 0) {
-      //console.log('Group in');
-      container
-        .selectAll('.nodeTrixCell')
-        .attr('fill', n => colorScale(n.weight))
-        .attr('stroke', n => colorScale(n.weight));
-    }
+    //console.log('Group in');
+    container
+      .selectAll('.nodeTrixCell')
+      .attr('fill', n => colorScale(n.weight))
+      .attr('stroke', n => colorScale(n.weight));
   }
 
   nodeTrixMouseInCell(n, colorScale) {
@@ -656,7 +650,6 @@ class NetworkService {
       })
       .attr('stroke', 'white')
       .attr('fill', n => colorScale(n.weight));
-    //.style('opacity', '1 !important');
     container
       .selectAll(`[column='${n.column}']`)
       .filter(d => {
@@ -711,7 +704,6 @@ class NetworkService {
           .darker(this.darkCoefficient)
           .toString()
       );
-    //.style('opacity', '1 !important');
     container
       .selectAll(`[column='${n.column}']`)
       .attr('stroke', n =>
@@ -758,10 +750,10 @@ class NetworkService {
       return;
     }
     container
-      .on('mouseover', () => {
+      .on('mouseenter', () => {
         this.nodeTrixMouseInContainer(colorScale);
       })
-      .on('mouseout', () => {
+      .on('mouseleave', () => {
         this.nodeTrixMouseOutContainer(colorScale);
       });
     container
