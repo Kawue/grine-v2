@@ -29,6 +29,12 @@ export default {
     store.commit('NETWORK_LOAD_GRAPH');
     store.commit('NETWORK_INIT_SVG');
     store.commit('NETWORK_SIMULATION_INIT');
+    store.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
+    store.subscribe(mutation => {
+      if (mutation.type === 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE') {
+        store.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
+      }
+    });
     console.log('svg fertig');
   },
 };

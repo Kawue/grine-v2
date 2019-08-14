@@ -100,7 +100,12 @@ export default new Vuex.Store({
       nodes: [],
       edges: [],
       lassoMode: true,
-      nodeTrixPossible: false,
+      nodeTrix: {
+        nodeTrixPossible: false,
+        minWeight: 0,
+        maxWeight: 1,
+        colorScale: null,
+      },
     },
     options: {
       state: {
@@ -225,7 +230,7 @@ export default new Vuex.Store({
       return state.network.nodes;
     },
     networkNodeTrixPossible: state => {
-      return state.network.nodeTrixPossible;
+      return state.network.nodeTrix.nodeTrixPossible;
     },
     stateOptionsGraph: state => {
       return state.options.data.graph;
@@ -351,6 +356,12 @@ export default new Vuex.Store({
       );
       state.network.nodes = tupel[0];
       state.network.edges = tupel[1];
+      const minMaxTupel = NetworkService.findMinMaxWeight(
+        state.originalGraphData.graphs['graph' + state.options.data.graph]
+          .graph['hierarchy' + state.meta.maxHierarchy].edges
+      );
+      state.network.nodeTrix.minWeight = minMaxTupel[0];
+      state.network.nodeTrix.minWeight = minMaxTupel[1];
     },
     NETWORK_EXPAND_NODE: (state, node) => {
       const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
@@ -409,8 +420,17 @@ export default new Vuex.Store({
         state.originalGraphData.graphs['graph' + state.options.data.graph]
           .graph,
         state.network.nodes,
-        state.meta.maxHierarchy
+        state.meta.maxHierarchy,
+        state.network.nodeTrix.colorScale
       );
+    },
+    NETWORK_NODETRIX_CHANGE_COLORSCALE: state => {
+      state.network.nodeTrix.colorScale = NetworkService.computeColorScale(
+        state.options.image.colorScale,
+        state.network.nodeTrix.minWeight,
+        state.network.nodeTrix.maxWeight
+      );
+      networkService.redrawNodeTrix(state.network.nodeTrix.colorScale);
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -454,7 +474,7 @@ export default new Vuex.Store({
       );
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
-      state.network.nodeTrixPossible = true;
+      state.network.nodeTrix.nodeTrixPossible = true;
       state.mzList.selectedMz = data;
       state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
       networkService.highlightNodesByMz(state.network.nodes, data);
@@ -465,7 +485,7 @@ export default new Vuex.Store({
       ].nodes[data.nodeKey].name = data.name;
     },
     MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
-      state.network.nodeTrixPossible = true;
+      state.network.nodeTrix.nodeTrixPossible = true;
       const tuple = mzListService.updateHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -485,7 +505,7 @@ export default new Vuex.Store({
       );
     },
     RESET_SELECTION: state => {
-      state.network.nodeTrixPossible = false;
+      state.network.nodeTrix.nodeTrixPossible = false;
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -568,7 +588,7 @@ export default new Vuex.Store({
             'graph' + context.state.options.data.graph
           ].graph
         ).length - 1;
-      context.state.network.nodeTrixPossible = false;
+      context.state.network.nodeTrix.nodeTrixPossible = false;
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
       context.commit('MZLIST_SORT_MZ');
@@ -576,6 +596,7 @@ export default new Vuex.Store({
       context.commit('NETWORK_INIT_SVG');
       context.commit('NETWORK_CENTER_CAMERA');
       context.commit('NETWORK_SIMULATION_INIT');
+      context.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
     },
     fetchImageData: (context, index) => {
       if (!context.state.images.imageData[index]) {
