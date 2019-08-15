@@ -13,6 +13,15 @@ class NetworkService {
   hybridEdgeCounter = 0;
   centerTransitionTime = 1000;
   darkCoefficient = 1.8;
+  gradientScale = {
+    x: this.width * 0.5 - 300,
+    y: 10,
+    width: 600,
+    height: 20,
+    minWeight: 0,
+    maxWeight: 1,
+    linearScaler: null,
+  };
 
   loadGraph(graph) {
     const tupel = [[], []];
@@ -78,7 +87,9 @@ class NetworkService {
     let selected = d3.select('.selected');
 
     if (!selected.empty()) {
-      d3.select('.annotations').remove();
+      d3.select('#graph-container')
+        .select('.annotations')
+        .remove();
       let annotationText = '';
       if (
         selected.data()[0].childs != null &&
@@ -115,7 +126,7 @@ class NetworkService {
       ];
       let makeAnnotations = d3annotate.annotation().annotations(annotations);
 
-      d3.select('.annotation-group').call(makeAnnotations);
+      d3.select('#node-annotation-group').call(makeAnnotations);
     }
   }
 
@@ -196,7 +207,7 @@ class NetworkService {
     let makeAnnotations = d3annotate.annotation().annotations(annotations);
     d3.select('#graph-container')
       .append('g')
-      .attr('class', 'annotation-group')
+      .attr('id', 'node-annotation-group')
       .style('pointer-events', 'none')
       .call(makeAnnotations);
   }
@@ -206,7 +217,7 @@ class NetworkService {
       .style('fill', n => n.color)
       .attr('r', n => n.radius)
       .attr('class', 'node');
-    d3.selectAll('.annotation-group').remove();
+    d3.selectAll('#node-annotation-group').remove();
     d.annotations = null;
   }
 
@@ -464,7 +475,7 @@ class NetworkService {
     return lasso;
   }
 
-  computeNodeTrix(graph, nodes, deepestHierarchy, colorScale, minMaxTupel) {
+  computeNodeTrix(graph, nodes, deepestHierarchy, colorScale) {
     if (!d3.select('#nodeTrix-container').empty()) {
       d3.select('#nodeTrix-container').remove();
       d3.select('#gradient-container').remove();
@@ -476,20 +487,20 @@ class NetworkService {
       .append('g')
       .attr('id', 'gradient-container');
 
-    NetworkService.computeGradient(minMaxTupel, colorScale, 40);
+    this.computeGradient(colorScale, 20);
 
     gradientContainer
       .append('text')
       .attr('id', 'minWeight')
       .attr('x', center[0] - 300)
-      .attr('y', 60)
-      .text(minMaxTupel[0].toFixed(2));
+      .attr('y', 50)
+      .text(this.gradientScale.minWeight.toFixed(2));
     gradientContainer
       .append('text')
       .attr('id', 'maxWeight')
       .attr('x', center[0] + 270)
-      .attr('y', 60)
-      .text(minMaxTupel[1].toFixed(2));
+      .attr('y', 50)
+      .text(this.gradientScale.maxWeight.toFixed(2));
 
     gradientContainer
       .append('rect')
@@ -497,7 +508,7 @@ class NetworkService {
       .attr('x', center[0] - 300)
       .attr('y', 10)
       .attr('width', 600)
-      .attr('height', 30)
+      .attr('height', 20)
       .style('stroke', 'black')
       .style('stroke-width', 1)
       .style('fill', 'url(#linear-gradient)');
@@ -620,6 +631,10 @@ class NetworkService {
   }
 
   nodeTrixMouseInContainer(colorScale) {
+    d3.select('#gradient-container')
+      .append('g')
+      .attr('id', 'gradient-annotation-group')
+      .style('pointer-events', 'none');
     const container = d3.select('#matrix');
     container
       .selectAll('.nodeTrixCell')
@@ -638,6 +653,7 @@ class NetworkService {
   }
 
   nodeTrixMouseOutContainer(colorScale) {
+    d3.select('#gradient-annotation-group').remove();
     const container = d3.select('#matrix');
     container
       .selectAll('.nodeTrixCell')
@@ -646,6 +662,30 @@ class NetworkService {
   }
 
   nodeTrixMouseInCell(n, colorScale) {
+    if (n.weight > 0) {
+      const annotations = [
+        {
+          note: {
+            label: n.weight.toFixed(2),
+            // create a newline whenever you read this symbol
+            wrapSplitter: '\n',
+          },
+          x:
+            this.gradientScale.x +
+            this.gradientScale.linearScaler(n.weight) *
+              this.gradientScale.width,
+          y: this.gradientScale.y + this.gradientScale.height,
+          dx: 0,
+          dy: 30,
+          color: 'teal',
+          type: d3annotate.annotationCalloutElbow,
+        },
+      ];
+      let makeAnnotations = d3annotate.annotation().annotations(annotations);
+
+      d3.select('#gradient-annotation-group').call(makeAnnotations);
+    }
+
     const container = d3.select('#matrix');
     container
       .selectAll(`[row='${n.row}']`)
@@ -694,6 +734,9 @@ class NetworkService {
   }
 
   nodeTrixMouseOutCell(n, colorScale) {
+    d3.select('#gradient-container')
+      .select('.annotations')
+      .remove();
     const container = d3.select('#matrix');
     container
       .selectAll(`[row='${n.row}']`)
@@ -754,24 +797,31 @@ class NetworkService {
       );
   }
 
-  static computeColorScale(colorScaleString, minWeight = 0, maxWeight = 1) {
+  computeColorScale(colorScaleString, minWeight = 0, maxWeight = 1) {
     const linearScale = d3
       .scaleLinear()
       .domain([minWeight, maxWeight])
       .range([0.2, 1]);
     const colorScale = d3.scaleSequential(d3[colorScaleString]);
+    this.gradientScale.minWeight = minWeight;
+    this.gradientScale.maxWeight = maxWeight;
+    this.gradientScale.linearScaler = d3
+      .scaleLinear()
+      .domain([minWeight, maxWeight])
+      .range([0, 1]);
     return t => (t > 0 ? colorScale(linearScale(t)) : colorScale(t));
   }
 
-  static computeGradient(minMaxTupel, colorScale, ticks = 4) {
+  computeGradient(colorScale, ticks = 4) {
     let linearGradient = d3
       .select('#gradient-container')
       .append('defs')
       .append('linearGradient')
       .attr('id', 'linear-gradient');
 
-    const delta = (minMaxTupel[1] - minMaxTupel[0]) / ticks;
-    let counter = minMaxTupel[0];
+    const delta =
+      (this.gradientScale.maxWeight - this.gradientScale.minWeight) / ticks;
+    let counter = this.gradientScale.minWeight;
     for (let j = 0; j <= ticks; j++) {
       // console.log((j * 100) / ticks + '%', colorScale(counter));
       linearGradient
@@ -796,14 +846,14 @@ class NetworkService {
     return [minWeight, maxWeight];
   }
 
-  redrawNodeTrix(colorScale, minMaxTupel) {
+  redrawNodeTrix(colorScale) {
     const container = d3.select('#matrix');
     if (container.empty()) {
       return;
     }
 
     d3.select('#linear-gradient').remove();
-    NetworkService.computeGradient(minMaxTupel, colorScale, 40);
+    this.computeGradient(colorScale, 20);
 
     d3.select('#color-gradient').attr('fill', 'url(#linear-gradient)');
 
@@ -884,7 +934,7 @@ class NetworkService {
   }
 
   shrinkNode(graph, oldNode, nodes, edges) {
-    d3.select('.annotation-group').remove();
+    d3.select('#node-annotation-group').remove();
     const previousHierarchy =
       parseInt(oldNode.name.split('n')[0].slice(1), 10) - 1;
     const nextNodeName =
@@ -1153,7 +1203,7 @@ class NetworkService {
 
     // remove old node from datastructure and svg
     nodes.splice(index, 1);
-    d3.select('.annotation-group').remove();
+    d3.select('#node-annotation-group').remove();
     d3.select('#' + oldNode.name).remove();
     const newNodes = [];
     const nextHierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10) + 1;

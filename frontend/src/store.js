@@ -426,7 +426,7 @@ export default new Vuex.Store({
       );
     },
     NETWORK_NODETRIX_CHANGE_COLORSCALE: state => {
-      state.network.nodeTrix.colorScale = NetworkService.computeColorScale(
+      state.network.nodeTrix.colorScale = networkService.computeColorScale(
         state.options.image.colorScale,
         state.network.nodeTrix.minWeight,
         state.network.nodeTrix.maxWeight
