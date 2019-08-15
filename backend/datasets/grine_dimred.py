@@ -50,9 +50,13 @@ def write_dimvis_rgb(dframe,red_ch, green_ch, blue_ch, method_name):
         
 
 
-barley = pd.read_hdf("C:\\Users\\kwuellems\\Desktop\\grinev2test\\barley101GrineV2.h5")
-kidney = pd.read_hdf("C:\\Users\\kwuellems\\Desktop\\grinev2test\\kidneyGrineV2.h5")
-vibrissae = pd.read_hdf("C:\\Users\\kwuellems\\Desktop\\grinev2test\\vibrissaeGrineV2.h5")
+# barley = pd.read_hdf("C:\\Users\\kwuellems\\Desktop\\grinev2test\\barley101GrineV2.h5")
+# kidney = pd.read_hdf("C:\\Users\\kwuellems\\Desktop\\grinev2test\\kidneyGrineV2.h5")
+# vibrissae = pd.read_hdf("C:\\Users\\kwuellems\\Desktop\\grinev2test\\vibrissaeGrineV2.h5")
+
+barley = pd.read_hdf("barley101GrineV2.h5")
+kidney = pd.read_hdf("kidneyGrineV2.h5")
+vibrissae = pd.read_hdf("vibrissaeGrineV2.h5")
 
 #barley = pd.read_hdf(argv[1])
 #kidney = pd.read_hdf(argv[2])

@@ -82,7 +82,7 @@
               <b-form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-input
                   v-model="nameModalMz.name"
-                  placeholder="Moin"
+                  placeholder="Annotation"
                   required
                   maxlength="30"
                   :state="nameModalMz.name.length > 0 ? null : false"
@@ -162,7 +162,6 @@ export default {
   },
   methods: {
     mzClicked: function() {
-      // store.commit('MZLIST_UPDATE_SELECTED_MZ', this.localSelectedMz);
       store.dispatch('mzlistUpdatedMzs', this.localSelectedMz);
     },
     sortMZ: function() {
@@ -240,6 +239,7 @@ export default {
 .sidebar-widget {
   &.expanded {
     width: 120px !important;
+    overflow: hidden !important;
   }
 }
 

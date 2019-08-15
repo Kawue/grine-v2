@@ -9,11 +9,13 @@ from flask import request
 from flask_cors import CORS
 from os import listdir
 from os.path import exists, isdir, isfile
+import matplotlib
+
 
 merged_dframe = pd.DataFrame()
 
-for path in argv[2:]:
-    if len(argv[2:]) == 1:
+for path in argv[3:]:
+    if len(argv[3:]) == 1:
         if isdir(path):
             for f in listdir(path):
                 if f.split(".")[1] == "h5":
@@ -21,15 +23,17 @@ for path in argv[2:]:
         else:
             merged_dframe = pd.read_hdf('datasets/' + path)
     else:
-        for path in argv[2:]:
+        for path in argv[3:]:
             merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))
 
 merged_dframe = merged_dframe.fillna(value=0)
 
+pca_dframe = pd.read_hdf('datasets/' + argv[2])
 
-# returns list of allowed merge methods for mz intensizties
+
+# returns list of allowed merge methods for mz intensities
 def merge_methods():
-    return ['min', 'max', 'median', 'mean']
+    return ['mean', 'median', 'max', 'min']
 
 
 # returns names of all available datasets
@@ -50,16 +54,9 @@ def mz_values(ds_name):
     return {i: mzs[i] for i in range(0, len(mzs))}
 
 
-def norm(val, min, max):
-    if max > 0:
-        val = (val - min) / (max - min)
-        return val
-    else:
-        return 0
-
-
 # provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
-def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
+# returns x, y and normed intensities
+def image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method):
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
@@ -67,16 +64,25 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
     # holds the intensities of all mz_values in an array
     intensity = np.array(single_dframe[mz_values])
 
-    if len(mz_values) > 1:
-        # merge the intensities into a single one with specified method and on specified axis
-        merge_method_dynamic_call = getattr(np, merge_method)
-        intensity = merge_method_dynamic_call(intensity, 1)
+    # merge the intensities into a single one with specified method and on specified axis
+    merge_method_dynamic_call = getattr(np, merge_method)
+    intensity = merge_method_dynamic_call(intensity, 1)
 
-    intensity_min = min(intensity)
-    intensity_max = max(intensity)
+    intensity = np.interp(intensity, (intensity.min(), intensity.max()), (0, 1))
+
+    return [pos_x, pos_y, intensity]
+
+
+# provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
+# returns data ready to pass through api
+def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
+    raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
+    pos_x = raw_data[0]
+    pos_y = raw_data[1]
+    intensity = raw_data[2]
 
     return [
-        {'x': int(x), 'y': int(y), 'intensity': float(norm(i, intensity_min, intensity_max))}
+        {'x': int(x), 'y': int(y), 'intensity': float(i)}
         for x, y, i in zip(pos_x, pos_y, intensity)
     ]
 
@@ -155,6 +161,34 @@ def graph_data_all_datasets():
         except:
             data = {}
     return data
+
+
+# returns PCA RGB image
+def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_threshold):
+    single_dframe = pca_dframe.loc[pca_dframe.index.get_level_values("dataset") == ds_name]
+    pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
+    pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
+
+    r = np.array(single_dframe['pcaR'])
+    g = np.array(single_dframe['pcaG'])
+    b = np.array(single_dframe['pcaB'])
+    r_norm = np.interp(r, (r.min(), r.max()), (0, 1))
+    g_norm = np.interp(g, (g.min(), g.max()), (0, 1))
+    b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
+
+    intensity = [1]*len(r)
+    if len(mz_values):
+        mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
+        intensity = mz_raw_data[2]
+
+        if data_threshold is not None:
+            intensity[intensity < data_threshold] = 0  # binarization
+            intensity[intensity >= data_threshold] = 1
+
+    return [
+        {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, i], keep_alpha=True)}
+        for x, y, r, g, b, i in zip(pos_x, pos_y, r_norm, g_norm, b_norm, intensity)
+    ]
 
 
 app = Flask(__name__)
@@ -253,6 +287,29 @@ def datasets_imagedata_all_mz_action(dataset_name):
 @app.route('/datasets/imagedata')
 def datasets_all_datasets_all_imagedata_action():
     return json.dumps(image_data_all_datasets())
+
+
+# get mz image data for dataset for all mz values
+@app.route('/datasets/<dataset_name>/pcaimagedata/method/<method>', methods=['POST'])
+def datasets_imagedata_pca_image_data_action(dataset_name, method):
+    if dataset_name not in dataset_names():
+        return abort(400)
+
+    if method not in merge_methods():
+        return abort(400)
+
+    try:
+        post_data = request.get_data()
+        post_data_json = json.loads(post_data.decode('utf-8'))
+        post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
+        if post_data_json['threshold'] is None:
+            post_data_threshold = None
+        else:
+            post_data_threshold = float(post_data_json['threshold']) / 100
+    except:
+        return abort(400)
+
+    return json.dumps(datasets_imagedata_pca_image_data(dataset_name, post_data_mz_values, method, post_data_threshold))
 
 
 # get graph data for all datasets

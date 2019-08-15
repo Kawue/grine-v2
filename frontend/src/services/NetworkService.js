@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import * as d3lasso from 'd3-lasso';
 import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import store from '@/store';
+import { IMAGE_INDEX_COMMUNITY } from '../store';
 
 class NetworkService {
   biggestNodeRadius = 30;
@@ -450,10 +451,10 @@ class NetworkService {
         .map(d => d.mzs)
         .flat();
 
-      // check if only nodes from the deepest hierarchy are selected
+
       lasso.selectedItems().attr('class', 'node nodeTrix');
       lasso.notSelectedItems().attr('class', 'node');
-
+      store.commit('CLEAR_IMAGES');
       store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
       store.dispatch('mzlistUpdateHighlightedMz', mzs);
     }
@@ -877,60 +878,75 @@ class NetworkService {
   }
 
   nodeClick(n) {
-    if ((d3.event.ctrlKey || d3.event.metaKey) && d3.event.shiftKey) {
+    store.commit('CLEAR_IMAGES');
+    let isMzLassoSelectionActive = store.getters.isMzLassoSelectionActive;
+    if (
+      (d3.event.ctrlKey || d3.event.metaKey) &&
+      d3.event.shiftKey &&
+      !isMzLassoSelectionActive
+    ) {
       store.commit('NETWORK_SHRINK_NODE', n);
-    } else if (d3.event.ctrlKey || d3.event.metaKey) {
+    } else if (
+      (d3.event.ctrlKey || d3.event.metaKey) &&
+      !isMzLassoSelectionActive
+    ) {
       store.commit('NETWORK_EXPAND_NODE', n);
     } else {
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {
+          store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
           if (!n.selected) {
             n.selected = true;
-            store.dispatch('mzlistUpdateHighlightedMz', n.mzs);
-            d3.select('#' + n.name)
-              .transition()
-              .duration(250)
-              .attr('rx', 0)
-              .attrTween('transform', function() {
-                return d3.interpolateString(
-                  'rotate(0 ' + n.x + ' ' + n.y + ')',
-                  'rotate(90 ' + n.x + ' ' + n.y + ')'
-                );
-              })
-              .attr('ry', 0)
-              .on('end', function() {
-                d3.select(this).attr('transform', null);
-              });
+            if (!isMzLassoSelectionActive) {
+              d3.select('#' + n.name)
+                .transition()
+                .duration(250)
+                .attr('rx', 0)
+                .attrTween('transform', function() {
+                  return d3.interpolateString(
+                    'rotate(0 ' + n.x + ' ' + n.y + ')',
+                    'rotate(90 ' + n.x + ' ' + n.y + ')'
+                  );
+                })
+                .attr('ry', 0)
+                .on('end', function() {
+                  d3.select(this).attr('transform', null);
+                });
+            }
           }
         } else {
           if (store.getters.networkNodes[i]['selected']) {
             store.getters.networkNodes[i]['selected'] = false;
-            d3.select('#' + store.getters.networkNodes[i].name)
-              .transition()
-              .duration(250)
-              .attr('rx', store.getters.networkNodes[i].radius)
-              .attr('ry', store.getters.networkNodes[i].radius)
-              .attrTween('transform', function() {
-                return d3.interpolateString(
-                  'rotate(0 ' +
-                    store.getters.networkNodes[i].x +
-                    ' ' +
-                    store.getters.networkNodes[i].y +
-                    ')',
-                  'rotate(-90 ' +
-                    store.getters.networkNodes[i].x +
-                    ' ' +
-                    store.getters.networkNodes[i].y +
-                    ')'
-                );
-              })
-              .on('end', function() {
-                d3.select(this).attr('transform', null);
-              });
+            if (!isMzLassoSelectionActive) {
+              d3.select('#' + store.getters.networkNodes[i].name)
+                .transition()
+                .duration(250)
+                .attr('rx', store.getters.networkNodes[i].radius)
+                .attr('ry', store.getters.networkNodes[i].radius)
+                .attrTween('transform', function() {
+                  return d3.interpolateString(
+                    'rotate(0 ' +
+                      store.getters.networkNodes[i].x +
+                      ' ' +
+                      store.getters.networkNodes[i].y +
+                      ')',
+                    'rotate(-90 ' +
+                      store.getters.networkNodes[i].x +
+                      ' ' +
+                      store.getters.networkNodes[i].y +
+                      ')'
+                  );
+                })
+                .on('end', function() {
+                  d3.select(this).attr('transform', null);
+                });
+            }
           }
         }
       }
     }
+
+    store.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
   }
 
   shrinkNode(graph, oldNode, nodes, edges) {
@@ -1586,7 +1602,6 @@ class NetworkService {
       d3.select('#gradient-container').remove();
     }
     for (let i = 0; i < nodes.length; i++) {
-      if (nodes[i].selected) {
         nodes[i].selected = false;
         d3.select('#' + nodes[i].name)
           .transition()
@@ -1602,9 +1617,8 @@ class NetworkService {
           .on('end', function() {
             d3.select(this)
               .attr('transform', null)
-              .attr('class', 'node');
+              .attr('class', 'node');;
           });
-      }
     }
   }
 
@@ -1616,6 +1630,30 @@ class NetworkService {
       }
     }
     return nodesSelected;
+  }
+
+  getParentNodeFromNode(node, graph) {
+    if (node.parent) {
+      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeParent = 'h' + (nodeHierarchy - 1) + 'n' + node.parent;
+      return graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent];
+    } else if (node.membership) {
+      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeParent = 'h' + (nodeHierarchy - 1) + 'n' + node.membership;
+      return graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent];
+    } else {
+      return null;
+    }
+  }
+
+  getRootParentNodeFromNode(node, graph) {
+    let lastParent = null;
+    let parent = node;
+    do {
+      lastParent = parent;
+      parent = this.getParentNodeFromNode(parent, graph);
+    } while (parent !== null);
+    return lastParent;
   }
 }
 export default NetworkService;

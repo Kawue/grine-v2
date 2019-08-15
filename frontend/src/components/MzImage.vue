@@ -1,5 +1,10 @@
 <template>
-  <div v-bind:style="widgetStyle()" v-bind:id="widgetUniqueId()" v-if="height">
+  <div
+    v-bind:style="widgetStyle()"
+    v-bind:id="widgetUniqueId()"
+    v-if="height"
+    v-on:click="imageClick()"
+  >
     <div class="canvas-root" style="position: relative;">
       <ScaleOut class="spinner" v-if="loading"></ScaleOut>
       <canvas
@@ -40,11 +45,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    enableClickCopyToLassoImage: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
       width: 250,
-      heightLast: 200,
+      heightLast: 100,
       render: false,
       canvas: null,
       lassoInstance: null,
@@ -67,6 +76,17 @@ export default {
       switch (mutation.type) {
         case 'SET_IMAGE_DATA_VALUES':
           if (mutation.payload[0] === this.imageDataIndex) {
+            if (this.height) {
+              this.heightLast = this.height;
+              let self = this;
+              setTimeout(function() {
+                self.drawPoints();
+              }, 10);
+            }
+          }
+          break;
+        case 'CLEAR_IMAGE':
+          if (mutation.payload === this.imageDataIndex) {
             if (this.height) {
               this.heightLast = this.height;
               let self = this;
@@ -101,6 +121,7 @@ export default {
       let height = this.$store.getters.getImageData(0).max.y;
       height = height ? height : this.$store.getters.getImageData(1).max.y;
       height = height ? height : this.$store.getters.getImageData(2).max.y;
+      height = height ? height : this.$store.getters.getImageData(3).max.y;
       height = height ? height : this.heightLast;
       height = height < 100 ? 100 : height;
       return height;
@@ -135,11 +156,26 @@ export default {
     },
   },
   methods: {
+    imageClick() {
+      if (this.enableLasso) {
+        store.commit('RESET_SELECTION');
+      } else {
+        if (this.enableClickCopyToLassoImage) {
+          store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
+        } else {
+          store.commit('CLEAR_IMAGE', this.imageDataIndex);
+        }
+      }
+    },
     widgetUniqueId() {
       return 'component-' + this._uid;
     },
     widgetStyle() {
-      return 'height: ' + this.height + 'px';
+      let style = 'height: ' + this.height + 'px;';
+      if (!this.enableLasso) {
+        style += 'cursor: pointer';
+      }
+      return style;
     },
     handleLassoEnd(lassoPolygon) {
       const selectedPoints = this.points.filter(d => {
@@ -152,9 +188,13 @@ export default {
         this.imageDataIndex,
         selectedPoints,
       ]);
+      store.commit('NETWORK_FREE_MODE');
     },
     handleLassoStart() {
       this.removeLassoAfterPointsDrawn = false;
+      if (store.getters.isMzLassoSelectionActive) {
+        store.commit('RESET_SELECTION');
+      }
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
     drawPoints() {
@@ -205,7 +245,9 @@ export default {
 
 <style lang="scss" scoped>
 .canvas-root {
-  margin: 25px;
+  margin-top: 0;
+  margin-left: 25px;
+  margin-right: 25px;
 
   canvas {
     border: 1px solid lightgrey;

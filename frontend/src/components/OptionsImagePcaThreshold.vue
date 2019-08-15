@@ -1,11 +1,12 @@
 <template>
   <div class="flex-container">
     <vue-slider
-      v-model="minIntensity"
+      v-model="threshold"
       v-bind="sliderOptions"
       class="slider"
+      v-bind:disabled="!state.pca.show || state.pca.relative"
     ></vue-slider>
-    <span class="percentage">{{ minIntensity }}%</span>
+    <span class="percentage">{{ threshold }}%</span>
   </div>
 </template>
 
@@ -18,23 +19,23 @@ export default {
   components: {
     VueSlider,
   },
-  name: 'OptionsImageMinIntensity',
+  name: 'OptionsImagePcaThreshold',
   computed: {
     ...mapGetters({
       state: 'getOptionsImage',
     }),
-    minIntensity: {
+    threshold: {
       get() {
-        return this.state.minIntensity;
+        return this.state.pca.threshold;
       },
       set(value) {
-        this.$store.commit('OPTIONS_IMAGE_CHANGE_MIN_INTENSITY', value);
+        this.$store.commit('OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD', value);
 
         let self = this;
         this.updatedValue = value;
         setTimeout(function() {
           if (self.updatedValue === value) {
-            self.$store.dispatch('fetchLassoSimilar', 3);
+            self.$store.dispatch('fetchPcaImageData', 3);
           }
         }, 500);
       },
