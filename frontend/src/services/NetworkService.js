@@ -480,7 +480,6 @@ class NetworkService {
       d3.select('#nodeTrix-container').remove();
       d3.select('#gradient-container').remove();
     }
-    const center = [this.width * 0.5, this.height * 0.5];
 
     const gradientContainer = d3
       .select('.graphd3')
@@ -492,23 +491,23 @@ class NetworkService {
     gradientContainer
       .append('text')
       .attr('id', 'minWeight')
-      .attr('x', center[0] - 300)
-      .attr('y', 50)
+      .attr('x', this.gradientScale.x)
+      .attr('y', this.gradientScale.y + this.gradientScale.height + 20)
       .text(this.gradientScale.minWeight.toFixed(2));
     gradientContainer
       .append('text')
       .attr('id', 'maxWeight')
-      .attr('x', center[0] + 270)
-      .attr('y', 50)
+      .attr('x', this.gradientScale.x + this.gradientScale.width - 30)
+      .attr('y', this.gradientScale.y + this.gradientScale.height + 20)
       .text(this.gradientScale.maxWeight.toFixed(2));
 
     gradientContainer
       .append('rect')
       .attr('id', 'color-gradient')
-      .attr('x', center[0] - 300)
-      .attr('y', 10)
-      .attr('width', 600)
-      .attr('height', 20)
+      .attr('x', this.gradientScale.x)
+      .attr('y', this.gradientScale.y)
+      .attr('width', this.gradientScale.width)
+      .attr('height', this.gradientScale.height)
       .style('stroke', 'black')
       .style('stroke-width', 1)
       .style('fill', 'url(#linear-gradient)');
@@ -592,6 +591,7 @@ class NetworkService {
         this.nodeTrixMouseOutContainer(colorScale);
       });
     const size = this.smallestNodeRadius * 2.4;
+    const center = [this.width * 0.5, this.height * 0.5];
     for (let i = 0; i < heatmap.length; i++) {
       const tempArray = [];
       for (let j = 0; j < heatmap.length; j++) {
