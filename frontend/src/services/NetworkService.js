@@ -61,7 +61,7 @@ class NetworkService {
     return tupel;
   }
 
-  simulationUpdate() {
+  static simulationUpdate() {
     store.getters.networkSVGElements.linkElements
       .attr('x1', function(d) {
         return d.source.x;
@@ -167,13 +167,13 @@ class NetworkService {
       .attr('y2', d.y);
   }
 
-  dragended(d) {
+  static dragEnded(d) {
     if (!d3.event.active) store.getters.networkSimulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
   }
 
-  mouseOver(d) {
+  static mouseOver(d) {
     d3.select('#' + d.name)
       .attr('r', d.radius + 5)
       .attr('class', 'selected');
@@ -212,7 +212,7 @@ class NetworkService {
       .call(makeAnnotations);
   }
 
-  mouseOut(d) {
+  static mouseOut(d) {
     d3.select('#' + d.name)
       .style('fill', n => n.color)
       .attr('r', n => n.radius)
@@ -258,14 +258,14 @@ class NetworkService {
       .attr('numMz', d => d.mzs)
       .attr('childs', d => d.childs)
       .on('click', this.nodeClick)
-      .on('mouseover', this.mouseOver)
-      .on('mouseout', this.mouseOut)
+      .on('mouseover', NetworkService.mouseOver)
+      .on('mouseout', NetworkService.mouseOut)
       .call(
         d3
           .drag()
           .on('start', this.dragstarted)
           .on('drag', this.dragged)
-          .on('end', this.dragended)
+          .on('end', NetworkService.dragEnded)
       );
 
     if (lassoMode) {
@@ -273,7 +273,7 @@ class NetworkService {
         svg: lSvg,
         nodeElements: lNode,
         linkElements: lLink,
-        zoom: this.initZoom(),
+        zoom: NetworkService.initZoom(),
         lasso: this.initLasso(lNode),
       };
     } else {
@@ -282,7 +282,7 @@ class NetworkService {
         nodeElements: lNode,
         linkElements: lLink,
         lasso: this.initLasso(lNode),
-        zoom: this.initZoom(),
+        zoom: NetworkService.initZoom(),
       };
     }
   }
@@ -293,20 +293,20 @@ class NetworkService {
     Mode is reversed because of event queue by d3
      */
     if (!lassoMode) {
-      networkSVG.zoom = this.initZoom();
+      networkSVG.zoom = NetworkService.initZoom();
     } else {
       networkSVG.lasso = this.initLasso(networkSVG.nodeElements);
     }
   }
 
-  initZoom() {
+  static initZoom() {
     const svg = d3.select('.graphd3');
     const zoom = d3.zoom().scaleExtent([1 / 4, 5]);
-    svg.call(zoom.on('zoom', this.zoomed));
+    svg.call(zoom.on('zoom', NetworkService.zoomed));
     return zoom;
   }
 
-  zoomed() {
+  static zoomed() {
     store.getters.networkSVGElements.svg.attr(
       'transform',
       'translate(' +
@@ -319,7 +319,7 @@ class NetworkService {
     );
   }
 
-  updateSimulationParameters(simulation, parameters) {
+  static updateSimulationParameters(simulation, parameters) {
     simulation.force('charge').strength(parameters.repulsion);
     simulation.force('link').distance(parameters.edgeLength);
     simulation
@@ -350,7 +350,7 @@ class NetworkService {
       .force('forceCollide', d3.forceCollide().radius(d => d.radius))
       .alphaDecay(1 - Math.pow(0.001, 1 / parameters.iterations))
       .alpha(1)
-      .on('tick', this.simulationUpdate);
+      .on('tick', NetworkService.simulationUpdate);
   }
 
   centerCamera(zoom) {
@@ -438,7 +438,7 @@ class NetworkService {
     );
   }
 
-  lassoEnd() {
+  static lassoEnd() {
     // Reset the color of all dots
     const lasso = store.getters.networkSVGElements.lasso;
     lasso.items().style('fill', n => n.color);
@@ -468,7 +468,7 @@ class NetworkService {
       .targetArea(svg)
       .on('start', this.lassoStart)
       .on('draw', this.lassoDraw)
-      .on('end', this.lassoEnd);
+      .on('end', NetworkService.lassoEnd);
 
     svg.call(lasso);
     return lasso;
@@ -511,7 +511,7 @@ class NetworkService {
       .style('stroke-width', 1)
       .style('fill', 'url(#linear-gradient)');
 
-    const sel = this.getSelectedNodes(nodes);
+    const sel = NetworkService.getSelectedNodes(nodes);
     let deepNodes = [];
     // compute nodes of the deepest hierarchy of selected nodes
     for (const node of sel) {
@@ -1198,14 +1198,14 @@ class NetworkService {
       .attr('numMz', nextNode.mzs)
       .attr('childs', nextNode.childs)
       .on('click', this.nodeClick)
-      .on('mouseover', this.mouseOver)
-      .on('mouseout', this.mouseOut)
+      .on('mouseover', NetworkService.mouseOver)
+      .on('mouseout', NetworkService.mouseOut)
       .call(
         d3
           .drag()
           .on('start', this.dragstarted)
           .on('drag', this.dragged)
-          .on('end', this.dragended)
+          .on('end', NetworkService.dragEnded)
       );
     store.getters.networkSVGElements.nodeElements = d3
       .select('#node-container')
@@ -1434,14 +1434,14 @@ class NetworkService {
       .attr('numMz', d => d.mzs)
       .attr('childs', d => d.childs)
       .on('click', this.nodeClick)
-      .on('mouseover', this.mouseOver)
-      .on('mouseout', this.mouseOut)
+      .on('mouseover', NetworkService.mouseOver)
+      .on('mouseout', NetworkService.mouseOut)
       .call(
         d3
           .drag()
           .on('start', this.dragstarted)
           .on('drag', this.dragged)
-          .on('end', this.dragended)
+          .on('end', NetworkService.dragEnded)
       );
     store.getters.networkSVGElements.nodeElements = d3
       .select('#node-container')
@@ -1620,7 +1620,7 @@ class NetworkService {
     }
   }
 
-  getSelectedNodes(nodes) {
+  static getSelectedNodes(nodes) {
     let nodesSelected = [];
     for (let i = 0; i < nodes.length; i++) {
       if (nodes[i].selected === true) {
@@ -1630,7 +1630,7 @@ class NetworkService {
     return nodesSelected;
   }
 
-  getParentNodeFromNode(node, graph) {
+  static getParentNodeFromNode(node, graph) {
     if (node.parent) {
       const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
       const nodeParent = 'h' + (nodeHierarchy - 1) + 'n' + node.parent;
@@ -1644,12 +1644,12 @@ class NetworkService {
     }
   }
 
-  getRootParentNodeFromNode(node, graph) {
+  static getRootParentNodeFromNode(node, graph) {
     let lastParent = null;
     let parent = node;
     do {
       lastParent = parent;
-      parent = this.getParentNodeFromNode(parent, graph);
+      parent = NetworkService.getParentNodeFromNode(parent, graph);
     } while (parent !== null);
     return lastParent;
   }

@@ -345,7 +345,7 @@ export default new Vuex.Store({
       mzImageData.min.y = minY;
     },
     IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
-      let nodesSelected = networkService.getSelectedNodes(state.network.nodes);
+      let nodesSelected = NetworkService.getSelectedNodes(state.network.nodes);
       if (nodesSelected) {
         if (nodesSelected.length === 0) {
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
@@ -364,7 +364,7 @@ export default new Vuex.Store({
             const graph =
               state.originalGraphData.graphs['graph' + state.options.data.graph]
                 .graph;
-            let parentNode = networkService.getRootParentNodeFromNode(
+            let parentNode = NetworkService.getRootParentNodeFromNode(
               nodesSelected[0],
               graph
             );
@@ -409,7 +409,7 @@ export default new Vuex.Store({
     },
     SET_NETWORK_OPTIONS: (state, options) => {
       state.options.network = options;
-      networkService.updateSimulationParameters(
+      NetworkService.updateSimulationParameters(
         state.network.simulation,
         options
       );
@@ -644,8 +644,8 @@ export default new Vuex.Store({
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
     },
-    MZ_IMAGE_LASSO_END: state => {
-      networkService.simulationUpdate();
+    MZ_IMAGE_LASSO_END: () => {
+      NetworkService.simulationUpdate();
     },
   },
   actions: {
