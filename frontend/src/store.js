@@ -361,7 +361,7 @@ export default new Vuex.Store({
           .graph['hierarchy' + state.meta.maxHierarchy].edges
       );
       state.network.nodeTrix.minWeight = minMaxTupel[0];
-      state.network.nodeTrix.minWeight = minMaxTupel[1];
+      state.network.nodeTrix.maxWeight = minMaxTupel[1];
     },
     NETWORK_EXPAND_NODE: (state, node) => {
       const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
@@ -421,7 +421,8 @@ export default new Vuex.Store({
           .graph,
         state.network.nodes,
         state.meta.maxHierarchy,
-        state.network.nodeTrix.colorScale
+        state.network.nodeTrix.colorScale,
+        [state.network.nodeTrix.minWeight, state.network.nodeTrix.maxWeight]
       );
     },
     NETWORK_NODETRIX_CHANGE_COLORSCALE: state => {
@@ -430,7 +431,10 @@ export default new Vuex.Store({
         state.network.nodeTrix.minWeight,
         state.network.nodeTrix.maxWeight
       );
-      networkService.redrawNodeTrix(state.network.nodeTrix.colorScale);
+      networkService.redrawNodeTrix(state.network.nodeTrix.colorScale, [
+        state.network.nodeTrix.minWeight,
+        state.network.nodeTrix.maxWeight,
+      ]);
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;

@@ -463,10 +463,43 @@ class NetworkService {
     return lasso;
   }
 
-  computeNodeTrix(graph, nodes, deepestHierarchy, colorScale) {
-    if (!d3.select('#nodeTrix').empty()) {
-      d3.select('#nodeTrix').remove();
+  computeNodeTrix(graph, nodes, deepestHierarchy, colorScale, minMaxTupel) {
+    if (!d3.select('#nodeTrix-container').empty()) {
+      d3.select('#nodeTrix-container').remove();
     }
+    const center = [this.width * 0.5, this.height * 0.5];
+
+    const gradientContainer = d3
+      .select('.graphd3')
+      .append('g')
+      .attr('id', 'gradient-container');
+
+    NetworkService.computeGradient(minMaxTupel, colorScale, 40);
+
+    gradientContainer
+      .append('text')
+      .attr('id', 'minWeight')
+      .attr('x', center[0] - 300)
+      .attr('y', 60)
+      .text(minMaxTupel[0].toFixed(2));
+    gradientContainer
+      .append('text')
+      .attr('id', 'maxWeight')
+      .attr('x', center[0] + 270)
+      .attr('y', 60)
+      .text(minMaxTupel[1].toFixed(2));
+
+    gradientContainer
+      .append('rect')
+      .attr('id', 'color-gradient')
+      .attr('x', center[0] - 300)
+      .attr('y', 10)
+      .attr('width', 600)
+      .attr('height', 30)
+      .style('stroke', 'black')
+      .style('stroke-width', 1)
+      .style('fill', 'url(#linear-gradient)');
+
     const sel = this.getSelectedNodes(nodes);
     let deepNodes = [];
     // compute nodes of the deepest hierarchy of selected nodes
@@ -533,18 +566,18 @@ class NetworkService {
         }
       }
     }
-    // console.log(heatmap);
     const heatMapSVG = d3
       .select('#graph-container')
       .append('g')
-      .attr('id', 'nodeTrix')
+      .attr('id', 'nodeTrix-container')
+      .append('g')
+      .attr('id', 'matrix')
       .on('mouseenter', () => {
         this.nodeTrixMouseInContainer(colorScale);
       })
       .on('mouseleave', () => {
         this.nodeTrixMouseOutContainer(colorScale);
       });
-    const center = [this.width * 0.5, this.height * 0.5];
     const size = this.smallestNodeRadius * 2.4;
     for (let i = 0; i < heatmap.length; i++) {
       const tempArray = [];
@@ -579,28 +612,13 @@ class NetworkService {
           this.nodeTrixMouseInCell(n, colorScale);
         })
         .on('mouseout', n => {
-          //console.log('Cell out');
           this.nodeTrixMouseOutCell(n, colorScale);
         });
     }
   }
 
-  static findMinMaxWeight(edges) {
-    let minWeight = 1;
-    let maxWeight = 0;
-    for (const edgeKey of Object.keys(edges)) {
-      if (edges[edgeKey.weight] < minWeight) {
-        minWeight = edges[edgeKey.weight];
-      }
-      if (edges[edgeKey.weight] > maxWeight) {
-        maxWeight = edges[edgeKey.weight];
-      }
-    }
-    return [minWeight, maxWeight];
-  }
-
   nodeTrixMouseInContainer(colorScale) {
-    const container = d3.select('#nodeTrix');
+    const container = d3.select('#matrix');
     container
       .selectAll('.nodeTrixCell')
       .attr('fill', n =>
@@ -618,8 +636,7 @@ class NetworkService {
   }
 
   nodeTrixMouseOutContainer(colorScale) {
-    const container = d3.select('#nodeTrix');
-    //console.log('Group in');
+    const container = d3.select('#matrix');
     container
       .selectAll('.nodeTrixCell')
       .attr('fill', n => colorScale(n.weight))
@@ -627,7 +644,7 @@ class NetworkService {
   }
 
   nodeTrixMouseInCell(n, colorScale) {
-    const container = d3.select('#nodeTrix');
+    const container = d3.select('#matrix');
     container
       .selectAll(`[row='${n.row}']`)
       .filter(d => {
@@ -675,7 +692,7 @@ class NetworkService {
   }
 
   nodeTrixMouseOutCell(n, colorScale) {
-    const container = d3.select('#nodeTrix');
+    const container = d3.select('#matrix');
     container
       .selectAll(`[row='${n.row}']`)
       .attr('stroke', n =>
@@ -744,11 +761,50 @@ class NetworkService {
     return t => (t > 0 ? colorScale(linearScale(t)) : colorScale(t));
   }
 
-  redrawNodeTrix(colorScale) {
-    const container = d3.select('#nodeTrix');
+  static computeGradient(minMaxTupel, colorScale, ticks = 4) {
+    let linearGradient = d3
+      .select('#gradient-container')
+      .append('defs')
+      .append('linearGradient')
+      .attr('id', 'linear-gradient');
+
+    const delta = (minMaxTupel[1] - minMaxTupel[0]) / ticks;
+    let counter = minMaxTupel[0];
+    for (let j = 0; j <= ticks; j++) {
+      // console.log((j * 100) / ticks + '%', colorScale(counter));
+      linearGradient
+        .append('stop')
+        .attr('offset', (j * 100) / ticks + '%')
+        .attr('stop-color', colorScale(counter));
+      counter = counter + delta;
+    }
+  }
+
+  static findMinMaxWeight(edges) {
+    let minWeight = 1;
+    let maxWeight = 0;
+    for (const edgeKey of Object.keys(edges)) {
+      if (edges[edgeKey].weight < minWeight) {
+        minWeight = edges[edgeKey].weight;
+      }
+      if (edges[edgeKey].weight > maxWeight) {
+        maxWeight = edges[edgeKey].weight;
+      }
+    }
+    return [minWeight, maxWeight];
+  }
+
+  redrawNodeTrix(colorScale, minMaxTupel) {
+    const container = d3.select('#matrix');
     if (container.empty()) {
       return;
     }
+
+    d3.select('#linear-gradient').remove();
+    NetworkService.computeGradient(minMaxTupel, colorScale, 40);
+
+    d3.select('#color-gradient').attr('fill', 'url(#linear-gradient)');
+
     container
       .on('mouseenter', () => {
         this.nodeTrixMouseInContainer(colorScale);
@@ -1473,8 +1529,8 @@ class NetworkService {
   }
 
   clearHighlight(nodes) {
-    if (!d3.select('#nodeTrix').empty()) {
-      d3.select('#nodeTrix').remove();
+    if (!d3.select('#nodeTrix-container').empty()) {
+      d3.select('#nodeTrix-container').remove();
     }
     for (let i = 0; i < nodes.length; i++) {
       if (nodes[i].selected) {
