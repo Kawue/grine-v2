@@ -2,7 +2,6 @@ import * as d3 from 'd3';
 import * as d3lasso from 'd3-lasso';
 import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import store from '@/store';
-import { IMAGE_INDEX_COMMUNITY } from '../store';
 
 class NetworkService {
   biggestNodeRadius = 30;
@@ -451,7 +450,6 @@ class NetworkService {
         .map(d => d.mzs)
         .flat();
 
-
       lasso.selectedItems().attr('class', 'node nodeTrix');
       lasso.notSelectedItems().attr('class', 'node');
       store.commit('CLEAR_IMAGES');
@@ -622,10 +620,10 @@ class NetworkService {
         .attr('stroke', n => colorScale(n.weight))
         .attr('stroke-width', 3)
         .attr('fill', n => colorScale(n.weight))
-        .on('mouseover', n => {
+        .on('mouseenter', n => {
           this.nodeTrixMouseInCell(n, colorScale);
         })
-        .on('mouseout', n => {
+        .on('mouseleave', n => {
           this.nodeTrixMouseOutCell(n, colorScale);
         });
     }
@@ -869,10 +867,10 @@ class NetworkService {
       .selectAll('.nodeTrixCell')
       .attr('stroke', n => colorScale(n.weight))
       .attr('fill', n => colorScale(n.weight))
-      .on('mouseover', n => {
+      .on('mouseenter', n => {
         this.nodeTrixMouseInCell(n, colorScale);
       })
-      .on('mouseout', n => {
+      .on('mouseleave', n => {
         this.nodeTrixMouseOutCell(n, colorScale);
       });
   }
@@ -1602,23 +1600,23 @@ class NetworkService {
       d3.select('#gradient-container').remove();
     }
     for (let i = 0; i < nodes.length; i++) {
-        nodes[i].selected = false;
-        d3.select('#' + nodes[i].name)
-          .transition()
-          .duration(250)
-          .attr('rx', nodes[i].radius)
-          .attr('ry', nodes[i].radius)
-          .attrTween('transform', function() {
-            return d3.interpolateString(
-              'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
-              'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
-            );
-          })
-          .on('end', function() {
-            d3.select(this)
-              .attr('transform', null)
-              .attr('class', 'node');;
-          });
+      nodes[i].selected = false;
+      d3.select('#' + nodes[i].name)
+        .transition()
+        .duration(250)
+        .attr('rx', nodes[i].radius)
+        .attr('ry', nodes[i].radius)
+        .attrTween('transform', function() {
+          return d3.interpolateString(
+            'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
+            'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
+          );
+        })
+        .on('end', function() {
+          d3.select(this)
+            .attr('transform', null)
+            .attr('class', 'node');
+        });
     }
   }
 
