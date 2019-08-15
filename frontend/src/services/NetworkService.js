@@ -485,7 +485,7 @@ class NetworkService {
       .append('g')
       .attr('id', 'gradient-container');
 
-    this.computeGradient(colorScale, 20);
+    this.computeGradient(colorScale);
 
     gradientContainer
       .append('text')
@@ -811,7 +811,7 @@ class NetworkService {
     return t => (t > 0 ? colorScale(linearScale(t)) : colorScale(t));
   }
 
-  computeGradient(colorScale, ticks = 4) {
+  computeGradient(colorScale, ticks = 15) {
     let linearGradient = d3
       .select('#gradient-container')
       .append('defs')
@@ -852,7 +852,7 @@ class NetworkService {
     }
 
     d3.select('#linear-gradient').remove();
-    this.computeGradient(colorScale, 20);
+    this.computeGradient(colorScale);
 
     d3.select('#color-gradient').attr('fill', 'url(#linear-gradient)');
 
