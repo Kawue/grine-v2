@@ -212,6 +212,7 @@ class NetworkService {
 
   initSVG(nodes, edges, lassoMode) {
     d3.select('#graph-container').remove();
+    d3.select('#gradient-container').remove();
 
     const lSvg = d3
       .select('.graphd3')
@@ -466,6 +467,7 @@ class NetworkService {
   computeNodeTrix(graph, nodes, deepestHierarchy, colorScale, minMaxTupel) {
     if (!d3.select('#nodeTrix-container').empty()) {
       d3.select('#nodeTrix-container').remove();
+      d3.select('#gradient-container').remove();
     }
     const center = [this.width * 0.5, this.height * 0.5];
 
@@ -1531,6 +1533,7 @@ class NetworkService {
   clearHighlight(nodes) {
     if (!d3.select('#nodeTrix-container').empty()) {
       d3.select('#nodeTrix-container').remove();
+      d3.select('#gradient-container').remove();
     }
     for (let i = 0; i < nodes.length; i++) {
       if (nodes[i].selected) {
