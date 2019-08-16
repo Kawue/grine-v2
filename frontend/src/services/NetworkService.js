@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import * as d3lasso from 'd3-lasso';
 import * as d3annotate from '../../node_modules/d3-svg-annotation';
+import * as _ from 'lodash';
 import store from '@/store';
 
 class NetworkService {
@@ -517,7 +518,17 @@ class NetworkService {
     for (const node of sel) {
       const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
       if (nodeHierarchy === deepestHierarchy) {
-        deepNodes.push(parseInt(node.name.split('n')[1], 10));
+        console.log(node);
+        deepNodes.push({
+          name: node.name,
+          color: node.color,
+          selected: node.selected,
+          mzs: node.mzs,
+          x: null,
+          y: null,
+          radius: this.smallestNodeRadius,
+          parent: node.parent,
+        });
       } else {
         let childs = [...node.childs];
         let hierarchyCounter = 1;
@@ -532,20 +543,29 @@ class NetworkService {
           childs = childs.flat();
           hierarchyCounter++;
         }
-        deepNodes.push(...childs);
+        const deepestHierarchyPrefix = 'h' + deepestHierarchy + 'n';
+        deepNodes.push(
+          ...childs.map(c => {
+            return {
+              name: deepestHierarchyPrefix + c,
+              color: node.color,
+              selected: node.selected,
+              mzs:
+                graph['hierarchy' + deepestHierarchy].nodes[
+                  deepestHierarchyPrefix + c
+                ].mzs,
+              x: null,
+              y: null,
+              radius: this.smallestNodeRadius,
+              parent:
+                graph['hierarchy' + deepestHierarchy].nodes[
+                  deepestHierarchyPrefix + c
+                ].membership,
+            };
+          })
+        );
       }
     }
-
-    // sort nodes by parents
-    const maxHierarchyPrefix = 'h' + deepestHierarchy + 'n';
-    deepNodes = deepNodes.map(n => {
-      return {
-        name: maxHierarchyPrefix + n,
-        parent:
-          graph['hierarchy' + deepestHierarchy].nodes[maxHierarchyPrefix + n]
-            .membership,
-      };
-    });
     const map = {};
     let heatmap = [];
     // construct empty heatmap and data structure to map from node name to index in heatmap
@@ -627,6 +647,61 @@ class NetworkService {
           this.nodeTrixMouseOutCell(n, colorScale);
         });
     }
+    const length = deepNodes.length;
+    for (let i = 0; i < length; i++) {
+      // left column
+      deepNodes[i]['position'] = 'L';
+      deepNodes[i]['column'] = -1;
+      deepNodes[i]['row'] = i;
+      deepNodes[i].selected = false;
+      deepNodes[i].x = center[0] - 0.5 * size;
+      deepNodes[i].y = center[1] + 0.5 * size + i * size;
+
+      // right column
+      const right = _.cloneDeep(deepNodes[i]);
+      right.position = 'R';
+      right.x = center[0] + size * (length + 0.5);
+      right.column = length;
+      deepNodes.push(right);
+
+      // top row
+      const top = _.cloneDeep(deepNodes[i]);
+      top.position = 'T';
+      top.x = center[0] + 0.5 * size + i * size;
+      top.y = center[1] - 0.5 * size;
+      top.row = -1;
+      top.column = i;
+      deepNodes.push(top);
+
+      // bottom row
+      const bottom = _.cloneDeep(top);
+      top.position = 'B';
+      top.y = center[1] + size * (0.5 + length);
+      top.row = length;
+      top.column = i;
+      deepNodes.push(bottom);
+    }
+    d3.select('#nodeTrix-container')
+      .append('g')
+      .attr('id', 'matrix-nodes')
+      .selectAll('newNodes')
+      .data(deepNodes)
+      .enter()
+      .append('rect')
+      .attr('x', n => n.x - n.radius)
+      .attr('y', n => n.y - n.radius)
+      .attr('rx', n => (n.selected ? 0 : n.radius))
+      .attr('id', n => n.name + n.position)
+      .attr('ry', n => (n.selected ? 0 : n.radius))
+      .attr('row', n => n.row)
+      .attr('column', n => n.column)
+      .attr('width', n => 2 * n.radius)
+      .attr('height', n => 2 * n.radius)
+      .attr('fill', n => n.color)
+      .attr('numMz', n => n.mzs)
+      // .on('click', this.nodeClick)
+      .on('mouseover', NetworkService.mouseOver)
+      .on('mouseout', NetworkService.mouseOut);
   }
 
   nodeTrixMouseInContainer(colorScale) {
@@ -634,30 +709,32 @@ class NetworkService {
       .append('g')
       .attr('id', 'gradient-annotation-group')
       .style('pointer-events', 'none');
-    const container = d3.select('#matrix');
+    const container = d3.select('#nodeTrix-container');
     container
-      .selectAll('.nodeTrixCell')
+      .selectAll('rect')
       .attr('fill', n =>
         d3
-          .color(colorScale(n.weight))
+          .color(n.radius != null ? n.color : colorScale(n.weight))
           .darker(this.darkCoefficient)
           .toString()
       )
       .attr('stroke', n =>
-        d3
-          .color(colorScale(n.weight))
-          .darker(this.darkCoefficient)
-          .toString()
+        n.radius != null
+          ? null
+          : d3
+              .color(colorScale(n.weight))
+              .darker(this.darkCoefficient)
+              .toString()
       );
   }
 
   nodeTrixMouseOutContainer(colorScale) {
     d3.select('#gradient-annotation-group').remove();
-    const container = d3.select('#matrix');
+    const container = d3.select('#nodeTrix-container');
     container
-      .selectAll('.nodeTrixCell')
-      .attr('fill', n => colorScale(n.weight))
-      .attr('stroke', n => colorScale(n.weight));
+      .selectAll('rect')
+      .attr('fill', n => (n.radius != null ? n.color : colorScale(n.weight)))
+      .attr('stroke', n => (n.radius != null ? null : colorScale(n.weight)));
   }
 
   nodeTrixMouseInCell(n, colorScale) {
@@ -685,7 +762,7 @@ class NetworkService {
       d3.select('#gradient-annotation-group').call(makeAnnotations);
     }
 
-    const container = d3.select('#matrix');
+    const container = d3.select('#nodeTrix-container');
     container
       .selectAll(`[row='${n.row}']`)
       .filter(d => {
@@ -695,8 +772,8 @@ class NetworkService {
           return d.column >= n.column;
         }
       })
-      .attr('stroke', 'white')
-      .attr('fill', n => colorScale(n.weight));
+      .attr('stroke', n => (n.radius != null ? null : 'white'))
+      .attr('fill', n => (n.radius != null ? n.color : colorScale(n.weight)));
     container
       .selectAll(`[row='${n.column}']`)
       .filter(d => {
@@ -706,8 +783,8 @@ class NetworkService {
           return d.column <= n.row;
         }
       })
-      .attr('stroke', 'white')
-      .attr('fill', n => colorScale(n.weight));
+      .attr('stroke', n => (n.radius != null ? null : 'white'))
+      .attr('fill', n => (n.radius != null ? n.color : colorScale(n.weight)));
     container
       .selectAll(`[column='${n.column}']`)
       .filter(d => {
@@ -717,8 +794,8 @@ class NetworkService {
           return d.row <= n.row;
         }
       })
-      .attr('stroke', 'white')
-      .attr('fill', n => colorScale(n.weight));
+      .attr('stroke', n => (n.radius != null ? null : 'white'))
+      .attr('fill', n => (n.radius != null ? n.color : colorScale(n.weight)));
     container
       .selectAll(`[column='${n.row}']`)
       .filter(d => {
@@ -728,54 +805,60 @@ class NetworkService {
           return d.row >= n.column;
         }
       })
-      .attr('stroke', 'white')
-      .attr('fill', n => colorScale(n.weight));
+      .attr('stroke', n => (n.radius != null ? null : 'white'))
+      .attr('fill', n => (n.radius != null ? n.color : colorScale(n.weight)));
   }
 
   nodeTrixMouseOutCell(n, colorScale) {
     d3.select('#gradient-container')
       .select('.annotations')
       .remove();
-    const container = d3.select('#matrix');
+    const container = d3.select('#nodeTrix-container');
     container
       .selectAll(`[row='${n.row}']`)
       .attr('stroke', n =>
-        d3
-          .color(colorScale(n.weight))
-          .darker(this.darkCoefficient)
-          .toString()
+        n.radius != null
+          ? null
+          : d3
+              .color(colorScale(n.weight))
+              .darker(this.darkCoefficient)
+              .toString()
       )
       .attr('fill', n =>
         d3
-          .color(colorScale(n.weight))
+          .color(n.radius != null ? n.color : colorScale(n.weight))
           .darker(this.darkCoefficient)
           .toString()
       );
     container
       .selectAll(`[row='${n.column}']`)
       .attr('stroke', n =>
-        d3
-          .color(colorScale(n.weight))
-          .darker(this.darkCoefficient)
-          .toString()
+        n.radius != null
+          ? null
+          : d3
+              .color(colorScale(n.weight))
+              .darker(this.darkCoefficient)
+              .toString()
       )
       .attr('fill', n =>
         d3
-          .color(colorScale(n.weight))
+          .color(n.radius != null ? n.color : colorScale(n.weight))
           .darker(this.darkCoefficient)
           .toString()
       );
     container
       .selectAll(`[column='${n.column}']`)
       .attr('stroke', n =>
-        d3
-          .color(colorScale(n.weight))
-          .darker(this.darkCoefficient)
-          .toString()
+        n.radius != null
+          ? null
+          : d3
+              .color(colorScale(n.weight))
+              .darker(this.darkCoefficient)
+              .toString()
       )
       .attr('fill', n =>
         d3
-          .color(colorScale(n.weight))
+          .color(n.radius != null ? n.color : colorScale(n.weight))
           .darker(this.darkCoefficient)
           .toString()
       );
@@ -783,14 +866,16 @@ class NetworkService {
     container
       .selectAll(`[column='${n.row}']`)
       .attr('stroke', n =>
-        d3
-          .color(colorScale(n.weight))
-          .darker(this.darkCoefficient)
-          .toString()
+        n.radius != null
+          ? null
+          : d3
+              .color(colorScale(n.weight))
+              .darker(this.darkCoefficient)
+              .toString()
       )
       .attr('fill', n =>
         d3
-          .color(colorScale(n.weight))
+          .color(n.radius != null ? n.color : colorScale(n.weight))
           .darker(this.darkCoefficient)
           .toString()
       );
