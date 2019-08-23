@@ -165,26 +165,38 @@ def graph_data_all_datasets():
 
 # returns PCA RGB image
 def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_threshold):
+    # filter pca dataframe by dataset name
     single_dframe = pca_dframe.loc[pca_dframe.index.get_level_values("dataset") == ds_name]
+
+    # get the x and y positions/columns from the pca
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
 
+    # get the r,g and b values/volumns from the pca
     r = np.array(single_dframe['pcaR'])
     g = np.array(single_dframe['pcaG'])
     b = np.array(single_dframe['pcaB'])
+
+    # norm the rgb values to a number between 0 and 1
     r_norm = np.interp(r, (r.min(), r.max()), (0, 1))
     g_norm = np.interp(g, (g.min(), g.max()), (0, 1))
     b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
 
     intensity = [1]*len(r)
     if len(mz_values):
+        # mz_raw_data returns format [pos_x, pos_y, intensity] from the non-pc dataset, intensity based on
+        # passed merge_method
         mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-        intensity = mz_raw_data[2]
+        intensity = mz_raw_data[2]  # we only need the intensity
 
         if data_threshold is not None:
-            intensity[intensity < data_threshold] = 0  # binarization
+            # we have a threshold, so we set all intensities to 0 which are below that threshold
+            # using binarization
+            intensity[intensity < data_threshold] = 0
             intensity[intensity >= data_threshold] = 1
 
+    # we return something like this:
+    # [{x: 27, y: 22, color: "#1464830c"}, {x: 28, y: 22, color: "#11677809"}, ...]
     return [
         {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, i], keep_alpha=True)}
         for x, y, r, g, b, i in zip(pos_x, pos_y, r_norm, g_norm, b_norm, intensity)
