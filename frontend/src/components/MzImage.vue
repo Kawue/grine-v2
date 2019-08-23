@@ -162,8 +162,6 @@ export default {
       } else {
         if (this.enableClickCopyToLassoImage) {
           store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
-        } else {
-          store.commit('CLEAR_IMAGE', this.imageDataIndex);
         }
       }
     },
@@ -172,7 +170,7 @@ export default {
     },
     widgetStyle() {
       let style = 'height: ' + this.height + 'px;';
-      if (!this.enableLasso) {
+      if (this.enableClickCopyToLassoImage) {
         style += 'cursor: pointer';
       }
       return style;
