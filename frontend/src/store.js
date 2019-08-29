@@ -782,7 +782,11 @@ export default new Vuex.Store({
       }
     },
     mzlistUpdatedMzs: (context, data) => {
-      context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
+      if (data.length === 1) {
+        context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
+      } else {
+        context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+      }
       context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
