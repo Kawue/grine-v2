@@ -573,7 +573,7 @@ export default new Vuex.Store({
         state.originalGraphData.graphs
       );
     },
-    RESET_SELECTION: state => {
+    RESET_SELECTION: (state, clearLasso) => {
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -594,6 +594,10 @@ export default new Vuex.Store({
       state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
       state.images.imageData[IMAGE_INDEX_PCA].mzValues = [];
       state.images.imageData[IMAGE_INDEX_PCA].points = [];
+      if (clearLasso) {
+        state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
+        state.images.imageData[IMAGE_INDEX_LASSO].points = [];
+      }
     },
     MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(

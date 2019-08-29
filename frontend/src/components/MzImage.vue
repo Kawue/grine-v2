@@ -158,7 +158,7 @@ export default {
   methods: {
     imageClick() {
       if (this.enableLasso) {
-        store.commit('RESET_SELECTION');
+        store.commit('RESET_SELECTION', true);
       } else {
         if (this.enableClickCopyToLassoImage) {
           store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);

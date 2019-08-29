@@ -1,3 +1,16 @@
+1. Wenn in der mz Liste mehrere Werte markiert werden, dann werden das mz Bild und das aggregate Bild getriggert.
+Es sollte aber nur das aggregate sein.
+
+5. Wenn das Lasso aktiv ist, es wird ein Knoten zur Kontrolle angeklickt und das neue Bild wird in den
+Cache geladen, dann kann wieder im Graphen geklickt werden und alle Knoten morphen sich.
+Gleichzeitig bleibt der im Cache ausgewählt. Das lässt sich nun auf 2 Arten lösen:
+a) Es kann kein neues Bild in den Cache geladen werden, wenn das Lasso aktiv ist.
+b) Wenn ein neues Bild in den Cache geladen wird, dann wird das Lasso gelöst, der
+Graph freigegeben und der Knoten zu dem in den Cache geladenen Bild wird markiert.
+
+
+
+
 # Grine v2
 
 ## Project setup
