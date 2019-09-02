@@ -217,13 +217,12 @@ class NetworkService {
     d.annotations = null;
   }
 
-  static mouseOverNodeTrixNode(d) {
+  static mouseOverNodeTrixCell(d) {
     d3.select('#' + d.name).attr('class', 'selected');
     const annotationText = 'mz Value: ' + d.mzs[0] + '\n' + d.name;
 
     let delta = d.radius + 20;
     if (d.position === 'L' || d.position === 'T') {
-      console.log('TOP or LEFT');
       delta = -1 * delta;
     }
     const annotations = [
@@ -234,7 +233,7 @@ class NetworkService {
           wrapSplitter: '\n',
         },
         subject: {
-          radius: d.radius + 10,
+          radius: d.radius + 5,
         },
         x: d.x,
         y: d.y,
@@ -522,12 +521,14 @@ class NetworkService {
       .append('text')
       .attr('id', 'minWeight')
       .attr('x', this.gradientScale.x)
+      .attr('fill', '#efebdc')
       .attr('y', this.gradientScale.y + this.gradientScale.height + 20)
       .text(this.gradientScale.minWeight.toFixed(2));
     gradientContainer
       .append('text')
       .attr('id', 'maxWeight')
       .attr('x', this.gradientScale.x + this.gradientScale.width - 30)
+      .attr('fill', '#efebdc')
       .attr('y', this.gradientScale.y + this.gradientScale.height + 20)
       .text(this.gradientScale.maxWeight.toFixed(2));
 
@@ -648,6 +649,8 @@ class NetworkService {
           row: i,
           column: j,
           weight: 0,
+          source: deepNodes[i].name,
+          target: deepNodes[j].name,
         });
         if (i < j) {
           tempArray[j].weight = heatmap[j][i];
@@ -729,10 +732,11 @@ class NetworkService {
       .attr('column', n => n.column)
       .attr('width', n => 2 * n.radius)
       .attr('height', n => 2 * n.radius)
+      .attr('pos', n => n.position)
       .attr('fill', n => n.color)
       .attr('numMz', n => n.mzs)
       // .on('click', this.nodeClick)
-      .on('mouseover', NetworkService.mouseOverNodeTrixNode)
+      .on('mouseover', NetworkService.mouseOverNodeTrixCell)
       .on('mouseout', NetworkService.mouseOut);
   }
 
@@ -742,6 +746,10 @@ class NetworkService {
       .attr('id', 'gradient-annotation-group')
       .style('pointer-events', 'none');
     const container = d3.select('#nodeTrix-container');
+    container
+      .append('g')
+      .attr('id', 'nodeTrix-annotation-group')
+      .style('pointer-events', 'none');
     container
       .selectAll('rect')
       .attr('fill', n =>
@@ -763,6 +771,7 @@ class NetworkService {
   nodeTrixMouseOutContainer(colorScale) {
     d3.select('#gradient-annotation-group').remove();
     const container = d3.select('#nodeTrix-container');
+    container.select('#nodeTrix-annotation-group').remove();
     container
       .selectAll('rect')
       .attr('fill', n => (n.radius != null ? n.color : colorScale(n.weight)))
@@ -795,6 +804,93 @@ class NetworkService {
     }
 
     const container = d3.select('#nodeTrix-container');
+    const annotations = [];
+    if (n.column <= n.row) {
+      const bottom = d3
+        .select('#matrix-nodes')
+        .selectAll(`[column='${n.column}']`)
+        .data()[0];
+      const left = d3
+        .select('#matrix-nodes')
+        .selectAll(`[row='${n.row}']`)
+        .data()[0];
+      annotations.push({
+        note: {
+          label: 'mz Value: ' + bottom.mzs[0] + '\n' + bottom.name,
+          // create a newline whenever you read this symbol
+          wrapSplitter: '\n',
+        },
+        subject: {
+          radius: bottom.radius + 5,
+        },
+        x: bottom.x,
+        y: bottom.y,
+        dx: bottom.radius + 20,
+        dy: bottom.radius + 20,
+        color: '#efebdc',
+        type: d3annotate.annotationCalloutCircle,
+      });
+      annotations.push({
+        note: {
+          label: 'mz Value: ' + left.mzs[0] + '\n' + left.name,
+          // create a newline whenever you read this symbol
+          wrapSplitter: '\n',
+        },
+        subject: {
+          radius: left.radius + 5,
+        },
+        x: left.x,
+        y: left.y,
+        dx: -(left.radius + 20),
+        dy: -(left.radius + 20),
+        color: '#efebdc',
+        type: d3annotate.annotationCalloutCircle,
+      });
+    } else {
+      const top = d3
+        .select('#matrix-nodes')
+        .selectAll(`[column='${n.column}']`)
+        .data()[1];
+      const right = d3
+        .select('#matrix-nodes')
+        .selectAll(`[row='${n.row}']`)
+        .data()[1];
+      annotations.push({
+        note: {
+          label: 'mz Value: ' + right.mzs[0] + '\n' + right.name,
+          // create a newline whenever you read this symbol
+          wrapSplitter: '\n',
+        },
+        subject: {
+          radius: right.radius + 5,
+        },
+        x: right.x,
+        y: right.y,
+        dx: right.radius + 20,
+        dy: right.radius + 20,
+        color: '#efebdc',
+        type: d3annotate.annotationCalloutCircle,
+      });
+      annotations.push({
+        note: {
+          label: 'mz Value: ' + top.mzs[0] + '\n' + top.name,
+          // create a newline whenever you read this symbol
+          wrapSplitter: '\n',
+        },
+        subject: {
+          radius: top.radius + 5,
+        },
+        x: top.x,
+        y: top.y,
+        dx: -(top.radius + 20),
+        dy: -(top.radius + 20),
+        color: '#efebdc',
+        type: d3annotate.annotationCalloutCircle,
+      });
+    }
+    d3.select('#nodeTrix-annotation-group').call(
+      d3annotate.annotation().annotations(annotations)
+    );
     container
       .selectAll(`[row='${n.row}']`)
       .filter(d => {
@@ -846,6 +942,7 @@ class NetworkService {
       .select('.annotations')
       .remove();
     const container = d3.select('#nodeTrix-container');
+    container.select('.annotations').remove();
     container
       .selectAll(`[row='${n.row}']`)
       .attr('stroke', n =>
