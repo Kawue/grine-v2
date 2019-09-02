@@ -9,8 +9,8 @@ class NetworkService {
   smallestNodeRadius = 15;
   height = window.innerHeight;
   width = window.innerWidth;
-  normalEdgeColor = '#111';
-  hybridEdgeColor = '#999';
+  normalEdgeColor = '#efebdc';
+  hybridEdgeColor = '#cbc7b8';
   hybridEdgeCounter = 0;
   centerTransitionTime = 1000;
   darkCoefficient = 1.8;
@@ -121,7 +121,7 @@ class NetworkService {
           y: selected.data()[0].y,
           dx: selected.data()[0].radius + 20,
           dy: selected.data()[0].radius + 20,
-          color: 'teal',
+          color: '#efebdc',
           type: d3annotate.annotationCalloutCircle,
         },
       ];
@@ -175,9 +175,7 @@ class NetworkService {
   }
 
   static mouseOver(d) {
-    d3.select('#' + d.name)
-      .attr('r', d.radius + 5)
-      .attr('class', 'selected');
+    d3.select('#' + d.name).attr('class', 'selected');
     let annotationText = '';
     if (d.childs != null && d.mzs.length > 1) {
       annotationText =
@@ -201,7 +199,7 @@ class NetworkService {
         y: d.y,
         dx: d.radius + 20,
         dy: d.radius + 20,
-        color: 'teal',
+        color: '#efebdc',
         type: d3annotate.annotationCalloutCircle,
       },
     ];
@@ -214,12 +212,44 @@ class NetworkService {
   }
 
   static mouseOut(d) {
-    d3.select('#' + d.name)
-      .style('fill', n => n.color)
-      .attr('r', n => n.radius)
-      .attr('class', 'node');
+    d3.select('#' + d.name).attr('class', 'node');
     d3.selectAll('#node-annotation-group').remove();
     d.annotations = null;
+  }
+
+  static mouseOverNodeTrixNode(d) {
+    d3.select('#' + d.name).attr('class', 'selected');
+    const annotationText = 'mz Value: ' + d.mzs[0] + '\n' + d.name;
+
+    let delta = d.radius + 20;
+    if (d.position === 'L' || d.position === 'T') {
+      console.log('TOP or LEFT');
+      delta = -1 * delta;
+    }
+    const annotations = [
+      {
+        note: {
+          label: annotationText,
+          // create a newline whenever you read this symbol
+          wrapSplitter: '\n',
+        },
+        subject: {
+          radius: d.radius + 10,
+        },
+        x: d.x,
+        y: d.y,
+        dx: delta,
+        dy: delta,
+        color: '#efebdc',
+        type: d3annotate.annotationCalloutCircle,
+      },
+    ];
+    let makeAnnotations = d3annotate.annotation().annotations(annotations);
+    d3.select('#graph-container')
+      .append('g')
+      .attr('id', 'node-annotation-group')
+      .style('pointer-events', 'none')
+      .call(makeAnnotations);
   }
 
   initSVG(nodes, edges, lassoMode) {
@@ -647,6 +677,8 @@ class NetworkService {
           this.nodeTrixMouseOutCell(n, colorScale);
         });
     }
+
+    // render nodes on border of nodesTrix
     const length = deepNodes.length;
     for (let i = 0; i < length; i++) {
       // left column
@@ -700,7 +732,7 @@ class NetworkService {
       .attr('fill', n => n.color)
       .attr('numMz', n => n.mzs)
       // .on('click', this.nodeClick)
-      .on('mouseover', NetworkService.mouseOver)
+      .on('mouseover', NetworkService.mouseOverNodeTrixNode)
       .on('mouseout', NetworkService.mouseOut);
   }
 
@@ -753,7 +785,7 @@ class NetworkService {
           y: this.gradientScale.y + this.gradientScale.height,
           dx: 0,
           dy: 30,
-          color: 'teal',
+          color: '#efebdc',
           type: d3annotate.annotationCalloutElbow,
         },
       ];

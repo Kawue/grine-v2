@@ -49,12 +49,12 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(231, 231, 231, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   z-index: 100;
   color: white;
 }
 .lasso path {
-  stroke: rgb(80, 80, 80);
+  stroke: rgb(239, 235, 220);
   stroke-width: 2px;
 }
 .lasso .drawn {

@@ -237,6 +237,7 @@ export default {
 
 <style scoped lang="scss">
 .sidebar-widget {
+  background: inherit;
   &.expanded {
     width: 120px !important;
     overflow: hidden !important;
@@ -254,6 +255,13 @@ export default {
   width: 100%;
   text-align: center;
   margin-top: 8px;
+}
+
+select {
+  background-color: #4f5051;
+  color: white;
+  border: 1px solid #737374;
+  margin: 0 0 5px 0;
 }
 
 #annotation-mz-value {

@@ -110,6 +110,7 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: white;
+  border: #717273 1px solid;
 
   &.expanded {
     width: 200px;

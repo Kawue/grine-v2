@@ -251,6 +251,7 @@ export default {
 
   canvas {
     border: 1px solid lightgrey;
+    background: white;
   }
 
   .spinner {
