@@ -9,9 +9,10 @@ class NetworkService {
   smallestNodeRadius = 15;
   height = window.innerHeight;
   width = window.innerWidth;
-  normalEdgeColor = '#efebdc';
-  hybridEdgeColor = '#cbc7b8';
+  normalEdgeColor = '#e1ddcd';
+  hybridEdgeColor = '#cdc9ba';
   hybridEdgeCounter = 0;
+  annotationColor = '#f0ecdd';
   centerTransitionTime = 1000;
   darkCoefficient = 1.8;
   gradientScale = {
@@ -62,7 +63,7 @@ class NetworkService {
     return tupel;
   }
 
-  static simulationUpdate() {
+  simulationUpdate() {
     store.getters.networkSVGElements.linkElements
       .attr('x1', function(d) {
         return d.source.x;
@@ -121,7 +122,7 @@ class NetworkService {
           y: selected.data()[0].y,
           dx: selected.data()[0].radius + 20,
           dy: selected.data()[0].radius + 20,
-          color: '#efebdc',
+          color: this.annotationColor,
           type: d3annotate.annotationCalloutCircle,
         },
       ];
@@ -174,7 +175,7 @@ class NetworkService {
     d.fy = null;
   }
 
-  static mouseOver(d) {
+  mouseOver(d) {
     d3.select('#' + d.name).attr('class', 'selected');
     let annotationText = '';
     if (d.childs != null && d.mzs.length > 1) {
@@ -199,16 +200,15 @@ class NetworkService {
         y: d.y,
         dx: d.radius + 20,
         dy: d.radius + 20,
-        color: '#efebdc',
+        color: this.annotationColor,
         type: d3annotate.annotationCalloutCircle,
       },
     ];
-    let makeAnnotations = d3annotate.annotation().annotations(annotations);
     d3.select('#graph-container')
       .append('g')
       .attr('id', 'node-annotation-group')
       .style('pointer-events', 'none')
-      .call(makeAnnotations);
+      .call(d3annotate.annotation().annotations(annotations));
   }
 
   static mouseOut(d) {
@@ -217,7 +217,7 @@ class NetworkService {
     d.annotations = null;
   }
 
-  static mouseOverNodeTrixCell(d) {
+  mouseOverNodeTrixCell(d) {
     d3.select('#' + d.name).attr('class', 'selected');
     const annotationText = 'mz Value: ' + d.mzs[0] + '\n' + d.name;
 
@@ -239,7 +239,7 @@ class NetworkService {
         y: d.y,
         dx: delta,
         dy: delta,
-        color: '#efebdc',
+        color: this.annotationColor,
         type: d3annotate.annotationCalloutCircle,
       },
     ];
@@ -288,7 +288,7 @@ class NetworkService {
       .attr('numMz', d => d.mzs)
       .attr('childs', d => d.childs)
       .on('click', this.nodeClick)
-      .on('mouseover', NetworkService.mouseOver)
+      .on('mouseover', this.mouseOver.bind(this))
       .on('mouseout', NetworkService.mouseOut)
       .call(
         d3
@@ -380,7 +380,7 @@ class NetworkService {
       .force('forceCollide', d3.forceCollide().radius(d => d.radius))
       .alphaDecay(1 - Math.pow(0.001, 1 / parameters.iterations))
       .alpha(1)
-      .on('tick', NetworkService.simulationUpdate);
+      .on('tick', this.simulationUpdate.bind(this));
   }
 
   centerCamera(zoom) {
@@ -521,14 +521,14 @@ class NetworkService {
       .append('text')
       .attr('id', 'minWeight')
       .attr('x', this.gradientScale.x)
-      .attr('fill', '#efebdc')
+      .attr('fill', this.annotationColor)
       .attr('y', this.gradientScale.y + this.gradientScale.height + 20)
       .text(this.gradientScale.minWeight.toFixed(2));
     gradientContainer
       .append('text')
       .attr('id', 'maxWeight')
       .attr('x', this.gradientScale.x + this.gradientScale.width - 30)
-      .attr('fill', '#efebdc')
+      .attr('fill', this.annotationColor)
       .attr('y', this.gradientScale.y + this.gradientScale.height + 20)
       .text(this.gradientScale.maxWeight.toFixed(2));
 
@@ -549,7 +549,6 @@ class NetworkService {
     for (const node of sel) {
       const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
       if (nodeHierarchy === deepestHierarchy) {
-        console.log(node);
         deepNodes.push({
           name: node.name,
           color: node.color,
@@ -736,7 +735,7 @@ class NetworkService {
       .attr('fill', n => n.color)
       .attr('numMz', n => n.mzs)
       // .on('click', this.nodeClick)
-      .on('mouseover', NetworkService.mouseOverNodeTrixCell)
+      .on('mouseover', this.mouseOverNodeTrixCell)
       .on('mouseout', NetworkService.mouseOut);
   }
 
@@ -794,13 +793,14 @@ class NetworkService {
           y: this.gradientScale.y + this.gradientScale.height,
           dx: 0,
           dy: 30,
-          color: '#efebdc',
+          color: this.annotationColor,
           type: d3annotate.annotationCalloutElbow,
         },
       ];
-      let makeAnnotations = d3annotate.annotation().annotations(annotations);
 
-      d3.select('#gradient-annotation-group').call(makeAnnotations);
+      d3.select('#gradient-annotation-group').call(
+        d3annotate.annotation().annotations(annotations)
+      );
     }
 
     const container = d3.select('#nodeTrix-container');
@@ -827,7 +827,7 @@ class NetworkService {
         y: bottom.y,
         dx: bottom.radius + 20,
         dy: bottom.radius + 20,
-        color: '#efebdc',
+        color: this.annotationColor,
         type: d3annotate.annotationCalloutCircle,
       });
       annotations.push({
@@ -843,7 +843,7 @@ class NetworkService {
         y: left.y,
         dx: -(left.radius + 20),
         dy: -(left.radius + 20),
-        color: '#efebdc',
+        color: this.annotationColor,
         type: d3annotate.annotationCalloutCircle,
       });
     } else {
@@ -868,7 +868,7 @@ class NetworkService {
         y: right.y,
         dx: right.radius + 20,
         dy: right.radius + 20,
-        color: '#efebdc',
+        color: this.annotationColor,
         type: d3annotate.annotationCalloutCircle,
       });
       annotations.push({
@@ -884,13 +884,14 @@ class NetworkService {
         y: top.y,
         dx: -(top.radius + 20),
         dy: -(top.radius + 20),
-        color: '#efebdc',
+        color: this.annotationColor,
         type: d3annotate.annotationCalloutCircle,
       });
     }
     d3.select('#nodeTrix-annotation-group').call(
       d3annotate.annotation().annotations(annotations)
     );
+    debugger;
     container
       .selectAll(`[row='${n.row}']`)
       .filter(d => {
@@ -1412,7 +1413,7 @@ class NetworkService {
       .attr('numMz', nextNode.mzs)
       .attr('childs', nextNode.childs)
       .on('click', this.nodeClick)
-      .on('mouseover', NetworkService.mouseOver)
+      .on('mouseover', this.mouseOver.bind(this))
       .on('mouseout', NetworkService.mouseOut)
       .call(
         d3
@@ -1648,7 +1649,7 @@ class NetworkService {
       .attr('numMz', d => d.mzs)
       .attr('childs', d => d.childs)
       .on('click', this.nodeClick)
-      .on('mouseover', NetworkService.mouseOver)
+      .on('mouseover', this.mouseOver.bind(this))
       .on('mouseout', NetworkService.mouseOut)
       .call(
         d3

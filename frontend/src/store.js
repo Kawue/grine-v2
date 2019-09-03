@@ -645,7 +645,7 @@ export default new Vuex.Store({
       state.mzList.notVisibleMz = tuple[1];
     },
     MZ_IMAGE_LASSO_END: () => {
-      NetworkService.simulationUpdate();
+      networkService.simulationUpdate();
     },
   },
   actions: {
