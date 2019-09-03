@@ -504,12 +504,10 @@ class NetworkService {
     return lasso;
   }
 
-  computeNodeTrix(graph, nodes, deepestHierarchy, colorScale) {
+  computeNodeTrix(graph, nodes, edges, deepestHierarchy, colorScale) {
     if (!d3.select('#nodeTrix-container').empty()) {
-      d3.select('#nodeTrix-container').remove();
-      d3.select('#gradient-container').remove();
+      this.resetNodeTrix(nodes, edges);
     }
-
     const gradientContainer = d3
       .select('.graphd3')
       .append('g')
@@ -543,7 +541,18 @@ class NetworkService {
       .style('stroke-width', 1)
       .style('fill', 'url(#linear-gradient)');
 
-    const sel = NetworkService.getSelectedNodes(nodes);
+    const sel = NetworkService.getSelectedNodes(nodes, true);
+
+    d3.select('#node-container')
+      .selectAll("[active='true']")
+      .remove();
+
+    const oldElements = store.getters.networkNodeTrixOldElements;
+    oldElements.oldNodes = sel;
+    oldElements.oldEdges = NetworkService.removeEdgesFromNodes(
+      edges,
+      sel.map(n => n.name)
+    );
     let deepNodes = [];
     // compute nodes of the deepest hierarchy of selected nodes
     for (const node of sel) {
@@ -735,8 +744,32 @@ class NetworkService {
       .attr('fill', n => n.color)
       .attr('numMz', n => n.mzs)
       // .on('click', this.nodeClick)
-      .on('mouseover', this.mouseOverNodeTrixCell)
+      .on('mouseover', this.mouseOverNodeTrixCell.bind(this))
       .on('mouseout', NetworkService.mouseOut);
+  }
+
+  resetNodeTrix(nodes, edges) {
+    // debugger;
+    d3.select('#nodeTrix-container').remove();
+    d3.select('#gradient-container').remove();
+    const oldElements = store.getters.networkNodeTrixOldElements;
+    const newNodes = oldElements.oldNodes.splice(
+      0,
+      oldElements.oldNodes.length
+    );
+    const newEdges = oldElements.oldEdges.splice(
+      0,
+      oldElements.oldEdges.length
+    );
+    nodes.push(...newNodes);
+    edges.push(
+      ...newEdges.map(e => {
+        e.source = nodes[nodes.findIndex(n => n.name === e.source.name)];
+        e.target = nodes[nodes.findIndex(n => n.name === e.target.name)];
+        return e;
+      })
+    );
+    this.addNodes(newNodes, newEdges);
   }
 
   nodeTrixMouseInContainer(colorScale) {
@@ -891,7 +924,6 @@ class NetworkService {
     d3.select('#nodeTrix-annotation-group').call(
       d3annotate.annotation().annotations(annotations)
     );
-    debugger;
     container
       .selectAll(`[row='${n.row}']`)
       .filter(d => {
@@ -1123,7 +1155,9 @@ class NetworkService {
                 })
                 .attr('ry', 0)
                 .on('end', function() {
-                  d3.select(this).attr('transform', null);
+                  d3.select(this)
+                    .attr('transform', null)
+                    .attr('active', 'true');
                 });
             }
           }
@@ -1151,7 +1185,9 @@ class NetworkService {
                   );
                 })
                 .on('end', function() {
-                  d3.select(this).attr('transform', null);
+                  d3.select(this)
+                    .attr('transform', null)
+                    .attr('active', 'false');
                 });
             }
           }
@@ -1227,16 +1263,7 @@ class NetworkService {
     }
     nextNode.selected = selectNextNode;
 
-    // remove old edges from datastructure and svg
-    for (let i = edges.length - 1; i >= 0; i--) {
-      if (
-        nodesToRemove.findIndex(n => n === edges[i].source.name) >= 0 ||
-        nodesToRemove.findIndex(n => n === edges[i].target.name) >= 0
-      ) {
-        d3.select('#' + edges[i].name).remove();
-        edges.splice(i, 1);
-      }
-    }
+    NetworkService.removeEdgesFromNodes(edges, nodesToRemove);
 
     const newEdges = [];
 
@@ -1381,50 +1408,7 @@ class NetworkService {
     });
     edges.push(...newEdges);
 
-    // add new edges to svg
-    d3.select('#link-container')
-      .selectAll('newEdges')
-      .data(newEdges)
-      .enter()
-      .append('line')
-      .attr('class', 'edge')
-      .attr('id', l => l.name)
-      .attr('stroke-dasharray', l => (l.name.startsWith('edge') ? 4 : 0))
-      .attr('stroke', l =>
-        l.name.startsWith('edge') ? this.hybridEdgeColor : this.normalEdgeColor
-      );
-    store.getters.networkSVGElements.linkElements = d3
-      .select('#link-container')
-      .selectAll('line');
-
-    // add new node to svg
-    d3.select('#node-container')
-      .selectAll('newNodes')
-      .data([nextNode])
-      .enter()
-      .append('rect')
-      .attr('class', 'node')
-      .attr('rx', nextNode.selected ? 0 : nextNode.radius)
-      .attr('id', nextNode.name)
-      .attr('ry', nextNode.selected ? 0 : nextNode.radius)
-      .attr('width', 2 * nextNode.radius)
-      .attr('height', 2 * nextNode.radius)
-      .style('fill', nextNode.color)
-      .attr('numMz', nextNode.mzs)
-      .attr('childs', nextNode.childs)
-      .on('click', this.nodeClick)
-      .on('mouseover', this.mouseOver.bind(this))
-      .on('mouseout', NetworkService.mouseOut)
-      .call(
-        d3
-          .drag()
-          .on('start', this.dragstarted)
-          .on('drag', this.dragged)
-          .on('end', NetworkService.dragEnded)
-      );
-    store.getters.networkSVGElements.nodeElements = d3
-      .select('#node-container')
-      .selectAll('rect');
+    this.addNodes([nextNode], newEdges);
   }
 
   expandNode(graph, oldNode, nodes, edges) {
@@ -1465,15 +1449,7 @@ class NetworkService {
     }
 
     // remove old edges from datastructure and svg
-    for (let i = edges.length - 1; i >= 0; i--) {
-      if (
-        edges[i].source.name === oldNode.name ||
-        edges[i].target.name === oldNode.name
-      ) {
-        d3.select('#' + edges[i].name).remove();
-        edges.splice(i, 1);
-      }
-    }
+    NetworkService.removeEdgesFromNodes(edges, [oldNode.name]);
 
     const newEdges = [];
 
@@ -1618,49 +1594,7 @@ class NetworkService {
     });
     edges.push(...newEdges);
 
-    // add new edges to svg
-    d3.select('#link-container')
-      .selectAll('newEdges')
-      .attr('class', 'edge')
-      .data(newEdges)
-      .enter()
-      .append('line')
-      .attr('id', l => l.name)
-      .attr('stroke-dasharray', l => (l.name.startsWith('edge') ? 4 : 0))
-      .attr('stroke', l =>
-        l.name.startsWith('edge') ? this.hybridEdgeColor : this.normalEdgeColor
-      );
-    store.getters.networkSVGElements.linkElements = d3
-      .select('#link-container')
-      .selectAll('line');
-    // add new nodes to svg
-    d3.select('#node-container')
-      .selectAll('newNodes')
-      .data(newNodes)
-      .enter()
-      .append('rect')
-      .attr('class', 'node')
-      .attr('rx', d => (d.selected ? 0 : d.radius))
-      .attr('id', d => d.name)
-      .attr('ry', d => (d.selected ? 0 : d.radius))
-      .attr('width', d => 2 * d.radius)
-      .attr('height', d => 2 * d.radius)
-      .style('fill', d => d.color)
-      .attr('numMz', d => d.mzs)
-      .attr('childs', d => d.childs)
-      .on('click', this.nodeClick)
-      .on('mouseover', this.mouseOver.bind(this))
-      .on('mouseout', NetworkService.mouseOut)
-      .call(
-        d3
-          .drag()
-          .on('start', this.dragstarted)
-          .on('drag', this.dragged)
-          .on('end', NetworkService.dragEnded)
-      );
-    store.getters.networkSVGElements.nodeElements = d3
-      .select('#node-container')
-      .selectAll('rect');
+    this.addNodes(newNodes, newEdges);
   }
 
   highlightNodesByName(nodes, nodeNames) {
@@ -1703,7 +1637,9 @@ class NetworkService {
               );
             })
             .on('end', function() {
-              d3.select(this).attr('transform', null);
+              d3.select(this)
+                .attr('transform', null)
+                .attr('active', 'false');
             });
         }
       }
@@ -1804,42 +1740,47 @@ class NetworkService {
           };
         })
         .on('end', function() {
-          d3.select(this).attr('transform', null);
+          d3.select(this)
+            .attr('transform', null)
+            .attr('active', 'true');
         });
     }
   }
 
   clearHighlight(nodes) {
-    if (!d3.select('#nodeTrix-container').empty()) {
-      d3.select('#nodeTrix-container').remove();
-      d3.select('#gradient-container').remove();
-    }
     for (let i = 0; i < nodes.length; i++) {
-      nodes[i].selected = false;
-      d3.select('#' + nodes[i].name)
-        .transition()
-        .duration(250)
-        .attr('rx', nodes[i].radius)
-        .attr('ry', nodes[i].radius)
-        .attrTween('transform', function() {
-          return d3.interpolateString(
-            'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
-            'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
-          );
-        })
-        .on('end', function() {
-          d3.select(this)
-            .attr('transform', null)
-            .attr('class', 'node');
-        });
+      if (nodes[i].selected) {
+        nodes[i].selected = false;
+        d3.select('#' + nodes[i].name)
+          .transition()
+          .duration(250)
+          .attr('rx', nodes[i].radius)
+          .attr('ry', nodes[i].radius)
+          .attrTween('transform', function() {
+            return d3.interpolateString(
+              'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
+              'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
+            );
+          })
+          .on('end', function() {
+            d3.select(this)
+              .attr('transform', null)
+              .attr('class', 'node')
+              .attr('active', 'false');
+          });
+      }
     }
   }
 
-  static getSelectedNodes(nodes) {
+  static getSelectedNodes(nodes, removeNodes) {
     let nodesSelected = [];
-    for (let i = 0; i < nodes.length; i++) {
+    for (let i = nodes.length - 1; i >= 0; i--) {
       if (nodes[i].selected === true) {
-        nodesSelected.push(nodes[i]);
+        nodesSelected.push(_.cloneDeep(nodes[i]));
+        if (removeNodes) {
+          nodesSelected[nodesSelected.length - 1].selected = false;
+          nodes.splice(i, 1);
+        }
       }
     }
     return nodesSelected;
@@ -1867,6 +1808,68 @@ class NetworkService {
       parent = NetworkService.getParentNodeFromNode(parent, graph);
     } while (parent !== null);
     return lastParent;
+  }
+
+  addNodes(nodes, edges) {
+    // add new edges to svg
+    d3.select('#link-container')
+      .selectAll('newEdges')
+      .data(edges)
+      .enter()
+      .append('line')
+      .attr('class', 'edge')
+      .attr('id', l => l.name)
+      .attr('stroke-dasharray', l => (l.name.startsWith('edge') ? 4 : 0))
+      .attr('stroke', l =>
+        l.name.startsWith('edge') ? this.hybridEdgeColor : this.normalEdgeColor
+      );
+    store.getters.networkSVGElements.linkElements = d3
+      .select('#link-container')
+      .selectAll('line');
+
+    // add new node to svg
+    d3.select('#node-container')
+      .selectAll('newNodes')
+      .data(nodes)
+      .enter()
+      .append('rect')
+      .attr('class', 'node')
+      .attr('rx', n => (n.selected ? 0 : n.radius))
+      .attr('id', n => n.name)
+      .attr('ry', n => (n.selected ? 0 : n.radius))
+      .attr('width', n => 2 * n.radius)
+      .attr('height', n => 2 * n.radius)
+      .style('fill', n => n.color)
+      .attr('numMz', n => n.mzs)
+      .attr('childs', n => n.childs)
+      .on('click', this.nodeClick)
+      .on('mouseover', this.mouseOver.bind(this))
+      .on('mouseout', NetworkService.mouseOut)
+      .call(
+        d3
+          .drag()
+          .on('start', this.dragstarted)
+          .on('drag', this.dragged)
+          .on('end', NetworkService.dragEnded)
+      );
+    store.getters.networkSVGElements.nodeElements = d3
+      .select('#node-container')
+      .selectAll('rect');
+    store.commit('NETWORK_SIMULATION_INIT');
+  }
+
+  static removeEdgesFromNodes(edges, nodeNames) {
+    const removedEdges = [];
+    for (let i = edges.length - 1; i >= 0; i--) {
+      if (
+        nodeNames.findIndex(name => name === edges[i].source.name) >= 0 ||
+        nodeNames.findIndex(name => name === edges[i].target.name) >= 0
+      ) {
+        d3.select('#' + edges[i].name).remove();
+        removedEdges.push(...edges.splice(i, 1));
+      }
+    }
+    return removedEdges;
   }
 }
 export default NetworkService;
