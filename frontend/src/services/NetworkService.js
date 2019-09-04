@@ -78,6 +78,23 @@ class NetworkService {
         return d.target.y;
       });
 
+    if (store.getters.networkNodeTrixNewElements.newEdges.length > 0) {
+      d3.select('#nodeTrix-edges')
+        .selectAll('line')
+        .attr('x1', function(d) {
+          return d.source.x;
+        })
+        .attr('y1', function(d) {
+          return d.source.y;
+        })
+        .attr('x2', function(d) {
+          return d.target.x;
+        })
+        .attr('y2', function(d) {
+          return d.target.y;
+        });
+    }
+
     store.getters.networkSVGElements.nodeElements
       .attr('x', function(d) {
         return d.x - d.radius;
@@ -689,6 +706,112 @@ class NetworkService {
         });
     }
 
+    const newEdges = [];
+    // normal edges to border nodes
+    Object.keys(graph['hierarchy' + deepestHierarchy]['edges']).forEach(l => {
+      let sourceIndex = deepNodes.findIndex(d => {
+        return (
+          d.name === graph['hierarchy' + deepestHierarchy]['edges'][l].source
+        );
+      });
+      if (sourceIndex >= 0) {
+        const targetIndex = nodes.findIndex(d => {
+          return (
+            d.name === graph['hierarchy' + deepestHierarchy]['edges'][l].target
+          );
+        });
+        if (targetIndex >= 0) {
+          newEdges.push({
+            source: deepNodes[sourceIndex],
+            target: nodes[targetIndex],
+            name: graph['hierarchy' + deepestHierarchy].edges[l]['name'],
+          });
+        }
+      } else {
+        sourceIndex = nodes.findIndex(d => {
+          return (
+            d.name === graph['hierarchy' + deepestHierarchy]['edges'][l].source
+          );
+        });
+        if (sourceIndex >= 0) {
+          const targetIndex = deepNodes.findIndex(d => {
+            return (
+              d.name ===
+              graph['hierarchy' + deepestHierarchy]['edges'][l].target
+            );
+          });
+          if (targetIndex >= 0) {
+            newEdges.push({
+              source: deepNodes[targetIndex],
+              target: nodes[sourceIndex],
+              name: graph['hierarchy' + deepestHierarchy].edges[l]['name'],
+            });
+          }
+        }
+      }
+    });
+
+    // hybrid edges to left border node
+    for (const node of nodes) {
+      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      let hierarchyCounter = 1;
+      if (nodeHierarchy < deepestHierarchy) {
+        let childs = [...node.childs];
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          // hierarchy of current node is still less than hierarchy of newNodes
+          // go one hierarchy deeper
+          const investigatesNodePrefix =
+            'h' + (nodeHierarchy + hierarchyCounter) + 'n';
+          if (nodeHierarchy + hierarchyCounter < deepestHierarchy) {
+            childs = childs.map(c => {
+              return graph['hierarchy' + (nodeHierarchy + hierarchyCounter)]
+                .nodes[investigatesNodePrefix + c].childs;
+            });
+            childs = childs.flat();
+            hierarchyCounter++;
+          } else {
+            // current hierarchy is equal with hierarchy of newNodes
+            const edgeKeys = Object.keys(
+              graph['hierarchy' + deepestHierarchy]['edges']
+            );
+            for (const l of edgeKeys) {
+              for (const deepNode of deepNodes) {
+                // search all edges where source or target is a newNode
+                if (
+                  graph['hierarchy' + deepestHierarchy]['edges'][l].target ===
+                    deepNode.name ||
+                  graph['hierarchy' + deepestHierarchy]['edges'][l].source ===
+                    deepNode.name
+                ) {
+                  for (const c of childs) {
+                    // search all edges where source or target is a child of current node in current hierarchy
+                    if (
+                      graph['hierarchy' + deepestHierarchy]['edges'][l]
+                        .target ===
+                        investigatesNodePrefix + c ||
+                      graph['hierarchy' + deepestHierarchy]['edges'][l]
+                        .source ===
+                        investigatesNodePrefix + c
+                    ) {
+                      newEdges.push({
+                        source: deepNode,
+                        target: node,
+                        name: 'edge' + this.hybridEdgeCounter,
+                      });
+                      this.hybridEdgeCounter += 1;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+            break;
+          }
+        }
+      }
+    }
+
     // render nodes on border of nodesTrix
     const length = deepNodes.length;
     for (let i = 0; i < length; i++) {
@@ -724,6 +847,23 @@ class NetworkService {
       top.column = i;
       deepNodes.push(bottom);
     }
+    store.getters.networkNodeTrixNewElements.newNodes = deepNodes;
+    store.getters.networkNodeTrixNewElements.newEdges = newEdges;
+
+    d3.select('#nodeTrix-container')
+      .append('g')
+      .attr('id', 'nodeTrix-edges')
+      .selectAll('newEdges')
+      .data(newEdges)
+      .enter()
+      .append('line')
+      .attr('class', 'edge')
+      .attr('id', l => l.name)
+      .attr('stroke-dasharray', l => (l.name.startsWith('edge') ? 4 : 0))
+      .attr('stroke', l =>
+        l.name.startsWith('edge') ? this.hybridEdgeColor : this.normalEdgeColor
+      );
+
     d3.select('#nodeTrix-container')
       .append('g')
       .attr('id', 'matrix-nodes')
@@ -749,9 +889,10 @@ class NetworkService {
   }
 
   resetNodeTrix(nodes, edges) {
-    // debugger;
     d3.select('#nodeTrix-container').remove();
     d3.select('#gradient-container').remove();
+    store.getters.networkNodeTrixNewElements.newEdges = [];
+    store.getters.networkNodeTrixNewElements.newNodes = [];
     const oldElements = store.getters.networkNodeTrixOldElements;
     const newNodes = oldElements.oldNodes.splice(
       0,
@@ -1069,7 +1210,6 @@ class NetworkService {
       (this.gradientScale.maxWeight - this.gradientScale.minWeight) / ticks;
     let counter = this.gradientScale.minWeight;
     for (let j = 0; j <= ticks; j++) {
-      // console.log((j * 100) / ticks + '%', colorScale(counter));
       linearGradient
         .append('stop')
         .attr('offset', (j * 100) / ticks + '%')

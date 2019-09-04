@@ -145,6 +145,10 @@ export default new Vuex.Store({
           oldNodes: [],
           oldEdges: [],
         },
+        newElements: {
+          newNodes: [],
+          newEdges: [],
+        },
       },
     },
     options: {
@@ -279,6 +283,9 @@ export default new Vuex.Store({
     },
     networkNodeTrixOldElements: state => {
       return state.network.nodeTrix.oldElements;
+    },
+    networkNodeTrixNewElements: state => {
+      return state.network.nodeTrix.newElements;
     },
     stateOptionsGraph: state => {
       return state.options.data.graph;
