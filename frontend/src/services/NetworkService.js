@@ -1548,6 +1548,42 @@ class NetworkService {
     });
     edges.push(...newEdges);
 
+    // if nodeTrix is active, update the edges to the border of the matrix
+    if (store.getters.networkNodeTrixNewElements.newNodes.length > 0) {
+      const oldEdges = NetworkService.removeEdgesFromNodes(
+        store.getters.networkNodeTrixNewElements.newEdges,
+        nodesToRemove
+      );
+      const newNodeTrixEdges = [];
+      for (const e of oldEdges) {
+        if (
+          newNodeTrixEdges.findIndex(
+            edge =>
+              e.source.name === edge.source.name &&
+              e.target.name === edge.target.name
+          ) === -1
+        ) {
+          newNodeTrixEdges.push({
+            source: e.source,
+            target: nextNode,
+            name: 'edge' + this.hybridEdgeCounter,
+          });
+          this.hybridEdgeCounter += 1;
+        }
+      }
+      store.getters.networkNodeTrixNewElements.newEdges.push(
+        ...newNodeTrixEdges
+      );
+      d3.select('#nodeTrix-edges')
+        .selectAll('newEdges')
+        .data(newNodeTrixEdges)
+        .enter()
+        .append('line')
+        .attr('class', 'edge')
+        .attr('id', l => l.name)
+        .attr('stroke-dasharray', 4)
+        .attr('stroke', this.hybridEdgeColor);
+    }
     this.addNodes([nextNode], newEdges);
   }
 
@@ -1590,6 +1626,10 @@ class NetworkService {
 
     // remove old edges from datastructure and svg
     NetworkService.removeEdgesFromNodes(edges, [oldNode.name]);
+    NetworkService.removeEdgesFromNodes(
+      store.getters.networkNodeTrixNewElements.newEdges,
+      [oldNode.name]
+    );
 
     const newEdges = [];
 
