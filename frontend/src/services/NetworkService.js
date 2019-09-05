@@ -437,6 +437,13 @@ class NetworkService {
       .attr('x2', center[0])
       .attr('y1', center[1])
       .attr('y2', center[1]);
+    d3.select('#nodeTrix-edges')
+      .selectAll('line')
+      .transition()
+      .duration(this.centerTransitionTime)
+      .ease(d3.easeCubicInOut)
+      .attr('x2', center[0])
+      .attr('y2', center[1]);
     d3.selectAll('.node')
       .transition()
       .duration(this.centerTransitionTime)
@@ -677,7 +684,10 @@ class NetworkService {
         this.nodeTrixMouseOutContainer(colorScale);
       });
     const size = this.smallestNodeRadius * 2.4;
-    const center = [this.width * 0.5, this.height * 0.5];
+    const center = [
+      this.width * 0.6,
+      0.5 * (this.height - (deepNodes.length + 2) * size),
+    ];
     for (let i = 0; i < heatmap.length; i++) {
       const tempArray = [];
       for (let j = 0; j < heatmap.length; j++) {
