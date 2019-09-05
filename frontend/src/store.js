@@ -641,7 +641,7 @@ export default new Vuex.Store({
         state.options.mzList.asc
       );
       if (state.network.nodeTrix.oldElements.oldNodes.length > 0) {
-        networkService.clearHighlightNodeTrixNodes();
+        NetworkService.clearHighlightNodeTrixNodes();
       }
       networkService.clearHighlight(state.network.nodes);
       state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];

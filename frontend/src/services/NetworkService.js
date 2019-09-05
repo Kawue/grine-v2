@@ -911,8 +911,8 @@ class NetworkService {
     const newNodes = store.getters.networkNodeTrixNewElements.newNodes;
     const quarterLength = newNodes.length / 4;
     if (!n.selected) {
-      n.selected = true;
       const nodeIndex = newNodes.findIndex(node => node.name === n.name);
+      newNodes[nodeIndex].selected = true;
       newNodes[quarterLength + nodeIndex].selected = true;
       newNodes[quarterLength + nodeIndex + 1].selected = true;
       newNodes[quarterLength + nodeIndex + 2].selected = true;
@@ -1390,7 +1390,7 @@ class NetworkService {
       store.commit('NETWORK_EXPAND_NODE', n);
     } else {
       if (!isMzLassoSelectionActive) {
-        this.clearHighlightNodeTrixNodes();
+        NetworkService.clearHighlightNodeTrixNodes();
       }
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {
@@ -2382,7 +2382,7 @@ class NetworkService {
 
   highlightNodesByName(nodes, nodeNames) {
     this.clearHighlight(nodes);
-    this.clearHighlightNodeTrixNodes();
+    NetworkService.clearHighlightNodeTrixNodes();
     for (let i = 0; i < nodes.length; i++) {
       if (nodeNames.indexOf(nodes[i].name) !== -1) {
         this.highlightNode(nodes[i]);
@@ -2556,7 +2556,7 @@ class NetworkService {
     }
   }
 
-  clearHighlightNodeTrixNodes() {
+  static clearHighlightNodeTrixNodes() {
     const newNodes = store.getters.networkNodeTrixNewElements.newNodes;
     if (newNodes.length > 0) {
       const quarterLength = newNodes.length / 4;
