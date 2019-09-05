@@ -8,7 +8,7 @@
       <div style="padding: 4px 8px 0 8px;">
         <span
           style="float: left;"
-          class="text-primary"
+          class="text-primary clickable"
           v-on:click="
             toggleShowAll();
             calculateCurrentMz();
@@ -20,7 +20,7 @@
         </span>
         <span
           style="float: left;margin-left: 15px;"
-          class="text-primary"
+          class="text-primary clickable"
           v-on:click="toggleShowAnnotation"
           v-b-tooltip.hover.top="'Show Annotations'"
         >
@@ -35,6 +35,7 @@
             sortMZ();
           "
           style="float: right; padding: 0"
+          class="clickable"
           v-b-tooltip.hover.top="'Sort'"
         >
           <v-icon
@@ -246,6 +247,10 @@ export default {
 
 .inactive {
   color: darkgray;
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .list {

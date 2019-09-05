@@ -153,6 +153,10 @@ class NetworkService {
     if (!d3.event.active)
       store.getters.networkSimulation.alphaTarget(0.3).restart();
 
+    d3.select('#node-container')
+      .select('#' + d.name)
+      .attr('cursor', 'grabbing');
+
     d.fx = d3.event.x;
     d.fy = d3.event.y;
     store.getters.networkSVGElements.linkElements
@@ -188,6 +192,10 @@ class NetworkService {
 
   static dragEnded(d) {
     if (!d3.event.active) store.getters.networkSimulation.alphaTarget(0);
+
+    d3.select('#node-container')
+      .select('#' + d.name)
+      .attr('cursor', 'grab');
     d.fx = null;
     d.fy = null;
   }
@@ -301,6 +309,7 @@ class NetworkService {
       .attr('ry', d => d.radius)
       .attr('width', d => 2 * d.radius)
       .attr('height', d => 2 * d.radius)
+      .attr('cursor', 'grab')
       .style('fill', d => d.color)
       .attr('numMz', d => d.mzs)
       .attr('childs', d => d.childs)
@@ -538,6 +547,7 @@ class NetworkService {
       .attr('x', this.gradientScale.x)
       .attr('fill', this.annotationColor)
       .attr('y', this.gradientScale.y + this.gradientScale.height + 20)
+      .attr('cursor', 'default')
       .text(this.gradientScale.minWeight.toFixed(2));
     gradientContainer
       .append('text')
@@ -545,6 +555,7 @@ class NetworkService {
       .attr('x', this.gradientScale.x + this.gradientScale.width - 30)
       .attr('fill', this.annotationColor)
       .attr('y', this.gradientScale.y + this.gradientScale.height + 20)
+      .attr('cursor', 'default')
       .text(this.gradientScale.maxWeight.toFixed(2));
 
     gradientContainer
@@ -874,8 +885,10 @@ class NetworkService {
       .attr('x', n => n.x - n.radius)
       .attr('y', n => n.y - n.radius)
       .attr('rx', n => (n.selected ? 0 : n.radius))
-      .attr('id', n => n.name + n.position)
       .attr('ry', n => (n.selected ? 0 : n.radius))
+      .attr('id', n => n.name + n.position)
+      .attr('orgName', n => n.name)
+      .attr('cursor', 'pointer')
       .attr('row', n => n.row)
       .attr('column', n => n.column)
       .attr('width', n => 2 * n.radius)
@@ -883,9 +896,104 @@ class NetworkService {
       .attr('pos', n => n.position)
       .attr('fill', n => n.color)
       .attr('numMz', n => n.mzs)
-      // .on('click', this.nodeClick)
+      .on('click', this.nodeTrixNodeClick)
       .on('mouseover', this.mouseOverNodeTrixCell.bind(this))
       .on('mouseout', NetworkService.mouseOut);
+  }
+
+  nodeTrixNodeClick(n) {
+    const isMzLassoSelectionActive = store.getters.isMzLassoSelectionActive;
+    store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
+    const newNodes = store.getters.networkNodeTrixNewElements.newNodes;
+    const quarterLength = newNodes.length / 4;
+    if (!n.selected) {
+      n.selected = true;
+      const nodeIndex = newNodes.findIndex(node => node.name === n.name);
+      newNodes[quarterLength + nodeIndex].selected = true;
+      newNodes[quarterLength + nodeIndex + 1].selected = true;
+      newNodes[quarterLength + nodeIndex + 2].selected = true;
+      if (!isMzLassoSelectionActive) {
+        d3.select('#matrix-nodes')
+          .selectAll(`[orgName='${n.name}']`)
+          .transition()
+          .duration(250)
+          .attr('rx', 0)
+          .attr('ry', 0)
+          .attrTween('transform', function(node) {
+            return d3.interpolateString(
+              'rotate(0 ' + node.x + ' ' + node.y + ')',
+              'rotate(90 ' + node.x + ' ' + node.y + ')'
+            );
+          })
+          .on('end', function() {
+            d3.select(this)
+              .attr('transform', null)
+              .attr('active', 'true');
+          });
+      }
+    }
+
+    for (let i = 0; i < quarterLength; i++) {
+      if (newNodes[i].name === n.name) {
+        continue;
+      }
+      if (newNodes[i].selected) {
+        newNodes[i].selected = false;
+        newNodes[quarterLength + i].selected = false;
+        newNodes[quarterLength + i + 1].selected = false;
+        newNodes[quarterLength + i + 2].selected = false;
+        if (!isMzLassoSelectionActive) {
+          d3.select('#matrix-nodes')
+            .selectAll(`[orgName='${newNodes[i].name}']`)
+            .transition()
+            .duration(250)
+            .attr('rx', newNodes[i].radius)
+            .attr('ry', newNodes[i].radius)
+            .attrTween('transform', function(node) {
+              return d3.interpolateString(
+                'rotate(0 ' + node.x + ' ' + node.y + ')',
+                'rotate(-90 ' + node.x + ' ' + node.y + ')'
+              );
+            })
+            .on('end', function() {
+              d3.select(this)
+                .attr('transform', null)
+                .attr('active', 'false');
+            });
+        }
+      }
+    }
+    for (let i = 0; i < store.getters.networkNodes.length; i++) {
+      if (store.getters.networkNodes[i]['selected']) {
+        store.getters.networkNodes[i]['selected'] = false;
+        if (!isMzLassoSelectionActive) {
+          d3.select('#' + store.getters.networkNodes[i].name)
+            .transition()
+            .duration(250)
+            .attr('rx', store.getters.networkNodes[i].radius)
+            .attr('ry', store.getters.networkNodes[i].radius)
+            .attrTween('transform', function() {
+              return d3.interpolateString(
+                'rotate(0 ' +
+                  store.getters.networkNodes[i].x +
+                  ' ' +
+                  store.getters.networkNodes[i].y +
+                  ')',
+                'rotate(-90 ' +
+                  store.getters.networkNodes[i].x +
+                  ' ' +
+                  store.getters.networkNodes[i].y +
+                  ')'
+              );
+            })
+            .on('end', function() {
+              d3.select(this)
+                .attr('transform', null)
+                .attr('active', 'false');
+            });
+        }
+      }
+    }
   }
 
   resetNodeTrix(nodes, edges) {
@@ -2267,6 +2375,7 @@ class NetworkService {
 
   highlightNodesByName(nodes, nodeNames) {
     this.clearHighlight(nodes);
+    this.clearHighlightNodeTrixNodes();
     for (let i = 0; i < nodes.length; i++) {
       if (nodeNames.indexOf(nodes[i].name) !== -1) {
         this.highlightNode(nodes[i]);
@@ -2440,6 +2549,38 @@ class NetworkService {
     }
   }
 
+  clearHighlightNodeTrixNodes() {
+    const newNodes = store.getters.networkNodeTrixNewElements.newNodes;
+    if (newNodes.length > 0) {
+      const quarterLength = newNodes.length / 4;
+      for (let i = 0; i < quarterLength; i++) {
+        if (newNodes[i].selected) {
+          newNodes[i].selected = false;
+          newNodes[quarterLength + i].selected = false;
+          newNodes[quarterLength + i + 1].selected = false;
+          newNodes[quarterLength + i + 2].selected = false;
+          d3.select('#matrix-nodes')
+            .selectAll(`[orgName='${newNodes[i].name}']`)
+            .transition()
+            .duration(250)
+            .attr('rx', newNodes[i].radius)
+            .attr('ry', newNodes[i].radius)
+            .attrTween('transform', function(node) {
+              return d3.interpolateString(
+                'rotate(0 ' + node.x + ' ' + node.y + ')',
+                'rotate(-90 ' + node.x + ' ' + node.y + ')'
+              );
+            })
+            .on('end', function() {
+              d3.select(this)
+                .attr('transform', null)
+                .attr('active', 'false');
+            });
+        }
+      }
+    }
+  }
+
   static getSelectedNodes(nodes, removeNodes) {
     let nodesSelected = [];
     for (let i = nodes.length - 1; i >= 0; i--) {
@@ -2507,6 +2648,7 @@ class NetworkService {
       .attr('ry', n => (n.selected ? 0 : n.radius))
       .attr('width', n => 2 * n.radius)
       .attr('height', n => 2 * n.radius)
+      .attr('cursor', 'grab')
       .style('fill', n => n.color)
       .attr('numMz', n => n.mzs)
       .attr('childs', n => n.childs)
