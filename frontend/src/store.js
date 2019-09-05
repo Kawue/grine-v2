@@ -138,6 +138,7 @@ export default new Vuex.Store({
       lassoMode: true,
       nodeTrix: {
         nodeTrixPossible: false,
+        nodeTrixActive: false,
         minWeight: 0,
         maxWeight: 1,
         colorScale: null,
@@ -280,6 +281,9 @@ export default new Vuex.Store({
     },
     networkNodeTrixPossible: state => {
       return state.network.nodeTrix.nodeTrixPossible;
+    },
+    networkNodeTrixActive: state => {
+      return state.network.nodeTrix.nodeTrixActive;
     },
     networkNodeTrixOldElements: state => {
       return state.network.nodeTrix.oldElements;
@@ -511,6 +515,8 @@ export default new Vuex.Store({
       networkService.centerCamera(state.network.svgElements.zoom);
     },
     NETWORK_COMPUTE_NODETRIX: state => {
+      state.network.nodeTrix.nodeTrixPossible = false;
+      state.network.nodeTrix.nodeTrixActive = true;
       networkService.computeNodeTrix(
         state.originalGraphData.graphs['graph' + state.options.data.graph]
           .graph,
@@ -519,6 +525,13 @@ export default new Vuex.Store({
         state.meta.maxHierarchy,
         state.network.nodeTrix.colorScale,
         [state.network.nodeTrix.minWeight, state.network.nodeTrix.maxWeight]
+      );
+    },
+    NETWORK_NODETRIX_RESET: state => {
+      state.network.nodeTrix.nodeTrixActive = false;
+      networkService.resetNodeTrix(state.network.nodes, state.network.edges);
+      state.network.svgElements.lasso.items(
+        state.network.svgElements.nodeElements
       );
     },
     NETWORK_NODETRIX_CHANGE_COLORSCALE: state => {
@@ -628,10 +641,7 @@ export default new Vuex.Store({
         state.options.mzList.asc
       );
       if (state.network.nodeTrix.oldElements.oldNodes.length > 0) {
-        networkService.resetNodeTrix(state.network.nodes, state.network.edges);
-        state.network.svgElements.lasso.items(
-          state.network.svgElements.nodeElements
-        );
+        networkService.clearHighlightNodeTrixNodes();
       }
       networkService.clearHighlight(state.network.nodes);
       state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];

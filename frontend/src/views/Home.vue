@@ -14,9 +14,17 @@
       id="nodeTrix-button"
       variant="primary"
       size="lg"
-      v-if="nodeTrix"
+      v-if="nodeTrixPossible"
       @click="computeNodeTrix"
       >NodeTrix</b-button
+    >
+    <b-button
+      id="nodeTrix-reset-button"
+      variant="warning"
+      size="lg"
+      v-if="nodeTrixActive"
+      @click="resetNodeTrix"
+      >Reset NodeTrix</b-button
     >
     <div class="mode-container text-center">
       <div v-if="lassoMode" class="selected-mode">
@@ -47,7 +55,8 @@ export default {
     ...mapGetters({
       loading: 'getLoadingGraphData',
       lassoMode: 'networkLassoMode',
-      nodeTrix: 'networkNodeTrixPossible',
+      nodeTrixPossible: 'networkNodeTrixPossible',
+      nodeTrixActive: 'networkNodeTrixActive',
     }),
   },
   mounted: function() {
@@ -61,6 +70,9 @@ export default {
     },
     computeNodeTrix() {
       store.commit('NETWORK_COMPUTE_NODETRIX');
+    },
+    resetNodeTrix() {
+      store.commit('NETWORK_NODETRIX_RESET');
     },
   },
 };
@@ -85,11 +97,19 @@ export default {
   background-color: rgba(231, 231, 231, 0.5);
   top: 0;
   z-index: 100;
+  cursor: default;
 }
 #nodeTrix-button {
   position: absolute;
   left: 3vw;
   top: 55vh;
+  font-size: 1.2em;
+  z-index: 100;
+}
+#nodeTrix-reset-button {
+  position: absolute;
+  left: 3vw;
+  top: 65vh;
   font-size: 1.2em;
   z-index: 100;
 }
