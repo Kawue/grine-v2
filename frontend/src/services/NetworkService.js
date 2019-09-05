@@ -900,7 +900,9 @@ class NetworkService {
       .on('mouseover', this.mouseOverNodeTrixCell.bind(this))
       .on('mouseout', NetworkService.mouseOut);
 
-      
+    d3.select('#matrix-nodes').raise();
+    d3.select('#nodeTrix-edges').lower();
+    d3.select('#nodeTrix-container').lower();
   }
 
   nodeTrixNodeClick(n) {
@@ -1387,6 +1389,9 @@ class NetworkService {
     ) {
       store.commit('NETWORK_EXPAND_NODE', n);
     } else {
+      if (!isMzLassoSelectionActive) {
+        this.clearHighlightNodeTrixNodes();
+      }
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {
           store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
