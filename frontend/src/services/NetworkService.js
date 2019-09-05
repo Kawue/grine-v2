@@ -909,7 +909,6 @@ class NetworkService {
     const isMzLassoSelectionActive = store.getters.isMzLassoSelectionActive;
     store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
     const newNodes = store.getters.networkNodeTrixNewElements.newNodes;
-    const quarterLength = newNodes.length / 4;
     if (!n.selected) {
       const nodeIndex = newNodes.findIndex(node => node.name === n.name);
       NetworkService.changeSelectedStatusNodeTrixNodes(
@@ -933,7 +932,7 @@ class NetworkService {
       }
     }
 
-    for (let i = 0; i < quarterLength; i++) {
+    for (let i = 0; i < newNodes.length / 4; i++) {
       if (newNodes[i].name === n.name) {
         continue;
       }
@@ -2645,10 +2644,10 @@ class NetworkService {
 
   static changeSelectedStatusNodeTrixNodes(nodes, index, selected) {
     const quarterLength = nodes.length / 4;
-    nodes[index] = selected;
-    nodes[quarterLength + index] = selected;
-    nodes[quarterLength + index + 1] = selected;
-    nodes[quarterLength + index + 2] = selected;
+    nodes[index].selected = selected;
+    nodes[quarterLength + index].selected = selected;
+    nodes[quarterLength + index + 1].selected = selected;
+    nodes[quarterLength + index + 2].selected = selected;
   }
 
   static simple90DegreeRotation(n) {
