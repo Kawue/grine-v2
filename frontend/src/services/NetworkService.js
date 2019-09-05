@@ -896,7 +896,7 @@ class NetworkService {
       .attr('pos', n => n.position)
       .attr('fill', n => n.color)
       .attr('numMz', n => n.mzs)
-      .on('click', this.nodeTrixNodeClick)
+      .on('click', this.nodeTrixNodeClick.bind(this))
       .on('mouseover', this.mouseOverNodeTrixCell.bind(this))
       .on('mouseout', NetworkService.mouseOut);
 
@@ -912,10 +912,11 @@ class NetworkService {
     const quarterLength = newNodes.length / 4;
     if (!n.selected) {
       const nodeIndex = newNodes.findIndex(node => node.name === n.name);
-      newNodes[nodeIndex].selected = true;
-      newNodes[quarterLength + nodeIndex].selected = true;
-      newNodes[quarterLength + nodeIndex + 1].selected = true;
-      newNodes[quarterLength + nodeIndex + 2].selected = true;
+      NetworkService.changeSelectedStatusNodeTrixNodes(
+        newNodes,
+        nodeIndex,
+        true
+      );
       if (!isMzLassoSelectionActive) {
         d3.select('#matrix-nodes')
           .selectAll(`[orgName='${n.name}']`)
@@ -923,12 +924,7 @@ class NetworkService {
           .duration(250)
           .attr('rx', 0)
           .attr('ry', 0)
-          .attrTween('transform', function(node) {
-            return d3.interpolateString(
-              'rotate(0 ' + node.x + ' ' + node.y + ')',
-              'rotate(90 ' + node.x + ' ' + node.y + ')'
-            );
-          })
+          .attrTween('transform', NetworkService.simple90DegreeRotation)
           .on('end', function() {
             d3.select(this)
               .attr('transform', null)
@@ -941,31 +937,7 @@ class NetworkService {
       if (newNodes[i].name === n.name) {
         continue;
       }
-      if (newNodes[i].selected) {
-        newNodes[i].selected = false;
-        newNodes[quarterLength + i].selected = false;
-        newNodes[quarterLength + i + 1].selected = false;
-        newNodes[quarterLength + i + 2].selected = false;
-        if (!isMzLassoSelectionActive) {
-          d3.select('#matrix-nodes')
-            .selectAll(`[orgName='${newNodes[i].name}']`)
-            .transition()
-            .duration(250)
-            .attr('rx', newNodes[i].radius)
-            .attr('ry', newNodes[i].radius)
-            .attrTween('transform', function(node) {
-              return d3.interpolateString(
-                'rotate(0 ' + node.x + ' ' + node.y + ')',
-                'rotate(-90 ' + node.x + ' ' + node.y + ')'
-              );
-            })
-            .on('end', function() {
-              d3.select(this)
-                .attr('transform', null)
-                .attr('active', 'false');
-            });
-        }
-      }
+      this.clearHighlightNodeTrixNode(newNodes, i);
     }
     for (let i = 0; i < store.getters.networkNodes.length; i++) {
       if (store.getters.networkNodes[i]['selected']) {
@@ -1402,12 +1374,7 @@ class NetworkService {
                 .transition()
                 .duration(250)
                 .attr('rx', 0)
-                .attrTween('transform', function() {
-                  return d3.interpolateString(
-                    'rotate(0 ' + n.x + ' ' + n.y + ')',
-                    'rotate(90 ' + n.x + ' ' + n.y + ')'
-                  );
-                })
+                .attrTween('transform', NetworkService.simple90DegreeRotation)
                 .attr('ry', 0)
                 .on('end', function() {
                   d3.select(this)
@@ -1425,20 +1392,10 @@ class NetworkService {
                 .duration(250)
                 .attr('rx', store.getters.networkNodes[i].radius)
                 .attr('ry', store.getters.networkNodes[i].radius)
-                .attrTween('transform', function() {
-                  return d3.interpolateString(
-                    'rotate(0 ' +
-                      store.getters.networkNodes[i].x +
-                      ' ' +
-                      store.getters.networkNodes[i].y +
-                      ')',
-                    'rotate(-90 ' +
-                      store.getters.networkNodes[i].x +
-                      ' ' +
-                      store.getters.networkNodes[i].y +
-                      ')'
-                  );
-                })
+                .attrTween(
+                  'transform',
+                  NetworkService.simpleNegative90DegreeRotation
+                )
                 .on('end', function() {
                   d3.select(this)
                     .attr('transform', null)
@@ -2397,9 +2354,7 @@ class NetworkService {
       for (let j = 0; j < mzValuesFloats.length; j++) {
         if (nodes[i].mzs.findIndex(mz => mz === mzValuesFloats[j]) > -1) {
           // remove all mz values in the array which are from the current node
-          mzValuesFloats = mzValuesFloats.filter(
-            f => nodes[i].mzs.findIndex(m => m === f) === -1
-          );
+          mzValuesFloats.splice(j, 1);
           hit = true;
           break;
         }
@@ -2414,17 +2369,35 @@ class NetworkService {
             .duration(500)
             .attr('rx', nodes[i].radius)
             .attr('ry', nodes[i].radius)
-            .attrTween('transform', function() {
-              return d3.interpolateString(
-                'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
-                'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
-              );
-            })
+            .attrTween(
+              'transform',
+              NetworkService.simpleNegative90DegreeRotation
+            )
             .on('end', function() {
               d3.select(this)
                 .attr('transform', null)
                 .attr('active', 'false');
             });
+        }
+      }
+    }
+    if (mzValuesFloats.length > 0 && store.getters.networkNodeTrixActive) {
+      const nodeTrixNodes = store.getters.networkNodeTrixNewElements.newNodes;
+      const quarterLength = nodeTrixNodes.length / 4;
+      for (let i = 0; i < quarterLength; i++) {
+        let hit = false;
+        for (let j = 0; j < mzValuesFloats.length; j++) {
+          if (nodeTrixNodes[i].mzs[0] === mzValuesFloats[j]) {
+            // remove all mz values in the array which are from the current node
+            mzValuesFloats.splice(j, 1);
+            hit = true;
+            break;
+          }
+        }
+        if (hit) {
+          this.highlightNodeTrixNode(nodeTrixNodes, i);
+        } else {
+          this.clearHighlightNodeTrixNode(nodeTrixNodes, i);
         }
       }
     }
@@ -2434,7 +2407,6 @@ class NetworkService {
     if (!node.selected) {
       node.selected = true;
       const selection = d3.select('#' + node.name);
-      const scalingConstant = this.biggestNodeRadius + 10;
       selection
         .transition()
         .duration(250)
@@ -2444,39 +2416,7 @@ class NetworkService {
         })
         .attr('rx', node.radius * 0.5)
         .attr('ry', node.radius * 0.5)
-        .attrTween('transform', function() {
-          return function(t) {
-            /*
-            interpolate linear between two values
-            t between 0 and 1
-            startValue + (endValue - startValue) * t
-            scaling factor k and rotation angle beta
-            k: 1 to maximal radius + 10
-            beta: 0° to 90°
-           */
-            const kTimesCosBeta =
-              (1 + (scalingConstant / node.radius - 1) * t) *
-              Math.cos(Math.PI * t * 0.5);
-            const kTimesSinBeta =
-              (1 + (scalingConstant / node.radius - 1) * t) *
-              Math.sin(Math.PI * t * 0.5);
-            return (
-              'matrix(' +
-              kTimesCosBeta +
-              ' ' +
-              kTimesSinBeta +
-              ' ' +
-              -kTimesSinBeta +
-              ' ' +
-              kTimesCosBeta +
-              ' ' +
-              (-node.x * kTimesCosBeta + node.y * kTimesSinBeta + node.x) +
-              ' ' +
-              (-node.x * kTimesSinBeta - node.y * kTimesCosBeta + node.y) +
-              ')'
-            );
-          };
-        });
+        .attrTween('transform', NetworkService.growingRotation.bind(this));
 
       selection
         .transition()
@@ -2488,46 +2428,70 @@ class NetworkService {
           // inverse of quadratic easing
           return d3.easePolyOut(t, 2);
         })
-        .attrTween('transform', function() {
-          return function(t) {
-            /*
-            interpolate linear between two values
-            t between 0 and 1
-            startValue + (endValue - startValue) * t
-            scaling factor k and rotation angle beta
-            k: maximal radius + 10 to 1
-            beta: 90° to 180°
-           */
-            const kTimesCosBeta =
-              (scalingConstant / node.radius -
-                (scalingConstant / node.radius - 1) * t) *
-              Math.cos(Math.PI * 0.5 * (1 + t));
-            const kTimesSinBeta =
-              (scalingConstant / node.radius -
-                (scalingConstant / node.radius - 1) * t) *
-              Math.sin(Math.PI * 0.5 * (1 + t));
-            return (
-              'matrix(' +
-              kTimesCosBeta +
-              ' ' +
-              kTimesSinBeta +
-              ' ' +
-              -kTimesSinBeta +
-              ' ' +
-              kTimesCosBeta +
-              ' ' +
-              (-node.x * kTimesCosBeta + node.y * kTimesSinBeta + node.x) +
-              ' ' +
-              (-node.x * kTimesSinBeta - node.y * kTimesCosBeta + node.y) +
-              ')'
-            );
-          };
-        })
+        .attrTween('transform', NetworkService.shrinkingRotation.bind(this))
         .on('end', function() {
           d3.select(this)
             .attr('transform', null)
             .attr('active', 'true');
         });
+    }
+  }
+
+  highlightNodeTrixNode(nodes, index) {
+    if (!nodes[index].selected) {
+      NetworkService.changeSelectedStatusNodeTrixNodes(nodes, index, true);
+      if (!store.getters.isMzLassoSelectionActive) {
+        const selection = d3
+          .select('#matrix-nodes')
+          .selectAll(`[orgName='${nodes[index].name}']`);
+        selection
+          .transition()
+          .duration(250)
+          .ease(function(t) {
+            // quadratic easing
+            return d3.easePolyIn(t, 2);
+          })
+          .attr('rx', n => n.radius * 0.5)
+          .attr('ry', n => n.radius * 0.5)
+          .attrTween('transform', NetworkService.growingRotation.bind(this));
+
+        selection
+          .transition()
+          .duration(250)
+          .delay(250)
+          .attr('rx', 0)
+          .attr('ry', 0)
+          .ease(function(t) {
+            // inverse of quadratic easing
+            return d3.easePolyOut(t, 2);
+          })
+          .attrTween('transform', NetworkService.shrinkingRotation.bind(this))
+          .on('end', function() {
+            d3.select(this)
+              .attr('transform', null)
+              .attr('active', 'true');
+          });
+      }
+    }
+  }
+
+  clearHighlightNodeTrixNode(nodes, index) {
+    if (nodes[index].selected) {
+      NetworkService.changeSelectedStatusNodeTrixNodes(nodes, index, false);
+      if (!store.getters.isMzLassoSelectionActive) {
+        d3.select('#matrix-nodes')
+          .selectAll(`[orgName='${nodes[index].name}']`)
+          .transition()
+          .duration(250)
+          .attr('rx', nodes[index].radius)
+          .attr('ry', nodes[index].radius)
+          .attrTween('transform', NetworkService.simpleNegative90DegreeRotation)
+          .on('end', function() {
+            d3.select(this)
+              .attr('transform', null)
+              .attr('active', 'false');
+          });
+      }
     }
   }
 
@@ -2540,12 +2504,7 @@ class NetworkService {
           .duration(250)
           .attr('rx', nodes[i].radius)
           .attr('ry', nodes[i].radius)
-          .attrTween('transform', function() {
-            return d3.interpolateString(
-              'rotate(0 ' + nodes[i].x + ' ' + nodes[i].y + ')',
-              'rotate(-90 ' + nodes[i].x + ' ' + nodes[i].y + ')'
-            );
-          })
+          .attrTween('transform', NetworkService.simpleNegative90DegreeRotation)
           .on('end', function() {
             d3.select(this)
               .attr('transform', null)
@@ -2562,22 +2521,17 @@ class NetworkService {
       const quarterLength = newNodes.length / 4;
       for (let i = 0; i < quarterLength; i++) {
         if (newNodes[i].selected) {
-          newNodes[i].selected = false;
-          newNodes[quarterLength + i].selected = false;
-          newNodes[quarterLength + i + 1].selected = false;
-          newNodes[quarterLength + i + 2].selected = false;
+          NetworkService.changeSelectedStatusNodeTrixNodes(newNodes, i, false);
           d3.select('#matrix-nodes')
             .selectAll(`[orgName='${newNodes[i].name}']`)
             .transition()
             .duration(250)
             .attr('rx', newNodes[i].radius)
             .attr('ry', newNodes[i].radius)
-            .attrTween('transform', function(node) {
-              return d3.interpolateString(
-                'rotate(0 ' + node.x + ' ' + node.y + ')',
-                'rotate(-90 ' + node.x + ' ' + node.y + ')'
-              );
-            })
+            .attrTween(
+              'transform',
+              NetworkService.simpleNegative90DegreeRotation
+            )
             .on('end', function() {
               d3.select(this)
                 .attr('transform', null)
@@ -2687,6 +2641,100 @@ class NetworkService {
       }
     }
     return removedEdges;
+  }
+
+  static changeSelectedStatusNodeTrixNodes(nodes, index, selected) {
+    const quarterLength = nodes.length / 4;
+    nodes[index] = selected;
+    nodes[quarterLength + index] = selected;
+    nodes[quarterLength + index + 1] = selected;
+    nodes[quarterLength + index + 2] = selected;
+  }
+
+  static simple90DegreeRotation(n) {
+    return d3.interpolateString(
+      'rotate(0 ' + n.x + ' ' + n.y + ')',
+      'rotate(90 ' + n.x + ' ' + n.y + ')'
+    );
+  }
+
+  static simpleNegative90DegreeRotation(n) {
+    return d3.interpolateString(
+      'rotate(0 ' + n.x + ' ' + n.y + ')',
+      'rotate(-90 ' + n.x + ' ' + n.y + ')'
+    );
+  }
+
+  static growingRotation(node) {
+    const scalingConstant = this.biggestNodeRadius + 10;
+    return function(t) {
+      /*
+      interpolate linear between two values
+      t between 0 and 1
+      startValue + (endValue - startValue) * t
+      scaling factor k and rotation angle beta
+      k: 1 to maximal radius + 10
+      beta: 0° to 90°
+     */
+      const kTimesCosBeta =
+        (1 + (scalingConstant / node.radius - 1) * t) *
+        Math.cos(Math.PI * t * 0.5);
+      const kTimesSinBeta =
+        (1 + (scalingConstant / node.radius - 1) * t) *
+        Math.sin(Math.PI * t * 0.5);
+      return (
+        'matrix(' +
+        kTimesCosBeta +
+        ' ' +
+        kTimesSinBeta +
+        ' ' +
+        -kTimesSinBeta +
+        ' ' +
+        kTimesCosBeta +
+        ' ' +
+        (-node.x * kTimesCosBeta + node.y * kTimesSinBeta + node.x) +
+        ' ' +
+        (-node.x * kTimesSinBeta - node.y * kTimesCosBeta + node.y) +
+        ')'
+      );
+    };
+  }
+
+  static shrinkingRotation(node) {
+    const scalingConstant = this.biggestNodeRadius + 10;
+    return function(t) {
+      /*
+      interpolate linear between two values
+      t between 0 and 1
+      startValue + (endValue - startValue) * t
+      scaling factor k and rotation angle beta
+      k: maximal radius + 10 to 1
+      beta: 90° to 180°
+     */
+      const kTimesCosBeta =
+        (scalingConstant / node.radius -
+          (scalingConstant / node.radius - 1) * t) *
+        Math.cos(Math.PI * 0.5 * (1 + t));
+      const kTimesSinBeta =
+        (scalingConstant / node.radius -
+          (scalingConstant / node.radius - 1) * t) *
+        Math.sin(Math.PI * 0.5 * (1 + t));
+      return (
+        'matrix(' +
+        kTimesCosBeta +
+        ' ' +
+        kTimesSinBeta +
+        ' ' +
+        -kTimesSinBeta +
+        ' ' +
+        kTimesCosBeta +
+        ' ' +
+        (-node.x * kTimesCosBeta + node.y * kTimesSinBeta + node.x) +
+        ' ' +
+        (-node.x * kTimesSinBeta - node.y * kTimesCosBeta + node.y) +
+        ')'
+      );
+    };
   }
 }
 export default NetworkService;
