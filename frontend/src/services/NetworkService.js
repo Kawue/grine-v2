@@ -886,7 +886,12 @@ class NetworkService {
       // .on('click', this.nodeClick)
       .on('mouseover', this.mouseOverNodeTrixCell.bind(this))
       .on('mouseout', NetworkService.mouseOut);
+
+      d3.select('#matrix-nodes').raise();
+      d3.select('#nodeTrix-edges').lower();
+      d3.select('#nodeTrix-container').lower();
   }
+
 
   resetNodeTrix(nodes, edges) {
     d3.select('#nodeTrix-container').remove();
