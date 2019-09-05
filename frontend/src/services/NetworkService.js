@@ -2338,10 +2338,28 @@ class NetworkService {
 
   highlightNodesByName(nodes, nodeNames) {
     this.clearHighlight(nodes);
-    NetworkService.clearHighlightNodeTrixNodes();
     for (let i = 0; i < nodes.length; i++) {
-      if (nodeNames.indexOf(nodes[i].name) !== -1) {
+      const nodeNamesIndex = nodeNames.indexOf(nodes[i].name);
+      if (nodeNamesIndex >= 0) {
+        nodeNames.splice(nodeNamesIndex, 1);
         this.highlightNode(nodes[i]);
+        if (nodeNames.length === 0) {
+          break;
+        }
+      }
+    }
+    if (store.getters.networkNodeTrixActive) {
+      NetworkService.clearHighlightNodeTrixNodes();
+      const nodeTrixNodes = store.getters.networkNodeTrixNewElements.newNodes;
+      for (let i = 0; i < nodeTrixNodes.length / 4; i++) {
+        if (nodeNames.length === 0) {
+          break;
+        }
+        const nodeNamesIndex = nodeNames.indexOf(nodeTrixNodes[i].name);
+        if (nodeNamesIndex >= 0) {
+          nodeNames.splice(nodeNamesIndex, 1);
+          this.highlightNodeTrixNode(nodeTrixNodes, i);
+        }
       }
     }
   }
@@ -2380,7 +2398,7 @@ class NetworkService {
         }
       }
     }
-    if (mzValuesFloats.length > 0 && store.getters.networkNodeTrixActive) {
+    if (mzValuesFloats.length > 0) {
       const nodeTrixNodes = store.getters.networkNodeTrixNewElements.newNodes;
       const quarterLength = nodeTrixNodes.length / 4;
       for (let i = 0; i < quarterLength; i++) {
@@ -2439,38 +2457,36 @@ class NetworkService {
   highlightNodeTrixNode(nodes, index) {
     if (!nodes[index].selected) {
       NetworkService.changeSelectedStatusNodeTrixNodes(nodes, index, true);
-      if (!store.getters.isMzLassoSelectionActive) {
-        const selection = d3
-          .select('#matrix-nodes')
-          .selectAll(`[orgName='${nodes[index].name}']`);
-        selection
-          .transition()
-          .duration(250)
-          .ease(function(t) {
-            // quadratic easing
-            return d3.easePolyIn(t, 2);
-          })
-          .attr('rx', n => n.radius * 0.5)
-          .attr('ry', n => n.radius * 0.5)
-          .attrTween('transform', NetworkService.growingRotation.bind(this));
+      const selection = d3
+        .select('#matrix-nodes')
+        .selectAll(`[orgName='${nodes[index].name}']`);
+      selection
+        .transition()
+        .duration(250)
+        .ease(function(t) {
+          // quadratic easing
+          return d3.easePolyIn(t, 2);
+        })
+        .attr('rx', n => n.radius * 0.5)
+        .attr('ry', n => n.radius * 0.5)
+        .attrTween('transform', NetworkService.growingRotation.bind(this));
 
-        selection
-          .transition()
-          .duration(250)
-          .delay(250)
-          .attr('rx', 0)
-          .attr('ry', 0)
-          .ease(function(t) {
-            // inverse of quadratic easing
-            return d3.easePolyOut(t, 2);
-          })
-          .attrTween('transform', NetworkService.shrinkingRotation.bind(this))
-          .on('end', function() {
-            d3.select(this)
-              .attr('transform', null)
-              .attr('active', 'true');
-          });
-      }
+      selection
+        .transition()
+        .duration(250)
+        .delay(250)
+        .attr('rx', 0)
+        .attr('ry', 0)
+        .ease(function(t) {
+          // inverse of quadratic easing
+          return d3.easePolyOut(t, 2);
+        })
+        .attrTween('transform', NetworkService.shrinkingRotation.bind(this))
+        .on('end', function() {
+          d3.select(this)
+            .attr('transform', null)
+            .attr('active', 'true');
+        });
     }
   }
 

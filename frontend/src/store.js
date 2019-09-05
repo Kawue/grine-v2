@@ -812,6 +812,18 @@ export default new Vuex.Store({
         context.state.network.nodes.forEach(function(node) {
           visibleNodes.push({ name: node.name, mzs: node.mzs });
         });
+        let counter = 0;
+        for (const node of context.state.network.nodeTrix.newElements
+          .newNodes) {
+          if (
+            counter >=
+            context.state.network.nodeTrix.newElements.newNodes.length / 4
+          ) {
+            break;
+          }
+          visibleNodes.push({ name: node.name, mzs: node.mzs });
+          counter++;
+        }
         const postData = {
           selectedPoints: selectedPoints,
           selectedMzs: context.state.images.imageData[index].mzValues,
