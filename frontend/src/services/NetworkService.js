@@ -899,6 +899,8 @@ class NetworkService {
       .on('click', this.nodeTrixNodeClick)
       .on('mouseover', this.mouseOverNodeTrixCell.bind(this))
       .on('mouseout', NetworkService.mouseOut);
+
+      
   }
 
   nodeTrixNodeClick(n) {
