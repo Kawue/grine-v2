@@ -385,17 +385,29 @@ class NetworkService {
       .restart();
   }
 
-  initSimulation(oldSimulation, nodes, edges, parameters) {
+  initSimulation(
+    oldSimulation,
+    nodes,
+    edges,
+    parameters,
+    nodeTrixNode,
+    nodeTrixEdges,
+    nodeTrixBorderNodes
+  ) {
     if (oldSimulation != null) {
       oldSimulation.stop();
     }
     return d3
-      .forceSimulation(nodes)
+      .forceSimulation(
+        nodeTrixNode == null
+          ? nodes
+          : nodes.concat([nodeTrixNode]).concat(nodeTrixBorderNodes)
+      )
       .force('charge', d3.forceManyBody().strength(parameters.repulsion))
       .force(
         'link',
         d3
-          .forceLink(edges)
+          .forceLink(edges.concat(nodeTrixEdges))
           .id(l => l.name)
           .distance(parameters.edgeLength)
           .strength(function strength(link) {
@@ -844,6 +856,8 @@ class NetworkService {
       deepNodes[i].selected = false;
       deepNodes[i].x = center[0] - 0.5 * size;
       deepNodes[i].y = center[1] + 0.5 * size + i * size;
+      deepNodes[i].fx = center[0] - 0.5 * size;
+      deepNodes[i].fy = center[1] + 0.5 * size + i * size;
 
       // right column
       const right = _.cloneDeep(deepNodes[i]);
@@ -871,6 +885,14 @@ class NetworkService {
     }
     store.getters.networkNodeTrixNewElements.newNodes = deepNodes;
     store.getters.networkNodeTrixNewElements.newEdges = newEdges;
+    const nodeTrixSize = heatmap.length * size;
+    store.getters.networkNodeTrixNewElements.nodeTrixNode = {
+      x: center[0] + 0.5 * nodeTrixSize,
+      y: center[1] + 0.5 * nodeTrixSize,
+      fx: center[0] + 0.5 * nodeTrixSize,
+      fy: center[1] + 0.5 * nodeTrixSize,
+      radius: nodeTrixSize * Math.pow(2, -0.5),
+    };
 
     d3.select('#nodeTrix-container')
       .append('g')
@@ -915,6 +937,7 @@ class NetworkService {
     d3.select('#matrix-nodes').raise();
     d3.select('#nodeTrix-edges').lower();
     d3.select('#nodeTrix-container').lower();
+    store.commit('NETWORK_SIMULATION_INIT');
   }
 
   nodeTrixNodeClick(n) {
@@ -988,6 +1011,7 @@ class NetworkService {
     d3.select('#gradient-container').remove();
     store.getters.networkNodeTrixNewElements.newEdges = [];
     store.getters.networkNodeTrixNewElements.newNodes = [];
+    store.getters.networkNodeTrixNewElements.nodeTrixNode = null;
     const hiddenNodes = store.getters.networkNodeTrixOldElements.oldNodes;
     this.filterNodesForResetNodeTrix(
       store.getters.getGraph,

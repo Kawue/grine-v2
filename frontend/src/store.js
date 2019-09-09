@@ -148,6 +148,7 @@ export default new Vuex.Store({
         newElements: {
           newNodes: [],
           newEdges: [],
+          nodeTrixNode: null,
         },
       },
     },
@@ -460,7 +461,13 @@ export default new Vuex.Store({
         state.network.simulation,
         state.network.nodes,
         state.network.edges,
-        state.options.network
+        state.options.network,
+        state.network.nodeTrix.newElements.nodeTrixNode,
+        state.network.nodeTrix.newElements.newEdges,
+        state.network.nodeTrix.newElements.newNodes.slice(
+          0,
+          state.network.nodeTrix.newElements.newNodes.length / 4
+        )
       );
       state.network.svgElements.lasso.items(
         state.network.svgElements.nodeElements
