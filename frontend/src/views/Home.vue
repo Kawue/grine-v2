@@ -26,7 +26,7 @@
       @click="resetNodeTrix"
       >Reset NodeTrix</b-button
     >
-    <div class="mode-container text-center">
+    <div class="mode-container text-center" @click="toggleMode">
       <div v-if="lassoMode" class="selected-mode">
         Free Mode
       </div>
@@ -74,6 +74,9 @@ export default {
     resetNodeTrix() {
       store.commit('NETWORK_NODETRIX_RESET');
     },
+    toggleMode() {
+      store.commit('NETWORK_TOGGLE_MODE');
+    },
   },
 };
 </script>
@@ -97,7 +100,7 @@ export default {
   background-color: rgba(231, 231, 231, 0.5);
   top: 0;
   z-index: 100;
-  cursor: default;
+  cursor: pointer;
 }
 #nodeTrix-button {
   position: absolute;
