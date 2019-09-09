@@ -310,7 +310,7 @@ class NetworkService {
       .attr('width', d => 2 * d.radius)
       .attr('height', d => 2 * d.radius)
       .attr('cursor', 'grab')
-      .style('fill', d => d.color)
+      .attr('fill', d => d.color)
       .attr('numMz', d => d.mzs)
       .attr('childs', d => d.childs)
       .on('click', this.nodeClick)
@@ -474,7 +474,7 @@ class NetworkService {
   lassoStart() {
     const lasso = store.getters.networkSVGElements.lasso;
 
-    lasso.items().style('fill', n =>
+    lasso.items().attr('fill', n =>
       d3
         .color(n.color)
         .darker(1)
@@ -486,7 +486,7 @@ class NetworkService {
     const lasso = store.getters.networkSVGElements.lasso;
 
     // Style the possible dots
-    lasso.possibleItems().style('fill', n =>
+    lasso.possibleItems().attr('fill', n =>
       d3
         .color(n.color)
         .darker(0.2)
@@ -494,7 +494,7 @@ class NetworkService {
     );
 
     // Style the not possible dot
-    lasso.notPossibleItems().style('fill', n =>
+    lasso.notPossibleItems().attr('fill', n =>
       d3
         .color(n.color)
         .darker(1)
@@ -505,7 +505,7 @@ class NetworkService {
   static lassoEnd() {
     // Reset the color of all dots
     const lasso = store.getters.networkSVGElements.lasso;
-    lasso.items().style('fill', n => n.color);
+    lasso.items().attr('fill', n => n.color);
 
     if (!lasso.selectedItems().empty()) {
       const mzs = lasso
@@ -988,13 +988,213 @@ class NetworkService {
     d3.select('#gradient-container').remove();
     store.getters.networkNodeTrixNewElements.newEdges = [];
     store.getters.networkNodeTrixNewElements.newNodes = [];
-    const oldElements = store.getters.networkNodeTrixOldElements;
-    const newNodes = oldElements.oldNodes.splice(
-      0,
-      oldElements.oldNodes.length
+    const hiddenNodes = store.getters.networkNodeTrixOldElements.oldNodes;
+    this.filterNodesForResetNodeTrix(
+      store.getters.getGraph,
+      nodes,
+      hiddenNodes
+    );
+    const newNodes = hiddenNodes.splice(0, hiddenNodes.length);
+    const newEdges = this.computeEdgesForResetNodeTrix(
+      store.getters.getGraph,
+      nodes,
+      newNodes
     );
     nodes.push(...newNodes);
-    this.addNodes(newNodes, []);
+    edges.push(...newEdges);
+    this.addNodes(newNodes, newEdges);
+  }
+
+  computeEdgesForResetNodeTrix(graph, visibleNodes, hiddenNodes) {
+    const newEdges = [];
+    for (let i = 0; i < hiddenNodes.length; i++) {
+      const currentNodeHierarchy = parseInt(
+        hiddenNodes[i].name.split('n')[0].slice(1),
+        10
+      );
+      for (const node of visibleNodes.concat(
+        NetworkService.spliceToNewArray(hiddenNodes, i)
+      )) {
+        const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+        let hierarchyCounter = 1;
+        // hierarchy of current node is less than hierarchy of next node
+        if (nodeHierarchy < currentNodeHierarchy) {
+          let childs = [...node.childs];
+          // eslint-disable-next-line no-constant-condition
+          while (true) {
+            const investigatesNodePrefix =
+              'h' + (nodeHierarchy + hierarchyCounter) + 'n';
+            // hierarchy of current node is still less than hierarchy of next node
+            // go one hierarchy deeper
+            if (nodeHierarchy + hierarchyCounter < currentNodeHierarchy) {
+              childs = childs.map(c => {
+                return graph['hierarchy' + (nodeHierarchy + hierarchyCounter)]
+                  .nodes[investigatesNodePrefix + c].childs;
+              });
+              childs = childs.flat();
+              hierarchyCounter++;
+            } else {
+              // current hierarchy is equal with hierarchy of nextNode
+              let hit = false;
+              const edgeKeys = Object.keys(
+                graph['hierarchy' + currentNodeHierarchy]['edges']
+              );
+              for (const l of edgeKeys) {
+                if (hit) break;
+                // search all edges where source or target is nextNode
+                if (
+                  graph['hierarchy' + currentNodeHierarchy]['edges'][l]
+                    .target === hiddenNodes[i].name ||
+                  graph['hierarchy' + currentNodeHierarchy]['edges'][l]
+                    .source === hiddenNodes[i].name
+                ) {
+                  for (const c of childs) {
+                    // search all edges where source or target is a child of current node in current hierarchy
+                    if (
+                      graph['hierarchy' + currentNodeHierarchy]['edges'][l]
+                        .target ===
+                        investigatesNodePrefix + c ||
+                      graph['hierarchy' + currentNodeHierarchy]['edges'][l]
+                        .source ===
+                        investigatesNodePrefix + c
+                    ) {
+                      /// draw hybrid edge
+                      newEdges.push({
+                        source: node,
+                        target: hiddenNodes[i],
+                        name: 'edge' + this.hybridEdgeCounter,
+                      });
+                      this.hybridEdgeCounter += 1;
+                      hit = true;
+                      break;
+                    }
+                  }
+                }
+              }
+              break;
+            }
+          }
+        } else if (nodeHierarchy > currentNodeHierarchy) {
+          let childs = [...hiddenNodes[i].childs];
+          // eslint-disable-next-line no-constant-condition
+          while (true) {
+            const investigatesNodePrefix =
+              'h' + (currentNodeHierarchy + hierarchyCounter) + 'n';
+            // hierarchy of nextNode is still less than hierarchy of current node
+            // go one hierarchy deeper
+            if (currentNodeHierarchy + hierarchyCounter < nodeHierarchy) {
+              childs = childs.map(c => {
+                return graph[
+                  'hierarchy' + (currentNodeHierarchy + hierarchyCounter)
+                ].nodes[investigatesNodePrefix + c].childs;
+              });
+              childs = childs.flat();
+              hierarchyCounter++;
+            } else {
+              // current hierarchy is equal with hierarchy of current node
+              const edgeKeys = Object.keys(
+                graph['hierarchy' + nodeHierarchy]['edges']
+              );
+              for (const l of edgeKeys) {
+                // search all edges where source or target is current node
+                if (
+                  graph['hierarchy' + nodeHierarchy]['edges'][l].target ===
+                    node.name ||
+                  graph['hierarchy' + nodeHierarchy]['edges'][l].source ===
+                    node.name
+                ) {
+                  for (const c of childs) {
+                    // search all edges where source or target is a child of nextNode in current hierarchy
+                    if (
+                      graph['hierarchy' + nodeHierarchy]['edges'][l].target ===
+                        investigatesNodePrefix + c ||
+                      graph['hierarchy' + nodeHierarchy]['edges'][l].source ===
+                        investigatesNodePrefix + c
+                    ) {
+                      //draw hybrid edge
+                      newEdges.push({
+                        source: node,
+                        target: hiddenNodes[i],
+                        name: 'edge' + this.hybridEdgeCounter,
+                      });
+                      this.hybridEdgeCounter += 1;
+                      break;
+                    }
+                  }
+                }
+              }
+              break;
+            }
+          }
+        } else if (nodeHierarchy === currentNodeHierarchy) {
+          Object.keys(graph['hierarchy' + currentNodeHierarchy].edges).forEach(
+            l => {
+              const currentEdge =
+                graph['hierarchy' + currentNodeHierarchy].edges[l];
+              if (
+                currentEdge.source === hiddenNodes[i].name &&
+                currentEdge.target === node.name
+              ) {
+                newEdges.push({
+                  source: hiddenNodes[i],
+                  target: node,
+                  name: currentEdge.name,
+                });
+              } else if (
+                currentEdge.target === hiddenNodes[i].name &&
+                currentEdge.source === node.name
+              ) {
+                newEdges.push({
+                  source: node,
+                  target: hiddenNodes[i],
+                  name: currentEdge.name,
+                });
+              }
+            }
+          );
+        }
+      }
+    }
+    return newEdges;
+  }
+
+  static spliceToNewArray(array, index) {
+    const newArray = [...array];
+    newArray.splice(index, 1);
+    return newArray;
+  }
+
+  filterNodesForResetNodeTrix(graph, visibleNodes, hiddenNodes) {
+    const visibleHigherNodes = visibleNodes.filter(node => {
+      return (
+        store.getters.meta.maxHierarchy >
+        parseInt(node.name.split('n')[0].slice(1), 10)
+      );
+    });
+    for (let i = hiddenNodes.length - 1; i >= 0; i--) {
+      const nodeHierarchy = parseInt(
+        hiddenNodes[i].name.split('n')[0].slice(1),
+        10
+      );
+      let parent = 'h' + (nodeHierarchy - 1) + 'n' + hiddenNodes[i].parent;
+      for (
+        let hierarchyCounter = 1;
+        hierarchyCounter <= nodeHierarchy;
+        hierarchyCounter++
+      ) {
+        const nodeIndex = visibleHigherNodes.findIndex(n => n.name === parent);
+        if (nodeIndex > -1) {
+          hiddenNodes.splice(i, 1);
+          break;
+        }
+        parent =
+          'h' +
+          (nodeHierarchy - hierarchyCounter - 1) +
+          'n' +
+          graph['hierarchy' + (nodeHierarchy - hierarchyCounter)].nodes[parent]
+            .membership;
+      }
+    }
   }
 
   nodeTrixMouseInContainer(colorScale) {
@@ -2295,7 +2495,7 @@ class NetworkService {
       .attr('width', n => 2 * n.radius)
       .attr('height', n => 2 * n.radius)
       .attr('cursor', 'grab')
-      .style('fill', n => n.color)
+      .attr('fill', n => n.color)
       .attr('numMz', n => n.mzs)
       .attr('childs', n => n.childs)
       .on('click', this.nodeClick)
