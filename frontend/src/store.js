@@ -144,7 +144,6 @@ export default new Vuex.Store({
         colorScale: null,
         oldElements: {
           oldNodes: [],
-          oldEdges: [],
         },
         newElements: {
           newNodes: [],
@@ -526,6 +525,9 @@ export default new Vuex.Store({
         state.network.nodeTrix.colorScale,
         [state.network.nodeTrix.minWeight, state.network.nodeTrix.maxWeight]
       );
+      state.network.svgElements.lasso.items(
+        NetworkService.getSelectedSVGNodes()
+      );
     },
     NETWORK_NODETRIX_RESET: state => {
       state.network.nodeTrix.nodeTrixActive = false;
@@ -598,6 +600,10 @@ export default new Vuex.Store({
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.network.nodeTrix.nodeTrixPossible = true;
       state.mzList.selectedMz = data;
+      state.mzList.visibleMz = mzListService.sortMzList(
+        state.mzList.visibleMz,
+        state.options.mzList.asc
+      );
       networkService.highlightNodesByMz(state.network.nodes, data);
     },
     MZLIST_UPDATE_NAME: (state, data) => {
