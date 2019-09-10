@@ -397,6 +397,7 @@ class NetworkService {
     if (oldSimulation != null) {
       oldSimulation.stop();
     }
+    d3.select('#graphd3').select('.lasso');
     return d3
       .forceSimulation(
         nodeTrixNode == null
@@ -526,10 +527,15 @@ class NetworkService {
         .map(d => d.mzs)
         .flat();
 
-      lasso.selectedItems().attr('class', 'node nodeTrix');
-      lasso.notSelectedItems().attr('class', 'node');
       store.commit('CLEAR_IMAGES');
-      store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
+      this.highlightNodesByName(
+        store.getters.networkNodes,
+        lasso
+          .selectedItems()
+          .data()
+          .map(d => d.name)
+      );
+      // store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
       store.dispatch('mzlistUpdateHighlightedMz', mzs);
     }
   }
@@ -544,7 +550,7 @@ class NetworkService {
       .targetArea(svg)
       .on('start', this.lassoStart)
       .on('draw', this.lassoDraw)
-      .on('end', NetworkService.lassoEnd);
+      .on('end', NetworkService.lassoEnd.bind(this));
 
     svg.call(lasso);
     return lasso;
@@ -1207,7 +1213,8 @@ class NetworkService {
         hierarchyCounter++
       ) {
         const nodeIndex = visibleHigherNodes.findIndex(n => n.name === parent);
-        if (nodeIndex > -1) {
+        const nodeIndex2 = hiddenNodes.findIndex(n => n.name === parent);
+        if (nodeIndex > -1 || nodeIndex2 > -1) {
           hiddenNodes.splice(i, 1);
           break;
         }
@@ -2249,6 +2256,26 @@ class NetworkService {
 
   highlightNodesByMz(nodes, mzValuesStrings) {
     let mzValuesFloats = mzValuesStrings.map(mz => parseFloat(mz));
+    if (mzValuesFloats.length > 0) {
+      const nodeTrixNodes = store.getters.networkNodeTrixNewElements.newNodes;
+      const quarterLength = nodeTrixNodes.length / 4;
+      for (let i = 0; i < quarterLength; i++) {
+        let hit = false;
+        for (let j = 0; j < mzValuesFloats.length; j++) {
+          if (nodeTrixNodes[i].mzs[0] === mzValuesFloats[j]) {
+            // remove all mz values in the array which are from the current node
+            mzValuesFloats.splice(j, 1);
+            hit = true;
+            break;
+          }
+        }
+        if (hit) {
+          this.highlightNodeTrixNode(nodeTrixNodes, i);
+        } else {
+          this.clearHighlightNodeTrixNode(nodeTrixNodes, i);
+        }
+      }
+    }
     for (let i = 0; i < nodes.length; i++) {
       let hit = false;
       for (let j = 0; j < mzValuesFloats.length; j++) {
@@ -2278,26 +2305,6 @@ class NetworkService {
                 .attr('transform', null)
                 .attr('active', 'false');
             });
-        }
-      }
-    }
-    if (mzValuesFloats.length > 0) {
-      const nodeTrixNodes = store.getters.networkNodeTrixNewElements.newNodes;
-      const quarterLength = nodeTrixNodes.length / 4;
-      for (let i = 0; i < quarterLength; i++) {
-        let hit = false;
-        for (let j = 0; j < mzValuesFloats.length; j++) {
-          if (nodeTrixNodes[i].mzs[0] === mzValuesFloats[j]) {
-            // remove all mz values in the array which are from the current node
-            mzValuesFloats.splice(j, 1);
-            hit = true;
-            break;
-          }
-        }
-        if (hit) {
-          this.highlightNodeTrixNode(nodeTrixNodes, i);
-        } else {
-          this.clearHighlightNodeTrixNode(nodeTrixNodes, i);
         }
       }
     }
@@ -2646,7 +2653,7 @@ class NetworkService {
     };
   }
 
-  static getSelectedSVGNodes() {
+  static getLassoSVGNodes() {
     return d3.select('#graph-container').selectAll('.node');
   }
 }

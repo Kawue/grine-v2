@@ -469,9 +469,7 @@ export default new Vuex.Store({
           state.network.nodeTrix.newElements.newNodes.length / 4
         )
       );
-      state.network.svgElements.lasso.items(
-        state.network.svgElements.nodeElements
-      );
+      state.network.svgElements.lasso.items(NetworkService.getLassoSVGNodes());
     },
     NETWORK_LOAD_GRAPH: state => {
       const tupel = networkService.loadGraph(
@@ -532,16 +530,15 @@ export default new Vuex.Store({
         state.network.nodeTrix.colorScale,
         [state.network.nodeTrix.minWeight, state.network.nodeTrix.maxWeight]
       );
-      state.network.svgElements.lasso.items(
-        NetworkService.getSelectedSVGNodes()
-      );
     },
     NETWORK_NODETRIX_RESET: state => {
       state.network.nodeTrix.nodeTrixActive = false;
       networkService.resetNodeTrix(state.network.nodes, state.network.edges);
-      state.network.svgElements.lasso.items(
-        state.network.svgElements.nodeElements
-      );
+      if (
+        NetworkService.getSelectedNodes(state.network.nodes, false).length === 0
+      ) {
+        state.network.nodeTrix.nodeTrixPossible = false;
+      }
     },
     NETWORK_NODETRIX_CHANGE_COLORSCALE: state => {
       state.network.nodeTrix.colorScale = networkService.computeColorScale(
@@ -629,6 +626,10 @@ export default new Vuex.Store({
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
+      state.mzList.visibleMz = mzListService.sortMzList(
+        state.mzList.visibleMz,
+        state.options.mzList.asc
+      );
       if (mzValues.length === 1) {
         state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
       }
@@ -746,6 +747,7 @@ export default new Vuex.Store({
           ].graph
         ).length - 1;
       context.state.network.nodeTrix.nodeTrixPossible = false;
+      context.state.network.nodeTrix.nodeTrixActive = false;
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
       context.commit('MZLIST_SORT_MZ');

@@ -14,7 +14,7 @@
       id="nodeTrix-button"
       variant="primary"
       size="lg"
-      v-if="nodeTrixPossible"
+      v-if="nodeTrixPossible && !lassoActive"
       @click="computeNodeTrix"
       >NodeTrix</b-button
     >
@@ -22,7 +22,7 @@
       id="nodeTrix-reset-button"
       variant="warning"
       size="lg"
-      v-if="nodeTrixActive"
+      v-if="nodeTrixActive && !lassoActive"
       @click="resetNodeTrix"
       >Reset NodeTrix</b-button
     >
@@ -57,6 +57,7 @@ export default {
       lassoMode: 'networkLassoMode',
       nodeTrixPossible: 'networkNodeTrixPossible',
       nodeTrixActive: 'networkNodeTrixActive',
+      lassoActive: 'isMzLassoSelectionActive',
     }),
   },
   mounted: function() {
