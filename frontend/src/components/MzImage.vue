@@ -156,14 +156,18 @@ export default {
     },
   },
   methods: {
+    isMzLassoActive() {
+      return store.getters.isMzLassoSelectionActive;
+    },
+    isAbleToCopyDataIntoSelectionImage() {
+      return this.enableClickCopyToLassoImage && !this.isMzLassoActive();
+    },
     imageClick() {
       if (this.enableLasso) {
-        store.commit('RESET_SELECTION');
+        store.commit('RESET_SELECTION', true);
       } else {
-        if (this.enableClickCopyToLassoImage) {
+        if (this.isAbleToCopyDataIntoSelectionImage()) {
           store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
-        } else {
-          store.commit('CLEAR_IMAGE', this.imageDataIndex);
         }
       }
     },
@@ -172,7 +176,7 @@ export default {
     },
     widgetStyle() {
       let style = 'height: ' + this.height + 'px;';
-      if (!this.enableLasso) {
+      if (this.isAbleToCopyDataIntoSelectionImage()) {
         style += 'cursor: pointer';
       }
       return style;

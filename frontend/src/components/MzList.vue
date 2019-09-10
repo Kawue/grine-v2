@@ -49,6 +49,7 @@
         v-on:click="mzClicked"
         class="list"
         multiple
+        :disabled="isMzLassoActive()"
       >
         <option
           v-for="mzObject in currentMz"
@@ -162,6 +163,9 @@ export default {
     }),
   },
   methods: {
+    isMzLassoActive() {
+      return store.getters.isMzLassoSelectionActive;
+    },
     mzClicked: function() {
       store.dispatch('mzlistUpdatedMzs', this.localSelectedMz);
     },

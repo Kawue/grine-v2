@@ -640,7 +640,7 @@ export default new Vuex.Store({
         state.originalGraphData.graphs
       );
     },
-    RESET_SELECTION: state => {
+    RESET_SELECTION: (state, keepLasso) => {
       state.network.nodeTrix.nodeTrixPossible = false;
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
@@ -665,6 +665,10 @@ export default new Vuex.Store({
       state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
       state.images.imageData[IMAGE_INDEX_PCA].mzValues = [];
       state.images.imageData[IMAGE_INDEX_PCA].points = [];
+      if (!keepLasso) {
+        state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
+        state.images.imageData[IMAGE_INDEX_LASSO].points = [];
+      }
     },
     MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(
@@ -863,7 +867,11 @@ export default new Vuex.Store({
       }
     },
     mzlistUpdatedMzs: (context, data) => {
-      context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
+      if (data.length === 1) {
+        context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
+      } else {
+        context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+      }
       context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');

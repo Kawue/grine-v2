@@ -42,7 +42,7 @@
             variant="primary"
             @click="toggleMode"
             id="toggle-button"
-            v-if="canToggleMode()"
+            :disabled="isMzLassoActive()"
           >
             Toggle Mode
           </b-button>
@@ -118,8 +118,8 @@ export default {
     },
   },
   methods: {
-    canToggleMode() {
-      return !store.getters.isMzLassoSelectionActive;
+    isMzLassoActive() {
+      return store.getters.isMzLassoSelectionActive;
     },
     updateParameters() {
       store.commit('SET_NETWORK_OPTIONS', this.parameters);

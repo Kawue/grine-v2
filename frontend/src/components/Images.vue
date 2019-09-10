@@ -89,6 +89,9 @@
       <div class="row" v-if="options.pca.show">
         <div class="col-md-12" style="margin-bottom: 25px;">
           DR:
+          <span v-on:click="deleteDrImage()">
+            <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
+          </span>
           <mz-image
             :imageDataIndex="4"
             v-bind:enableClickCopyToLassoImage="false"
@@ -125,6 +128,10 @@ export default {
     },
     deleteLassoImage() {
       this.$store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_LASSO);
+      this.$store.commit('RESET_SELECTION');
+    },
+    deleteDrImage() {
+      this.$store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_PCA);
     },
   },
   mounted: function() {
