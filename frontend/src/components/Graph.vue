@@ -29,6 +29,12 @@ export default {
     store.commit('NETWORK_LOAD_GRAPH');
     store.commit('NETWORK_INIT_SVG');
     store.commit('NETWORK_SIMULATION_INIT');
+    store.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
+    store.subscribe(mutation => {
+      if (mutation.type === 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE') {
+        store.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
+      }
+    });
     console.log('svg fertig');
   },
 };
@@ -43,12 +49,12 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(231, 231, 231, 0.5);
+  background-color: #404040;
   z-index: 100;
   color: white;
 }
 .lasso path {
-  stroke: rgb(80, 80, 80);
+  stroke: rgb(239, 235, 220);
   stroke-width: 2px;
 }
 .lasso .drawn {

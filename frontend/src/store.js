@@ -136,6 +136,21 @@ export default new Vuex.Store({
       nodes: [],
       edges: [],
       lassoMode: true,
+      nodeTrix: {
+        nodeTrixPossible: false,
+        nodeTrixActive: false,
+        minWeight: 0,
+        maxWeight: 1,
+        colorScale: null,
+        oldElements: {
+          oldNodes: [],
+        },
+        newElements: {
+          newNodes: [],
+          newEdges: [],
+          nodeTrixNode: null,
+        },
+      },
     },
     options: {
       state: {
@@ -267,6 +282,18 @@ export default new Vuex.Store({
     networkNodes: state => {
       return state.network.nodes;
     },
+    networkNodeTrixPossible: state => {
+      return state.network.nodeTrix.nodeTrixPossible;
+    },
+    networkNodeTrixActive: state => {
+      return state.network.nodeTrix.nodeTrixActive;
+    },
+    networkNodeTrixOldElements: state => {
+      return state.network.nodeTrix.oldElements;
+    },
+    networkNodeTrixNewElements: state => {
+      return state.network.nodeTrix.newElements;
+    },
     stateOptionsGraph: state => {
       return state.options.data.graph;
     },
@@ -339,7 +366,10 @@ export default new Vuex.Store({
       mzImageData.min.y = minY;
     },
     IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
-      let nodesSelected = networkService.getSelectedNodes(state.network.nodes);
+      let nodesSelected = NetworkService.getSelectedNodes(
+        state.network.nodes,
+        false
+      );
       if (nodesSelected) {
         if (nodesSelected.length === 0) {
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
@@ -358,7 +388,7 @@ export default new Vuex.Store({
             const graph =
               state.originalGraphData.graphs['graph' + state.options.data.graph]
                 .graph;
-            let parentNode = networkService.getRootParentNodeFromNode(
+            let parentNode = NetworkService.getRootParentNodeFromNode(
               nodesSelected[0],
               graph
             );
@@ -403,7 +433,7 @@ export default new Vuex.Store({
     },
     SET_NETWORK_OPTIONS: (state, options) => {
       state.options.network = options;
-      networkService.updateSimulationParameters(
+      NetworkService.updateSimulationParameters(
         state.network.simulation,
         options
       );
@@ -434,8 +464,15 @@ export default new Vuex.Store({
         state.network.simulation,
         state.network.nodes,
         state.network.edges,
-        state.options.network
+        state.options.network,
+        state.network.nodeTrix.newElements.nodeTrixNode,
+        state.network.nodeTrix.newElements.newEdges,
+        state.network.nodeTrix.newElements.newNodes.slice(
+          0,
+          state.network.nodeTrix.newElements.newNodes.length / 4
+        )
       );
+      state.network.svgElements.lasso.items(NetworkService.getLassoSVGNodes());
     },
     NETWORK_LOAD_GRAPH: state => {
       const tupel = networkService.loadGraph(
@@ -443,6 +480,12 @@ export default new Vuex.Store({
       );
       state.network.nodes = tupel[0];
       state.network.edges = tupel[1];
+      const minMaxTupel = NetworkService.findMinMaxWeight(
+        state.originalGraphData.graphs['graph' + state.options.data.graph]
+          .graph['hierarchy' + state.meta.maxHierarchy].edges
+      );
+      state.network.nodeTrix.minWeight = minMaxTupel[0];
+      state.network.nodeTrix.maxWeight = minMaxTupel[1];
     },
     NETWORK_EXPAND_NODE: (state, node) => {
       const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
@@ -453,15 +496,6 @@ export default new Vuex.Store({
           node,
           state.network.nodes,
           state.network.edges
-        );
-        state.network.simulation = networkService.initSimulation(
-          state.network.simulation,
-          state.network.nodes,
-          state.network.edges,
-          state.options.network
-        );
-        state.network.svgElements.lasso.items(
-          state.network.svgElements.nodeElements
         );
       }
     },
@@ -475,15 +509,6 @@ export default new Vuex.Store({
           state.network.nodes,
           state.network.edges
         );
-        state.network.simulation = networkService.initSimulation(
-          state.network.simulation,
-          state.network.nodes,
-          state.network.edges,
-          state.options.network
-        );
-        state.network.svgElements.lasso.items(
-          state.network.svgElements.nodeElements
-        );
       }
     },
     NETWORK_CENTER_NODES: state => {
@@ -495,6 +520,39 @@ export default new Vuex.Store({
     },
     NETWORK_CENTER_CAMERA: state => {
       networkService.centerCamera(state.network.svgElements.zoom);
+    },
+    NETWORK_COMPUTE_NODETRIX: state => {
+      state.network.nodeTrix.nodeTrixPossible = false;
+      state.network.nodeTrix.nodeTrixActive = true;
+      networkService.computeNodeTrix(
+        state.originalGraphData.graphs['graph' + state.options.data.graph]
+          .graph,
+        state.network.nodes,
+        state.network.edges,
+        state.meta.maxHierarchy,
+        state.network.nodeTrix.colorScale,
+        [state.network.nodeTrix.minWeight, state.network.nodeTrix.maxWeight]
+      );
+    },
+    NETWORK_NODETRIX_RESET: state => {
+      state.network.nodeTrix.nodeTrixActive = false;
+      networkService.resetNodeTrix(state.network.nodes, state.network.edges);
+      if (
+        NetworkService.getSelectedNodes(state.network.nodes, false).length === 0
+      ) {
+        state.network.nodeTrix.nodeTrixPossible = false;
+      }
+    },
+    NETWORK_NODETRIX_CHANGE_COLORSCALE: state => {
+      state.network.nodeTrix.colorScale = networkService.computeColorScale(
+        state.options.image.colorScale,
+        state.network.nodeTrix.minWeight,
+        state.network.nodeTrix.maxWeight
+      );
+      networkService.redrawNodeTrix(state.network.nodeTrix.colorScale, [
+        state.network.nodeTrix.minWeight,
+        state.network.nodeTrix.maxWeight,
+      ]);
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -547,7 +605,12 @@ export default new Vuex.Store({
       );
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
+      state.network.nodeTrix.nodeTrixPossible = true;
       state.mzList.selectedMz = data;
+      state.mzList.visibleMz = mzListService.sortMzList(
+        state.mzList.visibleMz,
+        state.options.mzList.asc
+      );
       networkService.highlightNodesByMz(state.network.nodes, data);
     },
     MZLIST_UPDATE_NAME: (state, data) => {
@@ -556,6 +619,7 @@ export default new Vuex.Store({
       ].nodes[data.nodeKey].name = data.name;
     },
     MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
+      state.network.nodeTrix.nodeTrixPossible = true;
       const tuple = mzListService.updateHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -565,6 +629,10 @@ export default new Vuex.Store({
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
+      state.mzList.visibleMz = mzListService.sortMzList(
+        state.mzList.visibleMz,
+        state.options.mzList.asc
+      );
       if (mzValues.length === 1) {
         state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
       }
@@ -577,6 +645,7 @@ export default new Vuex.Store({
       );
     },
     RESET_SELECTION: (state, keepLasso) => {
+      state.network.nodeTrix.nodeTrixPossible = false;
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -588,6 +657,9 @@ export default new Vuex.Store({
         tuple[0],
         state.options.mzList.asc
       );
+      if (state.network.nodeTrix.oldElements.oldNodes.length > 0) {
+        NetworkService.clearHighlightNodeTrixNodes();
+      }
       networkService.clearHighlight(state.network.nodes);
       state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
       state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
@@ -612,7 +684,7 @@ export default new Vuex.Store({
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
     },
-    MZ_IMAGE_LASSO_END: state => {
+    MZ_IMAGE_LASSO_END: () => {
       networkService.simulationUpdate();
     },
   },
@@ -677,6 +749,8 @@ export default new Vuex.Store({
             'graph' + context.state.options.data.graph
           ].graph
         ).length - 1;
+      context.state.network.nodeTrix.nodeTrixPossible = false;
+      context.state.network.nodeTrix.nodeTrixActive = false;
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
       context.commit('MZLIST_SORT_MZ');
@@ -684,6 +758,7 @@ export default new Vuex.Store({
       context.commit('NETWORK_INIT_SVG');
       context.commit('NETWORK_CENTER_CAMERA');
       context.commit('NETWORK_SIMULATION_INIT');
+      context.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
       context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
     },
     fetchImageData: (context, index) => {
@@ -759,6 +834,18 @@ export default new Vuex.Store({
         context.state.network.nodes.forEach(function(node) {
           visibleNodes.push({ name: node.name, mzs: node.mzs });
         });
+        let counter = 0;
+        for (const node of context.state.network.nodeTrix.newElements
+          .newNodes) {
+          if (
+            counter >=
+            context.state.network.nodeTrix.newElements.newNodes.length / 4
+          ) {
+            break;
+          }
+          visibleNodes.push({ name: node.name, mzs: node.mzs });
+          counter++;
+        }
         const postData = {
           selectedPoints: selectedPoints,
           selectedMzs: context.state.images.imageData[index].mzValues,

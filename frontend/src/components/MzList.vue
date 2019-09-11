@@ -8,7 +8,7 @@
       <div style="padding: 4px 8px 0 8px;">
         <span
           style="float: left;"
-          class="text-primary"
+          class="text-primary clickable"
           v-on:click="
             toggleShowAll();
             calculateCurrentMz();
@@ -20,7 +20,7 @@
         </span>
         <span
           style="float: left;margin-left: 15px;"
-          class="text-primary"
+          class="text-primary clickable"
           v-on:click="toggleShowAnnotation"
           v-b-tooltip.hover.top="'Show Annotations'"
         >
@@ -35,6 +35,7 @@
             sortMZ();
           "
           style="float: right; padding: 0"
+          class="clickable"
           v-b-tooltip.hover.top="'Sort'"
         >
           <v-icon
@@ -241,6 +242,7 @@ export default {
 
 <style scoped lang="scss">
 .sidebar-widget {
+  background: inherit;
   &.expanded {
     width: 120px !important;
     overflow: hidden !important;
@@ -251,6 +253,10 @@ export default {
   color: darkgray;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .list {
   padding: 0;
   font-size: 0.9em;
@@ -258,6 +264,13 @@ export default {
   width: 100%;
   text-align: center;
   margin-top: 8px;
+}
+
+select {
+  background-color: #4f5051;
+  color: white;
+  border: 1px solid #737374;
+  margin: 0 0 5px 0;
 }
 
 #annotation-mz-value {

@@ -31,6 +31,8 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 101;
+  background: #4f5051;
+  color: white;
 
   .row {
     padding: 0;

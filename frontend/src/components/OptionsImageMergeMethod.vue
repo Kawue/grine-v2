@@ -3,6 +3,7 @@
     v-model="mergeMethod"
     :options="optionsImageMergeMethodChoices"
     size="sm"
+    class="clickable"
   >
   </b-form-select>
 </template>
@@ -30,4 +31,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.clickable {
+  cursor: pointer;
+}
 </style>

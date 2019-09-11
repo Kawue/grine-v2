@@ -10,8 +10,24 @@
       @click="clearSelection"
       >Clear</b-button
     >
-    <div class="mode-container text-center">
-      <div v-if="this.lassoMode" class="selected-mode">
+    <b-button
+      id="nodeTrix-button"
+      variant="primary"
+      size="lg"
+      :disabled="!(nodeTrixPossible && !lassoActive)"
+      @click="computeNodeTrix"
+      >NodeTrix</b-button
+    >
+    <b-button
+      id="nodeTrix-reset-button"
+      variant="warning"
+      size="lg"
+      :disabled="!(nodeTrixActive && !lassoActive)"
+      @click="resetNodeTrix"
+      >Reset NodeTrix</b-button
+    >
+    <div class="mode-container text-center" @click="toggleMode">
+      <div v-if="lassoMode" class="selected-mode">
         Free Mode
       </div>
       <div v-else class="selected-mode">
@@ -39,6 +55,9 @@ export default {
     ...mapGetters({
       loading: 'getLoadingGraphData',
       lassoMode: 'networkLassoMode',
+      nodeTrixPossible: 'networkNodeTrixPossible',
+      nodeTrixActive: 'networkNodeTrixActive',
+      lassoActive: 'isMzLassoSelectionActive',
     }),
   },
   mounted: function() {
@@ -49,6 +68,15 @@ export default {
   methods: {
     clearSelection() {
       store.commit('RESET_SELECTION');
+    },
+    computeNodeTrix() {
+      store.commit('NETWORK_COMPUTE_NODETRIX');
+    },
+    resetNodeTrix() {
+      store.commit('NETWORK_NODETRIX_RESET');
+    },
+    toggleMode() {
+      store.commit('NETWORK_TOGGLE_MODE');
     },
   },
 };
@@ -69,9 +97,24 @@ export default {
 }
 .mode-container {
   position: absolute;
-  left: 4vw;
+  left: 3vw;
   background-color: rgba(231, 231, 231, 0.5);
   top: 0;
+  z-index: 100;
+  cursor: pointer;
+}
+#nodeTrix-button {
+  position: absolute;
+  left: 20vw;
+  bottom: 5vh;
+  font-size: 1.2em;
+  z-index: 100;
+}
+#nodeTrix-reset-button {
+  position: absolute;
+  left: 10vw;
+  bottom: 5vh;
+  font-size: 1.2em;
   z-index: 100;
 }
 </style>
