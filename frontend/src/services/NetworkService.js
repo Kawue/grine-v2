@@ -330,14 +330,14 @@ class NetworkService {
         nodeElements: lNode,
         linkElements: lLink,
         zoom: NetworkService.initZoom(),
-        lasso: this.initLasso(lNode),
+        lasso: this.initLasso(),
       };
     } else {
       return {
         svg: lSvg,
         nodeElements: lNode,
         linkElements: lLink,
-        lasso: this.initLasso(lNode),
+        lasso: this.initLasso(),
         zoom: NetworkService.initZoom(),
       };
     }
@@ -351,7 +351,7 @@ class NetworkService {
     if (!lassoMode) {
       networkSVG.zoom = NetworkService.initZoom();
     } else {
-      networkSVG.lasso = this.initLasso(networkSVG.nodeElements);
+      networkSVG.lasso = this.initLasso();
     }
   }
 
@@ -540,13 +540,13 @@ class NetworkService {
     }
   }
 
-  initLasso(nodes) {
+  initLasso() {
     const svg = d3.select('.graphd3');
     const lasso = d3lasso
       .lasso()
       .closePathSelect(true)
       .closePathDistance(100)
-      .items(nodes)
+      .items(NetworkService.getLassoSVGNodes())
       .targetArea(svg)
       .on('start', this.lassoStart)
       .on('draw', this.lassoDraw)
@@ -659,6 +659,17 @@ class NetworkService {
         );
       }
     }
+    // remove duplicated nodes
+    deepNodes
+      .sort((a, b) => (a.name > b.name ? 1 : -1))
+      .forEach((item, index) => {
+        if (
+          deepNodes[index + 1] != null &&
+          item.name === deepNodes[index + 1].name
+        ) {
+          deepNodes.splice(index, 1);
+        }
+      });
     const map = {};
     let heatmap = [];
     // construct empty heatmap and data structure to map from node name to index in heatmap
