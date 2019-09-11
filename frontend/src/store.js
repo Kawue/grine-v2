@@ -181,6 +181,9 @@ export default new Vuex.Store({
     },
   },
   getters: {
+    getWholeData: state => {
+      return state.originalGraphData;
+    },
     getLoadingGraphData: state => {
       return state.loadingGraphData;
     },

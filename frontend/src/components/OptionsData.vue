@@ -11,6 +11,18 @@
         </b-form-select>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+        <a
+          id="json-export"
+          :download="'grineV2.json'"
+          class="btn btn-primary"
+          :href="downloadJson"
+        >
+          Export JSON
+        </a>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -30,6 +42,7 @@ export default {
     ...mapGetters({
       optionsDataGraphChoices: 'optionsDataGraphChoices',
       state: 'getOptionsData',
+      wholeData: 'getWholeData',
     }),
     selectedGraph: {
       get() {
@@ -39,11 +52,21 @@ export default {
         this.$store.dispatch('changeGraph', value);
       },
     },
+    downloadJson() {
+      return window.URL.createObjectURL(
+        new Blob([JSON.stringify(this.wholeData, null, 2)], {
+          type: 'application/json',
+        })
+      );
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
 .network {
+}
+#json-export {
+  margin: 10px;
 }
 </style>
