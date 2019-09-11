@@ -3,29 +3,31 @@
     <SidebarLeft />
     <SidebarRight v-if="!loading" />
     <Graph v-if="!loading" />
-    <b-button
-      id="clear-button"
-      variant="warning"
-      size="lg"
-      @click="clearSelection"
-      >Clear</b-button
-    >
-    <b-button
-      id="nodeTrix-button"
-      variant="primary"
-      size="lg"
-      :disabled="!(nodeTrixPossible && !lassoActive)"
-      @click="computeNodeTrix"
-      >NodeTrix</b-button
-    >
-    <b-button
-      id="nodeTrix-reset-button"
-      variant="warning"
-      size="lg"
-      :disabled="!(nodeTrixActive && !lassoActive)"
-      @click="resetNodeTrix"
-      >Reset NodeTrix</b-button
-    >
+    <div id="bottom-button-container">
+      <b-button
+        id="clear-button"
+        variant="warning"
+        size="lg"
+        @click="clearSelection"
+        >Clear</b-button
+      >
+
+      <b-button
+        variant="warning"
+        size="lg"
+        :disabled="!(nodeTrixActive && !lassoActive)"
+        @click="resetNodeTrix"
+        >Reset NodeTrix</b-button
+      >
+      <b-button
+        id="nodeTrix-button"
+        variant="primary"
+        size="lg"
+        :disabled="!(nodeTrixPossible && !lassoActive)"
+        @click="computeNodeTrix"
+        >NodeTrix</b-button
+      >
+    </div>
     <div class="mode-container text-center" @click="toggleMode">
       <div v-if="lassoMode" class="selected-mode">
         Free Mode
@@ -83,11 +85,7 @@ export default {
 </script>
 <style scoped lang="scss">
 #clear-button {
-  position: absolute;
-  left: 3vw;
-  bottom: 5vh;
-  font-size: 1.2em;
-  z-index: 100;
+  margin-right: 50px;
 }
 .selected-mode {
   width: 150px;
@@ -104,17 +102,13 @@ export default {
   cursor: pointer;
 }
 #nodeTrix-button {
-  position: absolute;
-  left: 20vw;
-  bottom: 5vh;
-  font-size: 1.2em;
-  z-index: 100;
+  margin-left: 15px;
 }
-#nodeTrix-reset-button {
+#bottom-button-container {
   position: absolute;
-  left: 10vw;
+  left: 3vw;
   bottom: 5vh;
-  font-size: 1.2em;
   z-index: 100;
+  font-size: 1.2em;
 }
 </style>
