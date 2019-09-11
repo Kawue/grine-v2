@@ -14,7 +14,7 @@
       id="nodeTrix-button"
       variant="primary"
       size="lg"
-      v-if="nodeTrixPossible && !lassoActive"
+      :disabled="!(nodeTrixPossible && !lassoActive)"
       @click="computeNodeTrix"
       >NodeTrix</b-button
     >
@@ -22,7 +22,7 @@
       id="nodeTrix-reset-button"
       variant="warning"
       size="lg"
-      v-if="nodeTrixActive && !lassoActive"
+      :disabled="!(nodeTrixActive && !lassoActive)"
       @click="resetNodeTrix"
       >Reset NodeTrix</b-button
     >
@@ -105,15 +105,15 @@ export default {
 }
 #nodeTrix-button {
   position: absolute;
-  left: 3vw;
-  top: 55vh;
+  left: 20vw;
+  bottom: 5vh;
   font-size: 1.2em;
   z-index: 100;
 }
 #nodeTrix-reset-button {
   position: absolute;
-  left: 3vw;
-  top: 65vh;
+  left: 10vw;
+  bottom: 5vh;
   font-size: 1.2em;
   z-index: 100;
 }
