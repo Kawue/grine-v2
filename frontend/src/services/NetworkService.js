@@ -660,16 +660,22 @@ class NetworkService {
       }
     }
     // remove duplicated nodes
-    deepNodes
-      .sort((a, b) => (a.name > b.name ? 1 : -1))
-      .forEach((item, index) => {
-        if (
-          deepNodes[index + 1] != null &&
-          item.name === deepNodes[index + 1].name
-        ) {
-          deepNodes.splice(index, 1);
-        }
-      });
+    deepNodes.sort((a, b) => (a.name > b.name ? 1 : -1));
+    deepNodes.forEach((item, index) => {
+      if (
+        deepNodes[index + 1] != null &&
+        item.name === deepNodes[index + 1].name
+      ) {
+        deepNodes.splice(index, 1);
+      }
+    });
+    deepNodes.sort((a, b) => {
+      if (a.color === b.color) {
+        return a.mzs[0] > b.mzs[0] ? 1 : -1;
+      } else {
+        return a.color > b.color ? 1 : -1;
+      }
+    });
     const map = {};
     let heatmap = [];
     // construct empty heatmap and data structure to map from node name to index in heatmap
