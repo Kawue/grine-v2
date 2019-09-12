@@ -151,6 +151,11 @@ export default new Vuex.Store({
           nodeTrixNode: null,
         },
       },
+      split: {
+        oldGroup: [],
+        newGroup: [],
+        possible: false,
+      },
     },
     options: {
       state: {
@@ -293,6 +298,9 @@ export default new Vuex.Store({
     },
     networkNodeTrixNewElements: state => {
       return state.network.nodeTrix.newElements;
+    },
+    networkClusterSplitPossible: state => {
+      return state.network.split.possible;
     },
     stateOptionsGraph: state => {
       return state.options.data.graph;
@@ -524,6 +532,7 @@ export default new Vuex.Store({
     NETWORK_COMPUTE_NODETRIX: state => {
       state.network.nodeTrix.nodeTrixPossible = false;
       state.network.nodeTrix.nodeTrixActive = true;
+      state.network.split.possible = false;
       networkService.computeNodeTrix(
         state.originalGraphData.graphs['graph' + state.options.data.graph]
           .graph,
@@ -536,6 +545,7 @@ export default new Vuex.Store({
     },
     NETWORK_NODETRIX_RESET: state => {
       state.network.nodeTrix.nodeTrixActive = false;
+      state.network.split.possible = false;
       networkService.resetNodeTrix(state.network.nodes, state.network.edges);
       if (
         NetworkService.getSelectedNodes(state.network.nodes, false).length === 0
@@ -553,6 +563,22 @@ export default new Vuex.Store({
         state.network.nodeTrix.minWeight,
         state.network.nodeTrix.maxWeight,
       ]);
+    },
+    NETWORK_SPLIT_CLUSTER_POSSIBLE: (state, data) => {
+      state.network.split.possible = true;
+      state.network.split.newGroup = data[0];
+      state.network.split.oldGroup = data[1];
+    },
+    NETWORK_SPLIT_CLUSTER: state => {
+      state.network.split.possible = false;
+      networkService.splitCluster(
+        state.originalGraphData.graphs['graph' + state.options.data.graph]
+          .graph,
+        state.network.split.newGroup,
+        state.network.split.oldGroup
+      );
+      state.network.split.newGroup = [];
+      state.network.split.oldGroup = [];
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -606,6 +632,7 @@ export default new Vuex.Store({
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.network.nodeTrix.nodeTrixPossible = true;
+      state.network.split.possible = false;
       state.mzList.selectedMz = data;
       state.mzList.visibleMz = mzListService.sortMzList(
         state.mzList.visibleMz,
@@ -620,6 +647,7 @@ export default new Vuex.Store({
     },
     MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
       state.network.nodeTrix.nodeTrixPossible = true;
+      state.network.split.possible = false;
       const tuple = mzListService.updateHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -646,6 +674,9 @@ export default new Vuex.Store({
     },
     RESET_SELECTION: (state, keepLasso) => {
       state.network.nodeTrix.nodeTrixPossible = false;
+      state.network.split.possible = false;
+      state.network.split.newGroup = [];
+      state.network.split.oldGroup = [];
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -750,6 +781,7 @@ export default new Vuex.Store({
           ].graph
         ).length - 1;
       context.state.network.nodeTrix.nodeTrixPossible = false;
+      context.state.network.split.possible = false;
       context.state.network.nodeTrix.nodeTrixActive = false;
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');

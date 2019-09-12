@@ -535,8 +535,41 @@ class NetworkService {
           .data()
           .map(d => d.name)
       );
-      // store.commit('MZLIST_UPDATE_SELECTED_MZ', mzs.map(f => f.toString()));
       store.dispatch('mzlistUpdateHighlightedMz', mzs);
+      const hierarchies = lasso
+        .selectedItems()
+        .data()
+        .map(n => parseInt(n.name.split('n')[0].slice(1), 10));
+      const firstParent = lasso.selectedItems().data()[0].parent;
+      if (
+        hierarchies.reduce(
+          (acc, val) => acc && (val === hierarchies[0] && val > 0),
+          true
+        ) &&
+        lasso
+          .selectedItems()
+          .data()
+          .reduce((acc, val) => acc && val.parent === firstParent, true)
+      ) {
+        const inverseNodes = d3
+          .select('#graph-container')
+          .selectAll('.node')
+          .data()
+          .filter(node => {
+            return (
+              parseInt(node.name.split('n')[0].slice(1), 10) ===
+                hierarchies[0] &&
+              node.parent === firstParent &&
+              !node.selected
+            );
+          });
+        if (inverseNodes.length > 0) {
+          store.commit('NETWORK_SPLIT_CLUSTER_POSSIBLE', [
+            lasso.selectedItems().data(),
+            inverseNodes,
+          ]);
+        }
+      }
     }
   }
 
@@ -554,6 +587,11 @@ class NetworkService {
 
     svg.call(lasso);
     return lasso;
+  }
+
+  splitCluster(graph, newGroup, oldGroup) {
+    console.log('New group', newGroup.map(n => n.name));
+    console.log('Old Group', oldGroup.map(n => n.name));
   }
 
   computeNodeTrix(graph, nodes, edges, deepestHierarchy, colorScale) {
@@ -671,7 +709,7 @@ class NetworkService {
     });
     deepNodes.sort((a, b) => {
       if (a.color === b.color) {
-        return a.mzs[0] > b.mzs[0] ? 1 : -1;
+        return a.parent > b.parent ? 1 : -1;
       } else {
         return a.color > b.color ? 1 : -1;
       }
