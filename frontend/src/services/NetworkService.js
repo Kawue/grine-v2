@@ -674,7 +674,7 @@ class NetworkService {
     });
     deepNodes.sort((a, b) => {
       if (a.color === b.color) {
-        return a.mzs[0] > b.mzs[0] ? 1 : -1;
+        return a.parent > b.parent ? 1 : -1;
       } else {
         return a.color > b.color ? 1 : -1;
       }
