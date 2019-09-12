@@ -57,6 +57,7 @@ class NetworkService {
             return d.name === graph['hierarchy0']['edges'][l].target;
           }),
           name: graph['hierarchy0'].edges[l]['name'],
+          weight: graph['hierarchy0'].edges[l]['weight'],
         };
       })
     );
@@ -377,7 +378,9 @@ class NetworkService {
 
   static updateSimulationParameters(simulation, parameters) {
     simulation.force('charge').strength(parameters.repulsion);
-    simulation.force('link').distance(parameters.edgeLength);
+    simulation
+      .force('link')
+      .distance(l => (1.1 - l.weight) * parameters.edgeLength * 3);
     simulation
       .alphaDecay(1 - Math.pow(0.001, 1 / parameters.iterations))
       .alpha(0.5)
@@ -410,7 +413,7 @@ class NetworkService {
         d3
           .forceLink(edges.concat(nodeTrixEdges))
           .id(l => l.name)
-          .distance(parameters.edgeLength)
+          .distance(l => (1.1 - l.weight) * 3 * parameters.edgeLength)
           .strength(function strength(link) {
             return link.name.startsWith('edge') ? 0.001 : 1;
           })
@@ -801,6 +804,12 @@ class NetworkService {
         });
     }
 
+    const forbiddenNodeIndices = [];
+
+    for (const name of deepNodes.map(n => n.name)) {
+      forbiddenNodeIndices.push(parseInt(name.split('n')[1], 10));
+    }
+
     const newEdges = [];
     // normal edges to border nodes
     Object.keys(graph['hierarchy' + deepestHierarchy]['edges']).forEach(l => {
@@ -820,6 +829,7 @@ class NetworkService {
             source: deepNodes[sourceIndex],
             target: nodes[targetIndex],
             name: graph['hierarchy' + deepestHierarchy].edges[l]['name'],
+            weight: graph['hierarchy' + deepestHierarchy].edges[l]['weight'],
           });
         }
       } else {
@@ -840,6 +850,7 @@ class NetworkService {
               source: deepNodes[targetIndex],
               target: nodes[sourceIndex],
               name: graph['hierarchy' + deepestHierarchy].edges[l]['name'],
+              weight: graph['hierarchy' + deepestHierarchy].edges[l]['weight'],
             });
           }
         }
@@ -880,6 +891,9 @@ class NetworkService {
                     deepNode.name
                 ) {
                   for (const c of childs) {
+                    if (forbiddenNodeIndices.includes(c)) {
+                      continue;
+                    }
                     // search all edges where source or target is a child of current node in current hierarchy
                     if (
                       graph['hierarchy' + deepestHierarchy]['edges'][l]
@@ -893,6 +907,7 @@ class NetworkService {
                         source: deepNode,
                         target: node,
                         name: 'edge' + this.hybridEdgeCounter,
+                        weight: 0.1,
                       });
                       this.hybridEdgeCounter += 1;
                       break;
@@ -1148,6 +1163,7 @@ class NetworkService {
                         source: node,
                         target: hiddenNodes[i],
                         name: 'edge' + this.hybridEdgeCounter,
+                        weight: 0.1,
                       });
                       this.hybridEdgeCounter += 1;
                       hit = true;
@@ -1201,6 +1217,7 @@ class NetworkService {
                         source: node,
                         target: hiddenNodes[i],
                         name: 'edge' + this.hybridEdgeCounter,
+                        weight: 0.1,
                       });
                       this.hybridEdgeCounter += 1;
                       break;
@@ -1224,6 +1241,7 @@ class NetworkService {
                   source: hiddenNodes[i],
                   target: node,
                   name: currentEdge.name,
+                  weight: currentEdge.weight,
                 });
               } else if (
                 currentEdge.target === hiddenNodes[i].name &&
@@ -1233,6 +1251,7 @@ class NetworkService {
                   source: node,
                   target: hiddenNodes[i],
                   name: currentEdge.name,
+                  weight: currentEdge.weight,
                 });
               }
             }
@@ -1816,6 +1835,7 @@ class NetworkService {
                       source: node,
                       target: nextNode,
                       name: 'edge' + this.hybridEdgeCounter,
+                      weight: 0.1,
                     });
                     this.hybridEdgeCounter += 1;
                     hit = true;
@@ -1868,6 +1888,7 @@ class NetworkService {
                       source: node,
                       target: nextNode,
                       name: 'edge' + this.hybridEdgeCounter,
+                      weight: 0.1,
                     });
                     this.hybridEdgeCounter += 1;
                     break;
@@ -1900,6 +1921,7 @@ class NetworkService {
             source: nodes[sourceIndex],
             target: nodes[targetIndex],
             name: graph['hierarchy' + previousHierarchy].edges[l]['name'],
+            weight: graph['hierarchy' + previousHierarchy].edges[l]['weight'],
           });
         }
       }
@@ -1925,6 +1947,7 @@ class NetworkService {
             source: e.source,
             target: nextNode,
             name: 'edge' + this.hybridEdgeCounter,
+            weight: 0.1,
           });
           this.hybridEdgeCounter += 1;
         }
@@ -1958,13 +1981,12 @@ class NetworkService {
 
     const forbiddenNodeIndices = [];
 
-    if (nextHierarchy === maxH) {
-      for (const name of store.getters.networkNodeTrixNewElements.newNodes.map(
-        n => n.name
-      )) {
-        forbiddenNodeIndices.push(parseInt(name.split('n')[1], 10));
-      }
+    for (const name of store.getters.networkNodeTrixNewElements.newNodes.map(
+      n => n.name
+    )) {
+      forbiddenNodeIndices.push(parseInt(name.split('n')[1], 10));
     }
+
     // add nodes to datastructure
     for (let child of oldNode.childs) {
       if (forbiddenNodeIndices.includes(child)) {
@@ -2045,6 +2067,7 @@ class NetworkService {
                         source: node,
                         target: newNode,
                         name: 'edge' + this.hybridEdgeCounter,
+                        weight: 0.1,
                       });
                       this.hybridEdgeCounter += 1;
                       break;
@@ -2100,6 +2123,7 @@ class NetworkService {
                         source: node,
                         target: newNode,
                         name: 'edge' + this.hybridEdgeCounter,
+                        weight: 0.1,
                       });
                       hit = true;
                       this.hybridEdgeCounter += 1;
@@ -2134,6 +2158,7 @@ class NetworkService {
             source: nodes[sourceIndex],
             target: nodes[targetIndex],
             name: graph['hierarchy' + nextHierarchy].edges[l]['name'],
+            weight: graph['hierarchy' + nextHierarchy].edges[l]['weight'],
           });
         }
       }
@@ -2182,6 +2207,9 @@ class NetworkService {
                         .source === deepNode.name
                     ) {
                       for (const c of childs) {
+                        if (forbiddenNodeIndices.includes(c)) {
+                          continue;
+                        }
                         // search all edges where source or target is a child of current node in current hierarchy
                         if (
                           graph['hierarchy' + deepestHierarchy]['edges'][l]
@@ -2195,6 +2223,7 @@ class NetworkService {
                             source: deepNode,
                             target: node,
                             name: 'edge' + this.hybridEdgeCounter,
+                            weight: 0.1,
                           });
                           this.hybridEdgeCounter += 1;
                           break;
@@ -2230,6 +2259,8 @@ class NetworkService {
                     target: newNodes[targetIndex],
                     name:
                       graph['hierarchy' + deepestHierarchy].edges[l]['name'],
+                    weight:
+                      graph['hierarchy' + deepestHierarchy].edges[l]['weight'],
                   });
                 }
               } else {
@@ -2252,6 +2283,10 @@ class NetworkService {
                       target: newNodes[sourceIndex],
                       name:
                         graph['hierarchy' + deepestHierarchy].edges[l]['name'],
+                      weight:
+                        graph['hierarchy' + deepestHierarchy].edges[l][
+                          'weight'
+                        ],
                     });
                   }
                 }
