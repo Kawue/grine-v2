@@ -959,6 +959,7 @@ class NetworkService {
       top.column = i;
       deepNodes.push(bottom);
     }
+    NetworkService.removeDuplicatedEdges(newEdges);
     store.getters.networkNodeTrixNewElements.newNodes = deepNodes;
     store.getters.networkNodeTrixNewElements.newEdges = newEdges;
     const nodeTrixSize = heatmap.length * size;
@@ -1259,6 +1260,7 @@ class NetworkService {
         }
       }
     }
+    NetworkService.removeDuplicatedEdges(newEdges);
     return newEdges;
   }
 
@@ -1266,6 +1268,25 @@ class NetworkService {
     const newArray = [...array];
     newArray.splice(index, 1);
     return newArray;
+  }
+
+  static removeDuplicatedEdges(edges) {
+    edges.sort((a, b) => {
+      if (a.source.name === b.source.name) {
+        return a.target.name > b.target.name ? 1 : -1;
+      } else {
+        return a.source.name > b.source.name ? 1 : -1;
+      }
+    });
+    edges.forEach((edge, index) => {
+      while (
+        edges[index + 1] != null &&
+        edge.source.name === edges[index + 1].source.name &&
+        edge.target.name === edges[index + 1].target.name
+      ) {
+        edges.splice(index + 1, 1);
+      }
+    });
   }
 
   filterNodesForResetNodeTrix(graph, visibleNodes, hiddenNodes) {
@@ -1926,6 +1947,7 @@ class NetworkService {
         }
       }
     });
+    NetworkService.removeDuplicatedEdges(newEdges);
     edges.push(...newEdges);
 
     // if nodeTrix is active, update the edges to the border of the matrix
@@ -1952,6 +1974,7 @@ class NetworkService {
           this.hybridEdgeCounter += 1;
         }
       }
+      NetworkService.removeDuplicatedEdges(newNodeTrixEdges);
       store.getters.networkNodeTrixNewElements.newEdges.push(
         ...newNodeTrixEdges
       );
@@ -2163,6 +2186,7 @@ class NetworkService {
         }
       }
     });
+    NetworkService.removeDuplicatedEdges(newEdges);
     edges.push(...newEdges);
 
     if (store.getters.networkNodeTrixNewElements.newNodes.length > 0) {
@@ -2294,6 +2318,7 @@ class NetworkService {
             }
           );
         }
+        NetworkService.removeDuplicatedEdges(newNodeTrixEdges);
         store.getters.networkNodeTrixNewElements.newEdges.push(
           ...newNodeTrixEdges
         );
