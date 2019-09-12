@@ -595,6 +595,169 @@ class NetworkService {
   splitCluster(graph, newGroup, oldGroup) {
     console.log('New group', newGroup.map(n => n.name));
     console.log('Old Group', oldGroup.map(n => n.name));
+    const childHierarchy = parseInt(
+      newGroup[0].name.split('n')[0].slice(1),
+      10
+    );
+    const parentHierarchy = childHierarchy - 1;
+    const oldParent =
+      graph['hierarchy' + parentHierarchy].nodes[
+        'h' + parentHierarchy + 'n' + newGroup[0].parent
+      ];
+
+    // construct new parent one hierarchy higher
+    const newParentIndex = Object.keys(
+      graph['hierarchy' + parentHierarchy].nodes
+    ).length;
+    const newParentName = 'h' + parentHierarchy + 'n' + newParentIndex;
+    const newParentChilds = newGroup.map(n =>
+      parseInt(n.name.split('n')[1], 10)
+    );
+    const newParentMzs = newGroup.map(n => n.mzs).flat();
+    oldParent.childs = oldParent.childs.filter(
+      c => !newParentChilds.includes(c)
+    );
+    oldParent.mzs = oldParent.mzs.filter(mz => !newParentMzs.includes(mz));
+    const newParentParent = oldParent.membership;
+    const newParent = {
+      index: newParentIndex,
+      name: newParentName,
+      childs: newParentChilds,
+      mzs: newParentMzs,
+      membership: newParentParent,
+    };
+    graph['hierarchy' + (parentHierarchy - 1)].nodes[
+      'h' + (parentHierarchy - 1) + 'n' + newParentParent
+    ].childs.push(newParentIndex);
+    graph['hierarchy' + parentHierarchy].nodes[newParentName] = newParent;
+    for (const node of newGroup) {
+      node.parent = newParentIndex;
+      graph['hierarchy' + childHierarchy].nodes[
+        node.name
+      ].membership = newParentIndex;
+    }
+
+    // inspect edges from oldGroup and newGroup
+    let newGroupEdges = [];
+    let oldGroupEdges = [];
+    for (const edgeKey of Object.keys(
+      graph['hierarchy' + childHierarchy].edges
+    )) {
+      // search for edges between newGroup and every other group
+      const edge = graph['hierarchy' + childHierarchy].edges[edgeKey];
+      const sourceIndexNewGroup = newGroup.findIndex(
+        node => node.name === edge.source
+      );
+      const targetIndexNewGroup = newGroup.findIndex(
+        node => node.name === edge.target
+      );
+      if (sourceIndexNewGroup > -1 && targetIndexNewGroup === -1) {
+        newGroupEdges.push({
+          parent:
+            graph['hierarchy' + childHierarchy].nodes[edge.target].membership,
+          weight: edge.weight,
+        });
+      } else if (sourceIndexNewGroup === -1 && targetIndexNewGroup > -1) {
+        newGroupEdges.push({
+          parent:
+            graph['hierarchy' + childHierarchy].nodes[edge.source].membership,
+          weight: edge.weight,
+        });
+      }
+
+      if (sourceIndexNewGroup === -1 && targetIndexNewGroup === -1) {
+        const sourceIndexOldGroup = oldGroup.findIndex(
+          node => node.name === edge.source
+        );
+        const targetIndexOldGroup = oldGroup.findIndex(
+          node => node.name === edge.target
+        );
+        if (sourceIndexOldGroup > -1 && targetIndexOldGroup === -1) {
+          oldGroupEdges.push({
+            parent:
+              graph['hierarchy' + childHierarchy].nodes[edge.target].membership,
+            weight: edge.weight,
+          });
+        } else if (sourceIndexOldGroup === -1 && targetIndexOldGroup > -1) {
+          oldGroupEdges.push({
+            parent:
+              graph['hierarchy' + childHierarchy].nodes[edge.source].membership,
+            weight: edge.weight,
+          });
+        }
+      }
+    }
+    newGroupEdges = NetworkService.aggregateWeightsByParent(newGroupEdges);
+    oldGroupEdges = NetworkService.aggregateWeightsByParent(oldGroupEdges);
+    console.log('oldGroupEdges', oldGroupEdges);
+
+    // update edges from oldParent
+    for (const edgeKey of Object.keys(
+      graph['hierarchy' + parentHierarchy].edges
+    )) {
+      const edge = graph['hierarchy' + parentHierarchy].edges[edgeKey];
+      if (edge.source === oldParent.name || edge.target === oldParent.name) {
+        console.log(edge.source, edge.target);
+        const index = oldGroupEdges.findIndex(
+          aggregatedEdge =>
+            'h' + parentHierarchy + 'n' + aggregatedEdge.parent ===
+              edge.target ||
+            'h' + parentHierarchy + 'n' + aggregatedEdge.parent === edge.source
+        );
+        console.log(index);
+        if (index > -1) {
+          graph['hierarchy' + parentHierarchy].edges[edgeKey].weight =
+            oldGroupEdges[index].weight;
+        } else {
+          delete graph['hierarchy' + parentHierarchy].edges[edgeKey];
+        }
+      }
+    }
+
+    // insert new edges from newParent
+    let maxEdgeIndex = Math.max(
+      ...Object.keys(graph['hierarchy' + childHierarchy].edges).map(edgeKey =>
+        parseInt(edgeKey.split('e')[1], 10)
+      )
+    );
+    for (const edge of newGroupEdges) {
+      graph['hierarchy' + parentHierarchy].edges[
+        'h' + parentHierarchy + 'e' + maxEdgeIndex
+      ] = {
+        index: maxEdgeIndex,
+        name: 'h' + parentHierarchy + 'e' + maxEdgeIndex,
+        weight: edge.weight,
+        source: newParentName,
+        target: 'h' + parentHierarchy + 'n' + edge.parent,
+      };
+      maxEdgeIndex++;
+    }
+  }
+
+  static aggregateWeightsByParent(edges) {
+    // the mean is the aggregate function
+    // edges = [{parent: number, weight: number}]
+    const aggregatedEdges = [];
+    edges.sort((a, b) => (a.parent > b.parent ? 1 : -1));
+    for (let i = 0; i < edges.length; i++) {
+      const currentParent = edges[i].parent;
+      let counter = 1;
+      let sum = edges[i].weight;
+      while (
+        edges[i + counter] != null &&
+        edges[i + counter].parent === currentParent
+      ) {
+        sum += edges[i + counter].weight;
+        counter++;
+      }
+      aggregatedEdges.push({
+        parent: currentParent,
+        weight: sum / counter,
+      });
+      counter--;
+      i += counter;
+    }
+    return aggregatedEdges;
   }
 
   computeNodeTrix(graph, nodes, edges, deepestHierarchy, colorScale) {
