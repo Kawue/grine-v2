@@ -1266,6 +1266,7 @@ class NetworkService {
       nodes,
       newNodes
     );
+    NetworkService.removeDuplicatedEdges(newEdges);
     nodes.push(...newNodes);
     edges.push(...newEdges);
     this.addNodes(newNodes, newEdges);
