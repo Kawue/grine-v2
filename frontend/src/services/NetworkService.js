@@ -593,8 +593,6 @@ class NetworkService {
   }
 
   splitCluster(graph, newGroup, oldGroup) {
-    console.log('New group', newGroup.map(n => n.name));
-    console.log('Old Group', oldGroup.map(n => n.name));
     const childHierarchy = parseInt(
       newGroup[0].name.split('n')[0].slice(1),
       10
@@ -618,17 +616,20 @@ class NetworkService {
       c => !newParentChilds.includes(c)
     );
     oldParent.mzs = oldParent.mzs.filter(mz => !newParentMzs.includes(mz));
-    const newParentParent = oldParent.membership;
     const newParent = {
       index: newParentIndex,
       name: newParentName,
       childs: newParentChilds,
       mzs: newParentMzs,
-      membership: newParentParent,
     };
-    graph['hierarchy' + (parentHierarchy - 1)].nodes[
-      'h' + (parentHierarchy - 1) + 'n' + newParentParent
-    ].childs.push(newParentIndex);
+    if (parentHierarchy > 0) {
+      const newParentParent = oldParent.membership;
+      graph['hierarchy' + (parentHierarchy - 1)].nodes[
+        'h' + (parentHierarchy - 1) + 'n' + newParentParent
+      ].childs.push(newParentIndex);
+      newParent['membership'] = newParentParent;
+    }
+
     graph['hierarchy' + parentHierarchy].nodes[newParentName] = newParent;
     for (const node of newGroup) {
       node.parent = newParentIndex;
@@ -665,6 +666,7 @@ class NetworkService {
         });
       }
 
+      // search for edges between oldGroup and every other group except newGroup
       if (sourceIndexNewGroup === -1 && targetIndexNewGroup === -1) {
         const sourceIndexOldGroup = oldGroup.findIndex(
           node => node.name === edge.source
@@ -689,7 +691,6 @@ class NetworkService {
     }
     newGroupEdges = NetworkService.aggregateWeightsByParent(newGroupEdges);
     oldGroupEdges = NetworkService.aggregateWeightsByParent(oldGroupEdges);
-    console.log('oldGroupEdges', oldGroupEdges);
 
     // update edges from oldParent
     for (const edgeKey of Object.keys(
@@ -697,14 +698,12 @@ class NetworkService {
     )) {
       const edge = graph['hierarchy' + parentHierarchy].edges[edgeKey];
       if (edge.source === oldParent.name || edge.target === oldParent.name) {
-        console.log(edge.source, edge.target);
         const index = oldGroupEdges.findIndex(
           aggregatedEdge =>
             'h' + parentHierarchy + 'n' + aggregatedEdge.parent ===
               edge.target ||
             'h' + parentHierarchy + 'n' + aggregatedEdge.parent === edge.source
         );
-        console.log(index);
         if (index > -1) {
           graph['hierarchy' + parentHierarchy].edges[edgeKey].weight =
             oldGroupEdges[index].weight;
@@ -731,6 +730,9 @@ class NetworkService {
         target: 'h' + parentHierarchy + 'n' + edge.parent,
       };
       maxEdgeIndex++;
+    }
+    if (parentHierarchy === 0) {
+      store.dispatch('changeGraph', store.getters.stateOptionsGraph);
     }
   }
 
