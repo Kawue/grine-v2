@@ -35,7 +35,6 @@ export default {
         store.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
       }
     });
-    console.log('svg fertig');
   },
 };
 </script>

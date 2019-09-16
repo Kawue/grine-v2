@@ -1,14 +1,7 @@
 import * as d3 from 'd3';
+import * as _ from 'lodash';
 
 class ImageService {
-  /**
-   * @param src
-   * @returns {any}
-   */
-  jsonCopy(src) {
-    return JSON.parse(JSON.stringify(src));
-  }
-
   /**
    * assigns colors to image points
    * @param imageDataPassed
@@ -17,7 +10,7 @@ class ImageService {
    */
   calculateColors(imageDataPassed, colorScale) {
     let colorScaleD3 = d3.scaleSequential(d3[colorScale]).domain([0, 1]);
-    let imageData = this.jsonCopy(imageDataPassed);
+    let imageData = _.cloneDeep(imageDataPassed);
     for (let imagePoint in imageData) {
       if (imageData.hasOwnProperty(imagePoint)) {
         let intensity = imageData[imagePoint].intensity;

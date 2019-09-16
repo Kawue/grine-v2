@@ -27,6 +27,15 @@
         @click="computeNodeTrix"
         >NodeTrix</b-button
       >
+
+      <b-button
+        style="margin-left: 50px;"
+        variant="primary"
+        size="lg"
+        v-if="splitPossible"
+        @click="splitCluster"
+        >Split</b-button
+      >
     </div>
     <div class="mode-container text-center" @click="toggleMode">
       <div v-if="lassoMode" class="selected-mode">
@@ -60,10 +69,10 @@ export default {
       nodeTrixPossible: 'networkNodeTrixPossible',
       nodeTrixActive: 'networkNodeTrixActive',
       lassoActive: 'isMzLassoSelectionActive',
+      splitPossible: 'networkClusterSplitPossible',
     }),
   },
   mounted: function() {
-    console.log('home component mounted');
     store.dispatch('fetchGraphData');
     store.dispatch('fetchMergeMethods');
   },
@@ -79,6 +88,9 @@ export default {
     },
     toggleMode() {
       store.commit('NETWORK_TOGGLE_MODE');
+    },
+    splitCluster() {
+      store.commit('NETWORK_SPLIT_CLUSTER');
     },
   },
 };
