@@ -73,7 +73,6 @@ export default {
     }),
   },
   mounted: function() {
-    console.log('home component mounted');
     store.dispatch('fetchGraphData');
     store.dispatch('fetchMergeMethods');
   },
