@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-      width: 250,
+      width: 300,
       heightLast: 100,
       render: false,
       canvas: null,

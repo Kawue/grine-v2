@@ -173,9 +173,9 @@ def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_thr
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
 
     # get the r,g and b values/volumns from the pca
-    r = np.array(single_dframe['pcaR'])
-    g = np.array(single_dframe['pcaG'])
-    b = np.array(single_dframe['pcaB'])
+    r = np.array(single_dframe['umapR'])
+    g = np.array(single_dframe['umapG'])
+    b = np.array(single_dframe['umapB'])
 
     # norm the rgb values to a number between 0 and 1
     r_norm = np.interp(r, (r.min(), r.max()), (0, 1))
