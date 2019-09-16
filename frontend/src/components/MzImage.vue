@@ -163,12 +163,8 @@ export default {
       return this.enableClickCopyToLassoImage && !this.isMzLassoActive();
     },
     imageClick() {
-      if (this.enableLasso) {
-        store.commit('RESET_SELECTION', true);
-      } else {
-        if (this.isAbleToCopyDataIntoSelectionImage()) {
-          store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
-        }
+      if (this.isAbleToCopyDataIntoSelectionImage()) {
+        store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
       }
     },
     widgetUniqueId() {
@@ -197,7 +193,7 @@ export default {
     handleLassoStart() {
       this.removeLassoAfterPointsDrawn = false;
       if (store.getters.isMzLassoSelectionActive) {
-        store.commit('RESET_SELECTION');
+        store.commit('RESET_SELECTION', true);
       }
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
