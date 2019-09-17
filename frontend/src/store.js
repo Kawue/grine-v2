@@ -600,6 +600,12 @@ export default new Vuex.Store({
       state.network.split.possible = false;
       state.network.merge.mergePossible = false;
       state.network.merge.assignmentPossible = false;
+      networkService.changeNodesAssignment(
+        state.originalGraphData.graphs['graph' + state.options.data.graph],
+        state.network.merge.nodes,
+        parentIndex
+      );
+      state.network.merge.nodes = [];
     },
     NETWORK_MERGE_NODES: (state, nodeIndex) => {
       console.log('Unit nodes into node', nodeIndex);

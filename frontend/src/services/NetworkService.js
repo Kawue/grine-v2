@@ -786,6 +786,86 @@ class NetworkService {
     return aggregatedEdges;
   }
 
+  changeNodesAssignment(data, nodes, newParentIndex) {
+    const graph = data.graph;
+    const dataMzs = data.mzs;
+    const nodeHierarchy = parseInt(nodes[0].name.split('n')[0].slice(1), 10);
+    const parentHierarchy = nodeHierarchy - 1;
+    const newColor = nodes.find(n => n.parent === newParentIndex).color;
+    const newNodesMzs = [];
+    const newNodesIndices = [];
+    const parentsToDelete = [];
+    for (const node of nodes) {
+      if (node.parent !== newParentIndex) {
+        const nodeIndex = parseInt(node.name.split('n')[1], 10);
+        newNodesMzs.push(...node.mzs);
+        newNodesIndices.push(nodeIndex);
+
+        // update the nodes parent on every hierarchy
+        let hierarchyCounter = 0;
+        let parent = node.parent;
+        let lastIndex = nodeIndex;
+        let deleteParent = true;
+        // update childs and mzs
+        while (parentHierarchy - hierarchyCounter > -1) {
+          const currentHierarchy = parentHierarchy - hierarchyCounter;
+          const localNode =
+            graph['hierarchy' + currentHierarchy].nodes[
+              'h' + currentHierarchy + 'n' + parent
+            ];
+          if (deleteParent) {
+            localNode.childs = localNode.childs.filter(n => n !== lastIndex);
+          }
+          if (localNode.childs.length === 0) {
+            parentsToDelete.push(localNode.name);
+            delete graph['hierarchy' + currentHierarchy].nodes[localNode.name];
+          } else {
+            deleteParent = false;
+            localNode.mzs = localNode.mzs.filter(mz => !node.mzs.includes(mz));
+          }
+          lastIndex = parent;
+          hierarchyCounter++;
+          parent = localNode.membership;
+        }
+
+        // update the specific nodes parent and color
+        node.parent = newParentIndex;
+        graph['hierarchy' + nodeHierarchy].nodes[
+          node.name
+        ].membership = newParentIndex;
+        node.color = newColor;
+        d3.select('#graph-container')
+          .select('#' + node.name)
+          .attr('fill', node.color);
+        if (store.getters.networkNodeTrixActive) {
+          d3.select('#matrix-nodes')
+            .selectAll(`[orgName='${node.name}']`)
+            .attr('fill', node.color);
+        }
+      }
+    }
+
+    // update the new parent node on every hierarchy
+    let hierarchyCounter = 0;
+    let parent = newParentIndex;
+    while (parentHierarchy - hierarchyCounter > -1) {
+      const currentHierarchy = parentHierarchy - hierarchyCounter;
+      const localNode =
+        graph['hierarchy' + currentHierarchy].nodes[
+          'h' + currentHierarchy + 'n' + parent
+        ];
+      if (hierarchyCounter === 0) {
+        localNode.childs.push(...newNodesIndices);
+      }
+      localNode.mzs.push(...newNodesMzs);
+      for (const mz of newNodesMzs) {
+        dataMzs[mz.toString()]['hierarchy' + currentHierarchy] = localNode.name;
+      }
+      parent = localNode.membership;
+      hierarchyCounter++;
+    }
+  }
+
   computeNodeTrix(graph, nodes, edges, deepestHierarchy, colorScale) {
     const selNodeTrixNodes = [];
     if (!d3.select('#nodeTrix-container').empty()) {
