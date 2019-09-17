@@ -605,9 +605,12 @@ class NetworkService {
       ];
 
     // construct new parent one hierarchy higher
-    const newParentIndex = Object.keys(
-      graph['hierarchy' + parentHierarchy].nodes
-    ).length;
+    const newParentIndex =
+      Math.max(
+        ...Object.keys(graph['hierarchy' + parentHierarchy].nodes).map(
+          nodeKey => parseInt(nodeKey.split('n')[1], 10)
+        )
+      ) + 1;
     const newParentName = 'h' + parentHierarchy + 'n' + newParentIndex;
     const newParentChilds = newGroup.map(n =>
       parseInt(n.name.split('n')[1], 10)
