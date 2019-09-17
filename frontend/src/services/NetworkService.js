@@ -733,6 +733,25 @@ class NetworkService {
     }
     if (parentHierarchy === 0) {
       store.dispatch('changeGraph', store.getters.stateOptionsGraph);
+    } else if (store.getters.networkNodeTrixActive) {
+      // reload nodes which are hidden by nodetrix
+      for (const node of store.getters.networkNodeTrixOldElements.oldNodes) {
+        const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+        if (node.name === oldParent.name) {
+          newParent['radius'] = node.radius;
+          newParent['selected'] = node.selected;
+          newParent['color'] = node.color;
+          newParent['parent'] = newParent.membership;
+          newParent['x'] = node.x + Math.random() * 10;
+          newParent['y'] = node.y + Math.random() * 10;
+          store.getters.networkNodeTrixOldElements.oldNodes.push(newParent);
+        }
+        node.mzs = graph['hierarchy' + nodeHierarchy].nodes[node.name].mzs;
+        if (nodeHierarchy < store.getters.meta.maxHierarchy) {
+          node.childs =
+            graph['hierarchy' + nodeHierarchy].nodes[node.name].childs;
+        }
+      }
     }
   }
 
