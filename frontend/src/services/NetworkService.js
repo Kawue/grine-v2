@@ -542,7 +542,7 @@ class NetworkService {
       const hierarchies = lasso
         .selectedItems()
         .data()
-        .map(n => NetworkService.hierarchyOfNodeName(n));
+        .map(n => NetworkService.hierarchyOfNodeName(n.name));
       const firstParent = lasso.selectedItems().data()[0].parent;
       // check if all nodes are from the same hierarchy
       if (
@@ -862,10 +862,22 @@ class NetworkService {
       hierarchyCounter++;
     }
 
-    // update edges
+    // delete edges of deleted nodes
     const hierarchiesOfDeletedNodes = nodesToDelete.map(n =>
       NetworkService.hierarchyOfNodeName(n)
     );
+    NetworkService.removeSimpleDuplicatesFromArray(hierarchiesOfDeletedNodes);
+    for (const hierarchy of hierarchiesOfDeletedNodes) {
+      const nodesToInvestigate = nodesToDelete.filter(n => NetworkService.hierarchyOfNodeName(n) === hierarchy);
+      for (const edgeKey of Object.keys(graph['hierarchy' + hierarchy].edges)) {
+        const edge = graph['hierarchy' + hierarchy].edges[edgeKey];
+        if (
+          nodesToInvestigate.includes(edge.source) || nodesToInvestigate.includes(edge.target)
+        ) {
+          delete graph['hierarchy' + hierarchy].edges[edgeKey]
+        }
+      }
+    }
   }
 
   static removeSimpleDuplicatesFromArray(array) {
