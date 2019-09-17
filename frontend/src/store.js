@@ -572,8 +572,7 @@ export default new Vuex.Store({
     NETWORK_SPLIT_CLUSTER: state => {
       state.network.split.possible = false;
       networkService.splitCluster(
-        state.originalGraphData.graphs['graph' + state.options.data.graph]
-          .graph,
+        state.originalGraphData.graphs['graph' + state.options.data.graph],
         state.network.split.newGroup,
         state.network.split.oldGroup
       );

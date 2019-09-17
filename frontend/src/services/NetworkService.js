@@ -592,7 +592,8 @@ class NetworkService {
     return lasso;
   }
 
-  splitCluster(graph, newGroup, oldGroup) {
+  splitCluster(data, newGroup, oldGroup) {
+    const graph = data.graph;
     const childHierarchy = parseInt(
       newGroup[0].name.split('n')[0].slice(1),
       10
@@ -612,6 +613,9 @@ class NetworkService {
       parseInt(n.name.split('n')[1], 10)
     );
     const newParentMzs = newGroup.map(n => n.mzs).flat();
+    for (const mz of newParentMzs) {
+      data.mzs[mz.toString()]['hierarchy' + parentHierarchy] = newParentName;
+    }
     oldParent.childs = oldParent.childs.filter(
       c => !newParentChilds.includes(c)
     );
