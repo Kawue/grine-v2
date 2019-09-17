@@ -542,7 +542,7 @@ class NetworkService {
       const hierarchies = lasso
         .selectedItems()
         .data()
-        .map(n => parseInt(n.name.split('n')[0].slice(1), 10));
+        .map(n => NetworkService.hierarchyOfNodeName(n));
       const firstParent = lasso.selectedItems().data()[0].parent;
       // check if all nodes are from the same hierarchy
       if (
@@ -566,7 +566,7 @@ class NetworkService {
             .data()
             .filter(node => {
               return (
-                parseInt(node.name.split('n')[0].slice(1), 10) ===
+                NetworkService.hierarchyOfNodeName(node.name) ===
                   hierarchies[0] &&
                 node.parent === firstParent &&
                 !node.selected
@@ -618,10 +618,7 @@ class NetworkService {
   }
 
   splitCluster(graph, newGroup, oldGroup) {
-    const childHierarchy = parseInt(
-      newGroup[0].name.split('n')[0].slice(1),
-      10
-    );
+    const childHierarchy = NetworkService.hierarchyOfNodeName(newGroup[0].name);
     const parentHierarchy = childHierarchy - 1;
     const oldParent =
       graph['hierarchy' + parentHierarchy].nodes[
@@ -789,12 +786,12 @@ class NetworkService {
   changeNodesAssignment(data, nodes, newParentIndex) {
     const graph = data.graph;
     const dataMzs = data.mzs;
-    const nodeHierarchy = parseInt(nodes[0].name.split('n')[0].slice(1), 10);
+    const nodeHierarchy = NetworkService.hierarchyOfNodeName(nodes[0].name);
     const parentHierarchy = nodeHierarchy - 1;
     const newColor = nodes.find(n => n.parent === newParentIndex).color;
     const newNodesMzs = [];
     const newNodesIndices = [];
-    const parentsToDelete = [];
+    const nodesToDelete = [];
     for (const node of nodes) {
       if (node.parent !== newParentIndex) {
         const nodeIndex = parseInt(node.name.split('n')[1], 10);
@@ -817,7 +814,7 @@ class NetworkService {
             localNode.childs = localNode.childs.filter(n => n !== lastIndex);
           }
           if (localNode.childs.length === 0) {
-            parentsToDelete.push(localNode.name);
+            nodesToDelete.push(localNode.name);
             delete graph['hierarchy' + currentHierarchy].nodes[localNode.name];
           } else {
             deleteParent = false;
@@ -864,6 +861,24 @@ class NetworkService {
       parent = localNode.membership;
       hierarchyCounter++;
     }
+
+    // update edges
+    const hierarchiesOfDeletedNodes = nodesToDelete.map(n =>
+      NetworkService.hierarchyOfNodeName(n)
+    );
+  }
+
+  static removeSimpleDuplicatesFromArray(array) {
+    array.sort((a, b) => (a > b ? 1 : -1));
+    array.forEach((item, index) => {
+      while (array[index + 1] != null && item === array[index + 1]) {
+        array.splice(index + 1, 1);
+      }
+    });
+  }
+
+  static hierarchyOfNodeName(name) {
+    return parseInt(name.split('n')[0].slice(1), 10);
   }
 
   computeNodeTrix(graph, nodes, edges, deepestHierarchy, colorScale) {
@@ -920,7 +935,7 @@ class NetworkService {
     let deepNodes = [];
     // compute nodes of the deepest hierarchy of selected nodes
     for (const node of sel) {
-      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeHierarchy = NetworkService.hierarchyOfNodeName(node.name);
       if (nodeHierarchy === deepestHierarchy) {
         deepNodes.push({
           name: node.name,
@@ -1128,7 +1143,7 @@ class NetworkService {
 
     // hybrid edges to left border node
     for (const node of nodes) {
-      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeHierarchy = NetworkService.hierarchyOfNodeName(node.name);
       let hierarchyCounter = 1;
       if (nodeHierarchy < deepestHierarchy) {
         let childs = [...node.childs];
@@ -1379,14 +1394,13 @@ class NetworkService {
   computeEdgesForResetNodeTrix(graph, visibleNodes, hiddenNodes) {
     const newEdges = [];
     for (let i = 0; i < hiddenNodes.length; i++) {
-      const currentNodeHierarchy = parseInt(
-        hiddenNodes[i].name.split('n')[0].slice(1),
-        10
+      const currentNodeHierarchy = NetworkService.hierarchyOfNodeName(
+        hiddenNodes[i].name
       );
       for (const node of visibleNodes.concat(
         NetworkService.spliceToNewArray(hiddenNodes, i)
       )) {
-        const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+        const nodeHierarchy = NetworkService.hierarchyOfNodeName(node.name);
         let hierarchyCounter = 1;
         // hierarchy of current node is less than hierarchy of next node
         if (nodeHierarchy < currentNodeHierarchy) {
@@ -1563,13 +1577,12 @@ class NetworkService {
     const visibleHigherNodes = visibleNodes.filter(node => {
       return (
         store.getters.meta.maxHierarchy >
-        parseInt(node.name.split('n')[0].slice(1), 10)
+        NetworkService.hierarchyOfNodeName(node.name)
       );
     });
     for (let i = hiddenNodes.length - 1; i >= 0; i--) {
-      const nodeHierarchy = parseInt(
-        hiddenNodes[i].name.split('n')[0].slice(1),
-        10
+      const nodeHierarchy = NetworkService.hierarchyOfNodeName(
+        hiddenNodes[i].name
       );
       let parent = 'h' + (nodeHierarchy - 1) + 'n' + hiddenNodes[i].parent;
       for (
@@ -2009,7 +2022,7 @@ class NetworkService {
   shrinkNode(graph, oldNode, nodes, edges) {
     d3.select('#node-annotation-group').remove();
     const previousHierarchy =
-      parseInt(oldNode.name.split('n')[0].slice(1), 10) - 1;
+      NetworkService.hierarchyOfNodeName(oldNode.name) - 1;
     const nextNodeName =
       'h' + previousHierarchy.toString() + 'n' + oldNode.parent.toString();
     const maxH = store.getters.meta.maxHierarchy;
@@ -2037,10 +2050,7 @@ class NetworkService {
     // remove all removable nodes from datastructure and svg
     for (let i = nodes.length - 1; i >= 0; i--) {
       if (nodes[i].color === oldNode.color) {
-        const nodeHierarchy = parseInt(
-          nodes[i].name.split('n')[0].slice(1),
-          10
-        );
+        const nodeHierarchy = NetworkService.hierarchyOfNodeName(nodes[i].name);
         if (nodeHierarchy === previousHierarchy + 1) {
           if (nodes[i].parent === oldNode.parent) {
             nodesToRemove.push(nodes[i].name);
@@ -2078,7 +2088,7 @@ class NetworkService {
     // hybrid edges
     // go through all nodes
     for (const node of nodes) {
-      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeHierarchy = NetworkService.hierarchyOfNodeName(node.name);
       let hierarchyCounter = 1;
       // hierarchy of current node is less than hierarchy of next node
       if (nodeHierarchy < previousHierarchy) {
@@ -2269,7 +2279,7 @@ class NetworkService {
     d3.select('#node-annotation-group').remove();
     d3.select('#' + oldNode.name).remove();
     const newNodes = [];
-    const nextHierarchy = parseInt(oldNode.name.split('n')[0].slice(1), 10) + 1;
+    const nextHierarchy = NetworkService.hierarchyOfNodeName(oldNode.name) + 1;
     const maxH = store.getters.meta.maxHierarchy;
 
     const forbiddenNodeIndices = [];
@@ -2317,7 +2327,7 @@ class NetworkService {
     // hybrid edges
     // go through all nodes
     for (const node of nodes) {
-      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeHierarchy = NetworkService.hierarchyOfNodeName(node.name);
       let hierarchyCounter = 1;
       if (nodeHierarchy < nextHierarchy) {
         let childs = [...node.childs];
@@ -2859,11 +2869,11 @@ class NetworkService {
 
   static getParentNodeFromNode(node, graph) {
     if (node.parent) {
-      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeHierarchy = NetworkService.hierarchyOfNodeName(node.name);
       const nodeParent = 'h' + (nodeHierarchy - 1) + 'n' + node.parent;
       return graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent];
     } else if (node.membership) {
-      const nodeHierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const nodeHierarchy = NetworkService.hierarchyOfNodeName(node.name);
       const nodeParent = 'h' + (nodeHierarchy - 1) + 'n' + node.membership;
       return graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent];
     } else {

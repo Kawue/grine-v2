@@ -510,7 +510,7 @@ export default new Vuex.Store({
       state.network.nodeTrix.maxWeight = minMaxTupel[1];
     },
     NETWORK_EXPAND_NODE: (state, node) => {
-      const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const hierarchy = NetworkService.hierarchyOfNodeName(node.name);
       if (hierarchy < state.meta.maxHierarchy && node.mzs.length > 1) {
         networkService.expandNode(
           state.originalGraphData.graphs['graph' + state.options.data.graph]
@@ -522,7 +522,7 @@ export default new Vuex.Store({
       }
     },
     NETWORK_SHRINK_NODE: (state, node) => {
-      const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const hierarchy = NetworkService.hierarchyOfNodeName(node.name);
       if (hierarchy > 0) {
         networkService.shrinkNode(
           state.originalGraphData.graphs['graph' + state.options.data.graph]
