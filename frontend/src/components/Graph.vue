@@ -30,14 +30,10 @@
               v-for="node in myList"
               class="radio-selection-node"
               v-bind:key="node.name"
+              @click="selected = parseInt(node.name.split('n')[1], 10)"
             >
-              <svg
-                width="50px"
-                height="50px"
-                style="margin-right: 10px"
-                @click="selected = parseInt(node.name.split('n')[1], 10)"
-              >
-                <circle :fill="node.color" cx="25" cy="25" r="25" />
+              <svg width="50px" height="50px" style="margin-right: 10px">
+                <circle :fill="node.color" cx="25" cy="25" r="20" />
               </svg>
               <b-form-radio :value="parseInt(node.name.split('n')[1], 10)">
                 {{ node.name }}</b-form-radio
@@ -233,15 +229,21 @@ export default {
   display: flex;
   flex-flow: row wrap;
   align-content: space-evenly;
+  width: 480px;
 }
 .radio-selection-node {
   margin: 10px 5px;
   display: inline-block;
+  border: 1px solid lightgray;
+  cursor: pointer;
 }
 .small-left-margin {
   margin-left: 15px;
 }
 .large-left-margin {
   margin-left: 50px;
+}
+.custom-control-label {
+  cursor: inherit;
 }
 </style>
