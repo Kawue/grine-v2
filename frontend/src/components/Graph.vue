@@ -12,9 +12,8 @@
     <b-modal
       id="assignmentModal"
       ref="assignmentModal"
-      title="Select Parent for all"
+      :title="mergeNodes ? 'Select Node to merge to' : 'Select Parent for all'"
       @ok="handleOk"
-      @cancel="handleCancel"
     >
       <template slot="default">
         <b-form-group style="margin-bottom: 0;">
@@ -23,11 +22,11 @@
             name="radios-stacked"
             class="radio-selection"
             v-bind:style="{
-              maxHeight: 70 * Math.ceil(myList.length / 3) + 'px',
+              maxHeight: 70 * Math.ceil(confirmNodes.length / 3) + 'px',
             }"
           >
             <div
-              v-for="node in myList"
+              v-for="node in confirmNodes"
               class="radio-selection-node"
               v-bind:key="node.name"
               @click="selected = parseInt(node.name.split('n')[1], 10)"
@@ -42,17 +41,8 @@
           </b-form-radio-group>
         </b-form-group>
       </template>
-      <template slot="modal-footer" slot-scope="{ cancel, ok }">
-        <b-button variant="danger" @click="testDelete">
-          Delete
-        </b-button>
-        <b-button variant="primary" @click="testAdd">
-          Add
-        </b-button>
-        <b-button variant="outline-danger" @click="cancel()">
-          Cancel
-        </b-button>
-        <b-button variant="success" @click="ok()" :disabled="!state">
+      <template slot="modal-footer" slot-scope="{ ok }">
+        <b-button variant="success" @click="ok()" :disabled="selected == null">
           Confirm
         </b-button>
       </template>
@@ -94,6 +84,8 @@
         variant="primary"
         size="lg"
         class="small-left-margin"
+        :disabled="!assignmentPossible"
+        @click="clickChangeAssignment"
         >Change Assignment</b-button
       >
       <b-button
@@ -101,6 +93,8 @@
         variant="primary"
         size="lg"
         class="small-left-margin"
+        :disabled="!mergePossible"
+        @click="clickMergeNodes"
         >Merge Nodes</b-button
       >
     </div>
@@ -109,7 +103,6 @@
 
 <script>
 import store from '@/store';
-import * as d3 from 'd3';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -119,11 +112,8 @@ export default {
       height: window.innerHeight,
       width: window.innerWidth,
       selected: null,
-      myList: [
-        { name: 'h0n11', color: '#AAFFAA' },
-        { name: 'h0n12', color: '#ff433f' },
-      ],
-      counter: 13,
+      mergeNodes: null,
+      confirmNodes: [],
     };
   },
   computed: {
@@ -133,10 +123,10 @@ export default {
       nodeTrixActive: 'networkNodeTrixActive',
       lassoActive: 'isMzLassoSelectionActive',
       splitPossible: 'networkClusterSplitPossible',
+      mergePossible: 'networkNodeMergePossible',
+      assignmentPossible: 'networkChangeAssignmentPossible',
+      selectedNodes: 'networkMergeNodes',
     }),
-    state() {
-      return Boolean(this.selected);
-    },
   },
   methods: {
     clearSelection() {
@@ -151,26 +141,51 @@ export default {
     splitCluster() {
       store.commit('NETWORK_SPLIT_CLUSTER');
     },
-    handleOk() {
-      console.log('Modal Ok');
-      console.log(this.selected);
+    clickChangeAssignment() {
       this.selected = null;
-    },
-    handleCancel() {
-      console.log('Modal cancel');
-      this.selected = null;
-    },
-    testAdd() {
-      this.myList.push({
-        name: 'h0n' + this.counter,
-        color: d3.interpolateRainbow(Math.random()),
+      const nodesPrefix =
+        'h' +
+        (parseInt(this.selectedNodes[0].name.split('n')[0].slice(1), 10) - 1) +
+        'n';
+      this.confirmNodes = this.selectedNodes
+        .map(node => {
+          return {
+            name: nodesPrefix + node.parent,
+            color: node.color,
+          };
+        })
+        .sort((a, b) => (a.name > b.name ? 1 : -1));
+      this.confirmNodes.forEach((node, index) => {
+        while (
+          this.confirmNodes[index + 1] != null &&
+          node.name === this.confirmNodes[index + 1].name
+        ) {
+          this.confirmNodes.splice(index + 1, 1);
+        }
       });
-      this.counter++;
+      this.mergeNodes = false;
     },
-    testDelete() {
-      if (this.myList.length > 2) {
-        this.myList.splice(0, 1);
+    clickMergeNodes() {
+      this.selected = null;
+      this.confirmNodes = this.selectedNodes
+        .map(node => {
+          return {
+            name: node.name,
+            color: node.color,
+          };
+        })
+        .sort((a, b) => (a.name > b.name ? 1 : -1));
+      this.mergeNodes = true;
+    },
+    handleOk() {
+      if (this.mergeNodes) {
+        // commit merge nodes
+        store.commit('NETWORK_MERGE_NODES', this.selected);
+      } else {
+        // commit assignment change
+        store.commit('NETWORK_CHANGE_ASSIGNMENT', this.selected);
       }
+      this.selected = null;
     },
   },
   mounted() {
@@ -235,6 +250,7 @@ export default {
   margin: 10px 5px;
   display: inline-block;
   border: 1px solid lightgray;
+  border-radius: 5px;
   cursor: pointer;
 }
 .small-left-margin {

@@ -544,33 +544,58 @@ class NetworkService {
         .data()
         .map(n => parseInt(n.name.split('n')[0].slice(1), 10));
       const firstParent = lasso.selectedItems().data()[0].parent;
+      // check if all nodes are from the same hierarchy
       if (
-        hierarchies.reduce(
-          (acc, val) => acc && (val === hierarchies[0] && val > 0),
-          true
-        ) &&
-        lasso
-          .selectedItems()
-          .data()
-          .reduce((acc, val) => acc && val.parent === firstParent, true)
+        hierarchies.length > 1 &&
+        hierarchies.reduce((acc, val) => acc && val === hierarchies[0], true)
       ) {
-        const inverseNodes = d3
-          .select('#graph-container')
-          .selectAll('.node')
-          .data()
-          .filter(node => {
-            return (
-              parseInt(node.name.split('n')[0].slice(1), 10) ===
-                hierarchies[0] &&
-              node.parent === firstParent &&
-              !node.selected
+        // check if cluster split is possible
+        if (
+          lasso
+            .selectedItems()
+            .data()
+            .reduce(
+              (acc, val) =>
+                acc && val.parent != null && val.parent === firstParent,
+              true
+            )
+        ) {
+          const inverseNodes = d3
+            .select('#graph-container')
+            .selectAll('.node')
+            .data()
+            .filter(node => {
+              return (
+                parseInt(node.name.split('n')[0].slice(1), 10) ===
+                  hierarchies[0] &&
+                node.parent === firstParent &&
+                !node.selected
+              );
+            });
+          if (
+            inverseNodes.length > 0 &&
+            hierarchies.reduce((acc, val) => acc && val > 0, true)
+          ) {
+            store.commit('NETWORK_SPLIT_CLUSTER_POSSIBLE', [
+              lasso.selectedItems().data(),
+              inverseNodes,
+            ]);
+          }
+        } else {
+          if (hierarchies[0] > 0) {
+            // assignment change possible
+            store.commit(
+              'NETWORK_ASSIGNMENT_CHANGE_POSSIBLE',
+              lasso.selectedItems().data()
             );
-          });
-        if (inverseNodes.length > 0) {
-          store.commit('NETWORK_SPLIT_CLUSTER_POSSIBLE', [
-            lasso.selectedItems().data(),
-            inverseNodes,
-          ]);
+          }
+          if (hierarchies[0] < store.getters.meta.maxHierarchy) {
+            // node merge possible
+            store.commit(
+              'NETWORK_MERGE_NODES_POSSIBLE',
+              lasso.selectedItems().data()
+            );
+          }
         }
       }
     }
@@ -629,7 +654,6 @@ class NetworkService {
       ].childs.push(newParentIndex);
       newParent['membership'] = newParentParent;
     }
-
     graph['hierarchy' + parentHierarchy].nodes[newParentName] = newParent;
     for (const node of newGroup) {
       node.parent = newParentIndex;
