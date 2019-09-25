@@ -4,6 +4,51 @@ import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import * as _ from 'lodash';
 import store from '@/store';
 
+// data structure for a quadratic and symmetric matrix
+class quadraticSymmetricMatrix {
+  _matrix = [];
+  _size = 0;
+  constructor(size, defaultValue = 0) {
+    this._size = size;
+    for (let i = 0; i < size; i++) {
+      const tempArray = [];
+      for (let j = 0; j < size - i; j++) {
+        tempArray.push(defaultValue);
+      }
+      this._matrix.push(tempArray);
+    }
+    this._matrix = this._matrix.reverse();
+  }
+
+  getValue(i, j) {
+    if (i <= j) {
+      return this._matrix[j][i];
+    } else {
+      return this._matrix[i][j];
+    }
+  }
+
+  setValue(i, j, value) {
+    if (i <= j) {
+      this._matrix[j][i] = value;
+    } else {
+      this._matrix[i][j] = value;
+    }
+  }
+
+  setValueWithFunction(i, j, func) {
+    this.setValue(i, j, func(this.getValue(i, j)));
+  }
+
+  getIterableValues() {
+    return this._matrix.flat();
+  }
+
+  get size() {
+    return this._size;
+  }
+}
+
 class NetworkService {
   biggestNodeRadius = 30;
   smallestNodeRadius = 15;
@@ -871,16 +916,37 @@ class NetworkService {
     );
     NetworkService.removeSimpleDuplicatesFromArray(hierarchiesOfDeletedNodes);
     for (const hierarchy of hierarchiesOfDeletedNodes) {
-      const nodesToInvestigate = nodesToDelete.filter(n => NetworkService.hierarchyOfNodeName(n) === hierarchy);
+      const nodesToInvestigate = nodesToDelete.filter(
+        n => NetworkService.hierarchyOfNodeName(n) === hierarchy
+      );
       for (const edgeKey of Object.keys(graph['hierarchy' + hierarchy].edges)) {
         const edge = graph['hierarchy' + hierarchy].edges[edgeKey];
         if (
-          nodesToInvestigate.includes(edge.source) || nodesToInvestigate.includes(edge.target)
+          nodesToInvestigate.includes(edge.source) ||
+          nodesToInvestigate.includes(edge.target)
         ) {
-          delete graph['hierarchy' + hierarchy].edges[edgeKey]
+          delete graph['hierarchy' + hierarchy].edges[edgeKey];
         }
       }
     }
+    const allNodesInHierarchy = [];
+    for (const nodeKey of Object.keys(
+      graph['hierarchy' + nodeHierarchy].nodes
+    )) {
+      allNodesInHierarchy.push(
+        graph['hierarchy' + nodeHierarchy].nodes[nodeKey]
+      );
+    }
+    this.calculateNewEdges(
+      graph,
+      NetworkService.groupObjectsBy(
+        allNodesInHierarchy.map(node => {
+          node['parent'] = node.membership;
+          return node;
+        }),
+        'parent'
+      )
+    );
   }
 
   static removeSimpleDuplicatesFromArray(array) {
@@ -890,6 +956,142 @@ class NetworkService {
         array.splice(index + 1, 1);
       }
     });
+  }
+
+  calculateNewEdges(graph, nodeGroups) {
+    let groups = _.cloneDeep(nodeGroups);
+    let hierarchy = NetworkService.hierarchyOfNodeName(nodeGroups[0][0].name);
+    let parentNodes = [];
+    let oldMatrix = null;
+    while (hierarchy >= 0) {
+      // update edges on this hierarchy
+      if (oldMatrix != null) {
+        for (const edgeKey of Object.keys(
+          graph['hierarchy' + hierarchy].edges
+        )) {
+          const edge = graph['hierarchy' + hierarchy].edges[edgeKey];
+
+          const parentSourceIndex = parentNodes.findIndex(
+            node => edge.source === node.name
+          );
+          const parentTargetIndex = parentNodes.findIndex(
+            node => edge.target === node.name
+          );
+          if (parentSourceIndex > -1 && parentTargetIndex > -1) {
+            const edgeWeight = oldMatrix.getValue(
+              parentSourceIndex,
+              parentTargetIndex
+            ).weight;
+            if (edgeWeight === 0) {
+              // delete edge if there are no connections anymore between two groups
+              delete graph['hierarchy' + hierarchy].edges[edgeKey];
+            } else {
+              // update edge weight if the weight of edges on deeper hierarchy are changed
+              graph['hierarchy' + hierarchy].edges[edgeKey].weight = edgeWeight;
+              oldMatrix.setValue(parentSourceIndex, parentTargetIndex, {
+                weight: 0,
+                counter: 0,
+              });
+            }
+          }
+        }
+        let maxEdgeIndex =
+          Math.max(
+            ...Object.keys(graph['hierarchy' + hierarchy].edges).map(edgeKey =>
+              parseInt(edgeKey.split('e')[1], 10)
+            )
+          ) + 1;
+        oldMatrix.getIterableValues().forEach((item, index) => {
+          if (item.weight > 0) {
+            // reverse index function to map from flat array to i and j
+            const i = Math.floor(0.5 * (-1 + Math.sqrt(1 + 8 * index)));
+            const j = index - 0.5 * (i * (i + 1));
+            const newEdgeName = 'h' + hierarchy + 'e' + maxEdgeIndex;
+            // create a new edge between node which had before no connection
+            graph['hierarchy' + hierarchy].edges[newEdgeName] = {
+              name: newEdgeName,
+              index: maxEdgeIndex,
+              weight: item.weight,
+              source: parentNodes[i].name,
+              target: parentNodes[j].name,
+            };
+            maxEdgeIndex++;
+          }
+        });
+      }
+
+      // collect edge information to update edges on one hierarchy higher
+      if (hierarchy > 0) {
+        const map = {};
+        const adjMatrix = new quadraticSymmetricMatrix(groups.length, {
+          weight: 0,
+          counter: 0,
+        });
+        // create mapping from node name to group index
+        groups.forEach((group, index) => {
+          for (const node of group) {
+            map[node.name] = index;
+          }
+        });
+        for (const edgeKey of Object.keys(
+          graph['hierarchy' + hierarchy].edges
+        )) {
+          const edge = graph['hierarchy' + hierarchy].edges[edgeKey];
+          const sourceIndex = map[edge.source];
+          const targetIndex = map[edge.target];
+          if (
+            sourceIndex != null &&
+            targetIndex != null &&
+            sourceIndex !== targetIndex
+          ) {
+            // update edge between two groups
+            adjMatrix.setValueWithFunction(
+              sourceIndex,
+              targetIndex,
+              oldItem => {
+                return {
+                  weight:
+                    (oldItem.counter * oldItem.weight + edge.weight) /
+                    (oldItem.counter + 1),
+                  counter: oldItem.counter + 1,
+                };
+              }
+            );
+          }
+        }
+        hierarchy--;
+        // map nodes to their parent
+        parentNodes = groups.map(group => {
+          const parentNodeName = 'h' + hierarchy + 'n' + group[0].parent;
+          return {
+            name: parentNodeName,
+            parent:
+              graph['hierarchy' + hierarchy].nodes[parentNodeName].membership,
+          };
+        });
+        groups = NetworkService.groupObjectsBy(parentNodes, 'parent');
+        oldMatrix = adjMatrix;
+      } else {
+        hierarchy--;
+      }
+    }
+  }
+
+  static groupObjectsBy(array, attribute) {
+    const map = {};
+    const groupedObject = [];
+    let counter = 0;
+    for (const item of array) {
+      const value = item[attribute];
+      if (map[value] != null) {
+        groupedObject[map[value]].push(item);
+      } else {
+        groupedObject.push([item]);
+        map[value] = counter;
+        counter++;
+      }
+    }
+    return groupedObject;
   }
 
   static hierarchyOfNodeName(name) {
@@ -1017,17 +1219,10 @@ class NetworkService {
       }
     });
     const map = {};
-    let heatmap = [];
-    // construct empty heatmap and data structure to map from node name to index in heatmap
     for (let i = 0; i < deepNodes.length; i++) {
       map[deepNodes[i].name] = i;
-      const tempArray = [];
-      for (let j = 0; j < deepNodes.length - i; j++) {
-        tempArray.push(0);
-      }
-      heatmap.push(tempArray);
     }
-    heatmap = heatmap.reverse();
+    const heatmap = new quadraticSymmetricMatrix(deepNodes.length);
     const edgeKeys = Object.keys(
       graph['hierarchy' + deepestHierarchy]['edges']
     );
@@ -1040,11 +1235,7 @@ class NetworkService {
       if (sourceIndex != null && targetIndex != null) {
         const weight =
           graph['hierarchy' + deepestHierarchy]['edges'][edge].weight;
-        if (sourceIndex <= targetIndex) {
-          heatmap[targetIndex][sourceIndex] = weight;
-        } else {
-          heatmap[sourceIndex][targetIndex] = weight;
-        }
+        heatmap.setValue(sourceIndex, targetIndex, weight);
       }
     }
     const heatMapSVG = d3
@@ -1064,9 +1255,9 @@ class NetworkService {
       this.width * 0.6,
       0.5 * (this.height - (deepNodes.length + 2) * size),
     ];
-    for (let i = 0; i < heatmap.length; i++) {
+    for (let i = 0; i < heatmap.size; i++) {
       const tempArray = [];
-      for (let j = 0; j < heatmap.length; j++) {
+      for (let j = 0; j < heatmap.size; j++) {
         tempArray.push({
           row: i,
           column: j,
@@ -1074,11 +1265,7 @@ class NetworkService {
           source: deepNodes[i].name,
           target: deepNodes[j].name,
         });
-        if (i < j) {
-          tempArray[j].weight = heatmap[j][i];
-        } else {
-          tempArray[j].weight = heatmap[i][j];
-        }
+        tempArray[j].weight = heatmap.getValue(i, j);
       }
       heatMapSVG
         .selectAll('newHeatCells')
@@ -1261,7 +1448,7 @@ class NetworkService {
     NetworkService.removeDuplicatedEdges(newEdges);
     store.getters.networkNodeTrixNewElements.newNodes = deepNodes;
     store.getters.networkNodeTrixNewElements.newEdges = newEdges;
-    const nodeTrixSize = heatmap.length * size;
+    const nodeTrixSize = heatmap.size * size;
     store.getters.networkNodeTrixNewElements.nodeTrixNode = {
       x: center[0] + 0.5 * nodeTrixSize,
       y: center[1] + 0.5 * nodeTrixSize,
@@ -2938,6 +3125,7 @@ class NetworkService {
       .attr('cursor', 'grab')
       .attr('fill', n => n.color)
       .attr('numMz', n => n.mzs)
+      .attr('active', n => n.selected)
       .attr('childs', n => n.childs)
       .on('click', this.nodeClick)
       .on('mouseover', this.mouseOver.bind(this))
