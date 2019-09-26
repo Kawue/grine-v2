@@ -207,7 +207,7 @@ export default new Vuex.Store({
   },
   getters: {
     getWholeData: state => {
-      return state.originalGraphData;
+      return state.originalGraphData.graphs['graph0'].graph;
     },
     getLoadingGraphData: state => {
       return state.loadingGraphData;
@@ -596,7 +596,6 @@ export default new Vuex.Store({
       state.network.merge.nodes = nodes;
     },
     NETWORK_CHANGE_ASSIGNMENT: (state, parentIndex) => {
-      console.log('Change assignment with parent', parentIndex);
       state.network.split.possible = false;
       state.network.merge.mergePossible = false;
       state.network.merge.assignmentPossible = false;

@@ -5,43 +5,47 @@ import * as _ from 'lodash';
 import store from '@/store';
 
 // data structure for a quadratic and symmetric matrix
-class quadraticSymmetricMatrix {
+class qsMatrix {
   _matrix = [];
   _size = 0;
   constructor(size, defaultValue = 0) {
     this._size = size;
     for (let i = 0; i < size; i++) {
-      const tempArray = [];
       for (let j = 0; j < size - i; j++) {
-        tempArray.push(defaultValue);
+        this._matrix.push(defaultValue);
       }
-      this._matrix.push(tempArray);
     }
-    this._matrix = this._matrix.reverse();
+  }
+
+  static idx(i, j) {
+    if (i < j) {
+      return i + 0.5 * (j + 1) * j;
+    } else {
+      return j + 0.5 * (i + 1) * i;
+    }
+  }
+
+  static reverseIdx(k) {
+    const tuple = [];
+    tuple.push(Math.floor(0.5 * (-1 + Math.sqrt(1 + 8 * k))));
+    tuple.push(k - 0.5 * (tuple[0] * (tuple[0] + 1)));
+    return tuple;
   }
 
   getValue(i, j) {
-    if (i <= j) {
-      return this._matrix[j][i];
-    } else {
-      return this._matrix[i][j];
-    }
+    return this._matrix[qsMatrix.idx(i, j)];
   }
 
   setValue(i, j, value) {
-    if (i <= j) {
-      this._matrix[j][i] = value;
-    } else {
-      this._matrix[i][j] = value;
-    }
+    this._matrix[qsMatrix.idx(i, j)] = value;
   }
 
   setValueWithFunction(i, j, func) {
     this.setValue(i, j, func(this.getValue(i, j)));
   }
 
-  getIterableValues() {
-    return this._matrix.flat();
+  forEach(func) {
+    this._matrix.forEach(func);
   }
 
   get size() {
@@ -71,10 +75,10 @@ class NetworkService {
   };
 
   loadGraph(graph) {
-    const tupel = [[], []];
+    const tuple = [[], []];
     let counter = -1;
     const nodeKeys = Object.keys(graph['hierarchy0'].nodes);
-    tupel[0].push(
+    tuple[0].push(
       ...nodeKeys.map(nodeKey => {
         counter += 1;
         return {
@@ -92,13 +96,13 @@ class NetworkService {
         };
       })
     );
-    tupel[1].push(
+    tuple[1].push(
       ...Object.keys(graph['hierarchy0']['edges']).map(l => {
         return {
-          source: tupel[0].find(d => {
+          source: tuple[0].find(d => {
             return d.name === graph['hierarchy0']['edges'][l].source;
           }),
-          target: tupel[0].find(d => {
+          target: tuple[0].find(d => {
             return d.name === graph['hierarchy0']['edges'][l].target;
           }),
           name: graph['hierarchy0'].edges[l]['name'],
@@ -106,7 +110,7 @@ class NetworkService {
         };
       })
     );
-    return tupel;
+    return tuple;
   }
 
   simulationUpdate() {
@@ -942,6 +946,9 @@ class NetworkService {
       NetworkService.groupObjectsBy(
         allNodesInHierarchy.map(node => {
           node['parent'] = node.membership;
+          if (nodeHierarchy === store.getters.meta.maxHierarchy) {
+            node.name = 'h' + nodeHierarchy + 'n' + node.index;
+          }
           return node;
         }),
         'parent'
@@ -1001,19 +1008,18 @@ class NetworkService {
               parseInt(edgeKey.split('e')[1], 10)
             )
           ) + 1;
-        oldMatrix.getIterableValues().forEach((item, index) => {
+        oldMatrix.forEach((item, index) => {
           if (item.weight > 0) {
             // reverse index function to map from flat array to i and j
-            const i = Math.floor(0.5 * (-1 + Math.sqrt(1 + 8 * index)));
-            const j = index - 0.5 * (i * (i + 1));
+            const ij = qsMatrix.reverseIdx(index);
             const newEdgeName = 'h' + hierarchy + 'e' + maxEdgeIndex;
             // create a new edge between node which had before no connection
             graph['hierarchy' + hierarchy].edges[newEdgeName] = {
               name: newEdgeName,
               index: maxEdgeIndex,
               weight: item.weight,
-              source: parentNodes[i].name,
-              target: parentNodes[j].name,
+              source: parentNodes[ij[0]].name,
+              target: parentNodes[ij[1]].name,
             };
             maxEdgeIndex++;
           }
@@ -1023,7 +1029,7 @@ class NetworkService {
       // collect edge information to update edges on one hierarchy higher
       if (hierarchy > 0) {
         const map = {};
-        const adjMatrix = new quadraticSymmetricMatrix(groups.length, {
+        const adjMatrix = new qsMatrix(groups.length, {
           weight: 0,
           counter: 0,
         });
@@ -1222,7 +1228,7 @@ class NetworkService {
     for (let i = 0; i < deepNodes.length; i++) {
       map[deepNodes[i].name] = i;
     }
-    const heatmap = new quadraticSymmetricMatrix(deepNodes.length);
+    const heatmap = new qsMatrix(deepNodes.length);
     const edgeKeys = Object.keys(
       graph['hierarchy' + deepestHierarchy]['edges']
     );
