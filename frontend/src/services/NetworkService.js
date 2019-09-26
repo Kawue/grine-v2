@@ -835,6 +835,243 @@ class NetworkService {
     return aggregatedEdges;
   }
 
+  mergeNodes(data, selectedNodes, nodeToMergeIndex, nodes, edges) {
+    const graph = data.graph;
+    const dataMzs = data.mzs;
+    const nodeHierarchy = NetworkService.hierarchyOfNodeName(
+      selectedNodes[0].name
+    );
+    const parentHierarchy = nodeHierarchy - 1;
+    const newNodesMzs = [];
+    const newNodesChilds = [];
+    const nodesToDelete = [];
+    const mergedNodes = [];
+    let combinedNode = null;
+
+    for (const node of selectedNodes) {
+      const nodeIndex = parseInt(node.name.split('n')[1], 10);
+      if (nodeIndex !== nodeToMergeIndex) {
+        newNodesMzs.push(...node.mzs);
+        newNodesChilds.push(...node.childs);
+        mergedNodes.push(node.name);
+        delete graph['hierarchy' + nodeHierarchy].nodes[node.name];
+
+        // update the nodes childs membership
+        for (const child of node.childs) {
+          graph['hierarchy' + (nodeHierarchy + 1)].nodes[
+            'h' + (nodeHierarchy + 1) + 'n' + child
+          ].membership = nodeToMergeIndex;
+        }
+
+        // update the nodes parent on every hierarchy
+        let hierarchyCounter = 0;
+        let parent = node.parent;
+        let lastIndex = nodeIndex;
+        let deleteParent = true;
+        // update childs and mzs
+        while (parentHierarchy - hierarchyCounter > -1) {
+          const currentHierarchy = parentHierarchy - hierarchyCounter;
+          const localNode =
+            graph['hierarchy' + currentHierarchy].nodes[
+              'h' + currentHierarchy + 'n' + parent
+            ];
+          if (deleteParent) {
+            localNode.childs = localNode.childs.filter(n => n !== lastIndex);
+          }
+          if (localNode.childs.length === 0) {
+            nodesToDelete.push(localNode.name);
+            delete graph['hierarchy' + currentHierarchy].nodes[localNode.name];
+          } else {
+            deleteParent = false;
+            localNode.mzs = localNode.mzs.filter(mz => !node.mzs.includes(mz));
+          }
+          lastIndex = parent;
+          hierarchyCounter++;
+          parent = localNode.membership;
+        }
+      } else {
+        combinedNode = node;
+      }
+    }
+    // update parent of childs
+    for (const child of newNodesChilds) {
+      graph['hierarchy' + (nodeHierarchy + 1)].nodes[
+        'h' + (nodeHierarchy + 1) + 'n' + child
+      ].membership = parseInt(combinedNode.name.split('n')[1], 10);
+    }
+    // update childs and mzs of combined node and propagate the changes to higher hierarchies
+    let hierarchyCounter = 0;
+    let currentNodeIndex = parseInt(combinedNode.name.split('n')[1], 10);
+    while (nodeHierarchy - hierarchyCounter > -1) {
+      const currentHierarchy = nodeHierarchy - hierarchyCounter;
+      const localNode =
+        graph['hierarchy' + currentHierarchy].nodes[
+          'h' + currentHierarchy + 'n' + currentNodeIndex
+        ];
+      if (hierarchyCounter === 0) {
+        localNode.childs.push(...newNodesChilds);
+      }
+      localNode.mzs.push(...newNodesMzs);
+      for (const mz of newNodesMzs) {
+        dataMzs[mz.toString()]['hierarchy' + currentHierarchy] = localNode.name;
+      }
+      currentNodeIndex = localNode.membership;
+      hierarchyCounter++;
+    }
+    // delete edges of deleted nodes
+    const hierarchiesOfDeletedNodes = nodesToDelete.map(n =>
+      NetworkService.hierarchyOfNodeName(n)
+    );
+    NetworkService.removeSimpleDuplicatesFromArray(hierarchiesOfDeletedNodes);
+    for (const hierarchy of hierarchiesOfDeletedNodes) {
+      const nodesToInvestigate = nodesToDelete.filter(
+        n => NetworkService.hierarchyOfNodeName(n) === hierarchy
+      );
+      for (const edgeKey of Object.keys(graph['hierarchy' + hierarchy].edges)) {
+        const edge = graph['hierarchy' + hierarchy].edges[edgeKey];
+        if (
+          nodesToInvestigate.includes(edge.source) ||
+          nodesToInvestigate.includes(edge.target)
+        ) {
+          delete graph['hierarchy' + hierarchy].edges[edgeKey];
+        }
+      }
+    }
+    // delete merged nodes
+    let indicesToDelete = [];
+    nodes.forEach((node, index) => {
+      if (mergedNodes.findIndex(name => name === node.name) > -1) {
+        indicesToDelete.push(index);
+      }
+    });
+    indicesToDelete.sort((a, b) => (a > b ? -1 : 1));
+    for (const index of indicesToDelete) {
+      nodes.splice(index, 1);
+    }
+
+    // remove merged nodes from svg
+    for (const node of mergedNodes) {
+      delete graph['hierarchy' + nodeHierarchy].nodes[node];
+      d3.select('#node-container')
+        .select('#' + node)
+        .remove();
+    }
+    // remove edges from merged nodes and combined node
+    indicesToDelete = [];
+    edges.forEach((edge, index) => {
+      if (edge.name.startsWith('edge')) {
+        if (mergedNodes.findIndex(node => edge.source.name === node) > -1) {
+          edge.source = combinedNode;
+        } else if (
+          mergedNodes.findIndex(node => edge.target.name === node) > -1
+        ) {
+          edge.target = combinedNode;
+        }
+      } else {
+        if (
+          mergedNodes.findIndex(
+            node => edge.source.name === node || edge.target.name === node
+          ) > -1
+        ) {
+          delete graph['hierarchy' + nodeHierarchy].edges[edge.name];
+          d3.select('#link-container')
+            .select('#' + edge.name)
+            .remove();
+          indicesToDelete.push(index);
+        } else if (
+          edge.source.name === combinedNode.name ||
+          edge.target.name === combinedNode.name
+        ) {
+          d3.select('#link-container')
+            .select('#' + edge.name)
+            .remove();
+          indicesToDelete.push(index);
+        }
+      }
+    });
+    indicesToDelete.sort((a, b) => (a > b ? -1 : 1));
+    for (const index of indicesToDelete) {
+      edges.splice(index, 1);
+    }
+    const allNodesInHierarchy = [];
+    for (const nodeKey of Object.keys(
+      graph['hierarchy' + (nodeHierarchy + 1)].nodes
+    )) {
+      allNodesInHierarchy.push(
+        graph['hierarchy' + (nodeHierarchy + 1)].nodes[nodeKey]
+      );
+    }
+    // recalculate the edges and their weight
+    this.calculateNewEdges(
+      graph,
+      NetworkService.groupObjectsBy(
+        _.cloneDeep(allNodesInHierarchy).map(node => {
+          node['parent'] = node.membership;
+          if (nodeHierarchy + 1 === store.getters.meta.maxHierarchy) {
+            node.name = 'h' + (nodeHierarchy + 1) + 'n' + node.index;
+          }
+          return node;
+        }),
+        'parent'
+      )
+    );
+
+    const newEdges = [];
+    // re-add edges from combined node to datastructure
+    Object.keys(graph['hierarchy' + nodeHierarchy]['edges']).forEach(l => {
+      if (
+        graph['hierarchy' + nodeHierarchy]['edges'][l].target ===
+        combinedNode.name
+      ) {
+        const index = nodes.findIndex(d => {
+          return (
+            d.name === graph['hierarchy' + nodeHierarchy]['edges'][l].source
+          );
+        });
+        if (index >= 0) {
+          newEdges.push({
+            source: nodes[index],
+            target: combinedNode,
+            name: graph['hierarchy' + nodeHierarchy].edges[l]['name'],
+            weight: graph['hierarchy' + nodeHierarchy].edges[l]['weight'],
+          });
+        }
+      } else if (
+        graph['hierarchy' + nodeHierarchy]['edges'][l].source ===
+        combinedNode.name
+      ) {
+        const index = nodes.findIndex(d => {
+          return (
+            d.name === graph['hierarchy' + nodeHierarchy]['edges'][l].target
+          );
+        });
+        if (index >= 0) {
+          newEdges.push({
+            source: combinedNode,
+            target: nodes[index],
+            name: graph['hierarchy' + nodeHierarchy].edges[l]['name'],
+            weight: graph['hierarchy' + nodeHierarchy].edges[l]['weight'],
+          });
+        }
+      }
+    });
+    NetworkService.removeDuplicatedEdges(newEdges);
+    edges.push(...newEdges);
+    d3.select('#link-container')
+      .selectAll('newEdges')
+      .data(newEdges)
+      .enter()
+      .append('line')
+      .attr('class', 'edge')
+      .attr('id', l => l.name)
+      .attr('stroke-dasharray', 0)
+      .attr('stroke', this.normalEdgeColor);
+    store.getters.networkSVGElements.linkElements = d3
+      .select('#link-container')
+      .selectAll('line');
+    store.commit('NETWORK_SIMULATION_INIT');
+  }
+
   changeNodesAssignment(data, nodes, newParentIndex) {
     const graph = data.graph;
     const dataMzs = data.mzs;
@@ -944,7 +1181,7 @@ class NetworkService {
     this.calculateNewEdges(
       graph,
       NetworkService.groupObjectsBy(
-        allNodesInHierarchy.map(node => {
+        _.cloneDeep(allNodesInHierarchy).map(node => {
           node['parent'] = node.membership;
           if (nodeHierarchy === store.getters.meta.maxHierarchy) {
             node.name = 'h' + nodeHierarchy + 'n' + node.index;
@@ -2414,24 +2651,33 @@ class NetworkService {
     nodes.push(nextNode);
     // add new edges to datastructure
     Object.keys(graph['hierarchy' + previousHierarchy]['edges']).forEach(l => {
-      const sourceIndex = nodes.findIndex(d => {
-        return (
-          d.name === graph['hierarchy' + previousHierarchy]['edges'][l].source
-        );
-      });
-      if (sourceIndex >= 0) {
-        const targetIndex = nodes.findIndex(d => {
+      if (
+        edges.findIndex(
+          edge =>
+            edge.name ===
+            graph['hierarchy' + previousHierarchy]['edges'][l].name
+        ) === -1
+      ) {
+        const sourceIndex = nodes.findIndex(d => {
           return (
-            d.name === graph['hierarchy' + previousHierarchy]['edges'][l].target
+            d.name === graph['hierarchy' + previousHierarchy]['edges'][l].source
           );
         });
-        if (targetIndex >= 0) {
-          newEdges.push({
-            source: nodes[sourceIndex],
-            target: nodes[targetIndex],
-            name: graph['hierarchy' + previousHierarchy].edges[l]['name'],
-            weight: graph['hierarchy' + previousHierarchy].edges[l]['weight'],
+        if (sourceIndex >= 0) {
+          const targetIndex = nodes.findIndex(d => {
+            return (
+              d.name ===
+              graph['hierarchy' + previousHierarchy]['edges'][l].target
+            );
           });
+          if (targetIndex >= 0) {
+            newEdges.push({
+              source: nodes[sourceIndex],
+              target: nodes[targetIndex],
+              name: graph['hierarchy' + previousHierarchy].edges[l]['name'],
+              weight: graph['hierarchy' + previousHierarchy].edges[l]['weight'],
+            });
+          }
         }
       }
     });
@@ -2481,7 +2727,6 @@ class NetworkService {
 
   expandNode(graph, oldNode, nodes, edges) {
     const index = nodes.findIndex(d => d.name === oldNode.name);
-
     // remove old node from datastructure and svg
     nodes.splice(index, 1);
     d3.select('#node-annotation-group').remove();
@@ -2655,22 +2900,31 @@ class NetworkService {
 
     // add new edges to datastructure
     Object.keys(graph['hierarchy' + nextHierarchy]['edges']).forEach(l => {
-      const sourceIndex = nodes.findIndex(d => {
-        return d.name === graph['hierarchy' + nextHierarchy]['edges'][l].source;
-      });
-      if (sourceIndex >= 0) {
-        const targetIndex = nodes.findIndex(d => {
+      if (
+        edges.findIndex(
+          edge =>
+            edge.name === graph['hierarchy' + nextHierarchy]['edges'][l].name
+        ) === -1
+      ) {
+        const sourceIndex = nodes.findIndex(d => {
           return (
-            d.name === graph['hierarchy' + nextHierarchy]['edges'][l].target
+            d.name === graph['hierarchy' + nextHierarchy]['edges'][l].source
           );
         });
-        if (targetIndex >= 0) {
-          newEdges.push({
-            source: nodes[sourceIndex],
-            target: nodes[targetIndex],
-            name: graph['hierarchy' + nextHierarchy].edges[l]['name'],
-            weight: graph['hierarchy' + nextHierarchy].edges[l]['weight'],
+        if (sourceIndex >= 0) {
+          const targetIndex = nodes.findIndex(d => {
+            return (
+              d.name === graph['hierarchy' + nextHierarchy]['edges'][l].target
+            );
           });
+          if (targetIndex >= 0) {
+            newEdges.push({
+              source: nodes[sourceIndex],
+              target: nodes[targetIndex],
+              name: graph['hierarchy' + nextHierarchy].edges[l]['name'],
+              weight: graph['hierarchy' + nextHierarchy].edges[l]['weight'],
+            });
+          }
         }
       }
     });
