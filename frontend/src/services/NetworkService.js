@@ -703,6 +703,26 @@ class NetworkService {
       ].childs.push(newParentIndex);
       newParent['membership'] = newParentParent;
     }
+    if (store.getters.networkNodeTrixActive) {
+      const hiddenNodes = store.getters.networkNodeTrixOldElements.oldNodes;
+      if (hiddenNodes.findIndex(n => n.name === oldParent.name) > -1) {
+        const nodeToAdd = {
+          name: newParentName,
+          childs: newParentChilds,
+          mzs: newParentMzs,
+          color: newGroup[0].color,
+          selected: false,
+          radius:
+            this.biggestNodeRadius -
+            (this.smallestNodeRadius / store.getters.meta.maxHierarchy) *
+              parentHierarchy,
+        };
+        if (parentHierarchy > 0) {
+          nodeToAdd['parent'] = oldParent.membership;
+        }
+        hiddenNodes.push(nodeToAdd);
+      }
+    }
     graph['hierarchy' + parentHierarchy].nodes[newParentName] = newParent;
     for (const node of newGroup) {
       node.parent = newParentIndex;
