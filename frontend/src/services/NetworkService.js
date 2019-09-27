@@ -804,6 +804,12 @@ class NetworkService {
       };
       maxEdgeIndex++;
     }
+    if (store.getters.networkNodeTrixActive) {
+      NetworkService.updateNodeTrixHiddenNodes(
+        graph,
+        store.getters.networkNodeTrixOldElements.oldNodes
+      );
+    }
     if (parentHierarchy === 0) {
       store.dispatch('changeGraph', store.getters.stateOptionsGraph);
     }
@@ -1069,7 +1075,6 @@ class NetworkService {
     store.getters.networkSVGElements.linkElements = d3
       .select('#link-container')
       .selectAll('line');
-    store.commit('NETWORK_SIMULATION_INIT');
   }
 
   changeNodesAssignment(data, nodes, newParentIndex) {
@@ -1120,13 +1125,19 @@ class NetworkService {
           node.name
         ].membership = newParentIndex;
         node.color = newColor;
-        d3.select('#graph-container')
+        d3.select('#node-container')
           .select('#' + node.name)
           .attr('fill', node.color);
         if (store.getters.networkNodeTrixActive) {
+          for (const nodeTrixNode of d3
+            .select('#matrix-nodes')
+            .selectAll(`[orgName='${node.name}']`)
+            .data()) {
+            nodeTrixNode.color = newColor;
+          }
           d3.select('#matrix-nodes')
             .selectAll(`[orgName='${node.name}']`)
-            .attr('fill', node.color);
+            .attr('fill', newColor);
         }
       }
     }
@@ -1191,15 +1202,52 @@ class NetworkService {
         'parent'
       )
     );
+    if (store.getters.networkNodeTrixActive) {
+      NetworkService.updateNodeTrixHiddenNodes(
+        graph,
+        store.getters.networkNodeTrixOldElements.oldNodes
+      );
+    }
+  }
+
+  static updateNodeTrixHiddenNodes(graph, hiddenNodes) {
+    const nodeIndicesToDelete = [];
+    hiddenNodes.forEach((node, index) => {
+      const nodeHierarchy = NetworkService.hierarchyOfNodeName(node.name);
+      if (graph['hierarchy' + nodeHierarchy].nodes[node.name] == null) {
+        nodeIndicesToDelete.push(index);
+      } else {
+        const updatedNode = graph['hierarchy' + nodeHierarchy].nodes[node.name];
+        node.mzs = updatedNode.mzs;
+        if (node.parent != null) {
+          node.parent = updatedNode.membership;
+        }
+        if (node.childs != null) {
+          node.childs = updatedNode.childs;
+        }
+      }
+    });
+    nodeIndicesToDelete.sort((a, b) => (a > b ? -1 : 1));
+    for (const index of nodeIndicesToDelete) {
+      hiddenNodes.splice(index, 1);
+    }
   }
 
   static removeSimpleDuplicatesFromArray(array) {
     array.sort((a, b) => (a > b ? 1 : -1));
-    array.forEach((item, index) => {
-      while (array[index + 1] != null && item === array[index + 1]) {
-        array.splice(index + 1, 1);
+    const indicesToDelete = [];
+    for (let i = 0; i < array.length; i++) {
+      let counter = 1;
+      while (array[i + counter] != null && array[i] === array[i + counter]) {
+        indicesToDelete.push(i + counter);
+        counter++;
       }
-    });
+      i = i + counter - 1;
+    }
+    indicesToDelete.sort((a, b) => (a > b ? -1 : 1));
+    for (const index of indicesToDelete) {
+      array.splice(index, 1);
+    }
   }
 
   calculateNewEdges(graph, nodeGroups) {
@@ -2007,15 +2055,23 @@ class NetworkService {
         return a.source.name > b.source.name ? 1 : -1;
       }
     });
-    edges.forEach((edge, index) => {
+    const edgeIndicesToDelete = [];
+    for (let i = 0; i < edges.length; i++) {
+      let counter = 1;
       while (
-        edges[index + 1] != null &&
-        edge.source.name === edges[index + 1].source.name &&
-        edge.target.name === edges[index + 1].target.name
+        edges[i + counter] != null &&
+        edges[i].source.name === edges[i + counter].source.name &&
+        edges[i].target.name === edges[i + counter].target.name
       ) {
-        edges.splice(index + 1, 1);
+        edgeIndicesToDelete.push(i + counter);
+        counter++;
       }
-    });
+      i = i + counter - 1;
+    }
+    edgeIndicesToDelete.sort((a, b) => (a > b ? -1 : 1));
+    for (const index of edgeIndicesToDelete) {
+      edges.splice(index, 1);
+    }
   }
 
   filterNodesForResetNodeTrix(graph, visibleNodes, hiddenNodes) {
@@ -3420,9 +3476,9 @@ class NetworkService {
   static changeSelectedStatusNodeTrixNodes(nodes, index, selected) {
     const quarterLength = nodes.length / 4;
     nodes[index].selected = selected;
-    nodes[quarterLength + index].selected = selected;
-    nodes[quarterLength + index + 1].selected = selected;
-    nodes[quarterLength + index + 2].selected = selected;
+    nodes[quarterLength + 3 * index].selected = selected;
+    nodes[quarterLength + 3 * index + 1].selected = selected;
+    nodes[quarterLength + 3 * index + 2].selected = selected;
   }
 
   static simple90DegreeRotation(n) {

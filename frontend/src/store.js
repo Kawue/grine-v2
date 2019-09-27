@@ -207,7 +207,7 @@ export default new Vuex.Store({
   },
   getters: {
     getWholeData: state => {
-      return state.originalGraphData.graphs['graph0'].graph;
+      return state.originalGraphData;
     },
     getLoadingGraphData: state => {
       return state.loadingGraphData;
