@@ -595,10 +595,19 @@ class NetworkService {
       const firstParent = lasso.selectedItems().data()[0].parent;
       // check if all nodes are from the same hierarchy
       if (
-        hierarchies.length > 1 &&
         hierarchies.reduce((acc, val) => acc && val === hierarchies[0], true)
       ) {
         // check if cluster split is possible
+        if (
+          hierarchies[0] < store.getters.meta.maxHierarchy &&
+          hierarchies.length > 1
+        ) {
+          // node merge possible
+          store.commit(
+            'NETWORK_MERGE_NODES_POSSIBLE',
+            lasso.selectedItems().data()
+          );
+        }
         if (
           lasso
             .selectedItems()
@@ -630,18 +639,11 @@ class NetworkService {
               inverseNodes,
             ]);
           }
-        } else {
+        } else if (hierarchies.length > 1) {
           if (hierarchies[0] > 0) {
             // assignment change possible
             store.commit(
               'NETWORK_ASSIGNMENT_CHANGE_POSSIBLE',
-              lasso.selectedItems().data()
-            );
-          }
-          if (hierarchies[0] < store.getters.meta.maxHierarchy) {
-            // node merge possible
-            store.commit(
-              'NETWORK_MERGE_NODES_POSSIBLE',
               lasso.selectedItems().data()
             );
           }
