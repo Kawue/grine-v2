@@ -124,6 +124,10 @@ export default {
       height = height ? height : this.$store.getters.getImageData(3).max.y;
       height = height ? height : this.heightLast;
       height = height < 100 ? 100 : height;
+      // TODO: Dirty fix to update the lasso SVG height consistently when the canvas height is changed. Needs to be resolved more clean!
+      d3.selectAll('.canvas-root svg').attr("height",height);
+      d3.selectAll('.canvas-root svg g rect').attr("height",height);
+      console.log(height)
       return height;
     },
     domainX: function() {
