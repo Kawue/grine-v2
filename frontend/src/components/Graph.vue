@@ -8,6 +8,33 @@
       class="graphd3"
     ></svg>
 
+    <b-modal
+      id="clusterChangeStatusModal"
+      ref="clusterChangeStatusModal"
+      :title="changeType"
+    >
+      <template slot="default">
+        <div class="text-center">
+          <b-spinner
+            v-if="computeClusterChange"
+            variant="primary"
+            label="Spinning"
+            style="width: 4em; height: 4em;"
+          ></b-spinner>
+          <v-icon v-else name="check" scale="6" class="text-success"></v-icon>
+        </div>
+      </template>
+      <template slot="modal-footer" slot-scope="{ ok }">
+        <b-button
+          variant="success"
+          @click="ok()"
+          :disabled="computeClusterChange"
+        >
+          OK
+        </b-button>
+      </template>
+    </b-modal>
+
     <!-- Modal for selection of assignment parent -->
     <b-modal
       id="assignmentModal"
@@ -114,6 +141,7 @@ export default {
       selected: null,
       mergeNodes: null,
       confirmNodes: [],
+      changeType: '',
     };
   },
   computed: {
@@ -126,6 +154,7 @@ export default {
       mergePossible: 'networkNodeMergePossible',
       assignmentPossible: 'networkChangeAssignmentPossible',
       selectedNodes: 'networkMergeNodes',
+      computeClusterChange: 'networkComputeClusterChange',
     }),
   },
   methods: {
@@ -196,6 +225,15 @@ export default {
     store.subscribe(mutation => {
       if (mutation.type === 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE') {
         store.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
+      } else if (mutation.type === 'NETWORK_SPLIT_CLUSTER') {
+        this.changeType = 'Splitting cluster';
+        this.$refs['clusterChangeStatusModal'].show();
+      } else if (mutation.type === 'NETWORK_MERGE_NODES') {
+        this.changeType = 'Merge nodes';
+        this.$refs['clusterChangeStatusModal'].show();
+      } else if (mutation.type === 'NETWORK_CHANGE_ASSIGNMENT') {
+        this.changeType = 'Reassign nodes';
+        this.$refs['clusterChangeStatusModal'].show();
       }
     });
   },

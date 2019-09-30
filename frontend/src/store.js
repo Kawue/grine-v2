@@ -151,15 +151,18 @@ export default new Vuex.Store({
           nodeTrixNode: null,
         },
       },
-      split: {
-        oldGroup: [],
-        newGroup: [],
-        possible: false,
-      },
-      merge: {
-        mergePossible: false,
-        assignmentPossible: false,
-        nodes: [],
+      clusterChange: {
+        compute: false,
+        split: {
+          oldGroup: [],
+          newGroup: [],
+          possible: false,
+        },
+        merge: {
+          mergePossible: false,
+          assignmentPossible: false,
+          nodes: [],
+        },
       },
     },
     options: {
@@ -305,16 +308,19 @@ export default new Vuex.Store({
       return state.network.nodeTrix.newElements;
     },
     networkClusterSplitPossible: state => {
-      return state.network.split.possible;
+      return state.network.clusterChange.split.possible;
     },
     networkNodeMergePossible: state => {
-      return state.network.merge.mergePossible;
+      return state.network.clusterChange.merge.mergePossible;
     },
     networkChangeAssignmentPossible: state => {
-      return state.network.merge.assignmentPossible;
+      return state.network.clusterChange.merge.assignmentPossible;
     },
     networkMergeNodes: state => {
-      return state.network.merge.nodes;
+      return state.network.clusterChange.merge.nodes;
+    },
+    networkComputeClusterChange: state => {
+      return state.network.clusterChange.compute;
     },
     stateOptionsGraph: state => {
       return state.options.data.graph;
@@ -546,9 +552,9 @@ export default new Vuex.Store({
     NETWORK_COMPUTE_NODETRIX: state => {
       state.network.nodeTrix.nodeTrixPossible = false;
       state.network.nodeTrix.nodeTrixActive = true;
-      state.network.split.possible = false;
-      state.network.merge.mergePossible = false;
-      state.network.merge.assignmentPossible = false;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
       networkService.computeNodeTrix(
         state.originalGraphData.graphs['graph' + state.options.data.graph]
           .graph,
@@ -561,9 +567,9 @@ export default new Vuex.Store({
     },
     NETWORK_NODETRIX_RESET: state => {
       state.network.nodeTrix.nodeTrixActive = false;
-      state.network.split.possible = false;
-      state.network.merge.mergePossible = false;
-      state.network.merge.assignmentPossible = false;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
       networkService.resetNodeTrix(state.network.nodes, state.network.edges);
       if (
         NetworkService.getSelectedNodes(state.network.nodes, false).length === 0
@@ -583,53 +589,59 @@ export default new Vuex.Store({
       ]);
     },
     NETWORK_SPLIT_CLUSTER_POSSIBLE: (state, data) => {
-      state.network.split.possible = true;
-      state.network.split.newGroup = data[0];
-      state.network.split.oldGroup = data[1];
+      state.network.clusterChange.split.possible = true;
+      state.network.clusterChange.split.newGroup = data[0];
+      state.network.clusterChange.split.oldGroup = data[1];
     },
     NETWORK_MERGE_NODES_POSSIBLE: (state, nodes) => {
-      state.network.merge.mergePossible = true;
-      state.network.merge.nodes = nodes;
+      state.network.clusterChange.merge.mergePossible = true;
+      state.network.clusterChange.merge.nodes = nodes;
     },
     NETWORK_ASSIGNMENT_CHANGE_POSSIBLE: (state, nodes) => {
-      state.network.merge.assignmentPossible = true;
-      state.network.merge.nodes = nodes;
+      state.network.clusterChange.merge.assignmentPossible = true;
+      state.network.clusterChange.merge.nodes = nodes;
     },
     NETWORK_CHANGE_ASSIGNMENT: (state, parentIndex) => {
-      state.network.split.possible = false;
-      state.network.merge.mergePossible = false;
-      state.network.merge.assignmentPossible = false;
+      state.network.clusterChange.compute = true;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
       networkService.changeNodesAssignment(
         state.originalGraphData.graphs['graph' + state.options.data.graph],
-        state.network.merge.nodes,
+        state.network.clusterChange.merge.nodes,
         parentIndex
       );
-      state.network.merge.nodes = [];
+      state.network.clusterChange.merge.nodes = [];
+      state.network.clusterChange.compute = false;
     },
     NETWORK_MERGE_NODES: (state, nodeIndex) => {
+      state.network.clusterChange.compute = true;
       networkService.mergeNodes(
         state.originalGraphData.graphs['graph' + state.options.data.graph],
-        state.network.merge.nodes,
+        state.network.clusterChange.merge.nodes,
         nodeIndex,
         state.network.nodes,
         state.network.edges
       );
-      state.network.split.possible = false;
-      state.network.merge.mergePossible = false;
-      state.network.merge.assignmentPossible = false;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
+      state.network.clusterChange.compute = false;
     },
     NETWORK_SPLIT_CLUSTER: state => {
-      state.network.split.possible = false;
-      state.network.merge.mergePossible = false;
-      state.network.merge.assignmentPossible = false;
+      state.network.clusterChange.compute = true;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
       networkService.splitCluster(
         state.originalGraphData.graphs['graph' + state.options.data.graph]
           .graph,
-        state.network.split.newGroup,
-        state.network.split.oldGroup
+        state.network.clusterChange.split.newGroup,
+        state.network.clusterChange.split.oldGroup
       );
-      state.network.split.newGroup = [];
-      state.network.split.oldGroup = [];
+      state.network.clusterChange.split.newGroup = [];
+      state.network.clusterChange.split.oldGroup = [];
+      state.network.clusterChange.compute = false;
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -683,9 +695,9 @@ export default new Vuex.Store({
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.network.nodeTrix.nodeTrixPossible = true;
-      state.network.split.possible = false;
-      state.network.merge.mergePossible = false;
-      state.network.merge.assignmentPossible = false;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
       state.mzList.selectedMz = data;
       state.mzList.visibleMz = mzListService.sortMzList(
         state.mzList.visibleMz,
@@ -700,9 +712,9 @@ export default new Vuex.Store({
     },
     MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
       state.network.nodeTrix.nodeTrixPossible = true;
-      state.network.split.possible = false;
-      state.network.merge.mergePossible = false;
-      state.network.merge.assignmentPossible = false;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
       const tuple = mzListService.updateHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -729,11 +741,11 @@ export default new Vuex.Store({
     },
     RESET_SELECTION: (state, keepLasso) => {
       state.network.nodeTrix.nodeTrixPossible = false;
-      state.network.split.possible = false;
-      state.network.merge.mergePossible = false;
-      state.network.merge.assignmentPossible = false;
-      state.network.split.newGroup = [];
-      state.network.split.oldGroup = [];
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
+      state.network.clusterChange.split.newGroup = [];
+      state.network.clusterChange.split.oldGroup = [];
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -838,9 +850,9 @@ export default new Vuex.Store({
           ].graph
         ).length - 1;
       context.state.network.nodeTrix.nodeTrixPossible = false;
-      context.state.network.split.possible = false;
-      context.state.network.merge.mergePossible = false;
-      context.state.network.merge.assignmentPossible = false;
+      context.state.network.clusterChange.split.possible = false;
+      context.state.network.clusterChange.merge.mergePossible = false;
+      context.state.network.clusterChange.merge.assignmentPossible = false;
       context.state.network.nodeTrix.nodeTrixActive = false;
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');

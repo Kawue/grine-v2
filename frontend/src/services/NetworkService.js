@@ -1095,6 +1095,7 @@ class NetworkService {
     store.getters.networkSVGElements.linkElements = d3
       .select('#link-container')
       .selectAll('line');
+    store.commit('NETWORK_SIMULATION_INIT');
   }
 
   changeNodesAssignment(data, nodes, newParentIndex) {
@@ -1228,6 +1229,7 @@ class NetworkService {
         store.getters.networkNodeTrixOldElements.oldNodes
       );
     }
+    store.commit('NETWORK_SIMULATION_INIT');
   }
 
   static updateNodeTrixHiddenNodes(graph, hiddenNodes) {
