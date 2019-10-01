@@ -28,6 +28,7 @@ export default new Vuex.Store({
     meta: {
       maxHierarchy: 1,
       maxGraphs: 1,
+      threshold: 0,
     },
     images: {
       imageData: [
@@ -806,6 +807,10 @@ export default new Vuex.Store({
         .get(url)
         .then(response => {
           context.commit('SET_ORIGINAL_GRAPH_DATA', response.data);
+          context.state.meta.threshold =
+            context.state.originalGraphData.graphs[
+              'graph' + context.state.options.data.graph
+            ].threshold;
           context.state.meta.maxHierarchy =
             Object.keys(
               context.state.originalGraphData.graphs[
@@ -842,6 +847,10 @@ export default new Vuex.Store({
       context.dispatch('fetchImageData', IMAGE_INDEX_SELECTED_MZ);
       context.dispatch('fetchImageData', IMAGE_INDEX_AGGREGATED);
       context.dispatch('fetchImageData', IMAGE_INDEX_LASSO);
+      context.state.meta.threshold =
+        context.state.originalGraphData.graphs[
+        'graph' + context.state.options.data.graph
+          ].threshold;
       context.state.meta.maxHierarchy =
         Object.keys(
           context.state.originalGraphData.graphs[
