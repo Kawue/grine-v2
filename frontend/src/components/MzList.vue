@@ -267,7 +267,7 @@ export default {
 }
 
 select {
-  background-color: #4f5051;
+  background-color: #4f5050;
   color: white;
   border: 1px solid #737374;
   margin: 0 0 5px 0;

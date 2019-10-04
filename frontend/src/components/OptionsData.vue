@@ -21,6 +21,9 @@
         >
           Export JSON
         </a>
+        <b-button variant="primary" @click="sendGraph">
+          Send Graph
+        </b-button>
       </div>
     </div>
   </div>
@@ -28,6 +31,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import store from '@/store';
 
 export default {
   name: 'OptionsData',
@@ -58,6 +62,17 @@ export default {
           type: 'application/json',
         })
       );
+    },
+  },
+  methods: {
+    sendGraph() {
+      const nodes = this.wholeData.graphs['graph0'].graph['hierarchy2'].nodes;
+      const p = [];
+      for (const node of Object.keys(nodes)) {
+        p.push([parseInt(node.split('n')[1], 10), nodes[node].membership]);
+      }
+      p.sort((a, b) => (a[0] > b[0] ? 1 : -1));
+      store.dispatch('testG', p.map(n => n[1]));
     },
   },
 };

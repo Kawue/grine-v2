@@ -832,6 +832,14 @@ export default new Vuex.Store({
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
     changeGraph: (context, graph) => {
+      axios
+        .post(API_URL + '/change_graph', graph)
+        .then(() => {
+          console.log('Change Graph OK');
+        })
+        .catch(function() {
+          console.err('Change Graph NOT OK');
+        });
       context.state.options.data.graph = graph;
       context.state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
@@ -849,8 +857,8 @@ export default new Vuex.Store({
       context.dispatch('fetchImageData', IMAGE_INDEX_LASSO);
       context.state.meta.threshold =
         context.state.originalGraphData.graphs[
-        'graph' + context.state.options.data.graph
-          ].threshold;
+          'graph' + context.state.options.data.graph
+        ].threshold;
       context.state.meta.maxHierarchy =
         Object.keys(
           context.state.originalGraphData.graphs[
@@ -992,6 +1000,17 @@ export default new Vuex.Store({
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
       }, 700);
+    },
+    testG: (context, data) => {
+      axios
+        .get(API_URL + '/graph/clustcoeff', data)
+        .then(response => {
+          console.log(response.data);
+          console.log('OK');
+        })
+        .catch(function() {
+          console.err('NOT OK');
+        });
     },
     mzlistUpdateHighlightedMz: (context, data) => {
       context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);

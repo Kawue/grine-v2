@@ -31,7 +31,7 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 101;
-  background: #4f5051;
+  background: #4f5050;
   color: white;
 
   .row {

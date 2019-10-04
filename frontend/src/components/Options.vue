@@ -138,7 +138,7 @@ export default {
   }
   input,
   select {
-    background-color: #4f5051;
+    background-color: #4f5050;
     color: white;
     border: 1px solid #737374;
     margin: 0 0 5px 0;
@@ -151,7 +151,7 @@ export default {
     margin: 0;
   }
   .btn-secondary {
-    background-color: #4f5051;
+    background-color: #4f5050;
     border: 1px solid #737374;
     color: white;
     &.active {
@@ -183,7 +183,7 @@ export default {
   .options-tab-toggle {
     width: 40px;
     height: 40px;
-    background-color: #4f5051;
+    background-color: #4f5050;
     border: 1px solid #737374;
     border-top: 0;
     border-left: 0;
@@ -217,7 +217,7 @@ export default {
       border: 1px solid #4c4c4d;
     }
     &:not(.active) {
-      background-image: linear-gradient(-90deg, #4f5051, #565656);
+      background-image: linear-gradient(-90deg, #4f5050, #565656);
     }
     height: 150px;
     width: 40px;
@@ -225,7 +225,7 @@ export default {
     padding: 0;
     cursor: pointer;
     color: white;
-    background-color: #4f5051;
+    background-color: #4f5050;
     border: 1px solid #737374;
     border-top: 0;
     border-left: 0;

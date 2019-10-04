@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import json
 import time
+import networkx as nx
+import graph_func
 from flask import Flask
 from flask import abort
 from flask import request
@@ -29,6 +31,8 @@ for path in argv[3:]:
 merged_dframe = merged_dframe.fillna(value=0)
 
 pca_dframe = pd.read_hdf('datasets/' + argv[2])
+with open('json/' + argv[1], 'r') as file:
+    graph_func.graph_initialisation(np.load('datasets/similarity-matrix-MK_202_3.npy'), json.load(file)['graphs']['graph0']['threshold'])
 
 
 # returns list of allowed merge methods for mz intensities
@@ -39,10 +43,7 @@ def merge_methods():
 # returns names of all available datasets
 def dataset_names():
     dt_names = set(merged_dframe.index.get_level_values("dataset"))
-    names = []
-    for name in dt_names:
-        names.append(name)
-    return names
+    return [name for name in dt_names]
 
 
 # returns list of all mz_values
@@ -182,7 +183,7 @@ def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_thr
     g_norm = np.interp(g, (g.min(), g.max()), (0, 1))
     b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
 
-    intensity = [1]*len(r)
+    intensity = [1] * len(r)
     if len(mz_values):
         # mz_raw_data returns format [pos_x, pos_y, intensity] from the non-pc dataset, intensity based on
         # passed merge_method
@@ -226,6 +227,27 @@ def datasets_mzvalues_action(dataset_name):
         return abort(400)
 
     return json.dumps(mz_values(dataset_name))
+
+
+@app.route('/graph/centrality', methods=['GET'])
+def centrality():
+    return json.dumps(graph_func.betweenness_centrality())
+
+
+@app.route('/graph/clustcoeff', methods=['GET'])
+def clust_coeff():
+    return json.dumps(graph_func.cluster_coefficient())
+
+
+@app.route('/change_graph', methods=['PATCH'])
+def change_graph():
+    data = request.get_data().decode('utf-8')
+    dataset_name = data['name']
+    threshold = data['threshold']
+    if dataset_name not in dataset_names():
+        return abort(400)
+    graph_func.graph_initialisation(np.load('datasets/similarity-matrix-' + dataset_name + '.npy'), threshold)
+    return json.dumps('OK')
 
 
 # gets a list of visible nodes from the frontend
