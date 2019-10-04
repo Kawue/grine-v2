@@ -1,30 +1,64 @@
+import store from '@/store';
+
 class MzListService {
-  sortMzList(data, asc) {
-    if (asc) {
-      return data.sort((a, b) => a.mz - b.mz);
+  sortMzList(data) {
+    if (store.getters.mzListOptionsAsc) {
+      return data.sort((a, b) => a.mutableIndex - b.mutableIndex);
     } else {
-      return data.sort((a, b) => b.mz - a.mz);
+      return data.sort((a, b) => b.mutableIndex - a.mutableIndex);
     }
   }
 
   loadGraph(graphNumber, orgData) {
     const graphString = 'graph' + graphNumber;
-    const numberOfLayers = Object.keys(orgData[graphString].graph).length - 1;
-    const t = [];
-    Object.keys(orgData[graphString].mzs).forEach(function(mz) {
-      t.push({
+    const deepestHierarchy = store.getters.meta.maxHierarchy;
+    const mzObjects = [];
+    for (const mz of Object.keys(orgData[graphString].mzs)) {
+      const node =
+        orgData[graphString].graph['hierarchy' + deepestHierarchy].nodes[
+          orgData[graphString].mzs[mz]['hierarchy' + deepestHierarchy]
+        ];
+      mzObjects.push({
         highlight: true,
         ...orgData[graphString].mzs[mz],
-        name: orgData[graphString].graph['hierarchy' + numberOfLayers].nodes[
-          orgData[graphString].mzs[mz]['hierarchy' + numberOfLayers]
-        ].name.toString(),
-        mz: mz,
+        annotation: node.annotation,
+        originalIndex: node.index,
+        mutableIndex: node.index,
+        mz: parseFloat(mz),
       });
-    });
-    return t;
+    }
+    return mzObjects;
   }
 
-  calculateVisibleMz(showAll, notVisibleMz, visibleMz, asc) {
+  applyQueryPermutation(mutation, visibleMz, notVisibleMz) {
+    const deepestHierarchy = 'hierarchy' + store.getters.meta.maxHierarchy;
+    const namePrefix = `h${store.getters.meta.maxHierarchy}n`;
+    for (let i = 0; i < mutation.length; i++) {
+      const visibleIndex = visibleMz.findIndex(mzObject => {
+        return mzObject[deepestHierarchy] === namePrefix + mutation[i];
+      });
+      if (visibleIndex > -1) {
+        visibleMz[visibleIndex].mutableIndex = i;
+      } else {
+        notVisibleMz[
+          notVisibleMz.findIndex(mzObject => {
+            return mzObject[deepestHierarchy] === namePrefix + mutation[i];
+          })
+        ].mutableIndex = i;
+      }
+    }
+  }
+
+  resetPermutation(visibleMz, notVisibleMz) {
+    for (const mzObject of visibleMz) {
+      mzObject.mutableIndex = mzObject.originalIndex;
+    }
+    for (const mzObject of notVisibleMz) {
+      mzObject.mutableIndex = mzObject.originalIndex;
+    }
+  }
+
+  calculateVisibleMz(showAll, notVisibleMz, visibleMz) {
     let localVisible = [];
     let localNotVisible = [];
     if (showAll) {
@@ -32,7 +66,7 @@ class MzListService {
       if (notVisibleMz.length > 0) {
         localVisible.push(...notVisibleMz);
       }
-      localVisible = this.sortMzList(localVisible, asc);
+      localVisible = this.sortMzList(localVisible);
     } else {
       for (let i = 0; i < visibleMz.length; i++) {
         if (visibleMz[i].highlight) {
@@ -45,24 +79,22 @@ class MzListService {
     return [localVisible, localNotVisible];
   }
 
-  resetHighlightedMz(visibleMz, notVisibleMz, showAll, asc) {
+  resetHighlightedMz(visibleMz, notVisibleMz, showAll) {
     const localMzlist = [...visibleMz];
     localMzlist.push(...notVisibleMz);
     for (const mzObject of localMzlist) {
       mzObject.highlight = true;
     }
-    return this.calculateVisibleMz(showAll, [], localMzlist, asc);
+    return this.calculateVisibleMz(showAll, [], localMzlist);
   }
 
-  updateHighlightedMz(visibleMz, notVisibleMz, mzValues, showAll, asc) {
+  updateHighlightedMz(visibleMz, notVisibleMz, mzValues, showAll) {
     let localVisible = [...visibleMz];
     localVisible.push(...notVisibleMz);
-    const mzValuesStrings = mzValues.map(mz => mz.toString());
     for (const mzObject of localVisible) {
-      mzObject.highlight =
-        mzValuesStrings.findIndex(mz => mz === mzObject.mz) > -1;
+      mzObject.highlight = mzValues.findIndex(mz => mz === mzObject.mz) > -1;
     }
-    return this.calculateVisibleMz(showAll, [], localVisible, asc);
+    return this.calculateVisibleMz(showAll, [], localVisible);
   }
 }
 export default MzListService;

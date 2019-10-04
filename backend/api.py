@@ -32,7 +32,8 @@ merged_dframe = merged_dframe.fillna(value=0)
 
 pca_dframe = pd.read_hdf('datasets/' + argv[2])
 with open('json/' + argv[1], 'r') as file:
-    graph_func.graph_initialisation(np.load('datasets/similarity-matrix-MK_202_3.npy'), json.load(file)['graphs']['graph0']['threshold'])
+    firstDataset = json.load(file)['graphs']['graph0']
+    graph_func.graph_initialisation(np.load('datasets/similarity-matrix-{}.npy'.format(firstDataset['dataset'])), firstDataset['threshold'])
 
 
 # returns list of allowed merge methods for mz intensities

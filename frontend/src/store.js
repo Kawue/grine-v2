@@ -695,10 +695,7 @@ export default new Vuex.Store({
       state.options.image.minOverlap = data;
     },
     MZLIST_SORT_MZ: state => {
-      state.mzList.visibleMz = mzListService.sortMzList(
-        state.mzList.visibleMz,
-        state.options.mzList.asc
-      );
+      state.mzList.visibleMz = mzListService.sortMzList(state.mzList.visibleMz);
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
       state.network.nodeTrix.nodeTrixPossible = true;
@@ -706,16 +703,22 @@ export default new Vuex.Store({
       state.network.clusterChange.merge.mergePossible = false;
       state.network.clusterChange.merge.assignmentPossible = false;
       state.mzList.selectedMz = data;
-      state.mzList.visibleMz = mzListService.sortMzList(
-        state.mzList.visibleMz,
-        state.options.mzList.asc
-      );
+      state.mzList.visibleMz = mzListService.sortMzList(state.mzList.visibleMz);
       networkService.highlightNodesByMz(state.network.nodes, data);
     },
     MZLIST_UPDATE_NAME: (state, data) => {
-      state.originalGraphData.graphs['graph' + state.options.data.graph].graph[
-        'hierarchy' + state.meta.maxHierarchy
-      ].nodes[data.nodeKey].name = data.name;
+      if (data.name != null) {
+        state.originalGraphData.graphs[
+          'graph' + state.options.data.graph
+        ].graph['hierarchy' + state.meta.maxHierarchy].nodes[data.nodeKey][
+          'annotation'
+        ] = data.name;
+      } else {
+        delete state.originalGraphData.graphs[
+          'graph' + state.options.data.graph
+        ].graph['hierarchy' + state.meta.maxHierarchy].nodes[data.nodeKey]
+          .annotation;
+      }
     },
     MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
       state.network.nodeTrix.nodeTrixPossible = true;
@@ -726,15 +729,11 @@ export default new Vuex.Store({
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
         mzValues,
-        state.options.mzList.showAll,
-        state.options.mzList.asc
+        state.options.mzList.showAll
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
-      state.mzList.visibleMz = mzListService.sortMzList(
-        state.mzList.visibleMz,
-        state.options.mzList.asc
-      );
+      state.mzList.visibleMz = mzListService.sortMzList(state.mzList.visibleMz);
       if (mzValues.length === 1) {
         state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
       }
@@ -756,14 +755,14 @@ export default new Vuex.Store({
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
-        state.options.mzList.showAll,
-        state.options.mzList.asc
+        state.options.mzList.showAll
       );
-      state.mzList.notVisibleMz = tuple[1];
-      state.mzList.visibleMz = mzListService.sortMzList(
-        tuple[0],
-        state.options.mzList.asc
+      state.mzList.notVisibleMz = [];
+      mzListService.resetPermutation(
+        state.mzList.visibleMz,
+        state.mzList.notVisibleMz
       );
+      state.mzList.visibleMz = mzListService.sortMzList(tuple[0]);
       if (state.network.nodeTrix.oldElements.oldNodes.length > 0) {
         NetworkService.clearHighlightNodeTrixNodes();
       }
@@ -785,8 +784,7 @@ export default new Vuex.Store({
       const tuple = mzListService.calculateVisibleMz(
         state.options.mzList.showAll,
         state.mzList.notVisibleMz,
-        state.mzList.visibleMz,
-        state.options.mzList.asc
+        state.mzList.visibleMz
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
@@ -1012,11 +1010,17 @@ export default new Vuex.Store({
       axios
         .get(API_URL + '/graph/' + context.state.options.graphStatistic)
         .then(response => {
-          console.log(context.state.options.graphStatistic);
-          console.log(response.data);
+          mzListService.applyQueryPermutation(
+            response.data,
+            context.state.mzList.visibleMz,
+            context.state.mzList.notVisibleMz
+          );
+          context.state.mzList.visibleMz = mzListService.sortMzList(
+            context.state.mzList.visibleMz
+          );
         })
-        .catch(function() {
-          console.err('NOT OK');
+        .catch(err => {
+          console.log(err);
         });
     },
     updateGraphCluster: context => {
