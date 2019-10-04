@@ -178,6 +178,7 @@ export default new Vuex.Store({
         iterations: 300,
         edgeLength: 150,
       },
+      graphStatistic: 'centrality',
       image: {
         mergeMethod: null, // default will be first in array returned from api
         mergeMethods: [], // queries from api
@@ -322,6 +323,9 @@ export default new Vuex.Store({
     },
     networkComputeClusterChange: state => {
       return state.network.clusterChange.compute;
+    },
+    networkGraphStatistic: state => {
+      return state.options.graphStatistic;
     },
     stateOptionsGraph: state => {
       return state.options.data.graph;
@@ -549,6 +553,9 @@ export default new Vuex.Store({
     },
     NETWORK_CENTER_CAMERA: state => {
       networkService.centerCamera(state.network.svgElements.zoom);
+    },
+    NETWORK_GRAPH_STATISTIC: (state, stat) => {
+      state.options.graphStatistic = stat;
     },
     NETWORK_COMPUTE_NODETRIX: state => {
       state.network.nodeTrix.nodeTrixPossible = false;
@@ -833,9 +840,9 @@ export default new Vuex.Store({
     },
     changeGraph: (context, graph) => {
       axios
-        .post(API_URL + '/change_graph', graph)
+        .post(API_URL + '/graph/change_graph', graph)
         .then(() => {
-          console.log('Change Graph OK');
+          this.dispatch('updateGraphCluster');
         })
         .catch(function() {
           console.err('Change Graph NOT OK');
@@ -1001,14 +1008,33 @@ export default new Vuex.Store({
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
       }, 700);
     },
-    testG: (context, data) => {
+    graphQuery: context => {
       axios
-        .get(API_URL + '/graph/clustcoeff', data)
+        .get(API_URL + '/graph/' + context.state.options.graphStatistic)
         .then(response => {
+          console.log(context.state.options.graphStatistic);
           console.log(response.data);
-          console.log('OK');
         })
         .catch(function() {
+          console.err('NOT OK');
+        });
+    },
+    updateGraphCluster: context => {
+      const nodes =
+        context.state.originalGraphData.graphs[
+          'graph' + context.state.options.data.graph
+        ].graph['hierarchy' + context.state.meta.maxHierarchy].nodes;
+      const clusters = [];
+      for (const node of Object.keys(nodes)) {
+        clusters.push([nodes[node].index, nodes[node].membership]);
+      }
+      clusters.sort((a, b) => (a[0] > b[0] ? 1 : -1));
+      axios
+        .patch(API_URL + '/graph/update_cluster', clusters.map(c => c[1]))
+        .then(() => {
+          console.log('OK');
+        })
+        .catch(() => {
           console.err('NOT OK');
         });
     },

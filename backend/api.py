@@ -234,12 +234,43 @@ def centrality():
     return json.dumps(graph_func.betweenness_centrality())
 
 
-@app.route('/graph/clustcoeff', methods=['GET'])
+@app.route('/graph/cluster_coefficient', methods=['GET'])
 def clust_coeff():
     return json.dumps(graph_func.cluster_coefficient())
 
 
-@app.route('/change_graph', methods=['PATCH'])
+@app.route('/graph/eccentricity', methods=['GET'])
+def eccentricity():
+    return json.dumps(graph_func.eccentricity())
+
+
+@app.route('/graph/degree', methods=['GET'])
+def degree():
+    return json.dumps(graph_func.degree())
+
+
+@app.route('/graph/avg_edge_weights', methods=['GET'])
+def avg_edge_weights():
+    return json.dumps(graph_func.average_weight_per_edge())
+
+
+@app.route('/graph/between_group_degree', methods=['GET'])
+def bet_group_degree():
+    return json.dumps(graph_func.between_group_degree())
+
+
+@app.route('/graph/within_group_degree', methods=['GET'])
+def with_group_degree():
+    return json.dumps(graph_func.within_group_degree())
+
+
+@app.route('/graph/update_cluster', methods=['PATCH'])
+def update_graph_cluster():
+    graph_func.update_graph(request.get_data().decode('utf-8'))
+    return 'OK'
+
+
+@app.route('/graph/change_graph', methods=['PATCH'])
 def change_graph():
     data = request.get_data().decode('utf-8')
     dataset_name = data['name']

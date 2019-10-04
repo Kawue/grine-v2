@@ -169,6 +169,7 @@ export default {
     },
     splitCluster() {
       store.commit('NETWORK_SPLIT_CLUSTER');
+      store.dispatch('updateGraphCluster');
     },
     clickChangeAssignment() {
       this.selected = null;
@@ -214,6 +215,7 @@ export default {
         // commit assignment change
         store.commit('NETWORK_CHANGE_ASSIGNMENT', this.selected);
       }
+      store.dispatch('updateGraphCluster');
       this.selected = null;
     },
   },
@@ -222,6 +224,7 @@ export default {
     store.commit('NETWORK_INIT_SVG');
     store.commit('NETWORK_SIMULATION_INIT');
     store.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
+    store.dispatch('updateGraphCluster');
     store.subscribe(mutation => {
       if (mutation.type === 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE') {
         store.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');

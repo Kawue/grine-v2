@@ -21,8 +21,16 @@
         >
           Export JSON
         </a>
-        <b-button variant="primary" @click="sendGraph">
-          Send Graph
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <b-form-select
+          v-model="selectedStatistic"
+          :options="statisticOptions"
+        ></b-form-select>
+        <b-button variant="primary" @click="executeQuery">
+          Query
         </b-button>
       </div>
     </div>
@@ -42,11 +50,25 @@ export default {
       }
     });
   },
+  data: function() {
+    return {
+      statisticOptions: [
+        { value: 'centrality', text: 'Centrality' },
+        { value: 'degree', text: 'Degree' },
+        { value: 'eccentricity', text: 'Eccentricity' },
+        { value: 'cluster_coefficient', text: 'Cluster coefficient' },
+        { value: 'between_group_degree', text: 'Between Group Degree' },
+        { value: 'within_group_degree', text: 'Within Group Degree' },
+        { value: 'avg_edge_weights', text: 'Average Edge Weight' },
+      ],
+    };
+  },
   computed: {
     ...mapGetters({
       optionsDataGraphChoices: 'optionsDataGraphChoices',
       state: 'getOptionsData',
       wholeData: 'getWholeData',
+      stat: 'networkGraphStatistic',
     }),
     selectedGraph: {
       get() {
@@ -54,6 +76,14 @@ export default {
       },
       set(value) {
         this.$store.dispatch('changeGraph', value);
+      },
+    },
+    selectedStatistic: {
+      get() {
+        return this.stat;
+      },
+      set(value) {
+        store.commit('NETWORK_GRAPH_STATISTIC', value);
       },
     },
     downloadJson() {
@@ -65,14 +95,8 @@ export default {
     },
   },
   methods: {
-    sendGraph() {
-      const nodes = this.wholeData.graphs['graph0'].graph['hierarchy2'].nodes;
-      const p = [];
-      for (const node of Object.keys(nodes)) {
-        p.push([parseInt(node.split('n')[1], 10), nodes[node].membership]);
-      }
-      p.sort((a, b) => (a[0] > b[0] ? 1 : -1));
-      store.dispatch('testG', p.map(n => n[1]));
+    executeQuery() {
+      store.dispatch('graphQuery');
     },
   },
 };
