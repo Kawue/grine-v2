@@ -60,6 +60,8 @@ export default {
         { value: 'between_group_degree', text: 'Between Group Degree' },
         { value: 'within_group_degree', text: 'Within Group Degree' },
         { value: 'avg_edge_weights', text: 'Average Edge Weight' },
+        { value: 'spanning_tree_degree', text: 'Minimum spanning tree degree' },
+        { value: 'avg_neighbor_degree', text: 'Avg neighbor degree' },
       ],
     };
   },
