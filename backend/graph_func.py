@@ -48,7 +48,7 @@ def update_graph(node_cluster):
     global G, calculated_ranks
     calculated_ranks['between_group_degree'] = []
     temp_dict = {}
-    for idx, cluster in enumerate(node_cluster):
+    for idx, cluster in enumerate(eval(node_cluster)):
         temp_dict[idx] = cluster
     nx.set_node_attributes(G, temp_dict, 'cluster')
 
