@@ -155,7 +155,6 @@ def group_degree():
                 except KeyError:
                     cluster_edges[cluster] = 1
         group_degree_per_node = []
-        print(cluster_edges)
         for node in G.nodes():
             counter = 0
             node_cluster = G.nodes[node]['cluster']
