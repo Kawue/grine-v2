@@ -250,6 +250,11 @@ def degree():
     return json.dumps(graph_func.degree())
 
 
+@app.route('/graph/group_degree', methods=['GET'])
+def group_degree():
+    return json.dumps(graph_func.group_degree())
+
+
 @app.route('/graph/avg_edge_weights', methods=['GET'])
 def avg_edge_weights():
     return json.dumps(graph_func.average_weight_per_edge())

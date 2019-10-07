@@ -62,6 +62,7 @@ export default {
         { value: 'avg_edge_weights', text: 'Average Edge Weight' },
         { value: 'spanning_tree_degree', text: 'Minimum spanning tree degree' },
         { value: 'avg_neighbor_degree', text: 'Avg neighbor degree' },
+        { value: 'group_degree', text: 'Group degree' },
       ],
     };
   },

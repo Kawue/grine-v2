@@ -20,7 +20,8 @@ def graph_initialisation(similarity_matrix, threshold):
         'avg_edge_weight': [],
         'between_group_degree': [],
         'spanning_degree': [],
-        'avg_neighbor_degree': []
+        'avg_neighbor_degree': [],
+        'group_degree': []
     }
     distance_matrix = 1 - similarity_matrix
     distance_matrix[distance_matrix < 0.001] = 0.001
@@ -47,6 +48,7 @@ def update_graph(node_cluster):
     """
     global G, calculated_ranks
     calculated_ranks['between_group_degree'] = []
+    calculated_ranks['group_degree'] = []
     temp_dict = {}
     for idx, cluster in enumerate(eval(node_cluster)):
         temp_dict[idx] = cluster
@@ -137,9 +139,40 @@ def within_group_degree():
     return w_degree
 
 
+def group_degree():
+    """
+        calculate the group degree and sort by high group degree
+        :return: sorted list of nodes
+    """
+    global G, calculated_ranks
+    if len(calculated_ranks['group_degree']) == 0:
+        cluster_edges = {}
+        for s, t in G.edges:
+            if G.nodes[s]['cluster'] == G.nodes[t]['cluster']:
+                cluster = G.nodes[s]['cluster']
+                try:
+                    cluster_edges[cluster] += 1
+                except KeyError:
+                    cluster_edges[cluster] = 1
+        group_degree_per_node = []
+        print(cluster_edges)
+        for node in G.nodes():
+            counter = 0
+            node_cluster = G.nodes[node]['cluster']
+            for neighbor in G.neighbors(node):
+                if node_cluster == G.nodes[neighbor]['cluster']:
+                    counter += 1
+            try:
+                group_degree_per_node.append((node, counter / cluster_edges[node_cluster]))
+            except KeyError:
+                group_degree_per_node.append((node, 0))
+        calculated_ranks['group_degree'] = sort_and_map_tuple_list_to_name(group_degree_per_node, reverse=False)
+    return calculated_ranks['group_degree']
+
+
 def average_weight_per_edge():
     """
-        calculate the average weight per edge fropm each node and sort by high value
+        calculate the average weight per edge from each node and sort by high value
         :return: sorted list of nodes
     """
     global G, calculated_ranks
