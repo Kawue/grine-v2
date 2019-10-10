@@ -178,13 +178,13 @@ export default new Vuex.Store({
         iterations: 300,
         edgeLength: 150,
       },
-      graphStatistic: 'centrality',
+      graphStatistic: 'degree',
       image: {
         mergeMethod: null, // default will be first in array returned from api
         mergeMethods: [], // queries from api
         minIntensity: 20, // in %
         minOverlap: 80, // in %
-        colorScale: 'interpolateMagma',
+        colorScale: 'interpolateViridis',
         colorScales: {
           interpolateMagma: 'Magma',
           interpolateCool: 'Cool',

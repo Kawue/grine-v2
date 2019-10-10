@@ -270,6 +270,11 @@ def with_group_degree():
     return json.dumps(graph_func.within_group_degree())
 
 
+@app.route('/graph/within_cluster_centrality', methods=['GET'])
+def within_cluster_centrality():
+    return json.dumps(graph_func.within_cluster_centrality())
+
+
 @app.route('/graph/spanning_tree_degree', methods=['GET'])
 def spanning_tree_degree():
     return json.dumps(graph_func.minimal_spanning_tree_degree())

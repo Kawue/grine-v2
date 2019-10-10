@@ -53,16 +53,29 @@ export default {
   data: function() {
     return {
       statisticOptions: [
-        { value: 'centrality', text: 'Centrality' },
-        { value: 'degree', text: 'Degree' },
-        { value: 'eccentricity', text: 'Eccentricity' },
-        { value: 'cluster_coefficient', text: 'Cluster coefficient' },
-        { value: 'between_group_degree', text: 'Between Group Degree' },
-        { value: 'within_group_degree', text: 'Within Group Degree' },
+        { value: 'degree', text: 'Degree (Dominant Pattern)' },
+        // { value: 'eccentricity', text: 'Eccentricity' },
+        {
+          value: 'cluster_coefficient',
+          text: 'Cluster coefficient (Core Nodes)',
+        },
+        {
+          value: 'within_group_degree',
+          text: 'Within Group Degree (Core Nodes)',
+        },
+        {
+          value: 'between_group_degree',
+          text: 'Between Group Degree (Potential Misclustering)',
+        },
+        { value: 'group_degree', text: 'Group degree (Potential Singletons)' },
+        {
+          value: 'within_cluster_centrality',
+          text: 'Within cluster centrality (Potential Bridges)',
+        },
+        { value: 'centrality', text: 'Centrality (Central in Molecule-flow)' },
         { value: 'avg_edge_weights', text: 'Average Edge Weight' },
-        { value: 'spanning_tree_degree', text: 'Minimum spanning tree degree' },
+        // { value: 'spanning_tree_degree', text: 'Minimum spanning tree degree' },
         { value: 'avg_neighbor_degree', text: 'Avg neighbor degree' },
-        { value: 'group_degree', text: 'Group degree' },
       ],
     };
   },

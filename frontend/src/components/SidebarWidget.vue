@@ -114,7 +114,7 @@ export default {
 
   &.expanded {
     width: 300px;
-    &#images{
+    &#images {
       min-width: 350px;
     }
   }

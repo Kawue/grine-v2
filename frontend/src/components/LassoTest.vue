@@ -2,9 +2,16 @@
   <div>
     Lasso Test
     <div class="vis-root" style="position: relative;">
-      <canvas width="500" height="500" style="position: absolute;top: 0;left: 0;"></canvas>
-      <svg width="250" height="250" style="position: absolute; top: 0px; left: 0px;">
-      </svg>
+      <canvas
+        width="500"
+        height="500"
+        style="position: absolute;top: 0;left: 0;"
+      ></canvas>
+      <svg
+        width="250"
+        height="250"
+        style="position: absolute; top: 0px; left: 0px;"
+      ></svg>
     </div>
   </div>
 </template>

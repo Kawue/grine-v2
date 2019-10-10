@@ -21,7 +21,8 @@ def graph_initialisation(similarity_matrix, threshold):
         'between_group_degree': [],
         'spanning_degree': [],
         'avg_neighbor_degree': [],
-        'group_degree': []
+        'group_degree': [],
+        'within_cluster_coefficient': []
     }
     distance_matrix = 1 - similarity_matrix
     distance_matrix[distance_matrix < 0.001] = 0.001
@@ -49,6 +50,7 @@ def update_graph(node_cluster):
     global G, calculated_ranks
     calculated_ranks['between_group_degree'] = []
     calculated_ranks['group_degree'] = []
+    calculated_ranks['within_cluster_coefficient'] = []
     temp_dict = {}
     for idx, cluster in enumerate(eval(node_cluster)):
         temp_dict[idx] = cluster
@@ -162,7 +164,7 @@ def group_degree():
                 if node_cluster == G.nodes[neighbor]['cluster']:
                     counter += 1
             try:
-                group_degree_per_node.append((node, counter / cluster_edges[node_cluster]))
+                group_degree_per_node.append((node, math.pow(counter,2) / cluster_edges[node_cluster]))
             except KeyError:
                 group_degree_per_node.append((node, 0))
         calculated_ranks['group_degree'] = sort_and_map_tuple_list_to_name(group_degree_per_node, reverse=False)
@@ -205,6 +207,32 @@ def avg_neighbor_degree():
             b_degree.append((node, sum(neighbor_degrees)/len(neighbor_degrees)))
         calculated_ranks['avg_neighbor_degree'] = sort_and_map_tuple_list_to_name(b_degree)
     return calculated_ranks['avg_neighbor_degree']
+
+
+def within_cluster_centrality():
+    global G, calculated_ranks
+    if len(calculated_ranks['within_cluster_coefficient']) == 0:
+        graphs = []
+        # create for each cluster a sub-graph
+        for node, c in G.nodes(data='cluster'):
+            try:
+                graphs[c].add_node(node)
+            except IndexError:
+                graphs = graphs + [nx.Graph() for _ in range(c + 1 - len(graphs))]
+                graphs[c].add_node(node)
+        # add within cluster edges to each sub-graph
+        for s, t, w in G.edges(data='weight'):
+            cluster1 = G.nodes[s]['cluster']
+            cluster2 = G.nodes[t]['cluster']
+            if cluster1 == cluster2:
+                graphs[cluster1].add_edge(s, t, weight=w)
+        nodes = []
+        # compute for every node his centrality within his cluster divided by his degree
+        for graph in graphs:
+            nodes = nodes + list(map(lambda x: (x[0], x[1] / (graph.degree[x[0]] if graph.degree[x[0]] > 0 else -1)),
+                                     list(nx.betweenness_centrality(graph).items())))
+        calculated_ranks['within_cluster_coefficient'] = sort_and_map_tuple_list_to_name(nodes)
+    return calculated_ranks['within_cluster_coefficient']
 
 
 def sum_edge_weights(G, node):
