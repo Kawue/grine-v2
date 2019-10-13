@@ -57,6 +57,3 @@ Here is a list of icons: https://github.com/Justineo/vue-awesome/tree/master/src
 
 ### Vue Loading Spinner
 https://nguyenvanduocit.github.io/vue-loading-spinner/
-
-## Backend
-
