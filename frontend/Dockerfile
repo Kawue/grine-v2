@@ -1,8 +1,8 @@
 # build stage
 FROM node:lts-alpine as build-stage
 WORKDIR /app
-COPY package.json ./
 RUN apk add yarn
+COPY package.json ./
 COPY yarn.lock ./
 RUN yarn install
 COPY . .
