@@ -56,3 +56,4 @@ backend/datasets/dimreduce_kidneyOrbi.h5
 backend/json/eigenvector_orbi_kidney.json
 backend/json/louvain_orbi_kidney.json
 backend/datasets/similarity-matrix-MK_202_3.npy
+backend/__pycache__
