@@ -8,7 +8,7 @@
       <div style="padding: 4px 8px 0 8px;">
         <span
           style="float: left;"
-          class="text-primary"
+          class="text-primary clickable"
           v-on:click="
             toggleShowAll();
             calculateCurrentMz();
@@ -20,7 +20,7 @@
         </span>
         <span
           style="float: left;margin-left: 15px;"
-          class="text-primary"
+          class="text-primary clickable"
           v-on:click="toggleShowAnnotation"
           v-b-tooltip.hover.top="'Show Annotations'"
         >
@@ -35,6 +35,7 @@
             sortMZ();
           "
           style="float: right; padding: 0"
+          class="clickable"
           v-b-tooltip.hover.top="'Sort'"
         >
           <v-icon
@@ -48,6 +49,7 @@
         v-on:click="mzClicked"
         class="list"
         multiple
+        :disabled="isMzLassoActive()"
       >
         <option
           v-for="mzObject in currentMz"
@@ -57,7 +59,11 @@
           v-bind:key="mzObject.mz"
           v-on:dblclick="doubleClick(mzObject)"
         >
-          {{ showAnnotation ? mzObject.name : mzObject.mz }}
+          {{
+            showAnnotation && mzObject.annotation != null
+              ? mzObject.annotation
+              : mzObject.mz.toFixed(3)
+          }}
         </option>
       </select>
       <b-modal
@@ -111,7 +117,7 @@
           <b-button
             variant="outline-danger"
             @click="cancel()"
-            v-bind:disabled="nameModalMz.mz === nameModalMz.name"
+            v-if="nameModalMz.resetable"
           >
             Reset
           </b-button>
@@ -145,6 +151,7 @@ export default {
       nameModalMz: {
         name: '',
         mz: 0,
+        resetable: false,
       },
     };
   },
@@ -161,6 +168,9 @@ export default {
     }),
   },
   methods: {
+    isMzLassoActive() {
+      return store.getters.isMzLassoSelectionActive;
+    },
     mzClicked: function() {
       store.dispatch('mzlistUpdatedMzs', this.localSelectedMz);
     },
@@ -179,7 +189,8 @@ export default {
     doubleClick: function(mzObject) {
       this.nameModalMz = {
         mz: mzObject.mz,
-        name: mzObject.name,
+        name: mzObject.annotation != null ? mzObject.annotation : '',
+        resetable: mzObject.annotation != null,
       };
       this.$refs['nameModal'].show();
       setTimeout(() => {
@@ -195,10 +206,8 @@ export default {
         return;
       }
       const mz = this.nameModalMz.mz;
-      const index = this.currentMz.findIndex(function(val) {
-        return val.mz === mz;
-      });
-      this.currentMz[index].name = this.nameModalMz.name;
+      const index = this.currentMz.findIndex(mzObject => mzObject.mz === mz);
+      this.currentMz[index].annotation = this.nameModalMz.name;
       store.commit('MZLIST_UPDATE_NAME', {
         nodeKey: this.currentMz[index]['hierarchy' + this.meta.maxHierarchy],
         name: this.nameModalMz.name,
@@ -216,10 +225,10 @@ export default {
     handleCancel: function() {
       const mz = this.nameModalMz.mz;
       const index = this.currentMz.findIndex(val => val.mz === mz);
-      this.currentMz[index].name = this.nameModalMz.mz.toString();
+      this.currentMz[index].annotation = null;
       store.commit('MZLIST_UPDATE_NAME', {
         nodeKey: this.currentMz[index]['hierarchy' + this.meta.maxHierarchy],
-        name: this.nameModalMz.mz.toString(),
+        name: null,
       });
       setTimeout(() => {
         this.nameModalMz = {
@@ -237,6 +246,7 @@ export default {
 
 <style scoped lang="scss">
 .sidebar-widget {
+  background: inherit;
   &.expanded {
     width: 120px !important;
     overflow: hidden !important;
@@ -247,6 +257,10 @@ export default {
   color: darkgray;
 }
 
+.clickable {
+  cursor: pointer;
+}
+
 .list {
   padding: 0;
   font-size: 0.9em;
@@ -254,6 +268,13 @@ export default {
   width: 100%;
   text-align: center;
   margin-top: 8px;
+}
+
+select {
+  background-color: #4f5050;
+  color: white;
+  border: 1px solid #737374;
+  margin: 0 0 5px 0;
 }
 
 #annotation-mz-value {

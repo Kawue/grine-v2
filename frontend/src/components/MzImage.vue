@@ -45,10 +45,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    enableClickCopyToLassoImage: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
-      width: 250,
+      width: 300,
       heightLast: 100,
       render: false,
       canvas: null,
@@ -72,6 +76,17 @@ export default {
       switch (mutation.type) {
         case 'SET_IMAGE_DATA_VALUES':
           if (mutation.payload[0] === this.imageDataIndex) {
+            if (this.height) {
+              this.heightLast = this.height;
+              let self = this;
+              setTimeout(function() {
+                self.drawPoints();
+              }, 10);
+            }
+          }
+          break;
+        case 'CLEAR_IMAGE':
+          if (mutation.payload === this.imageDataIndex) {
             if (this.height) {
               this.heightLast = this.height;
               let self = this;
@@ -109,6 +124,9 @@ export default {
       height = height ? height : this.$store.getters.getImageData(3).max.y;
       height = height ? height : this.heightLast;
       height = height < 100 ? 100 : height;
+      // TODO: Dirty fix to update the lasso SVG height consistently when the canvas height is changed. Needs to be resolved more clean!
+      d3.selectAll('.canvas-root svg').attr('height', height);
+      d3.selectAll('.canvas-root svg g rect').attr('height', height);
       return height;
     },
     domainX: function() {
@@ -141,11 +159,15 @@ export default {
     },
   },
   methods: {
+    isMzLassoActive() {
+      return store.getters.isMzLassoSelectionActive;
+    },
+    isAbleToCopyDataIntoSelectionImage() {
+      return this.enableClickCopyToLassoImage && !this.isMzLassoActive();
+    },
     imageClick() {
-      if (!this.enableLasso) {
+      if (this.isAbleToCopyDataIntoSelectionImage()) {
         store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
-      } else {
-        store.commit('RESET_SELECTION');
       }
     },
     widgetUniqueId() {
@@ -153,7 +175,7 @@ export default {
     },
     widgetStyle() {
       let style = 'height: ' + this.height + 'px;';
-      if (!this.enableLasso) {
+      if (this.isAbleToCopyDataIntoSelectionImage()) {
         style += 'cursor: pointer';
       }
       return style;
@@ -174,7 +196,7 @@ export default {
     handleLassoStart() {
       this.removeLassoAfterPointsDrawn = false;
       if (store.getters.isMzLassoSelectionActive) {
-        store.commit('RESET_SELECTION');
+        store.commit('RESET_SELECTION', true);
       }
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
@@ -232,6 +254,7 @@ export default {
 
   canvas {
     border: 1px solid lightgrey;
+    background: white;
   }
 
   .spinner {

@@ -42,6 +42,18 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-4">
+                <span class="font12px">DR:</span>
+              </div>
+              <div class="col-md-8 font12px">
+                <OptionsImagePca></OptionsImagePca>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-12" style="margin-top: 25px; margin-bottom: 25px">
@@ -63,11 +75,27 @@
       </div>
       <div class="row">
         <div class="col-md-12" style="margin-bottom: 25px;">
-          Lasso Selector:
+          Cache/Lasso:
           <span v-on:click="deleteLassoImage()">
             <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
           </span>
-          <mz-image :imageDataIndex="3" v-bind:enable-lasso="true"></mz-image>
+          <mz-image
+            :imageDataIndex="3"
+            v-bind:enable-lasso="true"
+            v-bind:enableClickCopyToLassoImage="false"
+          ></mz-image>
+        </div>
+      </div>
+      <div class="row" v-if="options.pca.show">
+        <div class="col-md-12" style="margin-bottom: 25px;">
+          DR:
+          <span v-on:click="deleteDrImage()">
+            <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
+          </span>
+          <mz-image
+            :imageDataIndex="4"
+            v-bind:enableClickCopyToLassoImage="false"
+          ></mz-image>
         </div>
       </div>
     </div>
@@ -81,6 +109,7 @@ import { mapGetters } from 'vuex';
 import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
+import OptionsImagePca from './OptionsImagePca';
 import * as constants from '../store';
 
 export default {
@@ -91,20 +120,42 @@ export default {
     OptionsImageMergeMethod,
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
+    OptionsImagePca,
   },
   methods: {
+    loadPca() {
+      this.$store.dispatch('fetchPcaImageData');
+    },
     deleteLassoImage() {
-      this.$store.commit('CLEAR_IMAGE', 3);
+      this.$store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_LASSO);
+      this.$store.commit('RESET_SELECTION');
+    },
+    deleteDrImage() {
+      this.$store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_PCA);
     },
   },
   mounted: function() {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'IMAGE_COPY_INTO_SELECTION_IMAGE':
-        case 'CLEAR_IMAGE':
           this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
           break;
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_COMMUNITY
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_SELECTED_MZ
+          );
+          this.$store.dispatch(
+            'fetchImageData',
+            constants.IMAGE_INDEX_AGGREGATED
+          );
+          this.$store.dispatch('fetchPcaImageData');
+
+          break;
         case 'MZLIST_UPDATE_HIGHLIGHTED_MZ':
           this.$store.dispatch(
             'fetchImageData',
@@ -132,10 +183,7 @@ export default {
             'fetchImageData',
             constants.IMAGE_INDEX_AGGREGATED
           );
-          this.$store.dispatch(
-            'fetchImageData',
-            constants.IMAGE_INDEX_LASSO
-          );
+          this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
           break;
         case 'RESET_SELECTION':
           this.$store.dispatch(
@@ -151,6 +199,7 @@ export default {
             constants.IMAGE_INDEX_AGGREGATED
           );
           this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
+          this.$store.dispatch('fetchPcaImageData');
           break;
         case 'NETWORK_HIGHLIGHT_NODE':
         case 'MZLIST_UPDATE_SELECTED_MZ':
@@ -193,12 +242,19 @@ export default {
   margin-left: 10px;
 }
 
+select {
+  background-color: #4f5050;
+  color: white;
+  border: 1px solid #737374;
+  margin: 0 0 5px 0;
+}
+
 .font12px {
   font-size: 12px;
 }
 
 .sidebar-widget {
-  background-color: white;
+  background-color: inherit;
 }
 
 .sidebar-widget {

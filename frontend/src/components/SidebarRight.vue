@@ -2,10 +2,10 @@
   <div class="sidebar">
     <div class="row">
       <div class="col-sm">
-        <Images side="right"></Images>
+        <Images id="images" side="right"></Images>
       </div>
       <div class="col-sm">
-        <MzList side="right"></MzList>
+        <MzList id="mzlist" side="right"></MzList>
       </div>
     </div>
   </div>
@@ -31,6 +31,8 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 101;
+  background: #4f5050;
+  color: white;
 
   .row {
     padding: 0;

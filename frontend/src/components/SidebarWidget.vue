@@ -7,7 +7,7 @@
   >
     <slot name="nav" v-if="iconExpandEnabled">
       <span v-if="expanded" class="horizontal-title">{{ title }}</span>
-      <span v-on:click="toggleView()">
+      <span v-on:click="toggleView()" class="clickable">
         <v-icon
           name="arrow-right"
           class="icon-open"
@@ -20,7 +20,7 @@
         ></v-icon>
       </span>
       <span
-        class="vertical-title"
+        class="vertical-title clickable"
         v-on:click="toggleView()"
         v-if="!expanded"
         style="writing-mode: vertical-rl;text-orientation: mixed;"
@@ -110,9 +110,13 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: white;
+  border: #717273 1px solid;
 
   &.expanded {
-    width: 200px;
+    width: 300px;
+    &#images {
+      min-width: 350px;
+    }
   }
 }
 
@@ -124,6 +128,10 @@ export default {
   display: inline-block;
   padding-top: 5px;
   padding-bottom: 0;
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 .icon-collapsed {

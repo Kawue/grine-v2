@@ -3,20 +3,8 @@
     <SidebarLeft />
     <SidebarRight v-if="!loading" />
     <Graph v-if="!loading" />
-    <b-button
-      id="clear-button"
-      variant="warning"
-      size="lg"
-      @click="clearSelection"
-      >Clear</b-button
-    >
-    <div class="mode-container text-center">
-      <div v-if="this.lassoMode" class="selected-mode">
-        Free Mode
-      </div>
-      <div v-else class="selected-mode">
-        Lasso Mode
-      </div>
+    <div class="mode-container text-center" @click="toggleMode">
+      <div class="selected-mode">{{ lassoMode ? 'Free' : 'Lasso' }} Mode</div>
     </div>
   </div>
 </template>
@@ -42,25 +30,17 @@ export default {
     }),
   },
   mounted: function() {
-    console.log('home component mounted');
     store.dispatch('fetchGraphData');
     store.dispatch('fetchMergeMethods');
   },
   methods: {
-    clearSelection() {
-      store.commit('RESET_SELECTION');
+    toggleMode() {
+      store.commit('NETWORK_TOGGLE_MODE');
     },
   },
 };
 </script>
 <style scoped lang="scss">
-#clear-button {
-  position: absolute;
-  left: 3vw;
-  bottom: 5vh;
-  font-size: 1.2em;
-  z-index: 100;
-}
 .selected-mode {
   width: 150px;
   font-size: 1.4em;
@@ -69,9 +49,10 @@ export default {
 }
 .mode-container {
   position: absolute;
-  left: 4vw;
+  left: 3vw;
   background-color: rgba(231, 231, 231, 0.5);
   top: 0;
   z-index: 100;
+  cursor: pointer;
 }
 </style>

@@ -19,6 +19,7 @@ export const IMAGE_INDEX_COMMUNITY = 0;
 export const IMAGE_INDEX_SELECTED_MZ = 1;
 export const IMAGE_INDEX_AGGREGATED = 2;
 export const IMAGE_INDEX_LASSO = 3;
+export const IMAGE_INDEX_PCA = 4;
 
 export default new Vuex.Store({
   state: {
@@ -27,6 +28,7 @@ export default new Vuex.Store({
     meta: {
       maxHierarchy: 1,
       maxGraphs: 1,
+      threshold: 0,
     },
     images: {
       imageData: [
@@ -98,6 +100,23 @@ export default new Vuex.Store({
           },
           lassoFetching: false, // true during api call of lasso matching
         },
+        {
+          // IMAGE_INDEX_PCA data used to render the pca image
+          mzValues: [],
+          points: [], // points that are displayed as mz image
+          selectedPoints: [], // points that are selected by the lasso
+          max: {
+            // max image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          min: {
+            // min image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          lassoFetching: false, // true during api call of lasso matching
+        },
       ],
       loadingImageData: false, // api fetch for image data is running
     },
@@ -118,6 +137,34 @@ export default new Vuex.Store({
       nodes: [],
       edges: [],
       lassoMode: true,
+      nodeTrix: {
+        nodeTrixPossible: false,
+        nodeTrixActive: false,
+        minWeight: 0,
+        maxWeight: 1,
+        colorScale: null,
+        oldElements: {
+          oldNodes: [],
+        },
+        newElements: {
+          newNodes: [],
+          newEdges: [],
+          nodeTrixNode: null,
+        },
+      },
+      clusterChange: {
+        compute: false,
+        split: {
+          oldGroup: [],
+          newGroup: [],
+          possible: false,
+        },
+        merge: {
+          mergePossible: false,
+          assignmentPossible: false,
+          nodes: [],
+        },
+      },
     },
     options: {
       state: {
@@ -131,12 +178,13 @@ export default new Vuex.Store({
         iterations: 300,
         edgeLength: 150,
       },
+      graphStatistic: 'degree',
       image: {
         mergeMethod: null, // default will be first in array returned from api
         mergeMethods: [], // queries from api
         minIntensity: 20, // in %
         minOverlap: 80, // in %
-        colorScale: 'interpolateMagma',
+        colorScale: 'interpolateViridis',
         colorScales: {
           interpolateMagma: 'Magma',
           interpolateCool: 'Cool',
@@ -144,6 +192,11 @@ export default new Vuex.Store({
           interpolateViridis: 'Viridis',
           interpolatePlasma: 'Plasma',
           interpolateInferno: 'Inferno',
+        },
+        pca: {
+          show: false,
+          relative: true,
+          threshold: 50, // in %
         },
       },
       mzList: {
@@ -158,6 +211,9 @@ export default new Vuex.Store({
     },
   },
   getters: {
+    getWholeData: state => {
+      return state.originalGraphData;
+    },
     getLoadingGraphData: state => {
       return state.loadingGraphData;
     },
@@ -241,6 +297,36 @@ export default new Vuex.Store({
     networkNodes: state => {
       return state.network.nodes;
     },
+    networkNodeTrixPossible: state => {
+      return state.network.nodeTrix.nodeTrixPossible;
+    },
+    networkNodeTrixActive: state => {
+      return state.network.nodeTrix.nodeTrixActive;
+    },
+    networkNodeTrixOldElements: state => {
+      return state.network.nodeTrix.oldElements;
+    },
+    networkNodeTrixNewElements: state => {
+      return state.network.nodeTrix.newElements;
+    },
+    networkClusterSplitPossible: state => {
+      return state.network.clusterChange.split.possible;
+    },
+    networkNodeMergePossible: state => {
+      return state.network.clusterChange.merge.mergePossible;
+    },
+    networkChangeAssignmentPossible: state => {
+      return state.network.clusterChange.merge.assignmentPossible;
+    },
+    networkMergeNodes: state => {
+      return state.network.clusterChange.merge.nodes;
+    },
+    networkComputeClusterChange: state => {
+      return state.network.clusterChange.compute;
+    },
+    networkGraphStatistic: state => {
+      return state.options.graphStatistic;
+    },
     stateOptionsGraph: state => {
       return state.options.data.graph;
     },
@@ -313,7 +399,10 @@ export default new Vuex.Store({
       mzImageData.min.y = minY;
     },
     IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
-      let nodesSelected = networkService.getSelectedNodes(state.network.nodes);
+      let nodesSelected = NetworkService.getSelectedNodes(
+        state.network.nodes,
+        false
+      );
       if (nodesSelected) {
         if (nodesSelected.length === 0) {
           state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
@@ -328,18 +417,16 @@ export default new Vuex.Store({
             state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
               nodesSelected[0].mzs;
           } else if (nodesSelected[0].parent) {
-            // find mzs of parent community
+            // find mzs of highest parent community
             const graph =
               state.originalGraphData.graphs['graph' + state.options.data.graph]
                 .graph;
-            const nodeHierarchy = parseInt(
-              nodesSelected[0].name.split('n')[0].slice(1),
-              10
+            let parentNode = NetworkService.getRootParentNodeFromNode(
+              nodesSelected[0],
+              graph
             );
-            const nodeParent =
-              'h' + (nodeHierarchy - 1) + 'n' + nodesSelected[0].parent;
             state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
-              graph['hierarchy' + (nodeHierarchy - 1)].nodes[nodeParent].mzs;
+              parentNode.mzs;
           }
         } else if (nodesSelected.length > 1) {
           state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
@@ -379,7 +466,7 @@ export default new Vuex.Store({
     },
     SET_NETWORK_OPTIONS: (state, options) => {
       state.options.network = options;
-      networkService.updateSimulationParameters(
+      NetworkService.updateSimulationParameters(
         state.network.simulation,
         options
       );
@@ -410,8 +497,15 @@ export default new Vuex.Store({
         state.network.simulation,
         state.network.nodes,
         state.network.edges,
-        state.options.network
+        state.options.network,
+        state.network.nodeTrix.newElements.nodeTrixNode,
+        state.network.nodeTrix.newElements.newEdges,
+        state.network.nodeTrix.newElements.newNodes.slice(
+          0,
+          state.network.nodeTrix.newElements.newNodes.length / 4
+        )
       );
+      state.network.svgElements.lasso.items(NetworkService.getLassoSVGNodes());
     },
     NETWORK_LOAD_GRAPH: state => {
       const tupel = networkService.loadGraph(
@@ -419,9 +513,15 @@ export default new Vuex.Store({
       );
       state.network.nodes = tupel[0];
       state.network.edges = tupel[1];
+      const minMaxTupel = NetworkService.findMinMaxWeight(
+        state.originalGraphData.graphs['graph' + state.options.data.graph]
+          .graph['hierarchy' + state.meta.maxHierarchy].edges
+      );
+      state.network.nodeTrix.minWeight = minMaxTupel[0];
+      state.network.nodeTrix.maxWeight = minMaxTupel[1];
     },
     NETWORK_EXPAND_NODE: (state, node) => {
-      const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const hierarchy = NetworkService.hierarchyOfNodeName(node.name);
       if (hierarchy < state.meta.maxHierarchy && node.mzs.length > 1) {
         networkService.expandNode(
           state.originalGraphData.graphs['graph' + state.options.data.graph]
@@ -430,19 +530,10 @@ export default new Vuex.Store({
           state.network.nodes,
           state.network.edges
         );
-        state.network.simulation = networkService.initSimulation(
-          state.network.simulation,
-          state.network.nodes,
-          state.network.edges,
-          state.options.network
-        );
-        state.network.svgElements.lasso.items(
-          state.network.svgElements.nodeElements
-        );
       }
     },
     NETWORK_SHRINK_NODE: (state, node) => {
-      const hierarchy = parseInt(node.name.split('n')[0].slice(1), 10);
+      const hierarchy = NetworkService.hierarchyOfNodeName(node.name);
       if (hierarchy > 0) {
         networkService.shrinkNode(
           state.originalGraphData.graphs['graph' + state.options.data.graph]
@@ -450,15 +541,6 @@ export default new Vuex.Store({
           node,
           state.network.nodes,
           state.network.edges
-        );
-        state.network.simulation = networkService.initSimulation(
-          state.network.simulation,
-          state.network.nodes,
-          state.network.edges,
-          state.options.network
-        );
-        state.network.svgElements.lasso.items(
-          state.network.svgElements.nodeElements
         );
       }
     },
@@ -471,6 +553,102 @@ export default new Vuex.Store({
     },
     NETWORK_CENTER_CAMERA: state => {
       networkService.centerCamera(state.network.svgElements.zoom);
+    },
+    NETWORK_GRAPH_STATISTIC: (state, stat) => {
+      state.options.graphStatistic = stat;
+    },
+    NETWORK_COMPUTE_NODETRIX: state => {
+      state.network.nodeTrix.nodeTrixPossible = false;
+      state.network.nodeTrix.nodeTrixActive = true;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
+      networkService.computeNodeTrix(
+        state.originalGraphData.graphs['graph' + state.options.data.graph]
+          .graph,
+        state.network.nodes,
+        state.network.edges,
+        state.meta.maxHierarchy,
+        state.network.nodeTrix.colorScale,
+        [state.network.nodeTrix.minWeight, state.network.nodeTrix.maxWeight]
+      );
+    },
+    NETWORK_NODETRIX_RESET: state => {
+      state.network.nodeTrix.nodeTrixActive = false;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
+      networkService.resetNodeTrix(state.network.nodes, state.network.edges);
+      if (
+        NetworkService.getSelectedNodes(state.network.nodes, false).length === 0
+      ) {
+        state.network.nodeTrix.nodeTrixPossible = false;
+      }
+    },
+    NETWORK_NODETRIX_CHANGE_COLORSCALE: state => {
+      state.network.nodeTrix.colorScale = networkService.computeColorScale(
+        state.options.image.colorScale,
+        state.network.nodeTrix.minWeight,
+        state.network.nodeTrix.maxWeight
+      );
+      networkService.redrawNodeTrix(state.network.nodeTrix.colorScale, [
+        state.network.nodeTrix.minWeight,
+        state.network.nodeTrix.maxWeight,
+      ]);
+    },
+    NETWORK_SPLIT_CLUSTER_POSSIBLE: (state, data) => {
+      state.network.clusterChange.split.possible = true;
+      state.network.clusterChange.split.newGroup = data[0];
+      state.network.clusterChange.split.oldGroup = data[1];
+    },
+    NETWORK_MERGE_NODES_POSSIBLE: (state, nodes) => {
+      state.network.clusterChange.merge.mergePossible = true;
+      state.network.clusterChange.merge.nodes = nodes;
+    },
+    NETWORK_ASSIGNMENT_CHANGE_POSSIBLE: (state, nodes) => {
+      state.network.clusterChange.merge.assignmentPossible = true;
+      state.network.clusterChange.merge.nodes = nodes;
+    },
+    NETWORK_CHANGE_ASSIGNMENT: (state, parentIndex) => {
+      state.network.clusterChange.compute = true;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
+      networkService.changeNodesAssignment(
+        state.originalGraphData.graphs['graph' + state.options.data.graph],
+        state.network.clusterChange.merge.nodes,
+        parentIndex
+      );
+      state.network.clusterChange.merge.nodes = [];
+      state.network.clusterChange.compute = false;
+    },
+    NETWORK_MERGE_NODES: (state, nodeIndex) => {
+      state.network.clusterChange.compute = true;
+      networkService.mergeNodes(
+        state.originalGraphData.graphs['graph' + state.options.data.graph],
+        state.network.clusterChange.merge.nodes,
+        nodeIndex,
+        state.network.nodes,
+        state.network.edges
+      );
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
+      state.network.clusterChange.compute = false;
+    },
+    NETWORK_SPLIT_CLUSTER: state => {
+      state.network.clusterChange.compute = true;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
+      networkService.splitCluster(
+        state.originalGraphData.graphs['graph' + state.options.data.graph],
+        state.network.clusterChange.split.newGroup,
+        state.network.clusterChange.split.oldGroup
+      );
+      state.network.clusterChange.split.newGroup = [];
+      state.network.clusterChange.split.oldGroup = [];
+      state.network.clusterChange.compute = false;
     },
     OPTIONS_IMAGE_UPDATE: (state, { data }) => {
       state.options.image = data;
@@ -504,34 +682,58 @@ export default new Vuex.Store({
     OPTIONS_IMAGE_CHANGE_MIN_INTENSITY: (state, data) => {
       state.options.image.minIntensity = data;
     },
+    OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD: (state, data) => {
+      state.options.image.pca.threshold = data;
+    },
+    OPTIONS_IMAGE_PCA_CHANGE_RELATIVE: (state, data) => {
+      state.options.image.pca.relative = data;
+    },
+    OPTIONS_IMAGE_PCA_CHANGE_SHOW: (state, data) => {
+      state.options.image.pca.show = data;
+    },
     OPTIONS_IMAGE_CHANGE_MIN_OVERLAP: (state, data) => {
       state.options.image.minOverlap = data;
     },
     MZLIST_SORT_MZ: state => {
-      state.mzList.visibleMz = mzListService.sortMzList(
-        state.mzList.visibleMz,
-        state.options.mzList.asc
-      );
+      state.mzList.visibleMz = mzListService.sortMzList(state.mzList.visibleMz);
     },
     MZLIST_UPDATE_SELECTED_MZ: (state, data) => {
+      state.network.nodeTrix.nodeTrixPossible = true;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
       state.mzList.selectedMz = data;
+      state.mzList.visibleMz = mzListService.sortMzList(state.mzList.visibleMz);
       networkService.highlightNodesByMz(state.network.nodes, data);
     },
     MZLIST_UPDATE_NAME: (state, data) => {
-      state.originalGraphData.graphs['graph' + state.options.data.graph].graph[
-        'hierarchy' + state.meta.maxHierarchy
-      ].nodes[data.nodeKey].name = data.name;
+      if (data.name != null) {
+        state.originalGraphData.graphs[
+          'graph' + state.options.data.graph
+        ].graph['hierarchy' + state.meta.maxHierarchy].nodes[data.nodeKey][
+          'annotation'
+        ] = data.name;
+      } else {
+        delete state.originalGraphData.graphs[
+          'graph' + state.options.data.graph
+        ].graph['hierarchy' + state.meta.maxHierarchy].nodes[data.nodeKey]
+          .annotation;
+      }
     },
     MZLIST_UPDATE_HIGHLIGHTED_MZ: (state, mzValues) => {
+      state.network.nodeTrix.nodeTrixPossible = true;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
       const tuple = mzListService.updateHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
         mzValues,
-        state.options.mzList.showAll,
-        state.options.mzList.asc
+        state.options.mzList.showAll
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
+      state.mzList.visibleMz = mzListService.sortMzList(state.mzList.visibleMz);
       if (mzValues.length === 1) {
         state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
       }
@@ -543,18 +745,27 @@ export default new Vuex.Store({
         state.originalGraphData.graphs
       );
     },
-    RESET_SELECTION: state => {
+    RESET_SELECTION: (state, keepLasso) => {
+      state.network.nodeTrix.nodeTrixPossible = false;
+      state.network.clusterChange.split.possible = false;
+      state.network.clusterChange.merge.mergePossible = false;
+      state.network.clusterChange.merge.assignmentPossible = false;
+      state.network.clusterChange.split.newGroup = [];
+      state.network.clusterChange.split.oldGroup = [];
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
-        state.options.mzList.showAll,
-        state.options.mzList.asc
+        state.options.mzList.showAll
       );
-      state.mzList.notVisibleMz = tuple[1];
-      state.mzList.visibleMz = mzListService.sortMzList(
-        tuple[0],
-        state.options.mzList.asc
+      state.mzList.notVisibleMz = [];
+      mzListService.resetPermutation(
+        state.mzList.visibleMz,
+        state.mzList.notVisibleMz
       );
+      state.mzList.visibleMz = mzListService.sortMzList(tuple[0]);
+      if (state.network.nodeTrix.oldElements.oldNodes.length > 0) {
+        NetworkService.clearHighlightNodeTrixNodes();
+      }
       networkService.clearHighlight(state.network.nodes);
       state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
       state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
@@ -562,18 +773,23 @@ export default new Vuex.Store({
       state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
       state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
       state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
+      state.images.imageData[IMAGE_INDEX_PCA].mzValues = [];
+      state.images.imageData[IMAGE_INDEX_PCA].points = [];
+      if (!keepLasso) {
+        state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
+        state.images.imageData[IMAGE_INDEX_LASSO].points = [];
+      }
     },
     MZLIST_CALCULATE_VISIBLE_MZ: state => {
       const tuple = mzListService.calculateVisibleMz(
         state.options.mzList.showAll,
         state.mzList.notVisibleMz,
-        state.mzList.visibleMz,
-        state.options.mzList.asc
+        state.mzList.visibleMz
       );
       state.mzList.visibleMz = tuple[0];
       state.mzList.notVisibleMz = tuple[1];
     },
-    MZ_IMAGE_LASSO_END: state => {
+    MZ_IMAGE_LASSO_END: () => {
       networkService.simulationUpdate();
     },
   },
@@ -596,6 +812,10 @@ export default new Vuex.Store({
         .get(url)
         .then(response => {
           context.commit('SET_ORIGINAL_GRAPH_DATA', response.data);
+          context.state.meta.threshold =
+            context.state.originalGraphData.graphs[
+              'graph' + context.state.options.data.graph
+            ].threshold;
           context.state.meta.maxHierarchy =
             Object.keys(
               context.state.originalGraphData.graphs[
@@ -617,25 +837,44 @@ export default new Vuex.Store({
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
     changeGraph: (context, graph) => {
+      axios
+        .post(API_URL + '/graph/change_graph', graph)
+        .then(() => {
+          this.dispatch('updateGraphCluster');
+        })
+        .catch(function() {
+          console.err('Change Graph NOT OK');
+        });
       context.state.options.data.graph = graph;
       context.state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
+      context.state.images.imageData[IMAGE_INDEX_PCA].mzValues = [];
       context.state.images.imageData[IMAGE_INDEX_COMMUNITY].points = [];
       context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].points = [];
       context.state.images.imageData[IMAGE_INDEX_AGGREGATED].points = [];
       context.state.images.imageData[IMAGE_INDEX_LASSO].points = [];
+      context.state.images.imageData[IMAGE_INDEX_PCA].points = [];
       context.dispatch('fetchImageData', IMAGE_INDEX_COMMUNITY);
       context.dispatch('fetchImageData', IMAGE_INDEX_SELECTED_MZ);
       context.dispatch('fetchImageData', IMAGE_INDEX_AGGREGATED);
       context.dispatch('fetchImageData', IMAGE_INDEX_LASSO);
+      context.state.meta.threshold =
+        context.state.originalGraphData.graphs[
+          'graph' + context.state.options.data.graph
+        ].threshold;
       context.state.meta.maxHierarchy =
         Object.keys(
           context.state.originalGraphData.graphs[
             'graph' + context.state.options.data.graph
           ].graph
         ).length - 1;
+      context.state.network.nodeTrix.nodeTrixPossible = false;
+      context.state.network.clusterChange.split.possible = false;
+      context.state.network.clusterChange.merge.mergePossible = false;
+      context.state.network.clusterChange.merge.assignmentPossible = false;
+      context.state.network.nodeTrix.nodeTrixActive = false;
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
       context.commit('MZLIST_SORT_MZ');
@@ -643,6 +882,8 @@ export default new Vuex.Store({
       context.commit('NETWORK_INIT_SVG');
       context.commit('NETWORK_CENTER_CAMERA');
       context.commit('NETWORK_SIMULATION_INIT');
+      context.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
+      context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
     },
     fetchImageData: (context, index) => {
       if (!context.state.images.imageData[index]) {
@@ -717,6 +958,18 @@ export default new Vuex.Store({
         context.state.network.nodes.forEach(function(node) {
           visibleNodes.push({ name: node.name, mzs: node.mzs });
         });
+        let counter = 0;
+        for (const node of context.state.network.nodeTrix.newElements
+          .newNodes) {
+          if (
+            counter >=
+            context.state.network.nodeTrix.newElements.newNodes.length / 4
+          ) {
+            break;
+          }
+          visibleNodes.push({ name: node.name, mzs: node.mzs });
+          counter++;
+        }
         const postData = {
           selectedPoints: selectedPoints,
           selectedMzs: context.state.images.imageData[index].mzValues,
@@ -743,11 +996,51 @@ export default new Vuex.Store({
       }
     },
     mzlistUpdatedMzs: (context, data) => {
-      context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
+      if (data.length === 1) {
+        context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
+      } else {
+        context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+      }
       context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
       setTimeout(function() {
         context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
       }, 700);
+    },
+    graphQuery: context => {
+      axios
+        .get(API_URL + '/graph/' + context.state.options.graphStatistic)
+        .then(response => {
+          mzListService.applyQueryPermutation(
+            response.data,
+            context.state.mzList.visibleMz,
+            context.state.mzList.notVisibleMz
+          );
+          context.state.mzList.visibleMz = mzListService.sortMzList(
+            context.state.mzList.visibleMz
+          );
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    updateGraphCluster: context => {
+      const nodes =
+        context.state.originalGraphData.graphs[
+          'graph' + context.state.options.data.graph
+        ].graph['hierarchy' + context.state.meta.maxHierarchy].nodes;
+      const clusters = [];
+      for (const node of Object.keys(nodes)) {
+        clusters.push([nodes[node].index, nodes[node].membership]);
+      }
+      clusters.sort((a, b) => (a[0] > b[0] ? 1 : -1));
+      axios
+        .patch(API_URL + '/graph/update_cluster', clusters.map(c => c[1]))
+        .then(() => {
+          console.log('OK');
+        })
+        .catch(() => {
+          console.err('NOT OK');
+        });
     },
     mzlistUpdateHighlightedMz: (context, data) => {
       context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);
@@ -757,6 +1050,46 @@ export default new Vuex.Store({
     },
     imageCopyIntoSelectionImage: (context, index) => {
       context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);
+      context.dispatch('fetchPcaImageData', index);
+    },
+    fetchPcaImageData: (context, index) => {
+      let mzValues = [];
+      if (context.state.images.imageData[index]) {
+        mzValues = context.state.images.imageData[index].mzValues;
+      } else {
+        context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
+        return;
+      }
+      context.commit('SET_LOADING_IMAGE_DATA', true);
+      const datasetName =
+        context.state.options.data.graphChoices[
+          context.state.options.data.graph
+        ];
+      const mergeMethod = context.state.options.image.mergeMethod;
+      const url =
+        API_URL +
+        '/datasets/' +
+        datasetName +
+        '/pcaimagedata/method/' +
+        mergeMethod;
+      const postData = { mzValues: mzValues, threshold: null };
+      if (!context.state.options.image.pca.relative) {
+        postData.threshold = context.state.options.image.pca.threshold;
+      }
+      axios
+        .post(url, postData)
+        .then(response => {
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+          context.commit('SET_IMAGE_DATA_VALUES', [
+            IMAGE_INDEX_PCA,
+            response.data,
+          ]);
+        })
+        .catch(function() {
+          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+          alert('Error while loading pca image data from api.');
+        });
     },
   },
 });
