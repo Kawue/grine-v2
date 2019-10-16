@@ -630,7 +630,8 @@
               "membership": 0,
               "mzs": [
                 104.107
-              ]
+              ],
+              "annotation": "Choline"
             },
             "h2n2": {
               "index": 2,
@@ -654,7 +655,8 @@
               "membership": 2,
               "mzs": [
                 184.073
-              ]
+              ],
+              "annotation": "Phosphocholine"
             },
             "h2n5": {
               "index": 5,
@@ -670,7 +672,8 @@
               "membership": 3,
               "mzs": [
                 277.166
-              ]
+              ],
+              "annotation": "p-coumaroylagmatine"
             },
             "h2n7": {
               "index": 7,
@@ -686,7 +689,8 @@
               "membership": 4,
               "mzs": [
                 307.176
-              ]
+              ],
+              "annotation": "feruloylagmatine"
             },
             "h2n9": {
               "index": 9,
@@ -702,7 +706,8 @@
               "membership": 0,
               "mzs": [
                 381.079
-              ]
+              ],
+              "annotation": "2 hexoses"
             },
             "h2n11": {
               "index": 11,
@@ -742,7 +747,8 @@
               "membership": 7,
               "mzs": [
                 543.132
-              ]
+              ],
+              "annotation": "3 hexoses"
             },
             "h2n16": {
               "index": 16,
@@ -750,7 +756,8 @@
               "membership": 3,
               "mzs": [
                 551.309
-              ]
+              ],
+              "annotation": "hordatine A"
             },
             "h2n17": {
               "index": 17,
@@ -774,7 +781,8 @@
               "membership": 3,
               "mzs": [
                 573.291
-              ]
+              ],
+              "annotation": "hordatine A"
             },
             "h2n20": {
               "index": 20,
@@ -782,7 +790,8 @@
               "membership": 3,
               "mzs": [
                 581.319
-              ]
+              ],
+              "annotation": "hordatine B"
             },
             "h2n21": {
               "index": 21,
@@ -790,7 +799,8 @@
               "membership": 3,
               "mzs": [
                 589.265
-              ]
+              ],
+              "annotation": "hordatine A"
             },
             "h2n22": {
               "index": 22,
@@ -814,7 +824,8 @@
               "membership": 3,
               "mzs": [
                 603.301
-              ]
+              ],
+              "annotation": "hordatine B"
             },
             "h2n25": {
               "index": 25,
@@ -838,7 +849,8 @@
               "membership": 3,
               "mzs": [
                 619.275
-              ]
+              ],
+              "annotation": "hordatine B"
             },
             "h2n28": {
               "index": 28,
@@ -886,7 +898,8 @@
               "membership": 8,
               "mzs": [
                 689.211
-              ]
+              ],
+              "annotation": "4 hexoses"
             },
             "h2n34": {
               "index": 34,
@@ -894,7 +907,8 @@
               "membership": 0,
               "mzs": [
                 705.185
-              ]
+              ],
+              "annotation": "4 hexoses"
             },
             "h2n35": {
               "index": 35,
@@ -1094,7 +1108,8 @@
               "membership": 8,
               "mzs": [
                 851.264
-              ]
+              ],
+              "annotation": "5 hexoses"
             },
             "h2n60": {
               "index": 60,
@@ -1102,7 +1117,8 @@
               "membership": 7,
               "mzs": [
                 867.238
-              ]
+              ],
+              "annotation": "5 hexoses"
             },
             "h2n61": {
               "index": 61,
@@ -1294,7 +1310,8 @@
               "membership": 8,
               "mzs": [
                 1013.314
-              ]
+              ],
+              "annotation": "6 hexoses"
             },
             "h2n85": {
               "index": 85,
@@ -1302,7 +1319,8 @@
               "membership": 7,
               "mzs": [
                 1029.291
-              ]
+              ],
+              "annotation": "6 hexoses"
             },
             "h2n86": {
               "index": 86,
@@ -1310,7 +1328,8 @@
               "membership": 8,
               "mzs": [
                 1175.37
-              ]
+              ],
+              "annotation": "7 hexoses"
             },
             "h2n87": {
               "index": 87,
@@ -1318,7 +1337,8 @@
               "membership": 7,
               "mzs": [
                 1191.343
-              ]
+              ],
+              "annotation": "7 hexoses"
             },
             "h2n88": {
               "index": 88,
@@ -1326,7 +1346,8 @@
               "membership": 8,
               "mzs": [
                 1337.422
-              ]
+              ],
+              "annotation": "8 hexoses"
             },
             "h2n89": {
               "index": 89,
@@ -1334,7 +1355,8 @@
               "membership": 7,
               "mzs": [
                 1353.398
-              ]
+              ],
+              "annotation": "8 hexoses"
             },
             "h2n90": {
               "index": 90,
@@ -1342,7 +1364,8 @@
               "membership": 8,
               "mzs": [
                 1499.473
-              ]
+              ],
+              "annotation": "9 hexoses"
             },
             "h2n91": {
               "index": 91,
@@ -1350,7 +1373,8 @@
               "membership": 7,
               "mzs": [
                 1515.45
-              ]
+              ],
+              "annotation": "9 hexoses"
             },
             "h2n92": {
               "index": 92,
@@ -1358,7 +1382,8 @@
               "membership": 8,
               "mzs": [
                 1661.531
-              ]
+              ],
+              "annotation": "10 hexoses"
             },
             "h2n93": {
               "index": 93,
@@ -1366,7 +1391,8 @@
               "membership": 7,
               "mzs": [
                 1677.505
-              ]
+              ],
+              "annotation": "10 hexoses"
             },
             "h2n94": {
               "index": 94,
@@ -1374,7 +1400,8 @@
               "membership": 8,
               "mzs": [
                 1823.583
-              ]
+              ],
+              "annotation": "11 hexoses"
             },
             "h2n95": {
               "index": 95,
@@ -1382,7 +1409,8 @@
               "membership": 7,
               "mzs": [
                 1839.557
-              ]
+              ],
+              "annotation": "11 hexoses"
             },
             "h2n96": {
               "index": 96,
@@ -1390,7 +1418,8 @@
               "membership": 8,
               "mzs": [
                 1986.101
-              ]
+              ],
+              "annotation": "12 hexoses"
             },
             "h2n97": {
               "index": 97,
@@ -1398,7 +1427,8 @@
               "membership": 7,
               "mzs": [
                 2001.743
-              ]
+              ],
+              "annotation": "12 hexoses"
             },
             "h2n98": {
               "index": 98,
@@ -1406,7 +1436,8 @@
               "membership": 8,
               "mzs": [
                 2148.048
-              ]
+              ],
+              "annotation": "13 hexoses"
             },
             "h2n99": {
               "index": 99,
@@ -1414,7 +1445,8 @@
               "membership": 7,
               "mzs": [
                 2163.914
-              ]
+              ],
+              "annotation": "13 hexoses"
             },
             "h2n100": {
               "index": 100,
@@ -2320,7 +2352,7 @@
               "name": "h2e127",
               "source": "h2n21",
               "target": "h2n22",
-              "weight": 1.0
+              "weight": 1
             },
             "h2e128": {
               "index": 128,
@@ -2866,7 +2898,7 @@
               "name": "h2e205",
               "source": "h2n27",
               "target": "h2n28",
-              "weight": 1.0
+              "weight": 1
             },
             "h2e206": {
               "index": 206,
@@ -3748,7 +3780,7 @@
               "name": "h2e331",
               "source": "h2n39",
               "target": "h2n40",
-              "weight": 1.0
+              "weight": 1
             },
             "h2e332": {
               "index": 332,
@@ -4518,7 +4550,7 @@
               "name": "h2e441",
               "source": "h2n48",
               "target": "h2n49",
-              "weight": 1.0
+              "weight": 1
             },
             "h2e442": {
               "index": 442,
@@ -6373,7 +6405,7 @@
               "name": "h2e706",
               "source": "h2n72",
               "target": "h2n73",
-              "weight": 1.0
+              "weight": 1
             },
             "h2e707": {
               "index": 707,
