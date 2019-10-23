@@ -39,8 +39,8 @@ docker-compose down
 * Click on image to move it to cache canvas
 * The cache canvas offers a lasso selection of interesting regions. This triggers the image-to-graph workflow, which allows to search for images with specific distributions within the graph.
 * Selecting DR activates the dimension reduction image comparison.
-** The dimension reduction image (DR image) is an RGBA image which is build by encoding one dimension reduction component image in each color channel.
-** The alpha value is used to visualize the regions where the cached image overlaps with the DR image. If relative is activated the intensity value of the cached image encodes the alpha value, where the highest intensity equals to alpha equal to one and the lowest equals to alpha equal to zero. If relative is deactivated the percentage slider defines a threshold (t) of X% of the intensity maximum within the cached image. Every pixel with a lower intensity than t is set to alpha equal to zero, while the other pixels are set to alpha equal to one.
+	* The dimension reduction image (DR image) is an RGBA image which is build by encoding one dimension reduction component image in each color channel.
+	* The alpha value is used to visualize the regions where the cached image overlaps with the DR image. If relative is activated the intensity value of the cached image encodes the alpha value, where the highest intensity equals to alpha equal to one and the lowest equals to alpha equal to zero. If relative is deactivated the percentage slider defines a threshold (t) of X% of the intensity maximum within the cached image. Every pixel with a lower intensity than t is set to alpha equal to zero, while the other pixels are set to alpha equal to one.
 
 ### Options:
 Click on gearwheel to open option tabs
@@ -55,9 +55,9 @@ Click on gearwheel to open option tabs
 * Aggregation method for mz images. This method is applied to render the community images, as well as the aggregation images.
 * Select colorscale for images and NodeTrix
 * Select a minimal intensity and a minimal overlap for the image-to-graph workflow.
-** Image-to-graph workflow: for this workflow direction a region of interest has to be selected in the cached image. Based on the selection the images of the currently visible nodes are examined. Nodes are marked if their images contain a distribution pattern that overlaps with the region of interest.
-** Minimal intensity: Mass Spectromtry Images contain a lot of noise and pixel to pixel intensity variation. Therefore the overlap is calculated based on binarized images. The minimal intensity defines the binarization threshold.
-** Minimum overlap: In mosts cases a 100% overlap not given. Also, pattern that overlap to a specific percentage X with a give pattern can be as interesting as the ones that overlap to 100%. The minimum overlap allows to detect all images that reach a overlap of at least X% in the selected region.
+	* Image-to-graph workflow: for this workflow direction a region of interest has to be selected in the cached image. Based on the selection the images of the currently visible nodes are examined. Nodes are marked if their images contain a distribution pattern that overlaps with the region of interest.
+	* Minimal intensity: Mass Spectromtry Images contain a lot of noise and pixel to pixel intensity variation. Therefore the overlap is calculated based on binarized images. The minimal intensity defines the binarization threshold.
+	* Minimum overlap: In mosts cases a 100% overlap not given. Also, pattern that overlap to a specific percentage X with a give pattern can be as interesting as the ones that overlap to 100%. The minimum overlap allows to detect all images that reach a overlap of at least X% in the selected region.
 #### Data
 * Select dataset
 * Export JSON
