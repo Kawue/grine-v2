@@ -1,7 +1,7 @@
 <template>
   <div
     class="sidebar-widget"
-    v-bind:class="getExpandedClass()"
+    v-bind:class="[getExpandedClass(), 'ppppp']"
     @mouseover="eventMouseOver()"
     @mouseleave="eventMouseLeave()"
   >
@@ -114,9 +114,9 @@ export default {
 
   &.expanded {
     width: 300px;
-    &#images {
-      min-width: 350px;
-    }
+    //&#images {
+    //  min-width: 1000px;
+    //}
   }
 }
 

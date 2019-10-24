@@ -2,7 +2,7 @@
   <div class="sidebar">
     <div class="row">
       <div class="col-sm">
-        <Images id="images" side="right"></Images>
+        <Images id="images" side="right" v-bind:style="{ 'min-width':imageWidth + 'px' }"></Images>
       </div>
       <div class="col-sm">
         <MzList id="mzlist" side="right"></MzList>
@@ -14,6 +14,7 @@
 <script>
 import Images from '@/components/Images.vue';
 import MzList from '@/components/MzList.vue';
+import store from '@/store';
 
 export default {
   name: 'Sidebar',
@@ -21,6 +22,14 @@ export default {
     Images,
     MzList,
   },
+  computed: {
+    imageWidth: function() {
+      return this.$store.getters.getImageWidth + 70;
+    }
+  },
+  created: function() {
+    store.dispatch('fetchImageDimensions');
+  }
 };
 </script>
 

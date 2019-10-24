@@ -52,8 +52,6 @@ export default {
   },
   data() {
     return {
-      width: 300,
-      heightLast: 100,
       render: false,
       canvas: null,
       lassoInstance: null,
@@ -64,7 +62,6 @@ export default {
     let componentId = '#' + this.widgetUniqueId();
     this.canvas = d3.select(componentId + ' .canvas-root canvas');
     const interactionSvg = d3.select(componentId + ' .canvas-root svg');
-
     this.lassoInstance = lasso();
     if (this.enableLasso) {
       this.lassoInstance
@@ -76,23 +73,15 @@ export default {
       switch (mutation.type) {
         case 'SET_IMAGE_DATA_VALUES':
           if (mutation.payload[0] === this.imageDataIndex) {
-            if (this.height) {
-              this.heightLast = this.height;
-              let self = this;
-              setTimeout(function() {
-                self.drawPoints();
-              }, 10);
+            if (this.height > 1) {
+              this.drawPoints();
             }
           }
           break;
         case 'CLEAR_IMAGE':
           if (mutation.payload === this.imageDataIndex) {
-            if (this.height) {
-              this.heightLast = this.height;
-              let self = this;
-              setTimeout(function() {
-                self.drawPoints();
-              }, 10);
+            if (this.height > 1) {
+              this.drawPoints();
             }
           }
           break;
@@ -104,59 +93,50 @@ export default {
     points: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).points;
     },
-    max: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex).max;
-    },
-    min: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex).min;
+    pointsPos: function() {
+      return this.$store.getters.getImageData(this.imageDataIndex).pointsPos;
     },
     lassoFetching: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex)
-        .lassoFetching;
+      return this.$store.getters.getImageData(this.imageDataIndex).lassoFetching;
     },
     ...mapGetters({
       loading: 'getLoadingImageData',
     }),
-    height: function() {
-      let height = this.$store.getters.getImageData(0).max.y;
-      height = height ? height : this.$store.getters.getImageData(1).max.y;
-      height = height ? height : this.$store.getters.getImageData(2).max.y;
-      height = height ? height : this.$store.getters.getImageData(3).max.y;
-      height = height ? height : this.heightLast;
-      height = height < 100 ? 100 : height;
-      // TODO: Dirty fix to update the lasso SVG height consistently when the canvas height is changed. Needs to be resolved more clean!
-      d3.selectAll('.canvas-root svg').attr('height', height);
-      d3.selectAll('.canvas-root svg g rect').attr('height', height);
+    /*height: function() {
+      let height = this.$store.getters.getImageData(this.imageDataIndex).max.y;
+      if (height != undefined){
+        // TODO: Dirty fix to update the lasso SVG height consistently when the canvas height is changed. Needs to be resolved more clean!
+        d3.selectAll('.canvas-root svg').attr('height', height);
+        d3.selectAll('.canvas-root svg g rect').attr('height', height);
+      } else {
+        height = 10;
+      }
       return height;
     },
-    domainX: function() {
-      let domain = [];
-      for (let i = this.min.x; i < this.max.x; i++) {
-        domain.push(i);
+    width: function() {
+      let width = this.$store.getters.getImageData(this.imageDataIndex).max.x;
+      if (width != undefined){
+        d3.selectAll('.canvas-root svg').attr('width', width);
+        d3.selectAll('.canvas-root svg g rect').attr('width', width);
+      } else {
+        width = 10;
       }
-      return domain;
-    },
-    domainY: function() {
-      let domain = [];
-      for (let i = this.max.y; i >= this.min.y; i--) {
-        domain.push(i);
+      return width;
+    },*/
+    height: function() {
+      let height = this.$store.getters.getImageHeight;
+      if (height == null) {
+        height = 10
       }
-      return domain;
+      return height;
     },
-    scaleBandX: function() {
-      return d3
-        .scaleBand()
-        .range([0, this.width])
-        .domain(this.domainX)
-        .padding(0);
-    },
-    scaleBandY: function() {
-      return d3
-        .scaleBand()
-        .range([this.height, 0])
-        .domain(this.domainY)
-        .padding(0);
-    },
+    width: function() {
+      let width = this.$store.getters.getImageWidth;
+      if (width == null) {
+        width = 10
+      }
+      return width;
+    }
   },
   methods: {
     isMzLassoActive() {
@@ -181,10 +161,8 @@ export default {
       return style;
     },
     handleLassoEnd(lassoPolygon) {
-      const selectedPoints = this.points.filter(d => {
-        let x = this.getPosX(d.x);
-        let y = this.getPosY(d.y);
-        return d3.polygonContains(lassoPolygon, [x, y]);
+      const selectedPoints = this.pointsPos.filter(d => {
+        return d3.polygonContains(lassoPolygon, [d.x, d.y]);
       });
       this.removeLassoAfterPointsDrawn = false;
       store.dispatch('imagesSelectPoints', [
@@ -201,46 +179,36 @@ export default {
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
     drawPoints() {
-      const context = this.canvas.node().getContext('2d');
-      context.save();
-      context.clearRect(0, 0, this.width, this.height);
-
-      let data = this.points;
-
-      for (let i = 0; i < data.length; ++i) {
-        const point = data[i];
-        context.fillStyle = point.color;
-        context.fillRect(
-          this.getPosX(point.x),
-          this.getPosY(point.y),
-          this.getWidth(),
-          this.getHeight()
-        );
-      }
-      context.restore();
-      if (this.removeLassoAfterPointsDrawn) {
+      if ( (this.width && this.height) != null ) {
         if (this.enableLasso) {
-          this.lassoInstance.reset();
+          d3.select('#' + this.widgetUniqueId() + ' .canvas-root svg').select('g').select('rect')
+            .attr('width', this.width)
+            .attr('height', this.height)
         }
-      } else {
-        this.removeLassoAfterPointsDrawn = true;
+
+        const context = this.canvas.node().getContext('2d');
+        this.canvas.node().width = this.width;
+        this.canvas.node().height = this.height;
+        let data = this.points;
+        context.save();
+        context.clearRect(0, 0, this.width, this.height);
+        if (data.length > 0){
+          let imageData = context.createImageData(this.width, this.height);
+          let tmp = new Uint8ClampedArray(data);
+          imageData.data.set(tmp);
+          context.putImageData(imageData, 0, 0);
+        }
+        
+        context.restore();
+
+        if (this.removeLassoAfterPointsDrawn) {
+          if (this.enableLasso) {
+            this.lassoInstance.reset();
+          }
+        } else {
+          this.removeLassoAfterPointsDrawn = true;
+        }
       }
-    },
-    getPosX(x) {
-      let scaleBand = this.scaleBandX;
-      return scaleBand(x);
-    },
-    getWidth() {
-      let scaleBand = this.scaleBandX;
-      return scaleBand.bandwidth();
-    },
-    getPosY(y) {
-      let scaleBand = this.scaleBandY;
-      return scaleBand(y);
-    },
-    getHeight() {
-      let scaleBand = this.scaleBandY;
-      return scaleBand.bandwidth();
     },
   },
 };

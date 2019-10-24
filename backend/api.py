@@ -12,7 +12,7 @@ from flask_cors import CORS
 from os import listdir
 from os.path import exists, isdir, isfile
 import matplotlib
-
+import matplotlib.pyplot as plt
 
 merged_dframe = pd.DataFrame()
 
@@ -25,8 +25,8 @@ for path in argv[3:]:
         else:
             merged_dframe = pd.read_hdf('datasets/' + path)
     else:
-        for path in argv[3:]:
-            merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))
+        #for path in argv[3:]:
+        merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))
 
 merged_dframe = merged_dframe.fillna(value=0)
 
@@ -77,15 +77,30 @@ def image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method):
 
 # provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
 # returns data ready to pass through api
-def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method):
+def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method, colorscale):
     raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-    pos_x = raw_data[0]
-    pos_y = raw_data[1]
-    intensity = raw_data[2]
+    
+    pos_x = raw_data[0].astype(int)
+    pos_y = raw_data[1].astype(int)
+    pos_x_max = pos_x.max() + 1
+    pos_y_max = pos_y.max() + 1
 
+    intensity = np.zeros((pos_y_max, pos_x_max, 4))
+    colormap = plt.cm.ScalarMappable(plt.Normalize(), cmap=plt.cm.get_cmap(colorscale))
+    colormap.set_clim(np.percentile(raw_data[2], (0,100)))
+    intensity[(pos_y, pos_x)] = colormap.to_rgba(np.array(raw_data[2]), bytes=True)
+
+    idx = np.indices((pos_y_max, pos_x_max))
+    pos = np.dstack((idx[0], idx[1]))
+    pos_x = pos[:,:,1].flatten()
+    pos_y = pos[:,:,0].flatten()
+
+    intensity = list(intensity.flatten())
+    intensity = [intensity[i:i+4] for i in range(0, len(intensity), 4)]
+    
     return [
-        {'x': int(x), 'y': int(y), 'intensity': float(i)}
-        for x, y, i in zip(pos_x, pos_y, intensity)
+        {'x': int(x), 'y': int(y), 'color': c}
+        for x, y, c in zip(pos_x, pos_y, intensity)
     ]
 
 
@@ -140,18 +155,18 @@ def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, mer
 
 
 # provides data to render all mz images for passed dataset
-def image_data_for_dataset(ds_name):
+def image_data_for_dataset(ds_name, colorscale):
     object = {}
     for key, mz in mz_values(ds_name).items():
-        object[mz] = image_data_for_dataset_and_mzs(ds_name, [mz], None)
+        object[mz] = image_data_for_dataset_and_mzs(ds_name, [mz], None, colorscale)
     return object
 
 
 # provides all image data of all datasets and all mzvalues
-def image_data_all_datasets():
+def image_data_all_datasets(colorscale):
     object = {}
     for ds in dataset_names():
-        object.update({ds: image_data_for_dataset(ds)})
+        object.update({ds: image_data_for_dataset(ds, colorscale)})
     return object
 
 
@@ -171,8 +186,13 @@ def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_thr
     single_dframe = pca_dframe.loc[pca_dframe.index.get_level_values("dataset") == ds_name]
 
     # get the x and y positions/columns from the pca
-    pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
-    pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
+    pos_x = np.array(single_dframe.index.get_level_values("grid_x")).astype(int)
+    pos_y = np.array(single_dframe.index.get_level_values("grid_y")).astype(int)
+
+    pos_x_max = pos_x.max() + 1
+    pos_y_max = pos_y.max() + 1
+
+    img = np.zeros((pos_y_max, pos_x_max, 4))
 
     # get the r,g and b values/volumns from the pca
     r = np.array(single_dframe['umapR'])
@@ -184,24 +204,40 @@ def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_thr
     g_norm = np.interp(g, (g.min(), g.max()), (0, 1))
     b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
 
-    intensity = [1] * len(r)
+    alpha = [1] * len(r)
     if len(mz_values):
-        # mz_raw_data returns format [pos_x, pos_y, intensity] from the non-pc dataset, intensity based on
+        # mz_raw_data returns format [pos_x, pos_y, alpha] from the non-pc dataset, alpha based on
         # passed merge_method
         mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-        intensity = mz_raw_data[2]  # we only need the intensity
+        alpha = mz_raw_data[2]  # we only need the intensity
 
         if data_threshold is not None:
             # we have a threshold, so we set all intensities to 0 which are below that threshold
             # using binarization
-            intensity[intensity < data_threshold] = 0
-            intensity[intensity >= data_threshold] = 1
+            alpha[alpha < data_threshold] = 0
+            alpha[alpha >= data_threshold] = 1
+
+    img[(pos_y, pos_x, 0)] = r_norm
+    img[(pos_y, pos_x, 1)] = g_norm
+    img[(pos_y, pos_x, 2)] = b_norm
+    img[(pos_y, pos_x, 3)] = alpha
+
+    img = (img * 255).astype(int)
+
+    img = img.flatten().tolist()
+    img = [img[i:i+4] for i in range(0, len(img), 4)]
+
+    idx = np.indices((pos_y_max, pos_x_max))
+    pos = np.dstack((idx[0], idx[1]))
+    pos_x = pos[:,:,1].flatten()
+    pos_y = pos[:,:,0].flatten()
 
     # we return something like this:
     # [{x: 27, y: 22, color: "#1464830c"}, {x: 28, y: 22, color: "#11677809"}, ...]
+    # old version {'x': int(x), 'y': int(y), 'color': (np.array(matplotlib.colors.to_rgba([r, g, b, i])) * 255).astype(int).tolist()} for x, y, r, g, b, i in zip(pos_x, pos_y, r_norm, g_norm, b_norm, intensity)
     return [
-        {'x': int(x), 'y': int(y), 'color': matplotlib.colors.to_hex([r, g, b, i], keep_alpha=True)}
-        for x, y, r, g, b, i in zip(pos_x, pos_y, r_norm, g_norm, b_norm, intensity)
+        {'x': int(x), 'y': int(y), 'color': c}
+        for x, y, c in zip(pos_x, pos_y, img)
     ]
 
 
@@ -302,6 +338,13 @@ def change_graph():
     return json.dumps('OK')
 
 
+@app.route('/datasets/<dataset_name>/imagedimensions', methods=['GET'])
+def dataset_image_dimension(dataset_name):
+    single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == dataset_name]
+    pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
+    pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
+    return json.dumps({'height': int(pos_y.max() + 1), 'width': int(pos_x.max() + 1)})
+
 # gets a list of visible nodes from the frontend
 # get a list of selected points
 # returns which nodes are similar
@@ -339,8 +382,8 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
 # get mz image data for dataset and mz values
 # specified merge method is passed via GET parameter
 # mz values are passed via post request
-@app.route('/datasets/<dataset_name>/mzvalues/imagedata/method/<method>', methods=['POST'])
-def datasets_imagedata_multiple_mz_action(dataset_name, method):
+@app.route('/datasets/<dataset_name>/mzvalues/imagedata/method/<method>/colorscale/<colorscale>', methods=['POST'])
+def datasets_imagedata_multiple_mz_action(dataset_name, method, colorscale):
     if dataset_name not in dataset_names():
         return abort(400)
 
@@ -357,22 +400,30 @@ def datasets_imagedata_multiple_mz_action(dataset_name, method):
     if len(post_data_mz_values) == 0:
         return abort(400)
 
-    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, post_data_mz_values, method))
+    colorscales = {
+        'Viridis': 'viridis',
+        'Magma': 'magma',
+        'Inferno': 'inferno',
+        'Plasma': 'plasma',
+        'PiYG': 'PiYG'
+    }
+
+    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, post_data_mz_values, method, colorscales[colorscale]))
 
 
 # get mz image data for dataset for all mz values
-@app.route('/datasets/<dataset_name>/imagedata')
-def datasets_imagedata_all_mz_action(dataset_name):
+@app.route('/datasets/<dataset_name>/imagedata/colorscale/<colorscale>')
+def datasets_imagedata_all_mz_action(dataset_name, colorscale):
     if dataset_name not in dataset_names():
         return abort(400)
 
-    return json.dumps(image_data_for_dataset(dataset_name))
+    return json.dumps(image_data_for_dataset(dataset_name, colorscale))
 
 
 # get all image data for all datasets and all mz values
-@app.route('/datasets/imagedata')
-def datasets_all_datasets_all_imagedata_action():
-    return json.dumps(image_data_all_datasets())
+@app.route('/datasets/imagedata/colorscale/<colorscale>')
+def datasets_all_datasets_all_imagedata_action(colorscale):
+    return json.dumps(image_data_all_datasets(colorscale))
 
 
 # get mz image data for dataset for all mz values
