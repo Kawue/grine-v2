@@ -1,6 +1,6 @@
 # Grine v2
 
-If you use GRINE for your own work please reference it as [1].
+GRINE is an interactive visualization tool for the exploration of community structures in MSI image networks. If you use GRINE for your own work please reference it as [1].
 
 ## Data Creation
 To start Grine three files need to be provided:
