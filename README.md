@@ -1,5 +1,21 @@
 # Grine v2
 
+If you use GRINE for your own work please reference it as [1].
+
+## Data Creation
+To start Grine three files need to be provided:
+ 1. A .HDF5 file that contains the MSI data information.
+ 2. A .JSON file that contains the community detection and graph information.
+ 3. A .NPY file that contains the dimension reduction information.
+
+For 1. we refer to our preprocessing pipeline [A Mad Pie](https://github.com/Kawue/amadpie/) . For a self written processing we refer to [pyImzML-Parser](https://github.com/alexandrovteam/pyimzML/blob/master/pyimzml/ImzMLParser.py) and [Pandas](https://pandas.pydata.org/) .
+
+For 2. we refer to our [MSI Community Detection Project](https://github.com/Kawue/msi-community-detection). The theory is explained in [1].
+
+For 3. We refer to [?](www.google.de).
+
+All three projects produce the needed data files, which can then be used to start GRINE as stated below.
+
 ## Project Production startup
 ### Start:
 ```
@@ -121,3 +137,8 @@ Here is a list of icons: https://github.com/Justineo/vue-awesome/tree/master/src
 
 ### Vue Loading Spinner
 https://nguyenvanduocit.github.io/vue-loading-spinner/
+
+
+
+
+[1]: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2890-6
