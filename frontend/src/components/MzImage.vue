@@ -93,9 +93,6 @@ export default {
     points: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).points;
     },
-    pointsPos: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex).pointsPos;
-    },
     lassoFetching: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).lassoFetching;
     },
@@ -126,17 +123,24 @@ export default {
     height: function() {
       let height = this.$store.getters.getImageHeight;
       if (height == null) {
-        height = 10
+        height = 10;
       }
       return height;
     },
     width: function() {
       let width = this.$store.getters.getImageWidth;
       if (width == null) {
-        width = 10
+        width = 10;
       }
       return width;
-    }
+    },
+    scaler: function() {
+      let scaler = this.$store.getters.getImageScaler;
+      if (scaler == null) {
+        scaler = 1;
+      }
+      return scaler;
+    },
   },
   methods: {
     isMzLassoActive() {
@@ -161,8 +165,9 @@ export default {
       return style;
     },
     handleLassoEnd(lassoPolygon) {
-      const selectedPoints = this.pointsPos.filter(d => {
-        return d3.polygonContains(lassoPolygon, [d.x, d.y]);
+      console.log(lassoPolygon)
+      const selectedPoints = this.points.filter(d => {
+        return d3.polygonContains(lassoPolygon, [d.x * this.scaler, d.y * this.scaler]);
       });
       this.removeLassoAfterPointsDrawn = false;
       store.dispatch('imagesSelectPoints', [
@@ -186,23 +191,29 @@ export default {
             .attr('height', this.height)
         }
 
-        const context = this.canvas.node().getContext('2d');
-        this.canvas.node().width = this.width;
-        this.canvas.node().height = this.height;
-        let data = this.points;
-        context.save();
-        context.clearRect(0, 0, this.width, this.height);
-        if (data.length > 0){
-          let imageData = context.createImageData(this.width, this.height);
-          let tmp = new Uint8ClampedArray(data);
-          imageData.data.set(tmp);
-          context.putImageData(imageData, 0, 0);
+        let tmpCanvas = document.createElement('canvas');
+        let tmpWidth = this.width / this.scaler;
+        let tmpHeight = this.height / this.scaler;
+        tmpCanvas.width = tmpWidth
+        tmpCanvas.height = tmpHeight
+        let tmpCtx = tmpCanvas.getContext('2d');
+        if (this.points.length > 0){
+          let imageData = tmpCtx.createImageData(tmpWidth, tmpHeight);
+          let tmpBitArray = new Uint8ClampedArray(this.points.flatMap((d) => d.color));
+          imageData.data.set(tmpBitArray);
+          tmpCtx.putImageData(imageData, 0, 0);
         }
 
         //points ist immer länge 0, auch nach klick auf knoten in chrome!
-        console.log(this.points.length)
+        //console.log(this.points.length)
         
+        
+        let context = this.canvas.node().getContext('2d');
+        context.save()
+        context.scale(this.scaler, this.scaler);
+        context.drawImage(tmpCanvas, 0, 0);
         context.restore();
+
 
         if (this.removeLassoAfterPointsDrawn) {
           if (this.enableLasso) {
