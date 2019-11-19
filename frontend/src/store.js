@@ -951,6 +951,7 @@ export default new Vuex.Store({
           .then(response => {
             console.log('RESPONSE')
             context.commit('SET_IMAGE_DATA_VALUES', [index, response.data]);
+            console.log('Sup')
             context.commit('SET_LOADING_IMAGE_DATA', false);
             console.log('READY')
           })
