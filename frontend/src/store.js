@@ -387,9 +387,9 @@ export default new Vuex.Store({
       } else if (min < 100){
         scaler = 2;
       } else if (min > 800) {
-        scaler = 0.2;
+        scaler = 0.4;
       } else if (min > 400) {
-        scaler = 0.5;
+        scaler = 0.8;
       };
       state.images.scaler = scaler;
       state.images.width = payload.width * scaler;
@@ -401,9 +401,11 @@ export default new Vuex.Store({
       if (data.length > 0){
         state.images.imageData[index].max.x = Math.max(...payload[1].map((d) => {return d.x})) + 1;
         state.images.imageData[index].max.y = Math.max(...payload[1].map((d) => {return d.y})) + 1;
+        console.log("max")
         state.images.imageData[index].min.x = 0;
         state.images.imageData[index].min.y = 0;
         state.images.imageData[index].points = data;
+        console.log("copy")
         console.log(data)
       } else {
         //-> wenn hier nicht die richtigen zahlen SVGPathElement, wird das image gelöscht, am besten bei der initialisierung die max werte holen!

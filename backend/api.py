@@ -109,6 +109,7 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method, colorscale)
 # checks for overlap (amount datapoints with 1 in multiplied dataset) higher min_overlap
 def selection_match(dframe_selected, dframe_node, min_intensity, min_overlap, merge_method):
     # merge all columns (mzs) by merge_method into one column
+    print("START SELECTION")
     merge_method_dynamic_call = getattr(dframe_selected, merge_method)
     dframe_selected = merge_method_dynamic_call(axis=1)
 
@@ -129,12 +130,14 @@ def selection_match(dframe_selected, dframe_node, min_intensity, min_overlap, me
     # find amount of common entries in selected and node dataset
     dframe_multiplied = dframe_selected * dframe_node
     overlap = dframe_multiplied.sum() / len(dframe_selected)
+    print("END SELECTION")
     return overlap >= min_overlap
 
 
 # returns the names of nodes which are matching based on provided min_intensity and max_overlap
 # from frontend
 def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, merge_method, min_intensity, min_overlap):
+    print("START CHECK MATCH")
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
 
     # extract keys/points (x, y) from selected_points
@@ -151,7 +154,7 @@ def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, mer
         match = selection_match(dframe_selected, dframe_node, min_intensity, min_overlap, merge_method)
         if match:
             node_names.append(node['name'])
-
+    print("END CHECK MATCH")
     return node_names
 
 
@@ -367,7 +370,7 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
         post_data_min_overlap = float(post_data_json['minOverlap']) / 100
     except:
         return abort(400)
-
+    print("START OUTER ROUTINE")
     ret = check_nodes_for_match(
         dataset_name,
         post_data_visible_node_data,
@@ -377,6 +380,7 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
         post_data_min_intensity,
         post_data_min_overlap
     )
+    print("END OUTER ROUTINE")
     return json.dumps(ret)
 
 

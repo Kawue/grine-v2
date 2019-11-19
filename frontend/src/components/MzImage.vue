@@ -165,7 +165,7 @@ export default {
       return style;
     },
     handleLassoEnd(lassoPolygon) {
-      console.log(lassoPolygon)
+      console.log('lasso start')
       const selectedPoints = this.points.filter(d => {
         return d3.polygonContains(lassoPolygon, [d.x * this.scaler, d.y * this.scaler]);
       });
@@ -174,6 +174,7 @@ export default {
         this.imageDataIndex,
         selectedPoints,
       ]);
+      console.log('lasso end')
       store.commit('NETWORK_FREE_MODE');
     },
     handleLassoStart() {
