@@ -198,6 +198,9 @@ export default {
           imageData.data.set(tmp);
           context.putImageData(imageData, 0, 0);
         }
+
+        //points ist immer länge 0, auch nach klick auf knoten in chrome!
+        console.log(this.points.length)
         
         context.restore();
 
