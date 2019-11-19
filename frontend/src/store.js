@@ -949,9 +949,10 @@ export default new Vuex.Store({
         axios
           .post(url, postData)
           .then(response => {
-            console.log(response)
+            console.log('RESPONSE')
             context.commit('SET_IMAGE_DATA_VALUES', [index, response.data]);
             context.commit('SET_LOADING_IMAGE_DATA', false);
+            console.log('READY')
           })
           .catch(function() {
             context.commit('SET_LOADING_IMAGE_DATA', false);

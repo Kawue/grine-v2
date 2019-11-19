@@ -97,6 +97,7 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method, colorscale)
 
     intensity = list(intensity.flatten())
     intensity = [intensity[i:i+4] for i in range(0, len(intensity), 4)]
+    print('return')
     
     return [
         {'x': int(x), 'y': int(y), 'color': c}
@@ -384,6 +385,7 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
 # mz values are passed via post request
 @app.route('/datasets/<dataset_name>/mzvalues/imagedata/method/<method>/colorscale/<colorscale>', methods=['POST'])
 def datasets_imagedata_multiple_mz_action(dataset_name, method, colorscale):
+    print('start')
     if dataset_name not in dataset_names():
         return abort(400)
 
