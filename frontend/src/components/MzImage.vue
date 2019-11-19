@@ -224,6 +224,39 @@ export default {
         }
       }
     },
+    /*drawPoints() {
+      let context = this.canvas.node().getContext('2d');
+
+      let detachedContainer = document.createElement('custom');
+      let dataContainer = d3.select(detachedContainer);
+      let dataBinding = dataContainer.selectAll('cusom.pixel').data(this.points);
+      
+      dataBinding
+        .enter()
+        .append('custom')
+        .attr('class', 'pixel')
+        .attr('size', 1)
+        .attr('fillStyle', (d) => {return 'rgba('+[...d.color]+')'})
+        .attr('x', (d) => {return d.x})
+        .attr('y', (d) => {return d.y})
+      .merge(dataBinding)
+        .attr('size', 1)
+        .attr('fillStyle', (d) => {return 'rgba('+[...d.color]+')'})
+        .attr('x', (d) => {return d.x})
+        .attr('y', (d) => {return d.y})
+      
+      
+      let pixels = dataContainer.selectAll('custom.pixel');
+      pixels.each(function() {
+        let pixel = d3.select(this);
+        context.beginPath();
+        context.fillStyle = pixel.attr('fillStyle');
+        context.rect(pixel.attr('x'), pixel.attr('y'), pixel.attr('size'), pixel.attr('size'))
+        context.fill();
+        context.closePath()
+      });
+
+    },*/
   },
 };
 </script>
