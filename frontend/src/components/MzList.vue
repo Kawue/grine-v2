@@ -46,7 +46,7 @@
 
       <select
         v-model="localSelectedMz"
-        v-on:click="mzClicked"
+        v-on:change="mzClicked"
         class="list"
         multiple
         :disabled="isMzLassoActive()"
