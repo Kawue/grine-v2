@@ -2,20 +2,20 @@ from sys import argv
 import pandas as pd
 import numpy as np
 import json
-import time
-import networkx as nx
 import graph_func
+from mzDataset import mzDataSet
 from flask import Flask
 from flask import abort
 from flask import request
+from flask import send_file
 from flask_cors import CORS
-from os import listdir
-from os.path import exists, isdir, isfile
-import matplotlib
+from PIL import Image
+from io import BytesIO
 import matplotlib.pyplot as plt
 
-merged_dframe = pd.DataFrame()
+# merged_dframe = pd.DataFrame()
 
+"""
 for path in argv[3:]:
     if len(argv[3:]) == 1:
         if isdir(path):
@@ -27,8 +27,12 @@ for path in argv[3:]:
     else:
         #for path in argv[3:]:
         merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))
+"""
+path_to_dataset = 'datasets/'
+merged_dframe = pd.read_hdf(path_to_dataset + 'MK_202_3.h5').droplevel('dataset').sort_index()
 
-merged_dframe = merged_dframe.fillna(value=0)
+dataset = mzDataSet(merged_dframe, 'MK_202_3')
+del merged_dframe
 
 pca_dframe = pd.read_hdf('datasets/' + argv[2])
 with open('json/' + argv[1], 'r') as file:
@@ -43,17 +47,21 @@ def merge_methods():
 
 # returns names of all available datasets
 def dataset_names():
-    dt_names = set(merged_dframe.index.get_level_values("dataset"))
-    return [name for name in dt_names]
+    return dataset.name
+    #dt_names = set(merged_dframe.index.get_level_values("dataset"))
+    #return [name for name in dt_names]
 
 
 # returns list of all mz_values
 def mz_values(ds_name):
+    """
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
     mzs = []
     for key, value in single_dframe.iteritems():
         mzs.append(key)
     return {i: mzs[i] for i in range(0, len(mzs))}
+    """
+    return dataset.getMzValues()
 
 
 # provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
@@ -79,7 +87,7 @@ def image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method):
 # returns data ready to pass through api
 def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method, colorscale):
     raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-    
+
     pos_x = raw_data[0].astype(int)
     pos_y = raw_data[1].astype(int)
     pos_x_max = pos_x.max() + 1
@@ -98,7 +106,7 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method, colorscale)
     intensity = list(intensity.flatten())
     intensity = [intensity[i:i+4] for i in range(0, len(intensity), 4)]
     print('return')
-    
+
     return [
         {'x': int(x), 'y': int(y), 'color': c}
         for x, y, c in zip(pos_x, pos_y, intensity)
@@ -109,14 +117,13 @@ def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method, colorscale)
 # checks for overlap (amount datapoints with 1 in multiplied dataset) higher min_overlap
 def selection_match(dframe_selected, dframe_node, min_intensity, min_overlap, merge_method):
     # merge all columns (mzs) by merge_method into one column
-    print("START SELECTION")
+    #print("START SELECTION")
     merge_method_dynamic_call = getattr(dframe_selected, merge_method)
     dframe_selected = merge_method_dynamic_call(axis=1)
 
     # get the maximum for each column and multiply by the min_intensity
     t = np.max(dframe_selected) * min_intensity
-    dframe_selected[dframe_selected < t] = 0  # binarization
-    dframe_selected[dframe_selected >= t] = 1
+    dframe_selected = (dframe_selected < t).astype('float64')  # binarization
 
     # merge all columns (mzs) by merge_method into one column
     merge_method_dynamic_call = getattr(dframe_node, merge_method)
@@ -124,13 +131,12 @@ def selection_match(dframe_selected, dframe_node, min_intensity, min_overlap, me
 
     # get the maximum for each column and multiply by the min_intensity
     t = np.max(dframe_node) * min_intensity
-    dframe_node[dframe_node < t] = 0  # binarization
-    dframe_node[dframe_node >= t] = 1
+    dframe_node = (dframe_node < t).astype('float64')  # binarization
 
     # find amount of common entries in selected and node dataset
     dframe_multiplied = dframe_selected * dframe_node
     overlap = dframe_multiplied.sum() / len(dframe_selected)
-    print("END SELECTION")
+    #print("END SELECTION")
     return overlap >= min_overlap
 
 
@@ -138,7 +144,7 @@ def selection_match(dframe_selected, dframe_node, min_intensity, min_overlap, me
 # from frontend
 def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, merge_method, min_intensity, min_overlap):
     print("START CHECK MATCH")
-    single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
+    single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name].droplevel('dataset').sort_index()
 
     # extract keys/points (x, y) from selected_points
     keys_selected = []
@@ -344,10 +350,12 @@ def change_graph():
 
 @app.route('/datasets/<dataset_name>/imagedimensions', methods=['GET'])
 def dataset_image_dimension(dataset_name):
+    """
     single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == dataset_name]
     pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
     pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
-    return json.dumps({'height': int(pos_y.max() + 1), 'width': int(pos_x.max() + 1)})
+    """
+    return json.dumps({'height': dataset.getCube().shape[1], 'width': dataset.getCube().shape[0]})
 
 # gets a list of visible nodes from the frontend
 # get a list of selected points
@@ -414,7 +422,16 @@ def datasets_imagedata_multiple_mz_action(dataset_name, method, colorscale):
         'PiYG': 'PiYG'
     }
 
-    return json.dumps(image_data_for_dataset_and_mzs(dataset_name, post_data_mz_values, method, colorscales[colorscale]))
+    methods = {
+        'mean': np.mean,
+        'median': np.median,
+        'min': np.min,
+        'max': np.max,
+    }
+    img_io = BytesIO()
+    Image.fromarray(dataset.getColorImage(post_data_mz_values, method=methods[method], cmap=colorscales[colorscale]), mode='RGBA').save(img_io, 'PNG')
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/png')
 
 
 # get mz image data for dataset for all mz values

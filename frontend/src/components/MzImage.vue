@@ -94,7 +94,8 @@ export default {
       return this.$store.getters.getImageData(this.imageDataIndex).points;
     },
     lassoFetching: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex).lassoFetching;
+      return this.$store.getters.getImageData(this.imageDataIndex)
+        .lassoFetching;
     },
     ...mapGetters({
       loading: 'getLoadingImageData',
@@ -165,16 +166,19 @@ export default {
       return style;
     },
     handleLassoEnd(lassoPolygon) {
-      console.log('lasso start')
+      console.log('lasso start');
       const selectedPoints = this.points.filter(d => {
-        return d3.polygonContains(lassoPolygon, [d.x * this.scaler, d.y * this.scaler]);
+        return d3.polygonContains(lassoPolygon, [
+          d.x * this.scaler,
+          d.y * this.scaler,
+        ]);
       });
       this.removeLassoAfterPointsDrawn = false;
       store.dispatch('imagesSelectPoints', [
         this.imageDataIndex,
         selectedPoints,
       ]);
-      console.log('lasso end')
+      console.log('lasso end');
       store.commit('NETWORK_FREE_MODE');
     },
     handleLassoStart() {
@@ -185,36 +189,36 @@ export default {
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
     },
     drawPoints() {
-      if ( (this.width && this.height) != null ) {
+      if ((this.width && this.height) != null && this.points != null) {
         if (this.enableLasso) {
-          d3.select('#' + this.widgetUniqueId() + ' .canvas-root svg').select('g').select('rect')
+          d3.select('#' + this.widgetUniqueId() + ' .canvas-root svg')
+            .select('g')
+            .select('rect')
             .attr('width', this.width)
-            .attr('height', this.height)
+            .attr('height', this.height);
         }
-
         let tmpCanvas = document.createElement('canvas');
         let tmpWidth = this.width / this.scaler;
         let tmpHeight = this.height / this.scaler;
-        tmpCanvas.width = tmpWidth
-        tmpCanvas.height = tmpHeight
+        tmpCanvas.width = tmpWidth;
+        tmpCanvas.height = tmpHeight;
         let tmpCtx = tmpCanvas.getContext('2d');
-        if (this.points.length > 0){
-          let imageData = tmpCtx.createImageData(tmpWidth, tmpHeight);
-          let tmpBitArray = new Uint8ClampedArray(this.points.flatMap((d) => d.color));
-          imageData.data.set(tmpBitArray);
-          tmpCtx.putImageData(imageData, 0, 0);
-        }
+        //let imageData = tmpCtx.createImageData(tmpWidth, tmpHeight);
+        //let tmpBitArray = Uint8ClampedArray.of(this.points);
+        // imageData.data.set(tmpBitArray);
+        console.log('Points', typeof this.points);
+        //debugger
+        let img = new Image();
+        img.src = this.points;
+        tmpCtx.drawImage(img, 0, 0);
 
         //points ist immer länge 0, auch nach klick auf knoten in chrome!
         //console.log(this.points.length)
-        
-        
         let context = this.canvas.node().getContext('2d');
-        context.save()
+        context.save();
         context.scale(this.scaler, this.scaler);
         context.drawImage(tmpCanvas, 0, 0);
         context.restore();
-
 
         if (this.removeLassoAfterPointsDrawn) {
           if (this.enableLasso) {
@@ -231,7 +235,7 @@ export default {
       let detachedContainer = document.createElement('custom');
       let dataContainer = d3.select(detachedContainer);
       let dataBinding = dataContainer.selectAll('cusom.pixel').data(this.points);
-      
+
       dataBinding
         .enter()
         .append('custom')
@@ -245,8 +249,8 @@ export default {
         .attr('fillStyle', (d) => {return 'rgba('+[...d.color]+')'})
         .attr('x', (d) => {return d.x})
         .attr('y', (d) => {return d.y})
-      
-      
+
+
       let pixels = dataContainer.selectAll('custom.pixel');
       pixels.each(function() {
         let pixel = d3.select(this);

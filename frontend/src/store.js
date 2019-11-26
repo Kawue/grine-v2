@@ -39,7 +39,7 @@ export default new Vuex.Store({
         {
           // IMAGE_INDEX_COMMUNITY data used to render community image
           mzValues: [],
-          points: [], // points that are displayed as mz image
+          points: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
           max: {
             // max image coors, used to scale/cut image according
@@ -56,7 +56,7 @@ export default new Vuex.Store({
         {
           // IMAGE_INDEX_SELECTED_MZ data used to render image from selected mz values
           mzValues: [],
-          points: [], // points that are displayed as mz image
+          points: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
           max: {
             // max image coors, used to scale/cut image according
@@ -73,7 +73,7 @@ export default new Vuex.Store({
         {
           // IMAGE_INDEX_AGGREGATED data used to render image from multiple selected nodes
           mzValues: [],
-          points: [], // points that are displayed as mz image
+          points: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
           max: {
             // max image coors, used to scale/cut image according
@@ -90,7 +90,7 @@ export default new Vuex.Store({
         {
           // IMAGE_INDEX_LASSO data used to render image copied from other images
           mzValues: [],
-          points: [], // points that are displayed as mz image
+          points: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
           max: {
             // max image coors, used to scale/cut image according
@@ -107,7 +107,7 @@ export default new Vuex.Store({
         {
           // IMAGE_INDEX_PCA data used to render the pca image
           mzValues: [],
-          points: [], // points that are displayed as mz image
+          points: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
           max: {
             // max image coors, used to scale/cut image according
@@ -382,15 +382,15 @@ export default new Vuex.Store({
     SET_IMAGE_DIMENSIONS: (state, payload) => {
       let min = Math.min(payload.width, payload.height);
       let scaler = 1;
-      if (min < 200){
+      if (min < 200) {
         scaler = 3;
-      } else if (min < 100){
+      } else if (min < 100) {
         scaler = 2;
       } else if (min > 800) {
         scaler = 0.4;
       } else if (min > 400) {
         scaler = 0.8;
-      };
+      }
       state.images.scaler = scaler;
       state.images.width = payload.width * scaler;
       state.images.height = payload.height * scaler;
@@ -398,7 +398,9 @@ export default new Vuex.Store({
     SET_IMAGE_DATA_VALUES: (state, payload) => {
       let index = payload[0];
       let data = payload[1];
-      if (data.length > 0){
+      //if (data){
+      state.images.imageData[index].points = data;
+      /*
         state.images.imageData[index].max.x = Math.max(...payload[1].map((d) => {return d.x})) + 1;
         state.images.imageData[index].max.y = Math.max(...payload[1].map((d) => {return d.y})) + 1;
         console.log("max")
@@ -407,13 +409,14 @@ export default new Vuex.Store({
         state.images.imageData[index].points = data;
         console.log("copy")
         console.log(data)
-      } else {
-        //-> wenn hier nicht die richtigen zahlen SVGPathElement, wird das image gelöscht, am besten bei der initialisierung die max werte holen!
-        //state.images.imageData[index].max.x = 484;
-        //state.images.imageData[index].max.y = 425;
-        //state.images.imageData[index].min.x = 0;
-        //state.images.imageData[index].min.y = 0;
-      }
+         */
+      //} else {
+      //-> wenn hier nicht die richtigen zahlen SVGPathElement, wird das image gelöscht, am besten bei der initialisierung die max werte holen!
+      //state.images.imageData[index].max.x = 484;
+      //state.images.imageData[index].max.y = 425;
+      //state.images.imageData[index].min.x = 0;
+      //state.images.imageData[index].min.y = 0;
+      //}
     },
     IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
       let nodesSelected = NetworkService.getSelectedNodes(
@@ -902,17 +905,13 @@ export default new Vuex.Store({
       context.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
       context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
     },
-    fetchImageDimensions: (context) => {
+    fetchImageDimensions: context => {
       const datasetName =
         context.state.options.data.graphChoices[
           context.state.options.data.graph
         ];
 
-      const url =
-        API_URL +
-        '/datasets/' +
-        datasetName +
-        '/imagedimensions'
+      const url = API_URL + '/datasets/' + datasetName + '/imagedimensions';
 
       axios
         .get(url)
@@ -922,15 +921,15 @@ export default new Vuex.Store({
         .catch(function() {
           console.err('Image Dimensions NOT OK');
         });
-        
     },
     fetchImageData: (context, index) => {
       if (!context.state.images.imageData[index]) {
+        console.log('doof');
         return;
       }
       let mzValues = context.state.images.imageData[index].mzValues;
       // do an api fetch for a combination image of multiple mz values
-      context.commit('SET_IMAGE_DATA_VALUES', [index, []]);
+      context.commit('SET_IMAGE_DATA_VALUES', [index, null]);
       if (mzValues.length > 0) {
         context.commit('SET_LOADING_IMAGE_DATA', true);
         const datasetName =
@@ -947,15 +946,21 @@ export default new Vuex.Store({
           mergeMethod +
           '/colorscale/' +
           context.state.options.image.colorScales[colorscale];
+        const config = {
+          headers: {
+            Accept: 'image/png',
+          },
+        };
         const postData = { mzValues: mzValues };
+        console.log('send request');
         axios
-          .post(url, postData)
+          .post(url, postData, config)
           .then(response => {
-            console.log('RESPONSE')
+            console.log('RESPONSE');
+            console.log(response);
             context.commit('SET_IMAGE_DATA_VALUES', [index, response.data]);
-            console.log('Sup')
             context.commit('SET_LOADING_IMAGE_DATA', false);
-            console.log('READY')
+            console.log('READY');
           })
           .catch(function() {
             context.commit('SET_LOADING_IMAGE_DATA', false);
@@ -964,12 +969,13 @@ export default new Vuex.Store({
       context.dispatch('imagesSelectPoints', [index, []]);
     },
     imagesSelectPoints: (context, payload) => {
+      /*
       let index = payload[0];
       let selectedPoints = payload[1];
       /*let imageData = imageService.markSelectedPoints(
         context.state.images.imageData[index],
         selectedPoints
-      );*/
+      );
       let imageData = context.state.images.imageData[index];
       //imageData = imageService.calculateColors(
       //  imageData,
@@ -978,6 +984,7 @@ export default new Vuex.Store({
       context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
       context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
       context.dispatch('fetchLassoSimilar', index);
+      */
     },
     fetchLassoSimilar: (context, index) => {
       const selectedPoints =
@@ -1125,7 +1132,7 @@ export default new Vuex.Store({
           context.commit('SET_LOADING_IMAGE_DATA', false);
           context.commit('SET_IMAGE_DATA_VALUES', [
             IMAGE_INDEX_PCA,
-            response.data
+            response.data,
           ]);
         })
         .catch(function() {
