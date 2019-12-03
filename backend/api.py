@@ -3,11 +3,9 @@ import pandas as pd
 import numpy as np
 import json
 import graph_func
+import base64
 from mzDataset import mzDataSet
-from flask import Flask
-from flask import abort
-from flask import request
-from flask import send_file
+from flask import Flask, abort,request, make_response
 from flask_cors import CORS
 from PIL import Image
 from io import BytesIO
@@ -395,18 +393,14 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
 # get mz image data for dataset and mz values
 # specified merge method is passed via GET parameter
 # mz values are passed via post request
-@app.route('/datasets/<dataset_name>/mzvalues/imagedata/method/<method>/colorscale/<colorscale>', methods=['POST'])
-def datasets_imagedata_multiple_mz_action(dataset_name, method, colorscale):
-    print('start')
-    if dataset_name not in dataset_names():
-        return abort(400)
-
-    if method not in merge_methods():
-        return abort(400)
-
+@app.route('/mzimage', methods=['POST'])
+def datasets_imagedata_multiple_mz_action():
     try:
         post_data = request.get_data()
         post_data_json = json.loads(post_data.decode('utf-8'))
+        dataset_name = post_data_json['dataset']
+        method = post_data_json['method']
+        colorscale = post_data_json['colorscale']
         post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
     except:
         return abort(400)
@@ -431,7 +425,9 @@ def datasets_imagedata_multiple_mz_action(dataset_name, method, colorscale):
     img_io = BytesIO()
     Image.fromarray(dataset.getColorImage(post_data_mz_values, method=methods[method], cmap=colorscales[colorscale]), mode='RGBA').save(img_io, 'PNG')
     img_io.seek(0)
-    return send_file(img_io, mimetype='image/png')
+    response = make_response(base64.b64encode(img_io.getvalue()).decode("utf-8"), 200)
+    response.mimetype = "text/plain"
+    return response
 
 
 # get mz image data for dataset for all mz values

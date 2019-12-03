@@ -90,8 +90,11 @@ export default {
     this.drawPoints();
   },
   computed: {
-    points: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex).points;
+    base64Image: function() {
+      return (
+        'data:image/png;base64,' +
+        this.$store.getters.getImageData(this.imageDataIndex).points
+      );
     },
     lassoFetching: function() {
       return this.$store.getters.getImageData(this.imageDataIndex)
@@ -166,6 +169,7 @@ export default {
       return style;
     },
     handleLassoEnd(lassoPolygon) {
+      /*
       console.log('lasso start');
       const selectedPoints = this.points.filter(d => {
         return d3.polygonContains(lassoPolygon, [
@@ -180,16 +184,19 @@ export default {
       ]);
       console.log('lasso end');
       store.commit('NETWORK_FREE_MODE');
+      */
     },
     handleLassoStart() {
+      /*
       this.removeLassoAfterPointsDrawn = false;
       if (store.getters.isMzLassoSelectionActive) {
         store.commit('RESET_SELECTION', true);
       }
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
+      */
     },
     drawPoints() {
-      if ((this.width && this.height) != null && this.points != null) {
+      if ((this.width && this.height) != null && this.base64Image != null) {
         if (this.enableLasso) {
           d3.select('#' + this.widgetUniqueId() + ' .canvas-root svg')
             .select('g')
@@ -203,22 +210,18 @@ export default {
         tmpCanvas.width = tmpWidth;
         tmpCanvas.height = tmpHeight;
         let tmpCtx = tmpCanvas.getContext('2d');
-        //let imageData = tmpCtx.createImageData(tmpWidth, tmpHeight);
-        //let tmpBitArray = Uint8ClampedArray.of(this.points);
-        // imageData.data.set(tmpBitArray);
-        console.log('Points', typeof this.points);
-        //debugger
-        let img = new Image();
-        img.src = this.points;
-        tmpCtx.drawImage(img, 0, 0);
+        let image = new Image();
 
-        //points ist immer länge 0, auch nach klick auf knoten in chrome!
-        //console.log(this.points.length)
-        let context = this.canvas.node().getContext('2d');
-        context.save();
-        context.scale(this.scaler, this.scaler);
-        context.drawImage(tmpCanvas, 0, 0);
-        context.restore();
+        image.onload = () => {
+          tmpCtx.drawImage(image,0,0);
+          let context = this.canvas.node().getContext('2d');
+          context.save();
+          context.scale(this.scaler, this.scaler);
+          context.drawImage(tmpCanvas, 0, 0);
+          context.restore();
+        };
+
+        image.src = this.base64Image;
 
         if (this.removeLassoAfterPointsDrawn) {
           if (this.enableLasso) {

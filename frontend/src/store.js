@@ -938,26 +938,17 @@ export default new Vuex.Store({
           ];
         const mergeMethod = context.state.options.image.mergeMethod;
         const colorscale = context.state.options.image.colorScale;
-        const url =
-          API_URL +
-          '/datasets/' +
-          datasetName +
-          '/mzvalues/imagedata/method/' +
-          mergeMethod +
-          '/colorscale/' +
-          context.state.options.image.colorScales[colorscale];
-        const config = {
-          headers: {
-            Accept: 'image/png',
-          },
+        const url = API_URL + '/mzimage';
+        const postData = {
+          mzValues: mzValues,
+          colorscale: context.state.options.image.colorScales[colorscale],
+          dataset: datasetName,
+          method: mergeMethod,
         };
-        const postData = { mzValues: mzValues };
         console.log('send request');
         axios
-          .post(url, postData, config)
+          .post(url, postData)
           .then(response => {
-            console.log('RESPONSE');
-            console.log(response);
             context.commit('SET_IMAGE_DATA_VALUES', [index, response.data]);
             context.commit('SET_LOADING_IMAGE_DATA', false);
             console.log('READY');
