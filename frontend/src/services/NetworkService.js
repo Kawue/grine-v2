@@ -2504,7 +2504,7 @@ class NetworkService {
   }
 
   nodeClick(n) {
-    store.commit('CLEAR_IMAGES');
+    // store.commit('CLEAR_IMAGES');
     let isMzLassoSelectionActive = store.getters.isMzLassoSelectionActive;
     if (
       (d3.event.ctrlKey || d3.event.metaKey) &&
@@ -2562,9 +2562,8 @@ class NetworkService {
           }
         }
       }
+      store.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
     }
-
-    store.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
   }
 
   shrinkNode(graph, oldNode, nodes, edges) {

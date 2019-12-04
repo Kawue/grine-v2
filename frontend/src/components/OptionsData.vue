@@ -43,13 +43,6 @@ import store from '@/store';
 
 export default {
   name: 'OptionsData',
-  mounted: function() {
-    this.$store.subscribeAction(action => {
-      if (action.type === 'changeGraph') {
-        this.$store.dispatch('fetchImageData');
-      }
-    });
-  },
   data: function() {
     return {
       statisticOptions: [

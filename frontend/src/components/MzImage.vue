@@ -58,6 +58,16 @@ export default {
       removeLassoAfterPointsDrawn: true,
     };
   },
+  watch: {
+    base64Image() {
+      this.drawMzImage();
+    },
+    imageValues() {
+      if (!this.enableLasso) {
+        this.$store.dispatch('fetchImageData', this.imageDataIndex);
+      }
+    },
+  },
   mounted: function() {
     let componentId = '#' + this.widgetUniqueId();
     this.canvas = d3.select(componentId + ' .canvas-root canvas');
@@ -69,32 +79,17 @@ export default {
         .on('start', this.handleLassoStart);
       interactionSvg.call(this.lassoInstance);
     }
-    this.$store.subscribe(mutation => {
-      switch (mutation.type) {
-        case 'SET_IMAGE_DATA_VALUES':
-          if (mutation.payload[0] === this.imageDataIndex) {
-            if (this.height > 1) {
-              this.drawPoints();
-            }
-          }
-          break;
-        case 'CLEAR_IMAGE':
-          if (mutation.payload === this.imageDataIndex) {
-            if (this.height > 1) {
-              this.drawPoints();
-            }
-          }
-          break;
-      }
-    });
-    this.drawPoints();
   },
   computed: {
     base64Image: function() {
-      return (
-        'data:image/png;base64,' +
-        this.$store.getters.getImageData(this.imageDataIndex).points
-      );
+      return this.$store.getters.getImageData(this.imageDataIndex)
+        .base64Image != null
+        ? 'data:image/png;base64,' +
+            this.$store.getters.getImageData(this.imageDataIndex).base64Image
+        : null;
+    },
+    imageValues: function() {
+      return this.$store.getters.getImageData(this.imageDataIndex).mzValues;
     },
     lassoFetching: function() {
       return this.$store.getters.getImageData(this.imageDataIndex)
@@ -151,7 +146,11 @@ export default {
       return store.getters.isMzLassoSelectionActive;
     },
     isAbleToCopyDataIntoSelectionImage() {
-      return this.enableClickCopyToLassoImage && !this.isMzLassoActive();
+      return (
+        this.enableClickCopyToLassoImage &&
+        !this.isMzLassoActive() &&
+        this.base64Image != null
+      );
     },
     imageClick() {
       if (this.isAbleToCopyDataIntoSelectionImage()) {
@@ -195,8 +194,9 @@ export default {
       store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
       */
     },
-    drawPoints() {
-      if ((this.width && this.height) != null && this.base64Image != null) {
+    drawMzImage() {
+      console.log('Draw/Clear Image in', this.imageDataIndex);
+      if (this.base64Image != null) {
         if (this.enableLasso) {
           d3.select('#' + this.widgetUniqueId() + ' .canvas-root svg')
             .select('g')
@@ -213,8 +213,8 @@ export default {
         let image = new Image();
 
         image.onload = () => {
-          tmpCtx.drawImage(image,0,0);
-          let context = this.canvas.node().getContext('2d');
+          tmpCtx.drawImage(image, 0, 0);
+          const context = this.canvas.node().getContext('2d');
           context.save();
           context.scale(this.scaler, this.scaler);
           context.drawImage(tmpCanvas, 0, 0);
@@ -230,9 +230,12 @@ export default {
         } else {
           this.removeLassoAfterPointsDrawn = true;
         }
+      } else {
+        const context = this.canvas.node().getContext('2d');
+        context.clearRect(0, 0, this.width, this.height);
       }
     },
-    /*drawPoints() {
+    /*drawMzImage() {
       let context = this.canvas.node().getContext('2d');
 
       let detachedContainer = document.createElement('custom');

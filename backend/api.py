@@ -9,34 +9,33 @@ from flask import Flask, abort,request, make_response
 from flask_cors import CORS
 from PIL import Image
 from io import BytesIO
+from os import listdir
+from os.path import exists, isdir, isfile
 import matplotlib.pyplot as plt
 
-# merged_dframe = pd.DataFrame()
-
-"""
-for path in argv[3:]:
-    if len(argv[3:]) == 1:
-        if isdir(path):
-            for f in listdir(path):
-                if f.split(".")[1] == "h5":
-                    merged_dframe = merged_dframe.append(pd.read_hdf(f))
-        else:
-            merged_dframe = pd.read_hdf('datasets/' + path)
-    else:
-        #for path in argv[3:]:
-        merged_dframe = merged_dframe.append(pd.read_hdf('datasets/' + path))
-"""
+datasets = {}
 path_to_dataset = 'datasets/'
-merged_dframe = pd.read_hdf(path_to_dataset + 'MK_202_3.h5').droplevel('dataset').sort_index()
 
-dataset = mzDataSet(merged_dframe, 'MK_202_3')
-del merged_dframe
+if len(argv[3:]) == 1:
+    if isdir(argv[3]):
+        for f in listdir(argv[3]):
+            if f.split(".")[1] == "h5":
+                dataset_name = f.split(".")[0]
+                datasets[dataset_name] = mzDataSet(pd.read_hdf(f).droplevel('dataset').sort_index(), dataset_name)
+    else:
+        dataset_name = argv[3].split(".")[0]
+        datasets[dataset_name] = mzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset').sort_index(), dataset_name)
+else:
+    for path in argv[3:]:
+        dataset_name = path.split(".")[0]
+        datasets[dataset_name] = mzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset').sort_index(), dataset_name)
 
 pca_dframe = pd.read_hdf('datasets/' + argv[2])
 with open('json/' + argv[1], 'r') as file:
     firstDataset = json.load(file)['graphs']['graph0']
     graph_func.graph_initialisation(np.load('datasets/similarity-matrix-{}.npy'.format(firstDataset['dataset'])), firstDataset['threshold'])
 
+del dataset_name
 
 # returns list of allowed merge methods for mz intensities
 def merge_methods():
@@ -45,21 +44,12 @@ def merge_methods():
 
 # returns names of all available datasets
 def dataset_names():
-    return dataset.name
-    #dt_names = set(merged_dframe.index.get_level_values("dataset"))
-    #return [name for name in dt_names]
+    return list(datasets.keys())
 
 
 # returns list of all mz_values
 def mz_values(ds_name):
-    """
-    single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
-    mzs = []
-    for key, value in single_dframe.iteritems():
-        mzs.append(key)
-    return {i: mzs[i] for i in range(0, len(mzs))}
-    """
-    return dataset.getMzValues()
+    return datasets[ds_name].getMzValues()
 
 
 # provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
@@ -348,12 +338,7 @@ def change_graph():
 
 @app.route('/datasets/<dataset_name>/imagedimensions', methods=['GET'])
 def dataset_image_dimension(dataset_name):
-    """
-    single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == dataset_name]
-    pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
-    pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
-    """
-    return json.dumps({'height': dataset.getCube().shape[1], 'width': dataset.getCube().shape[0]})
+    return json.dumps({'height': datasets[dataset_name].getCube().shape[0], 'width': datasets[dataset_name].getCube().shape[1]})
 
 # gets a list of visible nodes from the frontend
 # get a list of selected points
@@ -393,12 +378,13 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
 # get mz image data for dataset and mz values
 # specified merge method is passed via GET parameter
 # mz values are passed via post request
-@app.route('/mzimage', methods=['POST'])
-def datasets_imagedata_multiple_mz_action():
+@app.route('/datasets/<dataset_name>/mzimage', methods=['POST'])
+def datasets_imagedata_multiple_mz_action(dataset_name):
+    if dataset_name not in dataset_names():
+        return abort(400)
     try:
         post_data = request.get_data()
         post_data_json = json.loads(post_data.decode('utf-8'))
-        dataset_name = post_data_json['dataset']
         method = post_data_json['method']
         colorscale = post_data_json['colorscale']
         post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
@@ -423,7 +409,13 @@ def datasets_imagedata_multiple_mz_action():
         'max': np.max,
     }
     img_io = BytesIO()
-    Image.fromarray(dataset.getColorImage(post_data_mz_values, method=methods[method], cmap=colorscales[colorscale]), mode='RGBA').save(img_io, 'PNG')
+    Image.fromarray(
+        datasets[dataset_name].getColorImage(
+            post_data_mz_values,
+            method=methods[method],
+            cmap=colorscales[colorscale]),
+        mode='RGBA'
+    ).save(img_io, 'PNG')
     img_io.seek(0)
     response = make_response(base64.b64encode(img_io.getvalue()).decode("utf-8"), 200)
     response.mimetype = "text/plain"
