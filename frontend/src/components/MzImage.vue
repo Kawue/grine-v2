@@ -82,11 +82,7 @@ export default {
   },
   computed: {
     base64Image: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex)
-        .base64Image != null
-        ? 'data:image/png;base64,' +
-            this.$store.getters.getImageData(this.imageDataIndex).base64Image
-        : null;
+      return this.$store.getters.getImageData(this.imageDataIndex).base64Image
     },
     imageValues: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).mzValues;
@@ -195,7 +191,6 @@ export default {
       */
     },
     drawMzImage() {
-      console.log('Draw/Clear Image in', this.imageDataIndex);
       if (this.base64Image != null) {
         if (this.enableLasso) {
           d3.select('#' + this.widgetUniqueId() + ' .canvas-root svg')

@@ -1,19 +1,18 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import OptionsService from './services/OptionsService';
+import MzListService from './services/MzListService';
+import NetworkService from './services/NetworkService';
+import axios from 'axios';
+import * as _ from 'lodash';
 
 Vue.use(Vuex);
 Vue.config.devtools = true;
 
-import OptionsService from './services/OptionsService';
-import MzListService from './services/MzListService';
-import ImageService from './services/ImageService';
-import NetworkService from './services/NetworkService';
 const optionsService = new OptionsService();
 const mzListService = new MzListService();
-const imageService = new ImageService();
+// const imageService = new ImageService();
 const networkService = new NetworkService();
-import axios from 'axios';
-import { SSL_OP_CRYPTOPRO_TLSEXT_BUG } from 'constants';
 
 const API_URL = 'http://localhost:5000';
 export const IMAGE_INDEX_COMMUNITY = 0;
@@ -368,12 +367,10 @@ export default new Vuex.Store({
       mzImageData.selectedPoints = data;
     },
     CLEAR_IMAGE: (state, index) => {
-      console.log('clear image', index);
       state.images.imageData[index].mzValues = [];
       state.images.imageData[index].base64Image = null;
     },
     CLEAR_IMAGES: state => {
-      console.log('Clear images');
       state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
       state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
       state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
@@ -398,58 +395,37 @@ export default new Vuex.Store({
       state.images.height = payload.height * scaler;
     },
     SET_IMAGE_DATA_VALUES: (state, payload) => {
-      let index = payload[0];
-      let data = payload[1];
-      //if (data){
-      state.images.imageData[index].base64Image = data;
-      /*
-        state.images.imageData[index].max.x = Math.max(...payload[1].map((d) => {return d.x})) + 1;
-        state.images.imageData[index].max.y = Math.max(...payload[1].map((d) => {return d.y})) + 1;
-        console.log("max")
-        state.images.imageData[index].min.x = 0;
-        state.images.imageData[index].min.y = 0;
-        state.images.imageData[index].base64Image = data;
-        console.log("copy")
-        console.log(data)
-         */
-      //} else {
-      //-> wenn hier nicht die richtigen zahlen SVGPathElement, wird das image gelöscht, am besten bei der initialisierung die max werte holen!
-      //state.images.imageData[index].max.x = 484;
-      //state.images.imageData[index].max.y = 425;
-      //state.images.imageData[index].min.x = 0;
-      //state.images.imageData[index].min.y = 0;
-      //}
+      state.images.imageData[payload[0]].base64Image = payload[1];
     },
     IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
-      let nodesSelected = NetworkService.getSelectedNodes(
+      const nodesSelected = NetworkService.getSelectedNodes(
         state.network.nodes,
         false
-      );
-      if (nodesSelected) {
-        const arraysMatch = (arr1, arr2) => {
-          // Check if the arrays are the same length
-          if (arr1.length !== arr2.length) return false;
+      ).concat(NetworkService.getSelectedNodeTrixNodes());
+      const arraysMatch = (arr1, arr2) => {
+        // Check if the arrays are the same length
+        if (arr1.length !== arr2.length) return false;
 
-          // Check if all items exist and are in the same order
-          for (let i = 0; i < arr1.length; i++) {
-            if (arr1[i] !== arr2[i]) return false;
-          }
+        // Check if all items exist and are in the same order
+        for (let i = 0; i < arr1.length; i++) {
+          if (arr1[i] !== arr2[i]) return false;
+        }
 
-          // Otherwise, return true
-          return true;
-        };
+        // Otherwise, return true
+        return true;
+      };
 
-        if (nodesSelected.length === 0) {
-          state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
-          state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
-          state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
-          state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
-        } else if (nodesSelected.length === 1) {
-          state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
-          state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
+      if (nodesSelected.length === 0) {
+        state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+        state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
+        state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+        state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
+      } else if (nodesSelected.length === 1) {
+        state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
+        state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
 
+        if (nodesSelected[0].mzs.length > 1) {
           if (
-            nodesSelected[0].mzs.length > 1 &&
             !arraysMatch(
               state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues,
               nodesSelected[0].mzs
@@ -457,36 +433,36 @@ export default new Vuex.Store({
           ) {
             state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
               nodesSelected[0].mzs;
-          } else if (nodesSelected[0].parent) {
-            // find mzs of highest parent community
-            const graph =
-              state.originalGraphData.graphs['graph' + state.options.data.graph]
-                .graph;
-            let parentNode = NetworkService.getRootParentNodeFromNode(
-              nodesSelected[0],
-              graph
-            );
-            if (
-              !arraysMatch(
-                state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues,
-                parentNode.mzs
-              )
-            ) {
-              state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
-                parentNode.mzs;
-            }
           }
-        } else if (nodesSelected.length > 1) {
-          state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
-          state.images.imageData[IMAGE_INDEX_SELECTED_MZ].base64Image = null;
-          state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
-          state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
-          let mzs = [];
-          nodesSelected.forEach(function(node) {
-            mzs = mzs.concat(node.mzs);
-          });
-          state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = mzs;
+        } else if (nodesSelected[0].parent) {
+          // find mzs of highest parent community
+          const graph =
+            state.originalGraphData.graphs['graph' + state.options.data.graph]
+              .graph;
+          let parentNode = NetworkService.getRootParentNodeFromNode(
+            nodesSelected[0],
+            graph
+          );
+          if (
+            !arraysMatch(
+              state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues,
+              parentNode.mzs
+            )
+          ) {
+            state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
+              parentNode.mzs;
+          }
         }
+      } else if (nodesSelected.length > 1) {
+        state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+        state.images.imageData[IMAGE_INDEX_SELECTED_MZ].base64Image = null;
+        state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
+        state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
+        const mzs = [];
+        for (const node of nodesSelected) {
+          mzs.push(node.mzs);
+        }
+        state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = mzs.flat();
       }
     },
     IMAGE_COPY_INTO_SELECTION_IMAGE: (state, index) => {
@@ -794,7 +770,6 @@ export default new Vuex.Store({
       );
     },
     RESET_SELECTION: (state, keepLasso) => {
-      console.log('Reset Selection');
       state.network.nodeTrix.nodeTrixPossible = false;
       state.network.clusterChange.split.possible = false;
       state.network.clusterChange.merge.mergePossible = false;
@@ -969,12 +944,6 @@ export default new Vuex.Store({
           colorscale: context.state.options.image.colorScales[colorscale],
           method: mergeMethod,
         };
-        console.log(
-          'Load image for',
-          mzValues.length,
-          'mz values in image',
-          index
-        );
         axios
           .post(url, postData)
           .then(response => {
@@ -1113,15 +1082,14 @@ export default new Vuex.Store({
     },
     mzlistUpdateHighlightedMz: (context, data) => {
       context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);
-      setTimeout(function() {
-        context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
-      }, 700);
+      context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
     },
     imageCopyIntoSelectionImage: (context, index) => {
       context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);
       // context.dispatch('fetchPcaImageData', index);
     },
     fetchPcaImageData: (context, index) => {
+      /*
       let mzValues = [];
       if (context.state.images.imageData[index]) {
         mzValues = context.state.images.imageData[index].mzValues;
@@ -1159,6 +1127,8 @@ export default new Vuex.Store({
           context.commit('SET_LOADING_IMAGE_DATA', false);
           alert('Error while loading pca image data from api.');
         });
+
+       */
     },
   },
 });
