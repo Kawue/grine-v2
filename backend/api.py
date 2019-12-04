@@ -417,7 +417,7 @@ def datasets_imagedata_multiple_mz_action(dataset_name):
         mode='RGBA'
     ).save(img_io, 'PNG')
     img_io.seek(0)
-    response = make_response(base64.b64encode(img_io.getvalue()).decode("utf-8"), 200)
+    response = make_response('data:image/png;base64,' + base64.b64encode(img_io.getvalue()).decode("utf-8"), 200)
     response.mimetype = "text/plain"
     return response
 
