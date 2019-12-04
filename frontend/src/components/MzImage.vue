@@ -204,20 +204,13 @@ export default {
             .attr('width', this.width)
             .attr('height', this.height);
         }
-        let tmpCanvas = document.createElement('canvas');
-        let tmpWidth = this.width / this.scaler;
-        let tmpHeight = this.height / this.scaler;
-        tmpCanvas.width = tmpWidth;
-        tmpCanvas.height = tmpHeight;
-        let tmpCtx = tmpCanvas.getContext('2d');
         let image = new Image();
 
         image.onload = () => {
-          tmpCtx.drawImage(image, 0, 0);
           const context = this.canvas.node().getContext('2d');
           context.save();
           context.scale(this.scaler, this.scaler);
-          context.drawImage(tmpCanvas, 0, 0);
+          context.drawImage(image, 0, 0);
           context.restore();
         };
 
