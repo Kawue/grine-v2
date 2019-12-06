@@ -45,6 +45,7 @@ export default function lasso() {
 
       lassoPath = g
         .append('path')
+        .attr('id', 'lassopath')
         .attr('fill', '#fff')
         .attr('fill-opacity', 0.1)
         .attr('stroke', '#fff')

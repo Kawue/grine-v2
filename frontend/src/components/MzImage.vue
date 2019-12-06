@@ -11,9 +11,10 @@
         v-bind:width="width"
         v-bind:height="height"
         style="position: absolute;top: 0; left: 0;"
-        :class="{ pulse: lassoFetching === true }"
+        v-bind:class="{ pulse: lassoFetching === true }"
       ></canvas>
       <svg
+        v-if="enableLasso"
         v-bind:width="width"
         v-bind:height="height"
         style="position: absolute; top: 0; left: 0;"
@@ -164,6 +165,27 @@ export default {
       return style;
     },
     handleLassoEnd(lassoPolygon) {
+      let bbox = d3.select('#lassopath').node().getBBox();
+
+      const selectedPoints = []
+      for(let i=bbox.x; i<bbox.x + bbox.width; i++){
+        for(let j=bbox.y; j<bbox.y + bbox.height; j++){
+          if(d3.polygonContains(lassoPolygon, [i,j])){
+            // TODO: May use ~~(i/this.scale), ~~(j/this.scale)
+            selectedPoints.push([i,j])
+          }
+        }
+      }
+
+      console.log(selectedPoints)
+
+      store.dispatch('imagesSelectPoints', [
+        this.imageDataIndex,
+        selectedPoints,
+      ]);
+      
+
+
       /*
       console.log('lasso start');
       const selectedPoints = this.points.filter(d => {
