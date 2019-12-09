@@ -4,13 +4,13 @@ import numpy as np
 import json
 import graph_func
 import base64
-from mzDataset import mzDataSet
-from flask import Flask, abort,request, make_response
+from mzDataset import MzDataSet, DimRedDataSet
+from flask import Flask, abort, request, make_response
 from flask_cors import CORS
 from PIL import Image
 from io import BytesIO
 from os import listdir
-from os.path import exists, isdir, isfile
+from os.path import isdir
 import matplotlib.pyplot as plt
 
 datasets = {}
@@ -21,21 +21,23 @@ if len(argv[3:]) == 1:
         for f in listdir(argv[3]):
             if f.split(".")[1] == "h5":
                 dataset_name = f.split(".")[0]
-                datasets[dataset_name] = mzDataSet(pd.read_hdf(f).droplevel('dataset').sort_index(), dataset_name)
+                datasets[dataset_name] = MzDataSet(pd.read_hdf(f).droplevel('dataset').sort_index(), dataset_name)
     else:
         dataset_name = argv[3].split(".")[0]
-        datasets[dataset_name] = mzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset').sort_index(), dataset_name)
+        datasets[dataset_name] = MzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset').sort_index(), dataset_name)
 else:
     for path in argv[3:]:
         dataset_name = path.split(".")[0]
-        datasets[dataset_name] = mzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset').sort_index(), dataset_name)
+        datasets[dataset_name] = MzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset').sort_index(), dataset_name)
 
 pca_dframe = pd.read_hdf('datasets/' + argv[2])
+dim_red_dataset = DimRedDataSet(pd.read_hdf('datasets/' + argv[2]))
 with open('json/' + argv[1], 'r') as file:
     firstDataset = json.load(file)['graphs']['graph0']
     graph_func.graph_initialisation(np.load('datasets/similarity-matrix-{}.npy'.format(firstDataset['dataset'])), firstDataset['threshold'])
 
 del dataset_name
+
 
 # returns list of allowed merge methods for mz intensities
 def merge_methods():
@@ -176,67 +178,6 @@ def graph_data_all_datasets():
         except:
             data = {}
     return data
-
-
-# returns PCA RGB image
-def datasets_imagedata_pca_image_data(ds_name, mz_values, merge_method, data_threshold):
-    # filter pca dataframe by dataset name
-    single_dframe = pca_dframe.loc[pca_dframe.index.get_level_values("dataset") == ds_name]
-
-    # get the x and y positions/columns from the pca
-    pos_x = np.array(single_dframe.index.get_level_values("grid_x")).astype(int)
-    pos_y = np.array(single_dframe.index.get_level_values("grid_y")).astype(int)
-
-    pos_x_max = pos_x.max() + 1
-    pos_y_max = pos_y.max() + 1
-
-    img = np.zeros((pos_y_max, pos_x_max, 4))
-
-    # get the r,g and b values/volumns from the pca
-    r = np.array(single_dframe['umapR'])
-    g = np.array(single_dframe['umapG'])
-    b = np.array(single_dframe['umapB'])
-
-    # norm the rgb values to a number between 0 and 1
-    r_norm = np.interp(r, (r.min(), r.max()), (0, 1))
-    g_norm = np.interp(g, (g.min(), g.max()), (0, 1))
-    b_norm = np.interp(b, (b.min(), b.max()), (0, 1))
-
-    alpha = [1] * len(r)
-    if len(mz_values):
-        # mz_raw_data returns format [pos_x, pos_y, alpha] from the non-pc dataset, alpha based on
-        # passed merge_method
-        mz_raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-        alpha = mz_raw_data[2]  # we only need the intensity
-
-        if data_threshold is not None:
-            # we have a threshold, so we set all intensities to 0 which are below that threshold
-            # using binarization
-            alpha[alpha < data_threshold] = 0
-            alpha[alpha >= data_threshold] = 1
-
-    img[(pos_y, pos_x, 0)] = r_norm
-    img[(pos_y, pos_x, 1)] = g_norm
-    img[(pos_y, pos_x, 2)] = b_norm
-    img[(pos_y, pos_x, 3)] = alpha
-
-    img = (img * 255).astype(int)
-
-    img = img.flatten().tolist()
-    img = [img[i:i+4] for i in range(0, len(img), 4)]
-
-    idx = np.indices((pos_y_max, pos_x_max))
-    pos = np.dstack((idx[0], idx[1]))
-    pos_x = pos[:,:,1].flatten()
-    pos_y = pos[:,:,0].flatten()
-
-    # we return something like this:
-    # [{x: 27, y: 22, color: "#1464830c"}, {x: 28, y: 22, color: "#11677809"}, ...]
-    # old version {'x': int(x), 'y': int(y), 'color': (np.array(matplotlib.colors.to_rgba([r, g, b, i])) * 255).astype(int).tolist()} for x, y, r, g, b, i in zip(pos_x, pos_y, r_norm, g_norm, b_norm, intensity)
-    return [
-        {'x': int(x), 'y': int(y), 'color': c}
-        for x, y, c in zip(pos_x, pos_y, img)
-    ]
 
 
 app = Flask(__name__)
@@ -417,7 +358,7 @@ def datasets_imagedata_multiple_mz_action(dataset_name):
         mode='RGBA'
     ).save(img_io, 'PNG')
     img_io.seek(0)
-    response = make_response('data:image/png;base64,' + base64.b64encode(img_io.getvalue()).decode("utf-8"), 200)
+    response = make_response('data:image/png;base64,' + base64.b64encode(img_io.getvalue()).decode('utf-8'), 200)
     response.mimetype = "text/plain"
     return response
 
@@ -438,26 +379,27 @@ def datasets_all_datasets_all_imagedata_action(colorscale):
 
 
 # get mz image data for dataset for all mz values
-@app.route('/datasets/<dataset_name>/pcaimagedata/method/<method>', methods=['POST'])
-def datasets_imagedata_pca_image_data_action(dataset_name, method):
+@app.route('/datasets/<dataset_name>/umapimage', methods=['GET'])
+def datasets_imagedata_umap_image_data_action(dataset_name):
     if dataset_name not in dataset_names():
         return abort(400)
 
-    if method not in merge_methods():
-        return abort(400)
-
     try:
-        post_data = request.get_data()
-        post_data_json = json.loads(post_data.decode('utf-8'))
-        post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
-        if post_data_json['threshold'] is None:
-            post_data_threshold = None
-        else:
-            post_data_threshold = float(post_data_json['threshold']) / 100
-    except:
+        alpha = float(request.args.get('alpha')) / 100.0
+    except ValueError:
         return abort(400)
+    except TypeError:
+        alpha = None
 
-    return json.dumps(datasets_imagedata_pca_image_data(dataset_name, post_data_mz_values, method, post_data_threshold))
+    img_io = BytesIO()
+    Image.fromarray(
+        dim_red_dataset.getAbsoluteImage() if alpha is None else dim_red_dataset.getRelativeImage(alpha),
+        mode='RGB'
+    ).save(img_io, 'PNG')
+    img_io.seek(0)
+    response = make_response('data:image/png;base64,' + base64.b64encode(img_io.getvalue()).decode('utf-8'), 200)
+    response.mimetype = "text/plain"
+    return response
 
 
 # get graph data for all datasets

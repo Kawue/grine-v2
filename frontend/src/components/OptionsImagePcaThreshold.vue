@@ -3,6 +3,7 @@
     <vue-slider
       v-model="threshold"
       v-bind="sliderOptions"
+      @change="updateThreshold"
       class="slider"
       v-bind:disabled="!state.pca.show || state.pca.relative"
     ></vue-slider>
@@ -24,32 +25,26 @@ export default {
     ...mapGetters({
       state: 'getOptionsImage',
     }),
-    threshold: {
-      get() {
-        return this.state.pca.threshold;
-      },
-      set(value) {
-        this.$store.commit('OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD', value);
-
-        let self = this;
-        this.updatedValue = value;
-        setTimeout(function() {
-          if (self.updatedValue === value) {
-            self.$store.dispatch('fetchPcaImageData', 3);
-          }
-        }, 500);
-      },
-    },
   },
   data() {
     return {
-      updateValue: null,
+      threshold: 50,
       sliderOptions: {
         min: 0,
         max: 100,
         tooltipFormatter: '{value}%',
+        lazy: true,
       },
     };
+  },
+  methods: {
+    updateThreshold() {
+      this.$store.commit('OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD', this.threshold);
+      this.$store.dispatch('fetchPcaImageData');
+    },
+  },
+  mounted() {
+    this.threshold = this.state.pca.threshold;
   },
 };
 </script>

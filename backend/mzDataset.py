@@ -1,7 +1,8 @@
 import numpy as np
 from matplotlib import cm
 
-class mzMapping:
+
+class MzMapping:
     def __init__(self, mzList):
         self.inverse = { index: value for value, index in enumerate(mzList)}
         self.mzList = mzList
@@ -24,9 +25,10 @@ class mzMapping:
         else:
             return [self.inverse[mzValues]]
 
-class mzDataSet:
+
+class MzDataSet:
     def __init__(self, dframe, name):
-        self.__mapping = mzMapping(list(dframe.columns))
+        self.__mapping = MzMapping(list(dframe.columns))
         self.name = name
         gx = dframe.index.get_level_values("grid_x").astype('int')
         gy = dframe.index.get_level_values("grid_y").astype('int')
@@ -35,10 +37,10 @@ class mzDataSet:
 
         for mz in dframe.columns:
             img = np.full((gy.max()+1, gx.max()+1), np.nan)
-            img[(gy,gx)] = dframe[mz]
+            img[(gy, gx)] = dframe[mz]
             mzimgs.append(img)
 
-        self.__cube = np.dstack(np.array(mzimgs)[None,:])
+        self.__cube = np.dstack(np.array(mzimgs)[None, :])
         self.__cube = np.moveaxis(self.__cube, 0, -1)
 
     def getMzValues(self):
@@ -70,3 +72,34 @@ class mzDataSet:
                         'color': list(image[x,y,:])
                     })
         return obj_list
+
+
+class DimRedDataSet:
+    def __init__(self, dframe):
+        gx = dframe.index.get_level_values("grid_x").astype('int')
+        gy = dframe.index.get_level_values("grid_y").astype('int')
+
+        mzimgs = []
+
+        for mz in dframe.columns:
+            img = np.full((gy.max() + 1, gx.max() + 1), np.nan)
+            img[(gy, gx)] = dframe[mz]
+            mzimgs.append(img)
+
+        self.__cube = np.moveaxis(np.dstack(np.array(mzimgs)[None, :]), 0, -1)[:, :, 3:6]
+        localMask = (~np.isnan(self.__cube))
+        self.__cube[localMask] = np.interp(
+            self.__cube[localMask],
+            (np.nanmin(self.__cube), np.nanmax(self.__cube)),
+            (0, 254)
+        )
+
+    def getAbsoluteImage(self):
+        return np.nan_to_num(self.__cube, nan=254).astype(np.uint8)
+
+    def getRelativeImage(self, alpha):
+        localCube = np.nan_to_num(self.__cube, nan=0)
+        localMask = (localCube >= alpha*254)
+        localCube[localMask] = 254
+        localCube[~localMask] = 0
+        return localCube.astype(np.uint8)

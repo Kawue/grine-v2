@@ -1086,35 +1086,19 @@ export default new Vuex.Store({
     },
     imageCopyIntoSelectionImage: (context, index) => {
       context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);
-      // context.dispatch('fetchPcaImageData', index);
     },
-    fetchPcaImageData: (context, index) => {
-      /*
-      let mzValues = [];
-      if (context.state.images.imageData[index]) {
-        mzValues = context.state.images.imageData[index].mzValues;
-      } else {
-        context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
-        return;
-      }
+    fetchPcaImageData: context => {
       context.commit('SET_LOADING_IMAGE_DATA', true);
       const datasetName =
         context.state.options.data.graphChoices[
           context.state.options.data.graph
         ];
-      const mergeMethod = context.state.options.image.mergeMethod;
-      const url =
-        API_URL +
-        '/datasets/' +
-        datasetName +
-        '/pcaimagedata/method/' +
-        mergeMethod;
-      const postData = { mzValues: mzValues, threshold: null };
+      let url = `${API_URL}/datasets/${datasetName}/umapimage`;
       if (!context.state.options.image.pca.relative) {
-        postData.threshold = context.state.options.image.pca.threshold;
+        url = `${url}?alpha=${context.state.options.image.pca.threshold}`;
       }
       axios
-        .post(url, postData)
+        .get(url)
         .then(response => {
           context.commit('SET_LOADING_IMAGE_DATA', false);
           context.commit('SET_IMAGE_DATA_VALUES', [
@@ -1122,13 +1106,11 @@ export default new Vuex.Store({
             response.data,
           ]);
         })
-        .catch(function() {
-          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
+        .catch(function(err) {
           context.commit('SET_LOADING_IMAGE_DATA', false);
-          alert('Error while loading pca image data from api.');
+          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
+          console.error(err);
         });
-
-       */
     },
   },
 });

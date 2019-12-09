@@ -123,9 +123,6 @@ export default {
     OptionsImagePca,
   },
   methods: {
-    loadPca() {
-      this.$store.dispatch('fetchPcaImageData');
-    },
     deleteLassoImage() {
       this.$store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_LASSO);
       this.$store.commit('RESET_SELECTION');
@@ -146,7 +143,6 @@ export default {
             'fetchImageData',
             constants.IMAGE_INDEX_AGGREGATED
           );
-          this.$store.dispatch('fetchPcaImageData');
           break;
         case 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE':
           this.$store.dispatch(

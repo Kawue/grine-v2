@@ -83,7 +83,7 @@ export default {
   },
   computed: {
     base64Image: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex).base64Image
+      return this.$store.getters.getImageData(this.imageDataIndex).base64Image;
     },
     imageValues: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).mzValues;
@@ -165,26 +165,27 @@ export default {
       return style;
     },
     handleLassoEnd(lassoPolygon) {
-      let bbox = d3.select('#lassopath').node().getBBox();
+      let bbox = d3
+        .select('#lassopath')
+        .node()
+        .getBBox();
 
-      const selectedPoints = []
-      for(let i=bbox.x; i<bbox.x + bbox.width; i++){
-        for(let j=bbox.y; j<bbox.y + bbox.height; j++){
-          if(d3.polygonContains(lassoPolygon, [i,j])){
+      const selectedPoints = [];
+      for (let i = bbox.x; i < bbox.x + bbox.width; i++) {
+        for (let j = bbox.y; j < bbox.y + bbox.height; j++) {
+          if (d3.polygonContains(lassoPolygon, [i, j])) {
             // TODO: May use ~~(i/this.scale), ~~(j/this.scale)
-            selectedPoints.push([i,j])
+            selectedPoints.push([i, j]);
           }
         }
       }
 
-      console.log(selectedPoints)
+      console.log(selectedPoints);
 
       store.dispatch('imagesSelectPoints', [
         this.imageDataIndex,
         selectedPoints,
       ]);
-      
-
 
       /*
       console.log('lasso start');
