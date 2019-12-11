@@ -375,7 +375,7 @@ export default new Vuex.Store({
     SET_IMAGE_DIMENSIONS: (state, payload) => {
       let min = Math.min(payload.width, payload.height);
       let scaler = 1;
-      if (min < 200) {
+      /*if (min < 200) {
         scaler = 3;
       } else if (min < 100) {
         scaler = 2;
@@ -383,7 +383,7 @@ export default new Vuex.Store({
         scaler = 0.4;
       } else if (min > 400) {
         scaler = 0.8;
-      }
+      }*/
       state.images.scaler = scaler;
       state.images.width = payload.width * scaler;
       state.images.height = payload.height * scaler;
@@ -951,9 +951,11 @@ export default new Vuex.Store({
       context.dispatch('imagesSelectPoints', [index, []]);
     },
     imagesSelectPoints: (context, payload) => {
-      /*
       let index = payload[0];
       let selectedPoints = payload[1];
+      context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
+      context.dispatch('fetchLassoSimilar', index);
+      
       /*let imageData = imageService.markSelectedPoints(
         context.state.images.imageData[index],
         selectedPoints
@@ -964,8 +966,6 @@ export default new Vuex.Store({
       //  context.state.options.image.colorScale
       //);
       context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
-      context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
-      context.dispatch('fetchLassoSimilar', index);
       */
     },
     fetchLassoSimilar: (context, index) => {
@@ -983,9 +983,7 @@ export default new Vuex.Store({
           API_URL +
           '/datasets/' +
           datasetName +
-          '/imagedata/method/' +
-          mergeMethod +
-          '/match';
+          '/imagedata/match';
         const visibleNodes = [];
         context.state.network.nodes.forEach(function(node) {
           visibleNodes.push({ name: node.name, mzs: node.mzs });
@@ -1003,9 +1001,10 @@ export default new Vuex.Store({
           counter++;
         }
         const postData = {
-          selectedPoints: selectedPoints,
-          selectedMzs: context.state.images.imageData[index].mzValues,
           visibleNodes: visibleNodes,
+          selectedMzs: context.state.images.imageData[index].mzValues,
+          selectedPoints: selectedPoints,
+          method: mergeMethod,
           minIntensity: context.state.options.image.minIntensity,
           minOverlap: context.state.options.image.minOverlap,
         };

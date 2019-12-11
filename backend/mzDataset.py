@@ -45,8 +45,14 @@ class MzDataSet:
     def getMzValues(self):
         return self.__mapping.mzList
 
+    def getMzIndex(self, mzValues):
+        return self.__mapping.getMultipleInverse(mzValues)
+
     def getCube(self):
         return self.__cube
+
+    def getRawImage(mzValues, method=np.mean):
+        return method(self.__cube[:,:,self.__mapping.getMultipleInverse(mzValues)], 2)
 
     def getGreyImage(self, mzValues, method=np.mean):
         intensity = method(self.__cube[:,:,self.__mapping.getMultipleInverse(mzValues)], 2)

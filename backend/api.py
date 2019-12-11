@@ -27,6 +27,20 @@ dataset_blueprint = '{}.h5'
 # dict to handle multiple datasets
 datasets = {}
 
+colorscales = {
+        'Viridis': 'viridis',
+        'Magma': 'magma',
+        'Inferno': 'inferno',
+        'Plasma': 'plasma',
+        'PiYG': 'PiYG'
+    }
+
+aggregation_methods = {
+    'mean': np.mean,
+    'median': np.median,
+    'min': np.min,
+    'max': np.max,
+}
 
 with open(path_to_data + path_to_json + args.json_name, 'r') as file:
     json_content = json.load(file)['graphs']
@@ -44,8 +58,8 @@ for dataset_name in datasets.keys():
     }
 
 # returns list of allowed merge methods for mz intensities
-def merge_methods():
-    return ['mean', 'median', 'max', 'min']
+def aggregation_methods_names():
+    return list(aggregation_methods.keys())
 
 
 # returns names of all available datasets
@@ -67,6 +81,36 @@ def graph_data_all_datasets():
             data = {}
     return data
 
+# rcube: reference cube, mcube: matching cube, ocube: overlap cube
+def selection_match(polygon_ref, polygon_match, min_intensity, min_overlap, aggregation_method):
+    # get thresholds for the minimum signal intensity that should be considered
+    t = np.amax(polygon_ref) * min_intensity
+    polygon_ref = (polygon_ref >= t) # binarization
+
+    # get the maximum for each column and multiply by the min_intensity
+    t = np.amax(polygon_match) * min_intensity
+    polygon_match = (polygon_match >= t) # binarization
+
+    # find amount of common entries in selected and node dataset
+    overlap = polygon_ref * polygon_match
+    match_score = overlap.sum() / len(polygon_ref)
+    return match_score >= min_overlap
+
+def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, aggregation_method, min_intensity, min_overlap):
+    mzDataSet = datasets[ds_name]["dataset"]
+    cube = mzDataSet.getCube()
+    selected_points = list(zip(*selected_points))
+    polygon_ref = aggregation_method(cube[:,:,mzDataSet.getMzIndex(selected_mzs)], axis=2)[selected_points]
+
+    node_names = []
+    for node in node_data:
+        polygon_match = aggregation_method(cube[:,:,mzDataSet.getMzIndex(node['mzs'])], axis=2)[selected_points]
+        match = selection_match(polygon_ref, polygon_match, min_intensity, min_overlap, aggregation_method)
+        if match:
+            node_names.append(node['name'])
+    return node_names
+
+
 
 app = Flask(__name__)
 CORS(app)
@@ -74,8 +118,8 @@ CORS(app)
 
 # get available merge methods if mz image of multiple images is queried
 @app.route('/mz-merge-methods')
-def merge_methods_action():
-    return json.dumps(merge_methods())
+def aggregation_methods_action():
+    return json.dumps(aggregation_methods_names())
 
 
 # get all dataset names
@@ -174,27 +218,38 @@ def dataset_image_dimension(dataset_name):
 # gets a list of visible nodes from the frontend
 # get a list of selected points
 # returns which nodes are similar
-@app.route('/datasets/<dataset_name>/imagedata/method/<method>/match', methods=['POST'])
-def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
+@app.route('/datasets/<dataset_name>/imagedata/match', methods=['POST'])
+def datasets_imagedata_selection_match_nodes_action(dataset_name):
     if dataset_name not in dataset_names():
-        return abort(400)
-
-    if method not in merge_methods():
         return abort(400)
 
     try:
         post_data = request.get_data()
         post_data_json = json.loads(post_data.decode('utf-8'))
-        post_data_selected_points = post_data_json['selectedPoints']
-        post_data_selected_mzs = [float(i) for i in post_data_json['selectedMzs']]
         post_data_visible_node_data = post_data_json['visibleNodes']
+        post_data_selected_mzs = [float(i) for i in post_data_json['selectedMzs']]
+        post_data_selected_points = post_data_json['selectedPoints']
+        post_data_aggregation_method = post_data_json['method']
         post_data_min_intensity = float(post_data_json['minIntensity']) / 100
         post_data_min_overlap = float(post_data_json['minOverlap']) / 100
-    except:
+    except Exception as e:
+        print("Exception during Dimension Reduction Matching.")
+        print(e)
         return abort(400)
-    print('START OUTER ROUTINE')
+    
+    if post_data_aggregation_method not in aggregation_methods_names():
+        return abort(400)
 
-    print('END OUTER ROUTINE')
+    ret = check_nodes_for_match(
+        dataset_name,
+        post_data_visible_node_data,
+        post_data_selected_mzs,
+        post_data_selected_points,
+        aggregation_methods[post_data_aggregation_method],
+        post_data_min_intensity,
+        post_data_min_overlap
+    )
+
     return json.dumps(ret)
 
 
@@ -208,7 +263,7 @@ def datasets_imagedata_multiple_mz_action(dataset_name):
     try:
         post_data = request.get_data()
         post_data_json = json.loads(post_data.decode('utf-8'))
-        method = post_data_json['method']
+        aggeregation_method = post_data_json['method']
         colorscale = post_data_json['colorscale']
         post_data_mz_values = [float(i) for i in post_data_json['mzValues']]
     except:
@@ -217,25 +272,11 @@ def datasets_imagedata_multiple_mz_action(dataset_name):
     if len(post_data_mz_values) == 0:
         return abort(400)
 
-    colorscales = {
-        'Viridis': 'viridis',
-        'Magma': 'magma',
-        'Inferno': 'inferno',
-        'Plasma': 'plasma',
-        'PiYG': 'PiYG'
-    }
-
-    methods = {
-        'mean': np.mean,
-        'median': np.median,
-        'min': np.min,
-        'max': np.max,
-    }
     img_io = BytesIO()
     Image.fromarray(
         datasets[dataset_name]['dataset'].getColorImage(
             post_data_mz_values,
-            method=methods[method],
+            method=aggregation_methods[aggeregation_method],
             cmap=colorscales[colorscale]),
         mode='RGBA'
     ).save(img_io, 'PNG')
@@ -253,12 +294,12 @@ def datasets_imagedata_dimreduce_image(dataset_name):
         post_data = request.get_data()
         post_data_json = json.loads(post_data.decode('utf-8'))
         try:
-            method = post_data_json['method']
+            aggeregation_method = post_data_json['method']
             mz_values = [float(i) for i in post_data_json['mzValues']]
             if len(mz_values) == 0:
                 return abort(400)
         except KeyError:
-            method = None
+            aggeregation_method = None
             mz_values = None
         try:
             alpha = float(post_data_json['alpha'])/100
@@ -269,21 +310,14 @@ def datasets_imagedata_dimreduce_image(dataset_name):
     except:
         return abort(400)
 
-
-    methods = {
-        'mean': np.mean,
-        'median': np.median,
-        'min': np.min,
-        'max': np.max,
-    }
     img_io = BytesIO()
-    if method is None:
+    if aggeregation_method is None:
         Image.fromarray(
                 datasets[dataset_name]['dimreduce'].getImage(),
                 mode='RGBA'
          ).save(img_io, 'PNG')
     else:
-        intensity = datasets[dataset_name]['dataset'].getGreyImage(mz_values, method=methods[method])
+        intensity = datasets[dataset_name]['dataset'].getGreyImage(mz_values, method=aggregation_methods[aggeregation_method])
         Image.fromarray(
             datasets[dataset_name]['dimreduce'].getRelativeImage(intensity) if alpha is None else datasets[dataset_name]['dimreduce'].getAbsoluteImage(intensity, alpha),
             mode='RGBA'

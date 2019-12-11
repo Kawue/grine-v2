@@ -178,7 +178,8 @@ export default {
         for (let j = bbox.y; j < bbox.y + bbox.height; j++) {
           if (d3.polygonContains(lassoPolygon, [i, j])) {
             // TODO: May use ~~(i/this.scale), ~~(j/this.scale)
-            selectedPoints.push([i, j]);
+            //selectedPoints.push([i/this.scaler,j/this.scaler])
+            selectedPoints.push([i,j])
           }
         }
       }
