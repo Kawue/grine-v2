@@ -51,7 +51,13 @@ fabric.properties
 # .idea/misc.xml
 # *.ipr
 
-backend/data/*/*MK_202_3*
-backend/data/*/vibrissae_163_6*
+backend/data/matrix/similarity-matrix-MK_202_3.npy
+backend/data/matrix/similarity-matrix-vibrissae_163_6.npy
+backend/data/json/MK_202_3.json
+backend/data/json/vibrissae_163_6.json
+backend/data/dataset/MK_202_3.h5
+backend/data/dataset/vibrissae_163_6.h5
+backend/data/dimreduce/dimreduce-vibrissae_163_6-umap.h5
+backend/data/dimreduce/dimreduce-MK_202_3-umap.h5
 backend/__pycache__
 frontend/package-lock.json

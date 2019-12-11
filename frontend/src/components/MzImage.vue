@@ -6,7 +6,6 @@
     v-on:click="imageClick()"
   >
     <div class="canvas-root" style="position: relative;">
-      <ScaleOut class="spinner" v-if="loading"></ScaleOut>
       <canvas
         v-bind:width="width"
         v-bind:height="height"
@@ -28,14 +27,10 @@ import * as d3 from 'd3';
 import lasso from '../services/Lasso';
 import { mapGetters } from 'vuex';
 import store from '@/store';
-import { ScaleOut } from 'vue-loading-spinner';
 import * as imageIndex from '../constants';
 
 export default {
   name: 'MzImage',
-  components: {
-    ScaleOut,
-  },
   props: {
     imageDataIndex: {
       // this prob defines which image data from the store is displayed
@@ -67,7 +62,10 @@ export default {
     imageValues() {
       if (this.imageDataIndex === imageIndex.DIM_RED) {
         this.$store.dispatch('fetchDimRedImage');
-      } else if (!this.enableLasso && this.imageDataIndex !== imageIndex.DIM_RED) {
+      } else if (
+        !this.enableLasso &&
+        this.imageDataIndex !== imageIndex.DIM_RED
+      ) {
         this.$store.dispatch('fetchImageData', this.imageDataIndex);
       }
     },

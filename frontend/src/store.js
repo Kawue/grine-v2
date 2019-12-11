@@ -100,7 +100,7 @@ export default new Vuex.Store({
           lassoFetching: false, // true during api call of lasso matching
         },
         {
-          // imageIndex.DIM_RED data used to render the pca image
+          // imageIndex.DIM_RED data used to render the dimred image
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -191,7 +191,7 @@ export default new Vuex.Store({
           interpolatePlasma: 'Plasma',
           interpolateInferno: 'Inferno',
         },
-        pca: {
+        dimred: {
           show: false,
           relative: true,
           threshold: 50, // in %
@@ -362,15 +362,15 @@ export default new Vuex.Store({
     },
     CLEAR_IMAGE: (state, index) => {
       state.images.imageData[index].mzValues = [];
-      state.images.imageData[index].base64Image = null;
+      if (!(index === imageIndex.DIM_RED)) {
+        state.images.imageData[index].base64Image = null;
+      }
     },
     CLEAR_IMAGES: state => {
-      state.images.imageData[imageIndex.COMMUNITY].mzValues = [];
-      state.images.imageData[imageIndex.COMMUNITY].base64Image = null;
-      state.images.imageData[imageIndex.SELECTED_MZ].mzValues = [];
-      state.images.imageData[imageIndex.SELECTED_MZ].base64Image = null;
-      state.images.imageData[imageIndex.AGGREGATED].mzValues = [];
-      state.images.imageData[imageIndex.AGGREGATED].base64Image = null;
+      for (const index of [imageIndex.COMMUNITY, imageIndex.SELECTED_MZ, imageIndex.AGGREGATED]){
+        state.images.imageData[index].mzValues = [];
+        state.images.imageData[index].base64Image = null;
+      }
     },
     SET_IMAGE_DIMENSIONS: (state, payload) => {
       let min = Math.min(payload.width, payload.height);
@@ -703,14 +703,14 @@ export default new Vuex.Store({
     OPTIONS_IMAGE_CHANGE_MIN_INTENSITY: (state, data) => {
       state.options.image.minIntensity = data;
     },
-    OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD: (state, data) => {
-      state.options.image.pca.threshold = data;
+    OPTIONS_IMAGE_DIM_RED_CHANGE_THRESHOLD: (state, data) => {
+      state.options.image.dimred.threshold = data;
     },
-    OPTIONS_IMAGE_PCA_CHANGE_RELATIVE: (state, data) => {
-      state.options.image.pca.relative = data;
+    OPTIONS_IMAGE_DIM_RED_CHANGE_RELATIVE: (state, data) => {
+      state.options.image.dimred.relative = data;
     },
-    OPTIONS_IMAGE_PCA_CHANGE_SHOW: (state, data) => {
-      state.options.image.pca.show = data;
+    OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW: (state, data) => {
+      state.options.image.dimred.show = data;
     },
     OPTIONS_IMAGE_CHANGE_MIN_OVERLAP: (state, data) => {
       state.options.image.minOverlap = data;
@@ -863,7 +863,7 @@ export default new Vuex.Store({
           this.dispatch('updateGraphCluster');
         })
         .catch(function() {
-          console.err('Change Graph NOT OK');
+          console.error('Change Graph NOT OK');
         });
       context.state.options.data.graph = graph;
       context.state.images.imageData[imageIndex.COMMUNITY].mzValues = [];
@@ -915,7 +915,7 @@ export default new Vuex.Store({
           context.commit('SET_IMAGE_DIMENSIONS', response.data);
         })
         .catch(function() {
-          console.err('Image Dimensions NOT OK');
+          console.error('Image Dimensions NOT OK');
         });
     },
     fetchImageData: (context, index) => {
@@ -1052,7 +1052,7 @@ export default new Vuex.Store({
           );
         })
         .catch(err => {
-          console.log(err);
+          console.error(err);
         });
     },
     updateGraphCluster: context => {
@@ -1071,7 +1071,7 @@ export default new Vuex.Store({
           console.log('OK');
         })
         .catch(() => {
-          console.err('NOT OK');
+          console.error('NOT OK');
         });
     },
     mzlistUpdateHighlightedMz: (context, data) => {
@@ -1079,7 +1079,7 @@ export default new Vuex.Store({
       context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
     },
     fetchDimRedImage: context => {
-      if (!context.state.options.image.pca.show) {
+      if (!context.state.options.image.dimred.show) {
         return;
       }
       context.commit('SET_LOADING_IMAGE_DATA', true);
@@ -1089,13 +1089,13 @@ export default new Vuex.Store({
         ];
       let url = `${API_URL}/datasets/${datasetName}/dimreduceimage`;
       const mzValues =
-        context.state.images.imageData[imageIndex.LASSO].mzValues;
+        context.state.images.imageData[imageIndex.DIM_RED].mzValues;
       const postData = {};
       if (mzValues.length > 0) {
         postData['method'] = context.state.options.image.mergeMethod;
         postData['mzValues'] = mzValues;
-        if (!context.state.options.image.pca.relative) {
-          postData['alpha'] = context.state.options.image.pca.threshold;
+        if (!context.state.options.image.dimred.relative) {
+          postData['alpha'] = context.state.options.image.dimred.threshold;
         }
       }
       axios
