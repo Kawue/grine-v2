@@ -5,7 +5,7 @@
       v-bind="sliderOptions"
       @change="updateThreshold"
       class="slider"
-      v-bind:disabled="!state.pca.show || state.pca.relative"
+      v-bind:disabled="!state.dimred.show || state.dimred.relative"
     ></vue-slider>
     <span class="percentage">{{ threshold }}%</span>
   </div>
@@ -20,7 +20,7 @@ export default {
   components: {
     VueSlider,
   },
-  name: 'OptionsImagePcaThreshold',
+  name: 'OptionsImageDimRedThreshold',
   computed: {
     ...mapGetters({
       state: 'getOptionsImage',
@@ -39,12 +39,15 @@ export default {
   },
   methods: {
     updateThreshold() {
-      this.$store.commit('OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD', this.threshold);
+      this.$store.commit(
+        'OPTIONS_IMAGE_DIM_RED_CHANGE_THRESHOLD',
+        this.threshold
+      );
       this.$store.dispatch('fetchDimRedImage');
     },
   },
   mounted() {
-    this.threshold = this.state.pca.threshold;
+    this.threshold = this.state.dimred.threshold;
   },
 };
 </script>

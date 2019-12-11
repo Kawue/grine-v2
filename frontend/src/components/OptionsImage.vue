@@ -47,7 +47,7 @@
             <span class="font12px">DR:</span>
           </div>
           <div class="col-md-8 font12px">
-            <OptionsImagePca></OptionsImagePca>
+            <OptionsImageDimRed></OptionsImageDimRed>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@ import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
 import OptionsImageColorScale from './OptionsImageColorScale';
-import OptionsImagePca from './OptionsImagePca';
+import OptionsImageDimRed from './OptionsImageDimRed';
 
 export default {
   name: 'OptionsImage',
@@ -69,7 +69,7 @@ export default {
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
     OptionsImageColorScale,
-    OptionsImagePca,
+    OptionsImageDimRed,
   },
 };
 </script>

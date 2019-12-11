@@ -64,7 +64,7 @@
       <div class="row">
         <div class="col-md-12" style="margin-bottom: 25px;">
           Cache/Lasso:
-          <span v-on:click="deleteLassoImage()">
+          <span v-on:click="deleteLassoImage()" v-if="showLassoTrash">
             <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
           </span>
           <mz-image
@@ -74,10 +74,10 @@
           ></mz-image>
         </div>
       </div>
-      <div class="row" v-if="options.pca.show">
+      <div class="row" v-bind:hidden="!options.dimred.show">
         <div class="col-md-12" style="margin-bottom: 25px;">
           DR:
-          <span v-on:click="deleteDrImage()">
+          <span v-on:click="deleteDrImage()" v-if="showDimredTrash">
             <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
           </span>
           <mz-image
@@ -98,6 +98,7 @@ import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
 import * as imageIndex from '../constants';
+import store from '@/store';
 
 export default {
   extends: SidebarWidget,
@@ -110,35 +111,51 @@ export default {
   },
   methods: {
     deleteLassoImage() {
-      this.$store.commit('CLEAR_IMAGE', imageIndex.LASSO);
-      this.$store.commit('RESET_SELECTION');
+      store.commit('CLEAR_IMAGE', imageIndex.LASSO);
+      store.commit('RESET_SELECTION');
     },
     deleteDrImage() {
-      this.$store.commit('CLEAR_IMAGE', imageIndex.DIM_RED);
+      if (!store.getters.getOptionsImage.dimred.relative) {
+        store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_RELATIVE', true);
+      }
+      store.commit('CLEAR_IMAGE', imageIndex.DIM_RED);
     },
   },
   mounted: function() {
-    this.$store.subscribe(mutation => {
+    store.subscribe(mutation => {
       switch (mutation.type) {
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
-          this.$store.dispatch('fetchImageData', imageIndex.COMMUNITY);
-          this.$store.dispatch('fetchImageData', imageIndex.AGGREGATED);
-          this.$store.dispatch('fetchDimRedImage');
+          store.dispatch('fetchImageData', imageIndex.COMMUNITY);
+          store.dispatch('fetchImageData', imageIndex.AGGREGATED);
+          store.dispatch('fetchDimRedImage');
           break;
         case 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE':
-          this.$store.dispatch('fetchImageData', imageIndex.COMMUNITY);
-          this.$store.dispatch('fetchImageData', imageIndex.SELECTED_MZ);
-          this.$store.dispatch('fetchImageData', imageIndex.AGGREGATED);
-          this.$store.dispatch('fetchImageData', imageIndex.LASSO);
+          store.dispatch('fetchImageData', imageIndex.COMMUNITY);
+          store.dispatch('fetchImageData', imageIndex.SELECTED_MZ);
+          store.dispatch('fetchImageData', imageIndex.AGGREGATED);
+          store.dispatch('fetchImageData', imageIndex.LASSO);
           break;
       }
     });
   },
   name: 'Images',
-  computed: mapGetters({
-    data: 'getData',
-    options: 'getOptionsImage',
-  }),
+  computed: {
+    ...mapGetters({
+      options: 'getOptionsImage',
+    }),
+    showDimredTrash: {
+      get() {
+        return (
+          store.getters.getImageData(imageIndex.DIM_RED).mzValues.length > 0
+        );
+      },
+    },
+    showLassoTrash: {
+      get() {
+        return store.getters.getImageData(imageIndex.LASSO).mzValues.length > 0;
+      },
+    },
+  },
 };
 </script>
 
