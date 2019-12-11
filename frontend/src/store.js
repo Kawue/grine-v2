@@ -5,6 +5,7 @@ import MzListService from './services/MzListService';
 import NetworkService from './services/NetworkService';
 import axios from 'axios';
 import * as _ from 'lodash';
+import * as imageIndex from './constants';
 
 Vue.use(Vuex);
 Vue.config.devtools = true;
@@ -15,11 +16,6 @@ const mzListService = new MzListService();
 const networkService = new NetworkService();
 
 const API_URL = 'http://localhost:5000';
-export const IMAGE_INDEX_COMMUNITY = 0;
-export const IMAGE_INDEX_SELECTED_MZ = 1;
-export const IMAGE_INDEX_AGGREGATED = 2;
-export const IMAGE_INDEX_LASSO = 3;
-export const IMAGE_INDEX_PCA = 4;
 
 export default new Vuex.Store({
   state: {
@@ -36,7 +32,7 @@ export default new Vuex.Store({
       scaler: 1,
       imageData: [
         {
-          // IMAGE_INDEX_COMMUNITY data used to render community image
+          // imageIndex.COMMUNITY data used to render community image
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -53,7 +49,7 @@ export default new Vuex.Store({
           lassoFetching: false, // true during api call of lasso matching
         },
         {
-          // IMAGE_INDEX_SELECTED_MZ data used to render image from selected mz values
+          // imageIndex.SELECTED_MZ data used to render image from selected mz values
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -70,7 +66,7 @@ export default new Vuex.Store({
           lassoFetching: false, // true during api call of lasso matching
         },
         {
-          // IMAGE_INDEX_AGGREGATED data used to render image from multiple selected nodes
+          // imageIndex.AGGREGATED data used to render image from multiple selected nodes
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -87,7 +83,7 @@ export default new Vuex.Store({
           lassoFetching: false, // true during api call of lasso matching
         },
         {
-          // IMAGE_INDEX_LASSO data used to render image copied from other images
+          // imageIndex.LASSO data used to render image copied from other images
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -104,7 +100,7 @@ export default new Vuex.Store({
           lassoFetching: false, // true during api call of lasso matching
         },
         {
-          // IMAGE_INDEX_PCA data used to render the pca image
+          // imageIndex.DIM_RED data used to render the pca image
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
@@ -351,9 +347,7 @@ export default new Vuex.Store({
       return state.options.image.colorScales;
     },
     isMzLassoSelectionActive: state => {
-      return (
-        state.images.imageData[IMAGE_INDEX_LASSO].selectedPoints.length > 0
-      );
+      return state.images.imageData[imageIndex.LASSO].selectedPoints.length > 0;
     },
   },
   mutations: {
@@ -371,12 +365,12 @@ export default new Vuex.Store({
       state.images.imageData[index].base64Image = null;
     },
     CLEAR_IMAGES: state => {
-      state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].base64Image = null;
-      state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
+      state.images.imageData[imageIndex.COMMUNITY].mzValues = [];
+      state.images.imageData[imageIndex.COMMUNITY].base64Image = null;
+      state.images.imageData[imageIndex.SELECTED_MZ].mzValues = [];
+      state.images.imageData[imageIndex.SELECTED_MZ].base64Image = null;
+      state.images.imageData[imageIndex.AGGREGATED].mzValues = [];
+      state.images.imageData[imageIndex.AGGREGATED].base64Image = null;
     },
     SET_IMAGE_DIMENSIONS: (state, payload) => {
       let min = Math.min(payload.width, payload.height);
@@ -416,22 +410,22 @@ export default new Vuex.Store({
       };
 
       if (nodesSelected.length === 0) {
-        state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
-        state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
-        state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
-        state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
+        state.images.imageData[imageIndex.COMMUNITY].mzValues = [];
+        state.images.imageData[imageIndex.COMMUNITY].base64Image = null;
+        state.images.imageData[imageIndex.AGGREGATED].mzValues = [];
+        state.images.imageData[imageIndex.AGGREGATED].base64Image = null;
       } else if (nodesSelected.length === 1) {
-        state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
-        state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
+        state.images.imageData[imageIndex.AGGREGATED].mzValues = [];
+        state.images.imageData[imageIndex.AGGREGATED].base64Image = null;
 
         if (nodesSelected[0].mzs.length > 1) {
           if (
             !arraysMatch(
-              state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues,
+              state.images.imageData[imageIndex.COMMUNITY].mzValues,
               nodesSelected[0].mzs
             )
           ) {
-            state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
+            state.images.imageData[imageIndex.COMMUNITY].mzValues =
               nodesSelected[0].mzs;
           }
         } else if (nodesSelected[0].parent) {
@@ -445,31 +439,34 @@ export default new Vuex.Store({
           );
           if (
             !arraysMatch(
-              state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues,
+              state.images.imageData[imageIndex.COMMUNITY].mzValues,
               parentNode.mzs
             )
           ) {
-            state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues =
+            state.images.imageData[imageIndex.COMMUNITY].mzValues =
               parentNode.mzs;
           }
         }
       } else if (nodesSelected.length > 1) {
-        state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
-        state.images.imageData[IMAGE_INDEX_SELECTED_MZ].base64Image = null;
-        state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
-        state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
+        state.images.imageData[imageIndex.SELECTED_MZ].mzValues = [];
+        state.images.imageData[imageIndex.SELECTED_MZ].base64Image = null;
+        state.images.imageData[imageIndex.COMMUNITY].mzValues = [];
+        state.images.imageData[imageIndex.COMMUNITY].base64Image = null;
         const mzs = [];
         for (const node of nodesSelected) {
           mzs.push(node.mzs);
         }
-        state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = mzs.flat();
+        state.images.imageData[imageIndex.AGGREGATED].mzValues = mzs.flat();
       }
     },
     IMAGE_COPY_INTO_SELECTION_IMAGE: (state, index) => {
-      state.images.imageData[IMAGE_INDEX_LASSO].mzValues = _.cloneDeep(
+      state.images.imageData[imageIndex.LASSO].mzValues = _.cloneDeep(
         state.images.imageData[index].mzValues
       );
-      state.images.imageData[IMAGE_INDEX_LASSO].base64Image = _.clone(
+      state.images.imageData[imageIndex.DIM_RED].mzValues = _.cloneDeep(
+        state.images.imageData[index].mzValues
+      );
+      state.images.imageData[imageIndex.LASSO].base64Image = _.clone(
         state.images.imageData[index].base64Image
       );
     },
@@ -759,7 +756,7 @@ export default new Vuex.Store({
       state.mzList.notVisibleMz = tuple[1];
       state.mzList.visibleMz = mzListService.sortMzList(state.mzList.visibleMz);
       if (mzValues.length === 1) {
-        state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = mzValues;
+        state.images.imageData[imageIndex.SELECTED_MZ].mzValues = mzValues;
       }
     },
     MZLIST_LOAD_GRAPH: state => {
@@ -791,17 +788,16 @@ export default new Vuex.Store({
         NetworkService.clearHighlightNodeTrixNodes();
       }
       networkService.clearHighlight(state.network.nodes);
-      state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_SELECTED_MZ].base64Image = null;
-      state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
-      state.images.imageData[IMAGE_INDEX_PCA].mzValues = [];
-      state.images.imageData[IMAGE_INDEX_PCA].base64Image = null;
+      state.images.imageData[imageIndex.COMMUNITY].mzValues = [];
+      state.images.imageData[imageIndex.COMMUNITY].base64Image = null;
+      state.images.imageData[imageIndex.SELECTED_MZ].mzValues = [];
+      state.images.imageData[imageIndex.SELECTED_MZ].base64Image = null;
+      state.images.imageData[imageIndex.AGGREGATED].mzValues = [];
+      state.images.imageData[imageIndex.AGGREGATED].base64Image = null;
+      state.images.imageData[imageIndex.DIM_RED].mzValues = [];
       if (!keepLasso) {
-        state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
-        state.images.imageData[IMAGE_INDEX_LASSO].base64Image = null;
+        state.images.imageData[imageIndex.LASSO].mzValues = [];
+        state.images.imageData[imageIndex.LASSO].base64Image = null;
       }
     },
     MZLIST_CALCULATE_VISIBLE_MZ: state => {
@@ -870,18 +866,16 @@ export default new Vuex.Store({
           console.err('Change Graph NOT OK');
         });
       context.state.options.data.graph = graph;
-      context.state.images.imageData[IMAGE_INDEX_COMMUNITY].mzValues = [];
-      context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
-      context.state.images.imageData[IMAGE_INDEX_AGGREGATED].mzValues = [];
-      context.state.images.imageData[IMAGE_INDEX_LASSO].mzValues = [];
-      context.state.images.imageData[IMAGE_INDEX_PCA].mzValues = [];
-      context.state.images.imageData[IMAGE_INDEX_COMMUNITY].base64Image = null;
-      context.state.images.imageData[
-        IMAGE_INDEX_SELECTED_MZ
-      ].base64Image = null;
-      context.state.images.imageData[IMAGE_INDEX_AGGREGATED].base64Image = null;
-      context.state.images.imageData[IMAGE_INDEX_LASSO].base64Image = null;
-      context.state.images.imageData[IMAGE_INDEX_PCA].base64Image = null;
+      context.state.images.imageData[imageIndex.COMMUNITY].mzValues = [];
+      context.state.images.imageData[imageIndex.SELECTED_MZ].mzValues = [];
+      context.state.images.imageData[imageIndex.AGGREGATED].mzValues = [];
+      context.state.images.imageData[imageIndex.LASSO].mzValues = [];
+      context.state.images.imageData[imageIndex.DIM_RED].mzValues = [];
+      context.state.images.imageData[imageIndex.COMMUNITY].base64Image = null;
+      context.state.images.imageData[imageIndex.SELECTED_MZ].base64Image = null;
+      context.state.images.imageData[imageIndex.AGGREGATED].base64Image = null;
+      context.state.images.imageData[imageIndex.LASSO].base64Image = null;
+      context.state.images.imageData[imageIndex.DIM_RED].base64Image = null;
       context.state.meta.threshold =
         context.state.originalGraphData.graphs[
           'graph' + context.state.options.data.graph
@@ -905,7 +899,7 @@ export default new Vuex.Store({
       context.commit('NETWORK_CENTER_CAMERA');
       context.commit('NETWORK_SIMULATION_INIT');
       context.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
-      context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
+      context.commit('SET_IMAGE_DATA_VALUES', [imageIndex.DIM_RED, []]);
     },
     fetchImageDimensions: context => {
       const datasetName =
@@ -1035,9 +1029,9 @@ export default new Vuex.Store({
     },
     mzlistUpdatedMzs: (context, data) => {
       if (data.length === 1) {
-        context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = data;
+        context.state.images.imageData[imageIndex.SELECTED_MZ].mzValues = data;
       } else {
-        context.state.images.imageData[IMAGE_INDEX_SELECTED_MZ].mzValues = [];
+        context.state.images.imageData[imageIndex.SELECTED_MZ].mzValues = [];
       }
       context.commit('MZLIST_UPDATE_SELECTED_MZ', data);
       setTimeout(function() {
@@ -1084,31 +1078,38 @@ export default new Vuex.Store({
       context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);
       context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
     },
-    imageCopyIntoSelectionImage: (context, index) => {
-      context.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', index);
-    },
-    fetchPcaImageData: context => {
+    fetchDimRedImage: context => {
+      if (!context.state.options.image.pca.show) {
+        return;
+      }
       context.commit('SET_LOADING_IMAGE_DATA', true);
       const datasetName =
         context.state.options.data.graphChoices[
           context.state.options.data.graph
         ];
       let url = `${API_URL}/datasets/${datasetName}/umapimage`;
-      if (!context.state.options.image.pca.relative) {
-        url = `${url}?alpha=${context.state.options.image.pca.threshold}`;
+      const mzValues =
+        context.state.images.imageData[imageIndex.LASSO].mzValues;
+      const postData = {};
+      if (mzValues.length > 0) {
+        postData['method'] = context.state.options.image.mergeMethod;
+        postData['mzValues'] = mzValues;
+        if (!context.state.options.image.pca.relative) {
+          postData['alpha'] = context.state.options.image.pca.threshold;
+        }
       }
       axios
-        .get(url)
+        .post(url, postData)
         .then(response => {
           context.commit('SET_LOADING_IMAGE_DATA', false);
           context.commit('SET_IMAGE_DATA_VALUES', [
-            IMAGE_INDEX_PCA,
+            imageIndex.DIM_RED,
             response.data,
           ]);
         })
         .catch(function(err) {
           context.commit('SET_LOADING_IMAGE_DATA', false);
-          context.commit('SET_IMAGE_DATA_VALUES', [IMAGE_INDEX_PCA, []]);
+          context.commit('SET_IMAGE_DATA_VALUES', [imageIndex.DIM_RED, []]);
           console.error(err);
         });
     },

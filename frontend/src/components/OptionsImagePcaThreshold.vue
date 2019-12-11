@@ -40,7 +40,7 @@ export default {
   methods: {
     updateThreshold() {
       this.$store.commit('OPTIONS_IMAGE_PCA_CHANGE_THRESHOLD', this.threshold);
-      this.$store.dispatch('fetchPcaImageData');
+      this.$store.dispatch('fetchDimRedImage');
     },
   },
   mounted() {

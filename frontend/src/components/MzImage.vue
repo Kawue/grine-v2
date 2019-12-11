@@ -29,6 +29,7 @@ import lasso from '../services/Lasso';
 import { mapGetters } from 'vuex';
 import store from '@/store';
 import { ScaleOut } from 'vue-loading-spinner';
+import * as imageIndex from '../constants';
 
 export default {
   name: 'MzImage',
@@ -64,7 +65,9 @@ export default {
       this.drawMzImage();
     },
     imageValues() {
-      if (!this.enableLasso) {
+      if (this.imageDataIndex === imageIndex.DIM_RED) {
+        this.$store.dispatch('fetchDimRedImage');
+      } else if (!this.enableLasso && this.imageDataIndex !== imageIndex.DIM_RED) {
         this.$store.dispatch('fetchImageData', this.imageDataIndex);
       }
     },
@@ -151,7 +154,7 @@ export default {
     },
     imageClick() {
       if (this.isAbleToCopyDataIntoSelectionImage()) {
-        store.dispatch('imageCopyIntoSelectionImage', this.imageDataIndex);
+        store.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', this.imageDataIndex);
       }
     },
     widgetUniqueId() {
@@ -227,6 +230,12 @@ export default {
         image.onload = () => {
           const context = this.canvas.node().getContext('2d');
           context.save();
+          if (this.imageDataIndex === imageIndex.DIM_RED) {
+            context.fillRect(0, 0, this.width, this.height);
+          } else {
+            context.clearRect(0, 0, this.width, this.height);
+          }
+          context.imageSmoothingEnabled = false;
           context.scale(this.scaler, this.scaler);
           context.drawImage(image, 0, 0);
           context.restore();

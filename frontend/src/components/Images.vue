@@ -42,18 +42,6 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-4">
-                <span class="font12px">DR:</span>
-              </div>
-              <div class="col-md-8 font12px">
-                <OptionsImagePca></OptionsImagePca>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
       <div class="row">
         <div class="col-md-12" style="margin-top: 25px; margin-bottom: 25px">
@@ -109,8 +97,7 @@ import { mapGetters } from 'vuex';
 import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
-import OptionsImagePca from './OptionsImagePca';
-import * as constants from '../store';
+import * as imageIndex from '../constants';
 
 export default {
   extends: SidebarWidget,
@@ -120,44 +107,29 @@ export default {
     OptionsImageMergeMethod,
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
-    OptionsImagePca,
   },
   methods: {
     deleteLassoImage() {
-      this.$store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_LASSO);
+      this.$store.commit('CLEAR_IMAGE', imageIndex.LASSO);
       this.$store.commit('RESET_SELECTION');
     },
     deleteDrImage() {
-      this.$store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_PCA);
+      this.$store.commit('CLEAR_IMAGE', imageIndex.DIM_RED);
     },
   },
   mounted: function() {
     this.$store.subscribe(mutation => {
       switch (mutation.type) {
         case 'OPTIONS_IMAGE_CHANGE_MERGE_METHOD':
-          this.$store.dispatch(
-            'fetchImageData',
-            constants.IMAGE_INDEX_COMMUNITY
-          );
-          this.$store.dispatch(
-            'fetchImageData',
-            constants.IMAGE_INDEX_AGGREGATED
-          );
+          this.$store.dispatch('fetchImageData', imageIndex.COMMUNITY);
+          this.$store.dispatch('fetchImageData', imageIndex.AGGREGATED);
+          this.$store.dispatch('fetchDimRedImage');
           break;
         case 'OPTIONS_IMAGE_CHANGE_COLOR_SCALE':
-          this.$store.dispatch(
-            'fetchImageData',
-            constants.IMAGE_INDEX_COMMUNITY
-          );
-          this.$store.dispatch(
-            'fetchImageData',
-            constants.IMAGE_INDEX_SELECTED_MZ
-          );
-          this.$store.dispatch(
-            'fetchImageData',
-            constants.IMAGE_INDEX_AGGREGATED
-          );
-          this.$store.dispatch('fetchImageData', constants.IMAGE_INDEX_LASSO);
+          this.$store.dispatch('fetchImageData', imageIndex.COMMUNITY);
+          this.$store.dispatch('fetchImageData', imageIndex.SELECTED_MZ);
+          this.$store.dispatch('fetchImageData', imageIndex.AGGREGATED);
+          this.$store.dispatch('fetchImageData', imageIndex.LASSO);
           break;
       }
     });

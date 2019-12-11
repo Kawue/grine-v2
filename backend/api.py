@@ -21,16 +21,15 @@ if len(argv[3:]) == 1:
         for f in listdir(argv[3]):
             if f.split(".")[1] == "h5":
                 dataset_name = f.split(".")[0]
-                datasets[dataset_name] = MzDataSet(pd.read_hdf(f).droplevel('dataset').sort_index(), dataset_name)
+                datasets[dataset_name] = MzDataSet(pd.read_hdf(f).droplevel('dataset'), dataset_name)
     else:
         dataset_name = argv[3].split(".")[0]
-        datasets[dataset_name] = MzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset').sort_index(), dataset_name)
+        datasets[dataset_name] = MzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset'), dataset_name)
 else:
     for path in argv[3:]:
         dataset_name = path.split(".")[0]
-        datasets[dataset_name] = MzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset').sort_index(), dataset_name)
+        datasets[dataset_name] = MzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset'), dataset_name)
 
-pca_dframe = pd.read_hdf('datasets/' + argv[2])
 dim_red_dataset = DimRedDataSet(pd.read_hdf('datasets/' + argv[2]))
 with open('json/' + argv[1], 'r') as file:
     firstDataset = json.load(file)['graphs']['graph0']
@@ -281,6 +280,7 @@ def change_graph():
 def dataset_image_dimension(dataset_name):
     return json.dumps({'height': datasets[dataset_name].getCube().shape[0], 'width': datasets[dataset_name].getCube().shape[1]})
 
+
 # gets a list of visible nodes from the frontend
 # get a list of selected points
 # returns which nodes are similar
@@ -378,27 +378,56 @@ def datasets_all_datasets_all_imagedata_action(colorscale):
     return json.dumps(image_data_all_datasets(colorscale))
 
 
-# get mz image data for dataset for all mz values
-@app.route('/datasets/<dataset_name>/umapimage', methods=['GET'])
-def datasets_imagedata_umap_image_data_action(dataset_name):
+@app.route('/datasets/<dataset_name>/umapimage', methods=['POST'])
+def datasets_imagedata_umap_image_overlay(dataset_name):
     if dataset_name not in dataset_names():
         return abort(400)
-
     try:
-        alpha = float(request.args.get('alpha')) / 100.0
-    except ValueError:
+        post_data = request.get_data()
+        post_data_json = json.loads(post_data.decode('utf-8'))
+        try:
+            method = post_data_json['method']
+            mz_values = [float(i) for i in post_data_json['mzValues']]
+            if len(mz_values) == 0:
+                return abort(400)
+        except KeyError:
+            method = None
+            mz_values = None
+        try:
+            alpha = float(post_data_json['alpha'])/100
+        except KeyError:
+            alpha = None
+        except ValueError:
+            abort(400)
+    except:
         return abort(400)
-    except TypeError:
-        alpha = None
 
+
+    methods = {
+        'mean': np.mean,
+        'median': np.median,
+        'min': np.min,
+        'max': np.max,
+    }
     img_io = BytesIO()
-    Image.fromarray(
-        dim_red_dataset.getAbsoluteImage() if alpha is None else dim_red_dataset.getRelativeImage(alpha),
-        mode='RGB'
-    ).save(img_io, 'PNG')
+    m=''
+    if method is None:
+        m='normal'
+        Image.fromarray(
+                dim_red_dataset.getImage(),
+                mode='RGBA'
+         ).save(img_io, 'PNG')
+    else:
+        m = 'relative' if alpha is None else 'absolute'
+        intensity = datasets[dataset_name].getGreyImage(mz_values, method=methods[method])
+        Image.fromarray(
+            dim_red_dataset.getRelativeImage(intensity) if alpha is None else dim_red_dataset.getAbsoluteImage(intensity, alpha),
+            mode='RGBA'
+        ).save(img_io, 'PNG')
     img_io.seek(0)
     response = make_response('data:image/png;base64,' + base64.b64encode(img_io.getvalue()).decode('utf-8'), 200)
     response.mimetype = "text/plain"
+    response.headers['X-Mode'] = m
     return response
 
 

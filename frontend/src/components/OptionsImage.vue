@@ -40,6 +40,18 @@
         </div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-4">
+            <span class="font12px">DR:</span>
+          </div>
+          <div class="col-md-8 font12px">
+            <OptionsImagePca></OptionsImagePca>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -48,6 +60,7 @@ import OptionsImageMergeMethod from './OptionsImageMergeMethod';
 import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
 import OptionsImageColorScale from './OptionsImageColorScale';
+import OptionsImagePca from './OptionsImagePca';
 
 export default {
   name: 'OptionsImage',
@@ -56,6 +69,7 @@ export default {
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
     OptionsImageColorScale,
+    OptionsImagePca,
   },
 };
 </script>

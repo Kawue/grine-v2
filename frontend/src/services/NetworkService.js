@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import * as d3lasso from 'd3-lasso';
 import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import * as _ from 'lodash';
-import * as constants from '../store';
+import * as imageIndex from '../constants';
 import store from '@/store';
 
 // data structure for a quadratic and symmetric matrix
@@ -2524,7 +2524,7 @@ class NetworkService {
       }
       if (n.mzs.length > 1) {
         // Clear the mz Image if a community node is clicked
-        store.commit('CLEAR_IMAGE', constants.IMAGE_INDEX_SELECTED_MZ);
+        store.commit('CLEAR_IMAGE', imageIndex.SELECTED_MZ);
       }
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {

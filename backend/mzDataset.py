@@ -49,7 +49,7 @@ class MzDataSet:
     def getCube(self):
         return self.__cube
 
-    def getGrayImage(self, mzValues, method=np.mean):
+    def getGreyImage(self, mzValues, method=np.mean):
         intensity = method(self.__cube[:,:,self.__mapping.getMultipleInverse(mzValues)], 2)
         mask = (~np.isnan(intensity))
         intensity[mask] = np.interp(intensity[mask], (np.nanmin(intensity), np.nanmax(intensity)), (0, 1))
@@ -58,20 +58,7 @@ class MzDataSet:
     def getColorImage(self, mzValues, method=np.mean, cmap='viridis', bytes=True):
         colorMap = cm.get_cmap(cmap)
         colorMap.set_bad(color='white')
-        return colorMap(np.ma.masked_invalid(self.getGrayImage(mzValues, method)), bytes=bytes)
-
-    @staticmethod
-    def generateImageObject(image):
-        obj_list = []
-        for x in range(image.shape[0]):
-            for y in range(image.shape[1]):
-                if image[x,y,:].sum() < 1020:
-                    obj_list.append({
-                        'x': x,
-                        'y': y,
-                        'color': list(image[x,y,:])
-                    })
-        return obj_list
+        return colorMap(np.ma.masked_invalid(self.getGreyImage(mzValues, method)), bytes=bytes)
 
 
 class DimRedDataSet:
@@ -86,20 +73,35 @@ class DimRedDataSet:
             img[(gy, gx)] = dframe[mz]
             mzimgs.append(img)
 
-        self.__cube = np.moveaxis(np.dstack(np.array(mzimgs)[None, :]), 0, -1)[:, :, 3:6]
+        self.__cube = np.moveaxis(np.dstack(np.array(mzimgs)[None, :]), 0, -1)
         localMask = (~np.isnan(self.__cube))
         self.__cube[localMask] = np.interp(
             self.__cube[localMask],
             (np.nanmin(self.__cube), np.nanmax(self.__cube)),
             (0, 254)
         )
+        self.__cube = np.dstack([np.nan_to_num(self.__cube, False, nan=0),
+                                 np.full((self.__cube.shape[0], self.__cube.shape[1]), 254)]).astype(np.uint8)
 
-    def getAbsoluteImage(self):
-        return np.nan_to_num(self.__cube, nan=254).astype(np.uint8)
+    def getImage(self):
+        return self.__cube
 
-    def getRelativeImage(self, alpha):
-        localCube = np.nan_to_num(self.__cube, nan=0)
-        localMask = (localCube >= alpha*254)
-        localCube[localMask] = 254
-        localCube[~localMask] = 0
-        return localCube.astype(np.uint8)
+    def getRelativeImage(self, intensity):
+        localMask = (~np.isnan(intensity))
+        intensity[localMask] = np.interp(
+            intensity[localMask],
+            (np.nanmin(intensity), np.nanmax(intensity)),
+            (0, 254)
+        )
+        localCube = np.copy(self.__cube)
+        localCube[:, :, 3] = np.nan_to_num(intensity, False, nan=0).astype(np.uint8)
+        return localCube
+
+    def getAbsoluteImage(self, intensity, alpha):
+        localCube = np.copy(self.__cube)
+        np.nan_to_num(intensity, nan=0)
+        localMask = (intensity >= alpha)
+        intensity[localMask] = 254
+        intensity[~localMask] = 0
+        localCube[:, :, 3] = intensity.astype(np.uint8)
+        return localCube
