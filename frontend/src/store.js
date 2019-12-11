@@ -1087,7 +1087,7 @@ export default new Vuex.Store({
         context.state.options.data.graphChoices[
           context.state.options.data.graph
         ];
-      let url = `${API_URL}/datasets/${datasetName}/umapimage`;
+      let url = `${API_URL}/datasets/${datasetName}/dimreduceimage`;
       const mzValues =
         context.state.images.imageData[imageIndex.LASSO].mzValues;
       const postData = {};

@@ -51,10 +51,7 @@ fabric.properties
 # .idea/misc.xml
 # *.ipr
 
-backend/datasets/MK_202_3.h5
-backend/datasets/dimreduce_kidneyOrbi.h5
-backend/json/eigenvector_orbi_kidney.json
-backend/json/louvain_orbi_kidney.json
-backend/datasets/similarity-matrix-MK_202_3.npy
+backend/data/*/*MK_202_3*
+backend/data/*/vibrissae_163_6*
 backend/__pycache__
 frontend/package-lock.json

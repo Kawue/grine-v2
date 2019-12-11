@@ -1,4 +1,3 @@
-from sys import argv
 import pandas as pd
 import numpy as np
 import json
@@ -9,34 +8,40 @@ from flask import Flask, abort, request, make_response
 from flask_cors import CORS
 from PIL import Image
 from io import BytesIO
-from os import listdir
-from os.path import isdir
-import matplotlib.pyplot as plt
+from argparse import ArgumentParser
 
+parser = ArgumentParser()
+parser.add_argument('-j', '--json', dest='json_name', required=True, nargs='?', help='name of the json file', metavar='filename', type=str)
+parser.add_argument('-m', '--method', dest='dimred_method', type=str, required=True, nargs='?', choices=['pca', 'nmf', 'lda', 'tsne', 'umap', 'ica', 'kpca', 'lsa', 'lle', 'mds', 'isomap', 'spectralembedding'], help='method for dimensionality reduction.')
+args = parser.parse_args()
+# Constants for folder structure
+path_to_data = 'data/'
+path_to_json = 'json/'
+path_to_matrix = 'matrix/'
+path_to_dataset = 'dataset/'
+path_to_dimreduce = 'dimreduce/'
+matrix_blueprint = 'similarity-matrix-{}.npy'
+dimreduce_blueprint = 'dimreduce-{}-{}.h5'
+dataset_blueprint = '{}.h5'
+
+# dict to handle multiple datasets
 datasets = {}
-path_to_dataset = 'datasets/'
 
-if len(argv[3:]) == 1:
-    if isdir(argv[3]):
-        for f in listdir(argv[3]):
-            if f.split(".")[1] == "h5":
-                dataset_name = f.split(".")[0]
-                datasets[dataset_name] = MzDataSet(pd.read_hdf(f).droplevel('dataset'), dataset_name)
-    else:
-        dataset_name = argv[3].split(".")[0]
-        datasets[dataset_name] = MzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset'), dataset_name)
-else:
-    for path in argv[3:]:
-        dataset_name = path.split(".")[0]
-        datasets[dataset_name] = MzDataSet(pd.read_hdf(path_to_dataset + argv[3]).droplevel('dataset'), dataset_name)
 
-dim_red_dataset = DimRedDataSet(pd.read_hdf('datasets/' + argv[2]))
-with open('json/' + argv[1], 'r') as file:
-    firstDataset = json.load(file)['graphs']['graph0']
-    graph_func.graph_initialisation(np.load('datasets/similarity-matrix-{}.npy'.format(firstDataset['dataset'])), firstDataset['threshold'])
+with open(path_to_data + path_to_json + args.json_name, 'r') as file:
+    json_content = json.load(file)['graphs']
+    for graphKey in json_content.keys():
+        datasets[json_content[graphKey]['dataset']] = ''
+    firstDataset = json_content['graph0']
+    graph_func.graph_initialisation(np.load((path_to_data + path_to_matrix + matrix_blueprint).format(firstDataset['dataset'])), firstDataset['threshold'])
+    del json_content
+    del firstDataset
 
-del dataset_name
-
+for dataset_name in datasets.keys():
+    datasets[dataset_name] = {
+        'dimreduce': DimRedDataSet(pd.read_hdf((path_to_data + path_to_dimreduce + dimreduce_blueprint).format(dataset_name, args.dimred_method)).droplevel('dataset')),
+        'dataset': MzDataSet(pd.read_hdf((path_to_data + path_to_dataset + dataset_blueprint).format(dataset_name)).droplevel('dataset'))
+    }
 
 # returns list of allowed merge methods for mz intensities
 def merge_methods():
@@ -50,128 +55,12 @@ def dataset_names():
 
 # returns list of all mz_values
 def mz_values(ds_name):
-    return datasets[ds_name].getMzValues()
-
-
-# provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
-# returns x, y and normed intensities
-def image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method):
-    single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name]
-    pos_x = np.array(single_dframe.index.get_level_values("grid_x"))
-    pos_y = np.array(single_dframe.index.get_level_values("grid_y"))
-
-    # holds the intensities of all mz_values in an array
-    intensity = np.array(single_dframe[mz_values])
-
-    # merge the intensities into a single one with specified method and on specified axis
-    merge_method_dynamic_call = getattr(np, merge_method)
-    intensity = merge_method_dynamic_call(intensity, 1)
-
-    intensity = np.interp(intensity, (intensity.min(), intensity.max()), (0, 1))
-
-    return [pos_x, pos_y, intensity]
-
-
-# provides data to render image for passed dataset, multiple mz_values and merge_method (min, max, median)
-# returns data ready to pass through api
-def image_data_for_dataset_and_mzs(ds_name, mz_values, merge_method, colorscale):
-    raw_data = image_data_for_dataset_and_mzs_raw_data(ds_name, mz_values, merge_method)
-
-    pos_x = raw_data[0].astype(int)
-    pos_y = raw_data[1].astype(int)
-    pos_x_max = pos_x.max() + 1
-    pos_y_max = pos_y.max() + 1
-
-    intensity = np.zeros((pos_y_max, pos_x_max, 4))
-    colormap = plt.cm.ScalarMappable(plt.Normalize(), cmap=plt.cm.get_cmap(colorscale))
-    colormap.set_clim(np.percentile(raw_data[2], (0,100)))
-    intensity[(pos_y, pos_x)] = colormap.to_rgba(np.array(raw_data[2]), bytes=True)
-
-    idx = np.indices((pos_y_max, pos_x_max))
-    pos = np.dstack((idx[0], idx[1]))
-    pos_x = pos[:,:,1].flatten()
-    pos_y = pos[:,:,0].flatten()
-
-    intensity = list(intensity.flatten())
-    intensity = [intensity[i:i+4] for i in range(0, len(intensity), 4)]
-    print('return')
-
-    return [
-        {'x': int(x), 'y': int(y), 'color': c}
-        for x, y, c in zip(pos_x, pos_y, intensity)
-    ]
-
-
-# does binarization of the selected dataset and a node dataset, keeps only points > min_intensity
-# checks for overlap (amount datapoints with 1 in multiplied dataset) higher min_overlap
-def selection_match(dframe_selected, dframe_node, min_intensity, min_overlap, merge_method):
-    # merge all columns (mzs) by merge_method into one column
-    #print("START SELECTION")
-    merge_method_dynamic_call = getattr(dframe_selected, merge_method)
-    dframe_selected = merge_method_dynamic_call(axis=1)
-
-    # get the maximum for each column and multiply by the min_intensity
-    t = np.max(dframe_selected) * min_intensity
-    dframe_selected = (dframe_selected < t).astype('float64')  # binarization
-
-    # merge all columns (mzs) by merge_method into one column
-    merge_method_dynamic_call = getattr(dframe_node, merge_method)
-    dframe_node = merge_method_dynamic_call(axis=1)
-
-    # get the maximum for each column and multiply by the min_intensity
-    t = np.max(dframe_node) * min_intensity
-    dframe_node = (dframe_node < t).astype('float64')  # binarization
-
-    # find amount of common entries in selected and node dataset
-    dframe_multiplied = dframe_selected * dframe_node
-    overlap = dframe_multiplied.sum() / len(dframe_selected)
-    #print("END SELECTION")
-    return overlap >= min_overlap
-
-
-# returns the names of nodes which are matching based on provided min_intensity and max_overlap
-# from frontend
-def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, merge_method, min_intensity, min_overlap):
-    print("START CHECK MATCH")
-    single_dframe = merged_dframe.loc[merged_dframe.index.get_level_values("dataset") == ds_name].droplevel('dataset').sort_index()
-
-    # extract keys/points (x, y) from selected_points
-    keys_selected = []
-    for i in selected_points:
-        keys_selected.append((i['x'], i['y']))
-    keys = [(a, b, ds_name) for a, b, in keys_selected]
-    dframe_selected = single_dframe.loc[keys]
-    dframe_selected = dframe_selected[selected_mzs]
-
-    node_names = []
-    for node in node_data:
-        dframe_node = single_dframe[node['mzs']]
-        match = selection_match(dframe_selected, dframe_node, min_intensity, min_overlap, merge_method)
-        if match:
-            node_names.append(node['name'])
-    print("END CHECK MATCH")
-    return node_names
-
-
-# provides data to render all mz images for passed dataset
-def image_data_for_dataset(ds_name, colorscale):
-    object = {}
-    for key, mz in mz_values(ds_name).items():
-        object[mz] = image_data_for_dataset_and_mzs(ds_name, [mz], None, colorscale)
-    return object
-
-
-# provides all image data of all datasets and all mzvalues
-def image_data_all_datasets(colorscale):
-    object = {}
-    for ds in dataset_names():
-        object.update({ds: image_data_for_dataset(ds, colorscale)})
-    return object
+    return datasets[ds_name]['dataset'].getMzValues()
 
 
 # generates json file for graph
 def graph_data_all_datasets():
-    with open('json/' + argv[1], 'r') as file:
+    with open(path_to_data + path_to_json + args.json_name, 'r') as file:
         try:
             data = json.load(file)
         except:
@@ -272,13 +161,14 @@ def change_graph():
     threshold = data['threshold']
     if dataset_name not in dataset_names():
         return abort(400)
-    graph_func.graph_initialisation(np.load('datasets/similarity-matrix-' + dataset_name + '.npy'), threshold)
+    graph_func.graph_initialisation(np.load((path_to_data + path_to_matrix + matrix_blueprint).format(dataset_name)), threshold)
     return json.dumps('OK')
 
 
 @app.route('/datasets/<dataset_name>/imagedimensions', methods=['GET'])
 def dataset_image_dimension(dataset_name):
-    return json.dumps({'height': datasets[dataset_name].getCube().shape[0], 'width': datasets[dataset_name].getCube().shape[1]})
+    shape = datasets[dataset_name]['dataset'].getCube().shape
+    return json.dumps({'height': shape[0], 'width': shape[1]})
 
 
 # gets a list of visible nodes from the frontend
@@ -302,17 +192,9 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name, method):
         post_data_min_overlap = float(post_data_json['minOverlap']) / 100
     except:
         return abort(400)
-    print("START OUTER ROUTINE")
-    ret = check_nodes_for_match(
-        dataset_name,
-        post_data_visible_node_data,
-        post_data_selected_mzs,
-        post_data_selected_points,
-        method,
-        post_data_min_intensity,
-        post_data_min_overlap
-    )
-    print("END OUTER ROUTINE")
+    print('START OUTER ROUTINE')
+
+    print('END OUTER ROUTINE')
     return json.dumps(ret)
 
 
@@ -351,7 +233,7 @@ def datasets_imagedata_multiple_mz_action(dataset_name):
     }
     img_io = BytesIO()
     Image.fromarray(
-        datasets[dataset_name].getColorImage(
+        datasets[dataset_name]['dataset'].getColorImage(
             post_data_mz_values,
             method=methods[method],
             cmap=colorscales[colorscale]),
@@ -359,27 +241,12 @@ def datasets_imagedata_multiple_mz_action(dataset_name):
     ).save(img_io, 'PNG')
     img_io.seek(0)
     response = make_response('data:image/png;base64,' + base64.b64encode(img_io.getvalue()).decode('utf-8'), 200)
-    response.mimetype = "text/plain"
+    response.mimetype = 'text/plain'
     return response
 
 
-# get mz image data for dataset for all mz values
-@app.route('/datasets/<dataset_name>/imagedata/colorscale/<colorscale>')
-def datasets_imagedata_all_mz_action(dataset_name, colorscale):
-    if dataset_name not in dataset_names():
-        return abort(400)
-
-    return json.dumps(image_data_for_dataset(dataset_name, colorscale))
-
-
-# get all image data for all datasets and all mz values
-@app.route('/datasets/imagedata/colorscale/<colorscale>')
-def datasets_all_datasets_all_imagedata_action(colorscale):
-    return json.dumps(image_data_all_datasets(colorscale))
-
-
-@app.route('/datasets/<dataset_name>/umapimage', methods=['POST'])
-def datasets_imagedata_umap_image_overlay(dataset_name):
+@app.route('/datasets/<dataset_name>/dimreduceimage', methods=['POST'])
+def datasets_imagedata_dimreduce_image(dataset_name):
     if dataset_name not in dataset_names():
         return abort(400)
     try:
@@ -410,24 +277,20 @@ def datasets_imagedata_umap_image_overlay(dataset_name):
         'max': np.max,
     }
     img_io = BytesIO()
-    m=''
     if method is None:
-        m='normal'
         Image.fromarray(
-                dim_red_dataset.getImage(),
+                datasets[dataset_name]['dimreduce'].getImage(),
                 mode='RGBA'
          ).save(img_io, 'PNG')
     else:
-        m = 'relative' if alpha is None else 'absolute'
-        intensity = datasets[dataset_name].getGreyImage(mz_values, method=methods[method])
+        intensity = datasets[dataset_name]['dataset'].getGreyImage(mz_values, method=methods[method])
         Image.fromarray(
-            dim_red_dataset.getRelativeImage(intensity) if alpha is None else dim_red_dataset.getAbsoluteImage(intensity, alpha),
+            datasets[dataset_name]['dimreduce'].getRelativeImage(intensity) if alpha is None else datasets[dataset_name]['dimreduce'].getAbsoluteImage(intensity, alpha),
             mode='RGBA'
         ).save(img_io, 'PNG')
     img_io.seek(0)
     response = make_response('data:image/png;base64,' + base64.b64encode(img_io.getvalue()).decode('utf-8'), 200)
-    response.mimetype = "text/plain"
-    response.headers['X-Mode'] = m
+    response.mimetype = 'text/plain'
     return response
 
 

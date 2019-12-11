@@ -13,10 +13,8 @@ services:
         volumes:
             # for windows users
             # -
-            # -
             # for unix users
-            - ./backend/datasets:/app/datasets
-            - ./backend/json:/app/json
+            - ./backend/data:/app/data
 
     client:
         build: ./frontend

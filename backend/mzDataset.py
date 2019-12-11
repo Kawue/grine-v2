@@ -27,9 +27,8 @@ class MzMapping:
 
 
 class MzDataSet:
-    def __init__(self, dframe, name):
+    def __init__(self, dframe):
         self.__mapping = MzMapping(list(dframe.columns))
-        self.name = name
         gx = dframe.index.get_level_values("grid_x").astype('int')
         gy = dframe.index.get_level_values("grid_y").astype('int')
 
