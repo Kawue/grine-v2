@@ -367,7 +367,11 @@ export default new Vuex.Store({
       }
     },
     CLEAR_IMAGES: state => {
-      for (const index of [imageIndex.COMMUNITY, imageIndex.SELECTED_MZ, imageIndex.AGGREGATED]){
+      for (const index of [
+        imageIndex.COMMUNITY,
+        imageIndex.SELECTED_MZ,
+        imageIndex.AGGREGATED,
+      ]) {
         state.images.imageData[index].mzValues = [];
         state.images.imageData[index].base64Image = null;
       }
@@ -773,6 +777,7 @@ export default new Vuex.Store({
       state.network.clusterChange.merge.assignmentPossible = false;
       state.network.clusterChange.split.newGroup = [];
       state.network.clusterChange.split.oldGroup = [];
+      state.images.imageData[imageIndex.LASSO].selectedPoints = [];
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -891,6 +896,7 @@ export default new Vuex.Store({
       context.state.network.clusterChange.merge.mergePossible = false;
       context.state.network.clusterChange.merge.assignmentPossible = false;
       context.state.network.nodeTrix.nodeTrixActive = false;
+      this.dispatch('fetchImageDimensions');
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
       context.commit('MZLIST_SORT_MZ');
@@ -955,7 +961,7 @@ export default new Vuex.Store({
       let selectedPoints = payload[1];
       context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
       context.dispatch('fetchLassoSimilar', index);
-      
+
       /*let imageData = imageService.markSelectedPoints(
         context.state.images.imageData[index],
         selectedPoints
@@ -979,11 +985,7 @@ export default new Vuex.Store({
           context.state.options.data.graphChoices[
             context.state.options.data.graph
           ];
-        const url =
-          API_URL +
-          '/datasets/' +
-          datasetName +
-          '/imagedata/match';
+        const url = API_URL + '/datasets/' + datasetName + '/imagedata/match';
         const visibleNodes = [];
         context.state.network.nodes.forEach(function(node) {
           visibleNodes.push({ name: node.name, mzs: node.mzs });

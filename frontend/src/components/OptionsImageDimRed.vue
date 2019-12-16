@@ -2,13 +2,9 @@
   <div class="flex-container">
     <div class="row">
       <div class="col">
-        <b-form-checkbox v-model="show" class="clickable">show</b-form-checkbox>
-      </div>
-      <div class="col">
         <b-form-checkbox
           v-bind:class="{ clickable: !disableRelativeCheckbox }"
           v-model="relative"
-          v-if="show"
           v-bind:disabled="disableRelativeCheckbox"
           >relative</b-form-checkbox
         >
@@ -42,18 +38,6 @@ export default {
         this.$store.dispatch('fetchDimRedImage');
       },
     },
-    show: {
-      get() {
-        return this.state.dimred.show;
-      },
-      set(value) {
-        this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW', value);
-        if (this.firstTime) {
-          this.firstTime = false;
-          this.$store.dispatch('fetchDimRedImage');
-        }
-      },
-    },
     disableRelativeCheckbox: {
       get() {
         return (
@@ -62,11 +46,6 @@ export default {
         );
       },
     },
-  },
-  data() {
-    return {
-      firstTime: true,
-    };
   },
 };
 </script>

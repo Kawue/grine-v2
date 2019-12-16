@@ -3,8 +3,9 @@
     v-bind:side="side"
     v-bind:initial-expanded="initialExpanded"
     title="Images"
+    v-on:change-expand="logEvent($event)"
   >
-    <div slot="content" style="margin-top: 30px">
+    <div slot="content" style="margin: 30px 10px 25px 10px">
       <div class="image-options text-left">
         <div class="row">
           <div class="col-md-12">
@@ -43,46 +44,192 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12" style="margin-top: 25px; margin-bottom: 25px">
-          Community:
-          <mz-image :imageDataIndex="0"></mz-image>
+      <!-- Community Image -->
+      <div class="vertical-flex-container">
+        <div class="horizontal-flex-container">
+          <div>
+            <span
+              class="text-primary clickable"
+              v-on:click="showCommunity = !showCommunity"
+              v-b-tooltip.hover.top="'Show Community Image'"
+            >
+              <v-icon name="eye" scale="1.5" v-if="showCommunity"></v-icon>
+              <v-icon
+                name="eye-slash"
+                scale="1.5"
+                v-else
+                class="inactive"
+              ></v-icon>
+            </span>
+            <v-icon
+              v-bind:class="{ invisible: !showCommunity }"
+              name="expand"
+              scale="1.5"
+              class="custom-col clickable margin-left20"
+              v-b-tooltip.hover.top="'Expand'"
+            ></v-icon>
+          </div>
+          <p>Community</p>
+          <div style="width: 10%"></div>
+        </div>
+        <div style="margin: auto">
+          <mz-image
+            :imageDataIndex="0"
+            v-bind:hidden="!showCommunity"
+          ></mz-image>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12" style="margin-bottom: 25px">
-          MZ:
-          <mz-image :imageDataIndex="1"></mz-image>
+      <!-- Mz Image -->
+      <div class="vertical-flex-container">
+        <div class="horizontal-flex-container">
+          <div>
+            <span
+              class="text-primary clickable"
+              v-on:click="showMz = !showMz"
+              v-b-tooltip.hover.top="'Show MZ Image'"
+            >
+              <v-icon name="eye" scale="1.5" v-if="showMz"></v-icon>
+              <v-icon
+                name="eye-slash"
+                scale="1.5"
+                v-else
+                class="inactive"
+              ></v-icon>
+            </span>
+            <v-icon
+              v-bind:class="{ invisible: !showMz }"
+              name="expand"
+              scale="1.5"
+              class="custom-col clickable margin-left20"
+              v-b-tooltip.hover.top="'Expand'"
+            ></v-icon>
+          </div>
+          <p>MZ</p>
+          <div style="width: 10%"></div>
+        </div>
+        <div style="margin: auto">
+          <mz-image :imageDataIndex="1" v-bind:hidden="!showMz"></mz-image>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12" style="margin-bottom: 25px">
-          Aggregate:
-          <mz-image :imageDataIndex="2"></mz-image>
+      <!-- Aggregated Image -->
+      <div class="vertical-flex-container">
+        <div class="horizontal-flex-container">
+          <div>
+            <span
+              class="text-primary clickable"
+              v-on:click="showAggregated = !showAggregated"
+              v-b-tooltip.hover.top="'Show Aggregated Image'"
+            >
+              <v-icon name="eye" scale="1.5" v-if="showAggregated"></v-icon>
+              <v-icon
+                name="eye-slash"
+                scale="1.5"
+                v-else
+                class="inactive"
+              ></v-icon>
+            </span>
+            <v-icon
+              v-bind:class="{ invisible: !showAggregated }"
+              name="expand"
+              scale="1.5"
+              class="custom-col clickable margin-left20"
+              v-b-tooltip.hover.top="'Expand'"
+            ></v-icon>
+          </div>
+          <p>Aggregated</p>
+          <div style="width: 10%"></div>
+        </div>
+        <div style="margin: auto">
+          <mz-image
+            :imageDataIndex="2"
+            v-bind:hidden="!showAggregated"
+          ></mz-image>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12" style="margin-bottom: 25px;">
-          Cache/Lasso:
-          <span v-on:click="deleteLassoImage()" v-if="showLassoTrash">
-            <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
-          </span>
+      <!-- Lasso Image -->
+      <div class="vertical-flex-container">
+        <div class="horizontal-flex-container">
+          <div>
+            <span
+              class="text-primary clickable"
+              v-on:click="showLasso = !showLasso"
+              v-b-tooltip.hover.top="'Show Lasso Image'"
+            >
+              <v-icon name="eye" scale="1.5" v-if="showLasso"></v-icon>
+              <v-icon
+                name="eye-slash"
+                scale="1.5"
+                v-else
+                class="inactive"
+              ></v-icon>
+            </span>
+            <v-icon
+              v-bind:class="{ invisible: !showLasso }"
+              name="expand"
+              scale="1.5"
+              class="custom-col clickable margin-left20"
+              v-b-tooltip.hover.top="'Expand'"
+            ></v-icon>
+          </div>
+          <p>Cache / Lasso</p>
+          <div style="min-width: 10%" v-on:click="deleteLassoImage()">
+            <v-icon
+              name="trash-alt"
+              scale="1.5"
+              v-if="showLassoTrash"
+              class="clickable"
+            ></v-icon>
+          </div>
+        </div>
+        <div style="margin: auto">
           <mz-image
             :imageDataIndex="3"
             v-bind:enable-lasso="true"
             v-bind:enableClickCopyToLassoImage="false"
+            v-bind:hidden="!showLasso"
           ></mz-image>
         </div>
       </div>
-      <div class="row" v-bind:hidden="!options.dimred.show">
-        <div class="col-md-12" style="margin-bottom: 25px;">
-          DR:
-          <span v-on:click="deleteDrImage()" v-if="showDimredTrash">
-            <v-icon name="trash-alt" style="cursor: pointer"></v-icon>
-          </span>
+      <!-- Dim Red Image -->
+      <div class="vertical-flex-container">
+        <div class="horizontal-flex-container">
+          <div>
+            <span
+              class="text-primary clickable"
+              v-on:click="showDimRed = !showDimRed"
+              v-b-tooltip.hover.top="'Show Dimension Reduction Image'"
+            >
+              <v-icon name="eye" scale="1.5" v-if="showDimRed"></v-icon>
+              <v-icon
+                name="eye-slash"
+                scale="1.5"
+                v-else
+                class="inactive"
+              ></v-icon>
+            </span>
+            <v-icon
+              v-bind:class="{ invisible: !showDimRed }"
+              name="expand"
+              scale="1.5"
+              class="custom-col clickable margin-left20"
+              v-b-tooltip.hover.top="'Expand'"
+            ></v-icon>
+          </div>
+          <p>DR</p>
+          <div style="min-width: 10%" v-on:click="deleteDrImage()">
+            <v-icon
+              name="trash-alt"
+              scale="1.5"
+              v-if="showDimredTrash"
+              class="clickable"
+            ></v-icon>
+          </div>
+        </div>
+        <div style="margin: auto">
           <mz-image
             :imageDataIndex="4"
             v-bind:enableClickCopyToLassoImage="false"
+            v-bind:hidden="!showDimRed"
           ></mz-image>
         </div>
       </div>
@@ -109,10 +256,22 @@ export default {
     OptionsImageMinIntensity,
     OptionsImageMinOverlap,
   },
+  data: function() {
+    return {
+      showCommunity: true,
+      showMz: true,
+      showAggregated: true,
+      showLasso: true,
+      firstTimeDimRed: true,
+    };
+  },
   methods: {
     deleteLassoImage() {
       store.commit('CLEAR_IMAGE', imageIndex.LASSO);
       store.commit('RESET_SELECTION');
+    },
+    logEvent(expanded) {
+      this.$emit('change-expand', expanded);
     },
     deleteDrImage() {
       if (!store.getters.getOptionsImage.dimred.relative) {
@@ -143,6 +302,18 @@ export default {
     ...mapGetters({
       options: 'getOptionsImage',
     }),
+    showDimRed: {
+      get() {
+        return this.options.dimred.show;
+      },
+      set(value) {
+        this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW', value);
+        if (this.firstTimeDimRed) {
+          this.firstTimeDimRed = false;
+          this.$store.dispatch('fetchDimRedImage');
+        }
+      },
+    },
     showDimredTrash: {
       get() {
         return (
@@ -172,7 +343,7 @@ select {
 }
 
 .font12px {
-  font-size: 12px;
+  font-size: 0.9em;
 }
 
 .sidebar-widget {
@@ -183,5 +354,41 @@ select {
   &.expanded {
     width: 300px !important;
   }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.margin-left20 {
+  margin-left: 20px;
+}
+
+.inactive {
+  color: darkgray;
+}
+.invisible {
+  visibility: hidden;
+}
+.vertical-flex-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid darkgrey;
+  padding-bottom: 10px;
+}
+.custom-col {
+  color: hotpink;
+}
+.horizontal-flex-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  align-items: baseline;
+}
+p {
+  font-size: 1.6em;
 }
 </style>

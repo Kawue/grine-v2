@@ -5,7 +5,11 @@
     v-if="height"
     v-on:click="imageClick()"
   >
-    <div class="canvas-root" style="position: relative;">
+    <div
+      class="canvas-root"
+      v-bind:style="{ width: width + 'px', height: height + 'px' }"
+      style="position: relative;"
+    >
       <canvas
         v-bind:width="width"
         v-bind:height="height"
@@ -177,7 +181,7 @@ export default {
           if (d3.polygonContains(lassoPolygon, [i, j])) {
             // TODO: May use ~~(i/this.scale), ~~(j/this.scale)
             //selectedPoints.push([i/this.scaler,j/this.scaler])
-            selectedPoints.push([i,j])
+            selectedPoints.push([i, j]);
           }
         }
       }
@@ -293,31 +297,11 @@ export default {
 
 <style lang="scss" scoped>
 .canvas-root {
-  margin-top: 0;
-  margin-left: 25px;
-  margin-right: 25px;
+  width: 100%;
 
   canvas {
     border: 1px solid lightgrey;
     background: white;
-  }
-
-  .spinner {
-    position: absolute;
-    top: 0;
-    margin: 0 auto;
-    margin-left: -20px;
-  }
-}
-.pulse {
-  animation: pulsating 1s infinite; /* IE 10+, Fx 29+ */
-}
-@keyframes pulsating {
-  0% {
-    border-color: lightgrey;
-  }
-  80% {
-    border-color: darkcyan;
   }
 }
 </style>
