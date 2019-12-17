@@ -1120,9 +1120,6 @@ export default new Vuex.Store({
       context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
     },
     fetchDimRedImage: context => {
-      if (!context.state.options.image.dimred.show) {
-        return;
-      }
       context.commit('SET_LOADING_IMAGE_DATA', true);
       const datasetName =
         context.state.options.data.graphChoices[

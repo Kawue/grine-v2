@@ -12,6 +12,12 @@
   text-align: center;
   color: #2c3e50;
 }
+@media (min-width: 100px) {
+  .modal .modal-huge {
+    max-width: 90% !important;
+    width: 90% !important;
+  }
+}
 #nav {
   padding: 30px;
   a {

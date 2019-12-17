@@ -5,7 +5,7 @@
       v-bind="sliderOptions"
       @change="updateThreshold"
       class="slider"
-      v-bind:disabled="!state.dimred.show || state.dimred.relative"
+      v-bind:disabled="state.dimred.relative"
     ></vue-slider>
     <span class="percentage">{{ threshold }}%</span>
   </div>

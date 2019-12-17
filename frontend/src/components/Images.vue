@@ -301,17 +301,66 @@
       </div>
       <b-modal
         ref="image-modal"
-        size="xl"
-        title="BootstrapVue"
+        size="huge"
         @close="hideModal"
+        @hide="hideModal"
+        hide-footer
       >
-        <template slot="default">
-          <p>Hier kommt canvas von Image {{ modalIndex }}</p>
+        <template v-slot:modal-header="{ close }">
+          <div
+            style="width: 100%; display: flex; flex-direction: row; justify-content: space-between; align-items: center"
+          >
+            <h2>{{ modalTitle }}</h2>
+            <div>
+              <a
+                class="clickable"
+                v-if="showDownloadIcon"
+                :href="blobUrl"
+                :download="'grineV2.png'"
+              >
+                <v-icon name="download" scale="1.5"></v-icon>
+              </a>
+              <span
+                class="clickable"
+                style="margin-left: 30px"
+                @click="close()"
+              >
+                <v-icon name="times"></v-icon>
+              </span>
+            </div>
+          </div>
         </template>
-        <template v-slot:modal-footer="{ close }">
-          <b-button variant="danger" @click="close()">
-            Close
-          </b-button>
+        <template slot="default">
+          <div
+            style="display: flex; flex-direction: row; align-items: center; justify-content: space-around; padding-bottom: 30px;"
+          >
+            <span
+              class="clickable"
+              v-bind:class="{ invisible: !showModalLeft }"
+              @click="modalArrowClick(false)"
+            >
+              <v-icon name="arrow-left" scale="2"></v-icon>
+            </span>
+
+            <div>
+              <mz-image
+                v-if="modalIndex != null"
+                :imageDataIndex="modalIndex"
+                :enableClickCopyToLassoImage="false"
+                :modal-image="true"
+                :modal-height="modalCanvasHeight"
+                :modal-width="modalCanvasWidth"
+                v-on:canvas-blob="handleCanvasBlob($event)"
+              ></mz-image>
+            </div>
+            <span
+              class="clickable"
+              v-bind:class="{ invisible: !showModalRight }"
+              @click="modalArrowClick(true)"
+            >
+              <v-icon name="arrow-right" scale="2"></v-icon>
+            </span>
+          </div>
         </template>
       </b-modal>
     </div>
@@ -347,6 +396,11 @@ export default {
       showHisto: false,
       firstTimeHisto: true,
       modalIndex: null,
+      modalTitle: '',
+      modalCanvasWidth: 0,
+      modalCanvasHeight: 0,
+      showDownloadIcon: false,
+      blobUrl: '#',
       mzIndex: imageIndex.SELECTED_MZ,
       communityIndex: imageIndex.COMMUNITY,
       aggregatedIndex: imageIndex.AGGREGATED,
@@ -356,14 +410,51 @@ export default {
     };
   },
   watch: {
-    modalIndex(newValue) {
+    modalIndex(newValue, oldValue) {
       if (newValue != null) {
-        this.showModal();
+        this.showDownloadIcon =
+          store.getters.getImageData(newValue).base64Image != null;
+        switch (newValue) {
+          case imageIndex.COMMUNITY:
+            this.modalTitle = 'Community Image';
+            break;
+          case imageIndex.SELECTED_MZ:
+            this.modalTitle = 'Mz Image';
+            break;
+          case imageIndex.AGGREGATED:
+            this.modalTitle = 'Aggregated Image';
+            break;
+          case imageIndex.LASSO:
+            this.modalTitle = 'Lasso Image';
+            break;
+          case imageIndex.DIM_RED:
+            this.modalTitle = 'Dimension Reduction Image';
+            break;
+          case imageIndex.HIST:
+            this.modalTitle = 'Histopathology Image';
+            break;
+        }
+        if (oldValue == null) {
+          this.showModal();
+        }
       }
     },
   },
   methods: {
+    modalArrowClick(toRight) {
+      if (toRight) {
+        this.modalIndex++;
+      } else {
+        this.modalIndex--;
+      }
+      if (this.modalIndex === imageIndex.HIST) {
+        this.downloadHisto();
+      } else if (this.modalIndex === imageIndex.DIM_RED) {
+        this.downloadDimRed();
+      }
+    },
     showModal() {
+      this.computeDims();
       this.$refs['image-modal'].show();
     },
     hideModal() {
@@ -371,11 +462,40 @@ export default {
       this.modalIndex = null;
     },
     toggleShowHisto() {
+      this.downloadHisto();
+      this.showHisto = !this.showHisto;
+    },
+    computeDims() {
+      const w =
+        0.8 *
+        Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+      const h =
+        0.75 *
+        Math.max(
+          document.documentElement.clientHeight,
+          window.innerHeight || 0
+        );
+      const iw = store.getters.getImageWidth;
+      const ih = store.getters.getImageHeight;
+      if (ih < iw) {
+        this.modalCanvasHeight = h;
+        this.modalCanvasWidth = Math.round((h * iw) / ih);
+      } else {
+        this.modalCanvasHeight = Math.round((w * ih) / iw);
+        this.modalCanvasWidth = w;
+      }
+    },
+    downloadHisto() {
       if (this.firstTimeHisto) {
         this.firstTimeHisto = false;
         this.$store.dispatch('fetchHistoImage');
       }
-      this.showHisto = !this.showHisto;
+    },
+    downloadDimRed() {
+      if (this.firstTimeDimRed) {
+        this.firstTimeDimRed = false;
+        this.$store.dispatch('fetchDimRedImage');
+      }
     },
     deleteLassoImage() {
       store.commit('CLEAR_IMAGE', imageIndex.LASSO);
@@ -383,6 +503,9 @@ export default {
     },
     logEvent(expanded) {
       this.$emit('change-expand', expanded);
+    },
+    handleCanvasBlob(blob) {
+      this.blobUrl = window.URL.createObjectURL(blob);
     },
     deleteDrImage() {
       if (!store.getters.getOptionsImage.dimred.relative) {
@@ -413,16 +536,19 @@ export default {
     ...mapGetters({
       options: 'getOptionsImage',
     }),
+    showModalRight() {
+      return this.modalIndex < imageIndex.HIST;
+    },
+    showModalLeft() {
+      return this.modalIndex > imageIndex.COMMUNITY;
+    },
     showDimRed: {
       get() {
         return this.options.dimred.show;
       },
       set(value) {
         this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW', value);
-        if (this.firstTimeDimRed) {
-          this.firstTimeDimRed = false;
-          this.$store.dispatch('fetchDimRedImage');
-        }
+        this.downloadDimRed();
       },
     },
     showDimredTrash: {

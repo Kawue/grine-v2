@@ -42,6 +42,18 @@ export default {
       type: Number,
       required: true,
     },
+    modalImage: {
+      type: Boolean,
+      default: false,
+    },
+    modalWidth: {
+      type: Number,
+      default: 1,
+    },
+    modalHeight: {
+      type: Number,
+      default: 1,
+    },
     enableLasso: {
       type: Boolean,
       default: false,
@@ -63,6 +75,9 @@ export default {
     base64Image() {
       this.drawMzImage();
     },
+    imageDataIndex() {
+      this.drawMzImage();
+    },
     imageValues() {
       if (this.imageDataIndex === imageIndex.DIM_RED) {
         this.$store.dispatch('fetchDimRedImage');
@@ -80,10 +95,11 @@ export default {
     const interactionSvg = d3.select(componentId + ' .canvas-root svg');
     this.lassoInstance = lasso();
     if (this.enableLasso) {
-      this.lassoInstance
-        .on('end', this.handleLassoEnd)
-        .on('start', this.handleLassoStart);
+      this.lassoInstance.on('end', this.handleLassoEnd);
       interactionSvg.call(this.lassoInstance);
+    }
+    if (this.modalImage) {
+      this.drawMzImage();
     }
   },
   computed: {
@@ -122,6 +138,9 @@ export default {
       return width;
     },*/
     height: function() {
+      if (this.modalImage) {
+        return this.modalHeight;
+      }
       let height = this.$store.getters.getImageHeight;
       if (height == null) {
         height = 10;
@@ -129,6 +148,9 @@ export default {
       return height;
     },
     width: function() {
+      if (this.modalImage) {
+        return this.modalWidth;
+      }
       let width = this.$store.getters.getImageWidth;
       if (width == null) {
         width = 10;
@@ -144,6 +166,11 @@ export default {
     },
   },
   methods: {
+    emitBlob() {
+      this.canvas.node().toBlob(blob => {
+        this.$emit('canvas-blob', blob);
+      });
+    },
     isMzLassoActive() {
       return store.getters.isMzLassoSelectionActive;
     },
@@ -192,32 +219,6 @@ export default {
         this.imageDataIndex,
         selectedPoints,
       ]);
-
-      /*
-      console.log('lasso start');
-      const selectedPoints = this.points.filter(d => {
-        return d3.polygonContains(lassoPolygon, [
-          d.x * this.scaler,
-          d.y * this.scaler,
-        ]);
-      });
-      this.removeLassoAfterPointsDrawn = false;
-      store.dispatch('imagesSelectPoints', [
-        this.imageDataIndex,
-        selectedPoints,
-      ]);
-      console.log('lasso end');
-      store.commit('NETWORK_FREE_MODE');
-      */
-    },
-    handleLassoStart() {
-      /*
-      this.removeLassoAfterPointsDrawn = false;
-      if (store.getters.isMzLassoSelectionActive) {
-        store.commit('RESET_SELECTION', true);
-      }
-      store.dispatch('imagesSelectPoints', [this.imageDataIndex, []]);
-      */
     },
     drawMzImage() {
       if (this.base64Image != null) {
@@ -242,11 +243,15 @@ export default {
             } else {
               context.clearRect(0, 0, this.width, this.height);
             }
-            context.scale(this.scaler, this.scaler);
+            const scale = this.width / image.width;
+            context.scale(scale, scale);
           }
           context.imageSmoothingEnabled = false;
           context.drawImage(image, 0, 0);
           context.restore();
+          if (this.modalImage) {
+            this.emitBlob();
+          }
         };
 
         image.src = this.base64Image;
@@ -263,39 +268,6 @@ export default {
         context.clearRect(0, 0, this.width, this.height);
       }
     },
-    /*drawMzImage() {
-      let context = this.canvas.node().getContext('2d');
-
-      let detachedContainer = document.createElement('custom');
-      let dataContainer = d3.select(detachedContainer);
-      let dataBinding = dataContainer.selectAll('cusom.pixel').data(this.points);
-
-      dataBinding
-        .enter()
-        .append('custom')
-        .attr('class', 'pixel')
-        .attr('size', 1)
-        .attr('fillStyle', (d) => {return 'rgba('+[...d.color]+')'})
-        .attr('x', (d) => {return d.x})
-        .attr('y', (d) => {return d.y})
-      .merge(dataBinding)
-        .attr('size', 1)
-        .attr('fillStyle', (d) => {return 'rgba('+[...d.color]+')'})
-        .attr('x', (d) => {return d.x})
-        .attr('y', (d) => {return d.y})
-
-
-      let pixels = dataContainer.selectAll('custom.pixel');
-      pixels.each(function() {
-        let pixel = d3.select(this);
-        context.beginPath();
-        context.fillStyle = pixel.attr('fillStyle');
-        context.rect(pixel.attr('x'), pixel.attr('y'), pixel.attr('size'), pixel.attr('size'))
-        context.fill();
-        context.closePath()
-      });
-
-    },*/
   },
 };
 </script>
