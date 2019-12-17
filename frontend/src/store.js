@@ -116,6 +116,23 @@ export default new Vuex.Store({
           },
           lassoFetching: false, // true during api call of lasso matching
         },
+        {
+          // imageIndex.HIST data used to render the histopathologie image
+          mzValues: [],
+          base64Image: null, // points that are displayed as mz image
+          selectedPoints: [], // points that are selected by the lasso
+          max: {
+            // max image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          min: {
+            // min image coors, used to scale/cut image according
+            x: null,
+            y: null,
+          },
+          lassoFetching: false, // true during api call of lasso matching
+        },
       ],
       loadingImageData: false, // api fetch for image data is running
     },
@@ -955,6 +972,29 @@ export default new Vuex.Store({
           });
       }
       context.dispatch('imagesSelectPoints', [index, []]);
+    },
+    fetchHistoImage: context => {
+      if (!context.state.images.imageData[imageIndex.HIST]) {
+        return;
+      }
+      const datasetName =
+        context.state.options.data.graphChoices[
+          context.state.options.data.graph
+        ];
+      // do an api fetch for a combination image of multiple mz values
+      const url = API_URL + '/datasets/' + datasetName + '/hist';
+      axios
+        .get(url)
+        .then(response => {
+          context.commit('SET_IMAGE_DATA_VALUES', [
+            imageIndex.HIST,
+            response.data,
+          ]);
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+        })
+        .catch(function() {
+          context.commit('SET_LOADING_IMAGE_DATA', false);
+        });
     },
     imagesSelectPoints: (context, payload) => {
       let index = payload[0];

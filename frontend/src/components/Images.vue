@@ -61,13 +61,18 @@
                 class="inactive"
               ></v-icon>
             </span>
-            <v-icon
-              v-bind:class="{ invisible: !showCommunity }"
-              name="expand"
-              scale="1.5"
-              class="custom-col clickable margin-left20"
+            <span
               v-b-tooltip.hover.top="'Expand'"
-            ></v-icon>
+              class="margin-left20"
+              @click="modalIndex = communityIndex"
+            >
+              <v-icon
+                v-bind:class="{ invisible: !showCommunity }"
+                name="expand"
+                scale="1.5"
+                class="custom-col clickable"
+              ></v-icon>
+            </span>
           </div>
           <p>Community</p>
           <div style="width: 10%"></div>
@@ -96,13 +101,18 @@
                 class="inactive"
               ></v-icon>
             </span>
-            <v-icon
-              v-bind:class="{ invisible: !showMz }"
-              name="expand"
-              scale="1.5"
-              class="custom-col clickable margin-left20"
+            <span
               v-b-tooltip.hover.top="'Expand'"
-            ></v-icon>
+              class="margin-left20"
+              @click="modalIndex = mzIndex"
+            >
+              <v-icon
+                v-bind:class="{ invisible: !showMz }"
+                name="expand"
+                scale="1.5"
+                class="custom-col clickable"
+              ></v-icon>
+            </span>
           </div>
           <p>MZ</p>
           <div style="width: 10%"></div>
@@ -128,13 +138,18 @@
                 class="inactive"
               ></v-icon>
             </span>
-            <v-icon
-              v-bind:class="{ invisible: !showAggregated }"
-              name="expand"
-              scale="1.5"
-              class="custom-col clickable margin-left20"
+            <span
               v-b-tooltip.hover.top="'Expand'"
-            ></v-icon>
+              class="margin-left20"
+              @click="modalIndex = aggregatedIndex"
+            >
+              <v-icon
+                v-bind:class="{ invisible: !showAggregated }"
+                name="expand"
+                scale="1.5"
+                class="custom-col clickable"
+              ></v-icon>
+            </span>
           </div>
           <p>Aggregated</p>
           <div style="width: 10%"></div>
@@ -163,13 +178,18 @@
                 class="inactive"
               ></v-icon>
             </span>
-            <v-icon
-              v-bind:class="{ invisible: !showLasso }"
-              name="expand"
-              scale="1.5"
-              class="custom-col clickable margin-left20"
+            <span
               v-b-tooltip.hover.top="'Expand'"
-            ></v-icon>
+              class="margin-left20"
+              @click="modalIndex = lassoIndex"
+            >
+              <v-icon
+                v-bind:class="{ invisible: !showLasso }"
+                name="expand"
+                scale="1.5"
+                class="custom-col clickable"
+              ></v-icon>
+            </span>
           </div>
           <p>Cache / Lasso</p>
           <div style="min-width: 10%" v-on:click="deleteLassoImage()">
@@ -207,13 +227,18 @@
                 class="inactive"
               ></v-icon>
             </span>
-            <v-icon
-              v-bind:class="{ invisible: !showDimRed }"
-              name="expand"
-              scale="1.5"
-              class="custom-col clickable margin-left20"
+            <span
               v-b-tooltip.hover.top="'Expand'"
-            ></v-icon>
+              class="margin-left20"
+              @click="modalIndex = dimRedIndex"
+            >
+              <v-icon
+                v-bind:class="{ invisible: !showDimRed }"
+                name="expand"
+                scale="1.5"
+                class="custom-col clickable"
+              ></v-icon>
+            </span>
           </div>
           <p>DR</p>
           <div style="min-width: 10%" v-on:click="deleteDrImage()">
@@ -233,6 +258,62 @@
           ></mz-image>
         </div>
       </div>
+      <!-- Histo Image -->
+      <div class="vertical-flex-container">
+        <div class="horizontal-flex-container">
+          <div>
+            <span
+              class="text-primary clickable"
+              v-on:click="toggleShowHisto"
+              v-b-tooltip.hover.top="'Show Histo Image'"
+            >
+              <v-icon name="eye" scale="1.5" v-if="showHisto"></v-icon>
+              <v-icon
+                name="eye-slash"
+                scale="1.5"
+                v-else
+                class="inactive"
+              ></v-icon>
+            </span>
+            <span
+              v-b-tooltip.hover.top="'Expand'"
+              class="margin-left20"
+              @click="modalIndex = histoIndex"
+            >
+              <v-icon
+                v-bind:class="{ invisible: !showHisto }"
+                name="expand"
+                scale="1.5"
+                class="custom-col clickable"
+              ></v-icon>
+            </span>
+          </div>
+          <p>Histo</p>
+          <div style="min-width: 10%"></div>
+        </div>
+        <div style="margin: auto">
+          <mz-image
+            :imageDataIndex="5"
+            v-bind:enableClickCopyToLassoImage="false"
+            v-bind:hidden="!showHisto"
+          ></mz-image>
+        </div>
+      </div>
+      <b-modal
+        ref="image-modal"
+        size="xl"
+        title="BootstrapVue"
+        @close="hideModal"
+      >
+        <template slot="default">
+          <p>Hier kommt canvas von Image {{ modalIndex }}</p>
+        </template>
+        <template v-slot:modal-footer="{ close }">
+          <b-button variant="danger" @click="close()">
+            Close
+          </b-button>
+        </template>
+      </b-modal>
     </div>
   </SidebarWidget>
 </template>
@@ -263,9 +344,39 @@ export default {
       showAggregated: true,
       showLasso: true,
       firstTimeDimRed: true,
+      showHisto: false,
+      firstTimeHisto: true,
+      modalIndex: null,
+      mzIndex: imageIndex.SELECTED_MZ,
+      communityIndex: imageIndex.COMMUNITY,
+      aggregatedIndex: imageIndex.AGGREGATED,
+      lassoIndex: imageIndex.LASSO,
+      dimRedIndex: imageIndex.DIM_RED,
+      histoIndex: imageIndex.HIST,
     };
   },
+  watch: {
+    modalIndex(newValue) {
+      if (newValue != null) {
+        this.showModal();
+      }
+    },
+  },
   methods: {
+    showModal() {
+      this.$refs['image-modal'].show();
+    },
+    hideModal() {
+      this.$refs['image-modal'].hide();
+      this.modalIndex = null;
+    },
+    toggleShowHisto() {
+      if (this.firstTimeHisto) {
+        this.firstTimeHisto = false;
+        this.$store.dispatch('fetchHistoImage');
+      }
+      this.showHisto = !this.showHisto;
+    },
     deleteLassoImage() {
       store.commit('CLEAR_IMAGE', imageIndex.LASSO);
       store.commit('RESET_SELECTION');

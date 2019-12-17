@@ -233,13 +233,18 @@ export default {
         image.onload = () => {
           const context = this.canvas.node().getContext('2d');
           context.save();
-          if (this.imageDataIndex === imageIndex.DIM_RED) {
-            context.fillRect(0, 0, this.width, this.height);
+          if (this.imageDataIndex === imageIndex.HIST) {
+            const scale = this.width / image.width;
+            context.scale(scale, scale);
           } else {
-            context.clearRect(0, 0, this.width, this.height);
+            if (this.imageDataIndex === imageIndex.DIM_RED) {
+              context.fillRect(0, 0, this.width, this.height);
+            } else {
+              context.clearRect(0, 0, this.width, this.height);
+            }
+            context.scale(this.scaler, this.scaler);
           }
           context.imageSmoothingEnabled = false;
-          context.scale(this.scaler, this.scaler);
           context.drawImage(image, 0, 0);
           context.restore();
         };

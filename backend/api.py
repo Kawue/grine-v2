@@ -236,7 +236,7 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name):
         print("Exception during Dimension Reduction Matching.")
         print(e)
         return abort(400)
-    
+
     if post_data_aggregation_method not in aggregation_methods_names():
         return abort(400)
 
@@ -326,6 +326,13 @@ def datasets_imagedata_dimreduce_image(dataset_name):
     response = make_response('data:image/png;base64,' + base64.b64encode(img_io.getvalue()).decode('utf-8'), 200)
     response.mimetype = 'text/plain'
     return response
+
+@app.route('/datasets/<dataset_name>/hist')
+def hist_image(dataset_name):
+    with open(path_to_data + 'msi_prune_mask.png', 'rb') as file_reader:
+        response = make_response('data:image/png;base64,' + base64.b64encode(file_reader.read()).decode('utf-8'))
+        response.mimetype = 'text/plain'
+        return response
 
 
 # get graph data for all datasets
