@@ -36,16 +36,6 @@ export default new Vuex.Store({
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
-          max: {
-            // max image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
-          min: {
-            // min image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
           lassoFetching: false, // true during api call of lasso matching
         },
         {
@@ -53,16 +43,6 @@ export default new Vuex.Store({
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
-          max: {
-            // max image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
-          min: {
-            // min image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
           lassoFetching: false, // true during api call of lasso matching
         },
         {
@@ -70,16 +50,6 @@ export default new Vuex.Store({
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
-          max: {
-            // max image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
-          min: {
-            // min image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
           lassoFetching: false, // true during api call of lasso matching
         },
         {
@@ -87,16 +57,6 @@ export default new Vuex.Store({
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
-          max: {
-            // max image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
-          min: {
-            // min image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
           lassoFetching: false, // true during api call of lasso matching
         },
         {
@@ -104,16 +64,6 @@ export default new Vuex.Store({
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
-          max: {
-            // max image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
-          min: {
-            // min image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
           lassoFetching: false, // true during api call of lasso matching
         },
         {
@@ -121,17 +71,9 @@ export default new Vuex.Store({
           mzValues: [],
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
-          max: {
-            // max image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
-          min: {
-            // min image coors, used to scale/cut image according
-            x: null,
-            y: null,
-          },
           lassoFetching: false, // true during api call of lasso matching
+          alpha: 0.5,
+          showOverlay: false,
         },
       ],
       loadingImageData: false, // api fetch for image data is running
@@ -254,6 +196,9 @@ export default new Vuex.Store({
       }
       return state.originalGraphData.graphs['graph' + state.options.data.graph]
         .graph;
+    },
+    getHistoAlpha: state => {
+      return state.images.imageData[imageIndex.HIST].alpha;
     },
     getImageScaler: state => {
       return state.images.scaler;
@@ -481,6 +426,7 @@ export default new Vuex.Store({
       }
     },
     IMAGE_COPY_INTO_SELECTION_IMAGE: (state, index) => {
+      state.images.imageData[imageIndex.HIST].showOverlay = true;
       state.images.imageData[imageIndex.LASSO].mzValues = _.cloneDeep(
         state.images.imageData[index].mzValues
       );
@@ -490,6 +436,12 @@ export default new Vuex.Store({
       state.images.imageData[imageIndex.LASSO].base64Image = _.clone(
         state.images.imageData[index].base64Image
       );
+    },
+    SET_HISTO_ALPHA: (state, alpha) => {
+      state.images.imageData[imageIndex.HIST].alpha = alpha;
+    },
+    SET_SHOW_HISTO_OVERLAY: (state, show) => {
+      state.images.imageData[imageIndex.HIST].showOverlay = show;
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
@@ -788,6 +740,7 @@ export default new Vuex.Store({
       );
     },
     RESET_SELECTION: (state, keepLasso) => {
+      state.images.imageData[imageIndex.HIST].showOverlay = false;
       state.network.nodeTrix.nodeTrixPossible = false;
       state.network.clusterChange.split.possible = false;
       state.network.clusterChange.merge.mergePossible = false;

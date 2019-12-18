@@ -63,7 +63,11 @@ class MzDataSet:
     def getColorImage(self, mzValues, method=np.mean, cmap='viridis', bytes=True):
         colorMap = cm.get_cmap(cmap)
         colorMap.set_bad(color='white')
-        return colorMap(np.ma.masked_invalid(self.getGreyImage(mzValues, method)), bytes=bytes)
+        alphaChannel = np.full((self.__cube.shape[0],self.__cube.shape[1]), 254, dtype=np.uint8)
+        alphaChannel[np.isnan(self.__cube[:,:,0])] = 0
+        imageArray = colorMap(np.ma.masked_invalid(self.getGreyImage(mzValues, method)), bytes=bytes)
+        imageArray[:,:,3] = alphaChannel
+        return imageArray
 
 
 class DimRedDataSet:

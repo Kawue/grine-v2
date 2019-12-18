@@ -11,23 +11,21 @@
       style="position: relative;"
     >
       <canvas
+        class="image-canvas absolute-position"
         v-bind:width="width"
         v-bind:height="height"
-        style="position: absolute;top: 0; left: 0;"
-        v-bind:class="{ pulse: lassoFetching === true }"
       ></canvas>
       <svg
+        class="lasso-svg absolute-position"
         v-if="enableLasso"
         v-bind:width="width"
         v-bind:height="height"
-        style="position: absolute; top: 0; left: 0;"
       ></svg>
       <canvas
-        v-if="imageDataIndex === histIndex"
+        v-bind:hidden="imageDataIndex !== histIndex"
         v-bind:width="width"
         v-bind:height="height"
-        style="position: absolute;top: 0; left: 0;"
-        v-bind:class="{ pulse: lassoFetching === true }"
+        class="histo-overlay-canvas absolute-position"
       ></canvas>
     </div>
   </div>
@@ -83,8 +81,16 @@ export default {
     base64Image() {
       this.drawMzImage();
     },
+    histoAlpha() {
+      this.drawHistoOverlay();
+    },
     imageDataIndex() {
       this.drawMzImage();
+    },
+    showHistoOverlay(newValue) {
+      if (!newValue) {
+        this.drawHistoOverlay();
+      }
     },
     imageValues() {
       if (this.imageDataIndex === imageIndex.DIM_RED) {
@@ -96,11 +102,14 @@ export default {
         this.$store.dispatch('fetchImageData', this.imageDataIndex);
       }
     },
+    lassoBase64() {
+      this.drawHistoOverlay();
+    },
   },
   mounted: function() {
-    let componentId = '#' + this.widgetUniqueId();
-    this.canvas = d3.select(componentId + ' .canvas-root canvas');
-    const interactionSvg = d3.select(componentId + ' .canvas-root svg');
+    const componentId = '#' + this.widgetUniqueId();
+    this.canvas = d3.select(componentId + ' .canvas-root .image-canvas');
+    const interactionSvg = d3.select(componentId + ' .canvas-root .lasso-svg');
     this.lassoInstance = lasso();
     if (this.enableLasso) {
       this.lassoInstance.on('end', this.handleLassoEnd);
@@ -108,14 +117,29 @@ export default {
     }
     if (this.modalImage) {
       this.drawMzImage();
+      if (this.imageDataIndex === imageIndex.HIST) {
+        this.drawHistoOverlay();
+      }
     }
   },
   computed: {
+    showHistoOverlay: function() {
+      return this.$store.getters.getImageData(imageIndex.HIST).showOverlay;
+    },
     base64Image: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).base64Image;
     },
     imageValues: function() {
       return this.$store.getters.getImageData(this.imageDataIndex).mzValues;
+    },
+    histoAlpha: function() {
+      if (this.imageDataIndex !== imageIndex.HIST) {
+        return 0;
+      }
+      return this.$store.getters.getHistoAlpha;
+    },
+    lassoBase64: function() {
+      return this.$store.getters.getImageData(imageIndex.LASSO).base64Image;
     },
     lassoFetching: function() {
       return this.$store.getters.getImageData(this.imageDataIndex)
@@ -221,12 +245,49 @@ export default {
         }
       }
 
-      console.log(selectedPoints);
+      // console.log(selectedPoints);
 
       store.dispatch('imagesSelectPoints', [
         this.imageDataIndex,
         selectedPoints,
       ]);
+    },
+    drawHistoOverlay() {
+      if (
+        this.$store.getters.getImageData(imageIndex.LASSO).base64Image !=
+          null &&
+        store.getters.getImageData(imageIndex.HIST).showOverlay
+      ) {
+        // console.log('Draw overlay');
+        const image = new Image();
+
+        image.onload = () => {
+          const componentId = '#' + this.widgetUniqueId();
+          const context = d3
+            .select(componentId + ' .canvas-root .histo-overlay-canvas')
+            .node()
+            .getContext('2d');
+          context.save();
+          context.globalAlpha = this.histoAlpha;
+          context.clearRect(0, 0, this.width, this.height);
+          const scale = this.width / image.width;
+          context.scale(scale, scale);
+          context.drawImage(image, 0, 0);
+          context.restore();
+        };
+        image.src = this.$store.getters.getImageData(
+          imageIndex.LASSO
+        ).base64Image;
+      } else {
+        const componentId = '#' + this.widgetUniqueId();
+        const context = d3
+          .select(componentId + ' .canvas-root .histo-overlay-canvas')
+          .node()
+          .getContext('2d');
+        context.save();
+        context.clearRect(0, 0, this.width, this.height);
+        context.restore();
+      }
     },
     drawMzImage() {
       if (this.base64Image != null) {
@@ -237,7 +298,7 @@ export default {
             .attr('width', this.width)
             .attr('height', this.height);
         }
-        let image = new Image();
+        const image = new Image();
 
         image.onload = () => {
           const context = this.canvas.node().getContext('2d');
@@ -288,5 +349,16 @@ export default {
     border: 1px solid lightgrey;
     background: white;
   }
+}
+.absolute-position {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.histo-overlay-canvas {
+  background: transparent !important;
+}
+.invisible {
+  visibility: hidden;
 }
 </style>

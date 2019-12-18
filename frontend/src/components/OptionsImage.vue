@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row top-row">
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-4">Min Overlap:</div>
@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row top-row">
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-4">Color Scale:</div>
@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row top-row">
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-4">
@@ -48,6 +48,16 @@
           </div>
           <div class="col-md-8 font12px">
             <OptionsImageDimRed></OptionsImageDimRed>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row top-row">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-4">Histo Alpha</div>
+          <div class="col-md-6">
+            <OptionsHistoAlpha></OptionsHistoAlpha>
           </div>
         </div>
       </div>
@@ -61,6 +71,7 @@ import OptionsImageMinIntensity from './OptionsImageMinIntensity';
 import OptionsImageMinOverlap from './OptionsImageMinOverlap';
 import OptionsImageColorScale from './OptionsImageColorScale';
 import OptionsImageDimRed from './OptionsImageDimRed';
+import OptionsHistoAlpha from './OptionsHistoAlpha';
 
 export default {
   name: 'OptionsImage',
@@ -70,8 +81,13 @@ export default {
     OptionsImageMinOverlap,
     OptionsImageColorScale,
     OptionsImageDimRed,
+    OptionsHistoAlpha,
   },
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.top-row {
+  padding-bottom: 15px;
+}
+</style>

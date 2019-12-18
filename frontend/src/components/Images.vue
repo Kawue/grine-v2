@@ -6,44 +6,6 @@
     v-on:change-expand="logEvent($event)"
   >
     <div slot="content" style="margin: 30px 10px 25px 10px">
-      <div class="image-options text-left">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-4">
-                <span class="font12px">Merge by:</span>
-              </div>
-              <div class="col-md-7">
-                <OptionsImageMergeMethod></OptionsImageMergeMethod>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row" style="margin-top: 10px">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-4">
-                <span class="font12px">Min Intensity:</span>
-              </div>
-              <div class="col-md-8 font12px">
-                <OptionsImageMinIntensity></OptionsImageMinIntensity>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-4">
-                <span class="font12px">Min Overlap:</span>
-              </div>
-              <div class="col-md-8 font12px">
-                <OptionsImageMinOverlap></OptionsImageMinOverlap>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <!-- Community Image -->
       <div class="vertical-flex-container">
         <div class="horizontal-flex-container">
@@ -289,7 +251,14 @@
             </span>
           </div>
           <p>Histo</p>
-          <div style="min-width: 10%"></div>
+          <div style="min-width: 10%" v-on:click="deleteHistoOverlay()">
+            <v-icon
+              name="trash-alt"
+              scale="1.5"
+              v-if="showHistoTrash"
+              class="clickable"
+            ></v-icon>
+          </div>
         </div>
         <div style="margin: auto">
           <mz-image
@@ -299,6 +268,7 @@
           ></mz-image>
         </div>
       </div>
+      <!-- Image Modal -->
       <b-modal
         ref="image-modal"
         size="huge"
@@ -311,6 +281,14 @@
             style="width: 100%; display: flex; flex-direction: row; justify-content: space-between; align-items: center"
           >
             <h2>{{ modalTitle }}</h2>
+            <options-image-dim-red
+              v-if="modalIndex === dimRedIndex"
+              style="width: 40%"
+            ></options-image-dim-red>
+            <div v-else-if="modalIndex === histoIndex" style="width: 40%">
+              <span>Alpha</span>
+              <options-histo-alpha></options-histo-alpha>
+            </div>
             <div>
               <a
                 class="clickable"
@@ -371,20 +349,18 @@
 import SidebarWidget from './SidebarWidget';
 import MzImage from './MzImage';
 import { mapGetters } from 'vuex';
-import OptionsImageMergeMethod from './OptionsImageMergeMethod';
-import OptionsImageMinIntensity from './OptionsImageMinIntensity';
-import OptionsImageMinOverlap from './OptionsImageMinOverlap';
 import * as imageIndex from '../constants';
 import store from '@/store';
+import OptionsImageDimRed from './OptionsImageDimRed';
+import OptionsHistoAlpha from './OptionsHistoAlpha';
 
 export default {
   extends: SidebarWidget,
   components: {
+    OptionsHistoAlpha,
     SidebarWidget,
     MzImage,
-    OptionsImageMergeMethod,
-    OptionsImageMinIntensity,
-    OptionsImageMinOverlap,
+    OptionsImageDimRed,
   },
   data: function() {
     return {
@@ -501,6 +477,9 @@ export default {
       store.commit('CLEAR_IMAGE', imageIndex.LASSO);
       store.commit('RESET_SELECTION');
     },
+    deleteHistoOverlay() {
+      store.commit('SET_SHOW_HISTO_OVERLAY', false);
+    },
     logEvent(expanded) {
       this.$emit('change-expand', expanded);
     },
@@ -551,17 +530,14 @@ export default {
         this.downloadDimRed();
       },
     },
-    showDimredTrash: {
-      get() {
-        return (
-          store.getters.getImageData(imageIndex.DIM_RED).mzValues.length > 0
-        );
-      },
+    showDimredTrash: function() {
+      return store.getters.getImageData(imageIndex.DIM_RED).mzValues.length > 0;
     },
-    showLassoTrash: {
-      get() {
-        return store.getters.getImageData(imageIndex.LASSO).mzValues.length > 0;
-      },
+    showLassoTrash: function() {
+      return store.getters.getImageData(imageIndex.LASSO).mzValues.length > 0;
+    },
+    showHistoTrash: function() {
+      return store.getters.getImageData(imageIndex.HIST).showOverlay;
     },
   },
 };
