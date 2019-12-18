@@ -4,6 +4,7 @@
       v-model="threshold"
       v-bind="sliderOptions"
       @change="updateThreshold"
+      :dragOnClick="true"
       class="slider"
       v-bind:disabled="state.dimred.relative"
     ></vue-slider>

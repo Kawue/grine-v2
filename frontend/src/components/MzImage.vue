@@ -22,6 +22,13 @@
         v-bind:height="height"
         style="position: absolute; top: 0; left: 0;"
       ></svg>
+      <canvas
+        v-if="imageDataIndex === histIndex"
+        v-bind:width="width"
+        v-bind:height="height"
+        style="position: absolute;top: 0; left: 0;"
+        v-bind:class="{ pulse: lassoFetching === true }"
+      ></canvas>
     </div>
   </div>
 </template>
@@ -69,6 +76,7 @@ export default {
       canvas: null,
       lassoInstance: null,
       removeLassoAfterPointsDrawn: true,
+      histIndex: imageIndex.HIST,
     };
   },
   watch: {

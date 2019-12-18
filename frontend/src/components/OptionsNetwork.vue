@@ -7,6 +7,7 @@
           v-model="repulsion"
           v-bind="optionsRepulsionSlider"
           @change="updateParameters"
+          :dragOnClick="true"
           class="slider"
         ></vue-slider>
         <div class="slider-label">Iterations: {{ parameters.iterations }}</div>
@@ -14,12 +15,14 @@
           v-model="parameters.iterations"
           v-bind="optionsIterationSlider"
           @change="updateParameters"
+          :dragOnClick="true"
           class="slider"
         ></vue-slider>
         <div class="slider-label">Edge Length: {{ parameters.edgeLength }}</div>
         <vue-slider
           v-model="parameters.edgeLength"
           v-bind="optionsEdgelengthSlider"
+          :dragOnClick="true"
           @change="updateParameters"
           class="slider"
         ></vue-slider>
