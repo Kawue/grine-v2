@@ -198,11 +198,6 @@ export default {
     },
   },
   methods: {
-    emitBlob() {
-      this.canvas.node().toBlob(blob => {
-        this.$emit('canvas-blob', blob);
-      });
-    },
     isMzLassoActive() {
       return store.getters.isMzLassoSelectionActive;
     },
@@ -318,9 +313,6 @@ export default {
           context.imageSmoothingEnabled = false;
           context.drawImage(image, 0, 0);
           context.restore();
-          if (this.modalImage) {
-            this.emitBlob();
-          }
         };
 
         image.src = this.base64Image;

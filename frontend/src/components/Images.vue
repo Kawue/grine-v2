@@ -275,6 +275,7 @@
         @close="hideModal"
         @hide="hideModal"
         hide-footer
+        id="image-modal"
       >
         <template v-slot:modal-header="{ close }">
           <div
@@ -292,7 +293,7 @@
             <div>
               <a
                 class="clickable"
-                v-if="showDownloadIcon"
+                v-if="showDownloadIcon && blobUrl != null"
                 :href="blobUrl"
                 :download="'grineV2.png'"
               >
@@ -328,7 +329,6 @@
                 :modal-image="true"
                 :modal-height="modalCanvasHeight"
                 :modal-width="modalCanvasWidth"
-                v-on:canvas-blob="handleCanvasBlob($event)"
               ></mz-image>
             </div>
             <span
@@ -350,6 +350,7 @@ import SidebarWidget from './SidebarWidget';
 import MzImage from './MzImage';
 import { mapGetters } from 'vuex';
 import * as imageIndex from '../constants';
+import * as d3 from 'd3';
 import store from '@/store';
 import OptionsImageDimRed from './OptionsImageDimRed';
 import OptionsHistoAlpha from './OptionsHistoAlpha';
@@ -376,16 +377,24 @@ export default {
       modalCanvasWidth: 0,
       modalCanvasHeight: 0,
       showDownloadIcon: false,
-      blobUrl: '#',
+      blobUrl: null,
       mzIndex: imageIndex.SELECTED_MZ,
       communityIndex: imageIndex.COMMUNITY,
       aggregatedIndex: imageIndex.AGGREGATED,
       lassoIndex: imageIndex.LASSO,
       dimRedIndex: imageIndex.DIM_RED,
       histoIndex: imageIndex.HIST,
+      modalImageSelector: null,
+      modalTimeout: null,
     };
   },
   watch: {
+    histoAlpha(newValue, oldValue) {
+      if (newValue != null && oldValue != null) {
+        clearTimeout(this.modalTimeout);
+        this.modalTimeout = setTimeout(() => this.updateDownloadUrl(), 500);
+      }
+    },
     modalIndex(newValue, oldValue) {
       if (newValue != null) {
         this.showDownloadIcon =
@@ -428,14 +437,25 @@ export default {
       } else if (this.modalIndex === imageIndex.DIM_RED) {
         this.downloadDimRed();
       }
+      this.blobUrl = null;
+      setTimeout(() => {
+        this.updateDownloadUrl();
+      }, 500);
     },
     showModal() {
       this.computeDims();
       this.$refs['image-modal'].show();
+      setTimeout(() => {
+        this.modalImageSelector = d3
+          .select('#image-modal')
+          .select('.canvas-root');
+        this.updateDownloadUrl();
+      }, 1000);
     },
     hideModal() {
       this.$refs['image-modal'].hide();
       this.modalIndex = null;
+      this.modalImageSelector = null;
     },
     toggleShowHisto() {
       this.downloadHisto();
@@ -461,6 +481,36 @@ export default {
         this.modalCanvasWidth = w;
       }
     },
+    updateDownloadUrl() {
+      if (this.showDownloadIcon) {
+        if (this.modalIndex === imageIndex.HIST) {
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = this.modalCanvasWidth;
+          tempCanvas.height = this.modalCanvasHeight;
+          const tempContext = tempCanvas.getContext('2d');
+          tempContext.drawImage(
+            this.modalImageSelector.select('.image-canvas').node(),
+            0,
+            0
+          );
+          tempContext.drawImage(
+            this.modalImageSelector.select('.histo-overlay-canvas').node(),
+            0,
+            0
+          );
+          tempCanvas.toBlob(blob => {
+            this.blobUrl = window.URL.createObjectURL(blob);
+          });
+        } else {
+          this.modalImageSelector
+            .select('.image-canvas')
+            .node()
+            .toBlob(blob => {
+              this.blobUrl = window.URL.createObjectURL(blob);
+            });
+        }
+      }
+    },
     downloadHisto() {
       if (this.firstTimeHisto) {
         this.firstTimeHisto = false;
@@ -482,9 +532,6 @@ export default {
     },
     logEvent(expanded) {
       this.$emit('change-expand', expanded);
-    },
-    handleCanvasBlob(blob) {
-      this.blobUrl = window.URL.createObjectURL(blob);
     },
     deleteDrImage() {
       if (!store.getters.getOptionsImage.dimred.relative) {
@@ -529,6 +576,12 @@ export default {
         this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW', value);
         this.downloadDimRed();
       },
+    },
+    histoAlpha: function() {
+      if (this.modalIndex !== imageIndex.HIST) {
+        return null;
+      }
+      return this.$store.getters.getHistoAlpha;
     },
     showDimredTrash: function() {
       return store.getters.getImageData(imageIndex.DIM_RED).mzValues.length > 0;
