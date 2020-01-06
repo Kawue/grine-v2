@@ -369,9 +369,7 @@ export default {
       showMz: true,
       showAggregated: true,
       showLasso: true,
-      firstTimeDimRed: true,
       showHisto: false,
-      firstTimeHisto: true,
       modalIndex: null,
       modalTitle: '',
       modalCanvasWidth: 0,
@@ -432,11 +430,6 @@ export default {
       } else {
         this.modalIndex--;
       }
-      if (this.modalIndex === imageIndex.HIST) {
-        this.downloadHisto();
-      } else if (this.modalIndex === imageIndex.DIM_RED) {
-        this.downloadDimRed();
-      }
       this.blobUrl = null;
       setTimeout(() => {
         this.updateDownloadUrl();
@@ -458,7 +451,6 @@ export default {
       this.modalImageSelector = null;
     },
     toggleShowHisto() {
-      this.downloadHisto();
       this.showHisto = !this.showHisto;
     },
     computeDims() {
@@ -509,18 +501,6 @@ export default {
               this.blobUrl = window.URL.createObjectURL(blob);
             });
         }
-      }
-    },
-    downloadHisto() {
-      if (this.firstTimeHisto) {
-        this.firstTimeHisto = false;
-        this.$store.dispatch('fetchHistoImage');
-      }
-    },
-    downloadDimRed() {
-      if (this.firstTimeDimRed) {
-        this.firstTimeDimRed = false;
-        this.$store.dispatch('fetchDimRedImage');
       }
     },
     deleteLassoImage() {
@@ -574,7 +554,6 @@ export default {
       },
       set(value) {
         this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW', value);
-        this.downloadDimRed();
       },
     },
     histoAlpha: function() {

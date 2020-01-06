@@ -35,7 +35,6 @@
 import * as d3 from 'd3';
 import lasso from '../services/Lasso';
 import { mapGetters } from 'vuex';
-import store from '@/store';
 import * as imageIndex from '../constants';
 
 export default {
@@ -105,6 +104,11 @@ export default {
     lassoBase64() {
       this.drawHistoOverlay();
     },
+    histoDimRedOverlay() {
+      if (this.imageDataIndex === imageIndex.HIST) {
+        this.drawHistoOverlay();
+      }
+    },
   },
   mounted: function() {
     const componentId = '#' + this.widgetUniqueId();
@@ -121,6 +125,26 @@ export default {
         this.drawHistoOverlay();
       }
     }
+    if (
+      this.imageDataIndex === imageIndex.HIST &&
+      this.$store.getters.getImageData(imageIndex.HIST).base64Image == null
+    ) {
+      this.$store.dispatch('fetchHistoImage');
+    } else if (
+      this.imageDataIndex === imageIndex.DIM_RED &&
+      this.$store.getters.getImageData(imageIndex.DIM_RED).base64Image == null
+    ) {
+      this.$store.dispatch('fetchDimRedImage');
+    }
+    this.$store.subscribe(mutation => {
+      if (
+        mutation.type === 'CLEAR_IMAGE' &&
+        this.imageDataIndex === imageIndex.HIST &&
+        mutation.payload === imageIndex.DIM_RED
+      ) {
+        setTimeout(() => this.drawHistoOverlay(), 1000);
+      }
+    });
   },
   computed: {
     showHistoOverlay: function() {
@@ -144,6 +168,9 @@ export default {
     lassoFetching: function() {
       return this.$store.getters.getImageData(this.imageDataIndex)
         .lassoFetching;
+    },
+    histoDimRedOverlay: function() {
+      return this.$store.getters.getHistoDimRedOverlay;
     },
     ...mapGetters({
       loading: 'getLoadingImageData',
@@ -199,7 +226,7 @@ export default {
   },
   methods: {
     isMzLassoActive() {
-      return store.getters.isMzLassoSelectionActive;
+      return this.$store.getters.isMzLassoSelectionActive;
     },
     isAbleToCopyDataIntoSelectionImage() {
       return (
@@ -210,7 +237,10 @@ export default {
     },
     imageClick() {
       if (this.isAbleToCopyDataIntoSelectionImage()) {
-        store.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', this.imageDataIndex);
+        this.$store.commit(
+          'IMAGE_COPY_INTO_SELECTION_IMAGE',
+          this.imageDataIndex
+        );
       }
     },
     widgetUniqueId() {
@@ -240,20 +270,13 @@ export default {
         }
       }
 
-      // console.log(selectedPoints);
-
-      store.dispatch('imagesSelectPoints', [
+      this.$store.dispatch('imagesSelectPoints', [
         this.imageDataIndex,
         selectedPoints,
       ]);
     },
     drawHistoOverlay() {
-      if (
-        this.$store.getters.getImageData(imageIndex.LASSO).base64Image !=
-          null &&
-        store.getters.getImageData(imageIndex.HIST).showOverlay
-      ) {
-        // console.log('Draw overlay');
+      if (this.$store.getters.getImageData(imageIndex.HIST).showOverlay) {
         const image = new Image();
 
         image.onload = () => {
@@ -270,9 +293,17 @@ export default {
           context.drawImage(image, 0, 0);
           context.restore();
         };
-        image.src = this.$store.getters.getImageData(
-          imageIndex.LASSO
-        ).base64Image;
+        if (this.histoDimRedOverlay) {
+          image.src = this.$store.getters.getImageData(
+            imageIndex.DIM_RED
+          ).base64Image;
+        } else if (
+          this.$store.getters.getImageData(imageIndex.LASSO).base64Image != null
+        ) {
+          image.src = this.$store.getters.getImageData(
+            imageIndex.LASSO
+          ).base64Image;
+        }
       } else {
         const componentId = '#' + this.widgetUniqueId();
         const context = d3

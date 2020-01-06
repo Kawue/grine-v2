@@ -62,6 +62,21 @@
         </div>
       </div>
     </div>
+    <div class="row top-row">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-4">Use DimRed as Overlay</div>
+          <div class="col-md-6">
+            <b-button
+              @click="setDimRedOverlay"
+              :disabled="dimRedOverlay"
+              variant="primary"
+              >Overlay</b-button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -72,6 +87,8 @@ import OptionsImageMinOverlap from './OptionsImageMinOverlap';
 import OptionsImageColorScale from './OptionsImageColorScale';
 import OptionsImageDimRed from './OptionsImageDimRed';
 import OptionsHistoAlpha from './OptionsHistoAlpha';
+import store from '@/store';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'OptionsImage',
@@ -83,6 +100,14 @@ export default {
     OptionsImageDimRed,
     OptionsHistoAlpha,
   },
+  methods: {
+    setDimRedOverlay: function() {
+      store.commit('SET_DIMRED_AS_HISTO_OVERLAY');
+    },
+  },
+  computed: mapGetters({
+    dimRedOverlay: 'getHistoDimRedOverlay',
+  }),
 };
 </script>
 
