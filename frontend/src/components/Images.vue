@@ -27,9 +27,9 @@
               v-b-tooltip.hover.top="'Expand'"
               class="margin-left20"
               @click="modalIndex = communityIndex"
+              v-bind:class="{ invisible: !showCommunity }"
             >
               <v-icon
-                v-bind:class="{ invisible: !showCommunity }"
                 name="expand"
                 scale="1.5"
                 class="custom-col clickable"
@@ -67,9 +67,9 @@
               v-b-tooltip.hover.top="'Expand'"
               class="margin-left20"
               @click="modalIndex = mzIndex"
+              v-bind:class="{ invisible: !showMz }"
             >
               <v-icon
-                v-bind:class="{ invisible: !showMz }"
                 name="expand"
                 scale="1.5"
                 class="custom-col clickable"
@@ -104,9 +104,9 @@
               v-b-tooltip.hover.top="'Expand'"
               class="margin-left20"
               @click="modalIndex = aggregatedIndex"
+              v-bind:class="{ invisible: !showAggregated }"
             >
               <v-icon
-                v-bind:class="{ invisible: !showAggregated }"
                 name="expand"
                 scale="1.5"
                 class="custom-col clickable"
@@ -144,9 +144,9 @@
               v-b-tooltip.hover.top="'Expand'"
               class="margin-left20"
               @click="modalIndex = lassoIndex"
+              v-bind:class="{ invisible: !showLasso }"
             >
               <v-icon
-                v-bind:class="{ invisible: !showLasso }"
                 name="expand"
                 scale="1.5"
                 class="custom-col clickable"
@@ -193,9 +193,9 @@
               v-b-tooltip.hover.top="'Expand'"
               class="margin-left20"
               @click="modalIndex = dimRedIndex"
+              v-bind:class="{ invisible: !showDimRed }"
             >
               <v-icon
-                v-bind:class="{ invisible: !showDimRed }"
                 name="expand"
                 scale="1.5"
                 class="custom-col clickable"
@@ -240,10 +240,10 @@
             <span
               v-b-tooltip.hover.top="'Expand'"
               class="margin-left20"
+              v-bind:class="{ invisible: !showHisto }"
               @click="modalIndex = histoIndex"
             >
               <v-icon
-                v-bind:class="{ invisible: !showHisto }"
                 name="expand"
                 scale="1.5"
                 class="custom-col clickable"
@@ -427,6 +427,22 @@ export default {
     },
   },
   methods: {
+    showToasts() {
+      if (!this.dimredAvailable) {
+        this.$bvToast.toast('No Dimensionality Reduction Image available', {
+          title: 'Dimensionality Reduction',
+          variant: 'warning',
+          solid: true,
+        });
+      }
+      if (!this.histoAvailable) {
+        this.$bvToast.toast('No Histopathology Image available', {
+          title: 'Histopathology',
+          variant: 'warning',
+          solid: true,
+        });
+      }
+    },
     deferredImageURLUpdate(newValue, oldValue) {
       if (newValue != null && oldValue != null) {
         clearTimeout(this.modalTimeout);
@@ -549,6 +565,9 @@ export default {
           store.dispatch('fetchImageData', imageIndex.AGGREGATED);
           store.dispatch('fetchImageData', imageIndex.LASSO);
           break;
+        case 'SET_AVAILABLE_IMAGES':
+          this.showToasts();
+          break;
       }
     });
   },
@@ -649,6 +668,7 @@ select {
 }
 .invisible {
   visibility: hidden;
+  pointer-events: none;
 }
 .vertical-flex-container {
   margin-top: 20px;

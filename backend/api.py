@@ -232,7 +232,6 @@ def update_graph_cluster():
 @app.route('/graph/change_graph', methods=['PATCH'])
 def change_graph():
     data = json.loads(request.get_data().decode('utf-8'))
-    print(data)
     dataset_name = data['name']
     threshold = data['threshold']
     if dataset_name not in dataset_names():

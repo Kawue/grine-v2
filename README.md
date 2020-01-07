@@ -23,16 +23,23 @@ Docker is not compatible with Windows 7, 8 and 10 Home. For details about a work
 docker-compose up --build -d
 ```
 Visit Browser under `localhost:8080`
+(Only when starting the tool the first time it is necessary to add the `--build` flag)
 
 ### Stop:
 ```
 docker-compose down
 ```
-### Change Dataset:
-* Stop Docker container
-* Copy JSON into `backend/json` and datasets into `backend/datasets`
-* Open `backend/uwsgi.ini` and follow the instructions.
-* Start Docker container
+### Load new Dataset:
+* Stop Docker container with `docker-compose down`
+* Copy JSON into `backend/data/json`. The name of the file is irrelevant.
+* For every graph in the JSON file identify the dataset name, which you can find in the JSON file itself. The name should be unique for every dataset.
+* Copy every dataset file into `backend/data/dataset`. The name of the files must have the pattern `<dataset_name>.h5`, where `<dataset_name>` is the placeholder for the real dataset name.
+* (Optional)
+Copy every dimensionality reduction data file into `backend/data/dimreduce`. The files will be automatically detected and loaded, if the name of the files begins with`dimreduce-<dataset_name>-`.
+* (Optional)
+Create a new folder in `backend/data/histo-images` where the folder name is a dataset name. Copy every hisopathology image into this folder. The images will be automatically detected and loaded.
+* Open `backend/uwsgi.ini`. Search the lines which starts with `pyargv = ...` and replace it with `pyargv = -j <json_file>` where `<json_file>` is the placeholder for the name of your json file.
+* Start Docker container with `docker-compose up -d`
 
 ## Handbook
 ### Graph:
@@ -129,19 +136,8 @@ cd frontend
 yarn serve
 ```
 
-
-## Frontend
-
-### FontAwesome / Vue Awesome
-https://justineo.github.io/vue-awesome/demo/
-Here is a list of icons: https://github.com/Justineo/vue-awesome/tree/master/src/icons
-
-### Vue Loading Spinner
-https://nguyenvanduocit.github.io/vue-loading-spinner/
-
-
 ## Docker on Windows 7, 8 and 10 Home
-1. Visit https://docs.docker.com/toolbox/toolbox_install_windows/. Follow the given instructions and install all required software to install the Docker Toolbox on Windows.
+1. Visit [Docker](https://docs.docker.com/toolbox/toolbox_install_windows/). Follow the given instructions and install all required software to install the Docker Toolbox on Windows.
 2. Control if virtualization is enabled on your system. Task Manager -> Performance tab -> CPU -> Virtualization. If it is enabled continue with Step X.
 3. If virtualization is disabled, it needs to be enabled in your BIOS. Navigate into your systems BIOS and look for Virtualization Technology (VT). Enable VT, save settings and reboot. This option is most likely part of the Advanced or Security tab. This step can deviate based on your Windows and Mainboard Manufacturer.
 4. Open your CMD as administrator and call `docker-machine create default --virtualbox-no-vtx-check`. A restart may be required.

@@ -383,6 +383,13 @@ export default new Vuex.Store({
     SET_IMAGE_DATA_VALUES: (state, payload) => {
       state.images.imageData[payload[0]].base64Image = payload[1];
     },
+    SET_AVAILABLE_IMAGES: (state, payload) => {
+      state.images.imageData[imageIndex.HIST].availableImages = payload[
+        'histo'
+      ].map(item => item.split('.')[0]);
+      state.images.imageData[imageIndex.DIM_RED].available =
+        payload['dimreduce'];
+    },
     IMAGE_DATA_UPDATE_FROM_SELECTED_NODES: state => {
       const nodesSelected = NetworkService.getSelectedNodes(
         state.network.nodes,
@@ -1138,13 +1145,7 @@ export default new Vuex.Store({
       axios
         .get(url)
         .then(response => {
-          context.state.images.imageData[
-            imageIndex.HIST
-          ].availableImages = response.data['histo'].map(
-            item => item.split('.')[0]
-          );
-          context.state.images.imageData[imageIndex.DIM_RED].available =
-            response.data['dimreduce'];
+          context.commit('SET_AVAILABLE_IMAGES', response.data);
           context.dispatch('fetchDimRedImage');
           context.dispatch('fetchHistoImage');
         })
