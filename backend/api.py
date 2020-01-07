@@ -24,7 +24,7 @@ path_to_dataset = 'dataset/'
 path_to_dimreduce = 'dimreduce/'
 path_to_hist_images = 'histo-images/'
 matrix_blueprint = 'similarity-matrix-{}.npy'
-dimreduce_pattern_blueprint = '^dimreduce-{}-.*\.h5'
+dimreduce_pattern_blueprint = '^dimreduce-{}.*\.h5'
 dataset_blueprint = '{}.h5'
 
 # dict to handle multiple datasets

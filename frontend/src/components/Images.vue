@@ -32,7 +32,7 @@
               <v-icon
                 name="expand"
                 scale="1.5"
-                class="custom-col clickable"
+                class="text-primary clickable"
               ></v-icon>
             </span>
           </div>
@@ -72,7 +72,7 @@
               <v-icon
                 name="expand"
                 scale="1.5"
-                class="custom-col clickable"
+                class="text-primary clickable"
               ></v-icon>
             </span>
           </div>
@@ -109,7 +109,7 @@
               <v-icon
                 name="expand"
                 scale="1.5"
-                class="custom-col clickable"
+                class="text-primary clickable"
               ></v-icon>
             </span>
           </div>
@@ -149,7 +149,7 @@
               <v-icon
                 name="expand"
                 scale="1.5"
-                class="custom-col clickable"
+                class="text-primary clickable"
               ></v-icon>
             </span>
           </div>
@@ -198,7 +198,7 @@
               <v-icon
                 name="expand"
                 scale="1.5"
-                class="custom-col clickable"
+                class="text-primary clickable"
               ></v-icon>
             </span>
           </div>
@@ -246,7 +246,7 @@
               <v-icon
                 name="expand"
                 scale="1.5"
-                class="custom-col clickable"
+                class="text-primary clickable"
               ></v-icon>
             </span>
           </div>
@@ -677,9 +677,6 @@ select {
   align-items: center;
   border: 2px solid darkgrey;
   padding-bottom: 10px;
-}
-.custom-col {
-  color: hotpink;
 }
 .horizontal-flex-container {
   display: flex;

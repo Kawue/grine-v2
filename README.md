@@ -35,7 +35,7 @@ docker-compose down
 * For every graph in the JSON file identify the dataset name, which you can find in the JSON file itself. The name should be unique for every dataset.
 * Copy every dataset file into `backend/data/dataset`. The name of the files must have the pattern `<dataset_name>.h5`, where `<dataset_name>` is the placeholder for the real dataset name.
 * (Optional)
-Copy every dimensionality reduction data file into `backend/data/dimreduce`. The files will be automatically detected and loaded, if the name of the files begins with`dimreduce-<dataset_name>-`.
+Copy every dimensionality reduction data file into `backend/data/dimreduce`. The files will be automatically detected and loaded, if the name of the files begins with`dimreduce-<dataset_name>`.
 * (Optional)
 Create a new folder in `backend/data/histo-images` where the folder name is a dataset name. Copy every hisopathology image into this folder. The images will be automatically detected and loaded.
 * Open `backend/uwsgi.ini`. Search the lines which starts with `pyargv = ...` and replace it with `pyargv = -j <json_file>` where `<json_file>` is the placeholder for the name of your json file.
