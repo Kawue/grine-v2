@@ -125,6 +125,7 @@ export default {
         this.drawHistoOverlay();
       }
     }
+    /*
     if (
       this.imageDataIndex === imageIndex.HIST &&
       this.$store.getters.getImageData(imageIndex.HIST).base64Image == null
@@ -136,6 +137,7 @@ export default {
     ) {
       this.$store.dispatch('fetchDimRedImage');
     }
+    */
     this.$store.subscribe(mutation => {
       if (
         mutation.type === 'CLEAR_IMAGE' &&
@@ -329,6 +331,7 @@ export default {
         image.onload = () => {
           const context = this.canvas.node().getContext('2d');
           context.save();
+          context.clearRect(0, 0, this.width, this.height);
           if (this.imageDataIndex === imageIndex.HIST) {
             const scale = this.width / image.width;
             context.scale(scale, scale);

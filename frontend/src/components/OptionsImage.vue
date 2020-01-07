@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="row top-row">
+    <div class="row top-row" v-if="dimredAvailable">
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-4">
@@ -52,7 +52,7 @@
         </div>
       </div>
     </div>
-    <div class="row top-row">
+    <div class="row top-row" v-if="availableHistoImages.length > 0">
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-4">Histo Alpha</div>
@@ -62,7 +62,24 @@
         </div>
       </div>
     </div>
-    <div class="row top-row">
+    <div class="row top-row" v-if="availableHistoImages.length > 1">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-4">Histo Image</div>
+          <div class="col-md-6">
+            <b-form-select
+              v-model="histoImageIndex"
+              :options="histoImageOptions"
+              size="sm"
+            ></b-form-select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="row top-row"
+      v-if="dimredAvailable && availableHistoImages.length > 0"
+    >
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-4">Use DimRed as Overlay</div>
@@ -89,6 +106,7 @@ import OptionsImageDimRed from './OptionsImageDimRed';
 import OptionsHistoAlpha from './OptionsHistoAlpha';
 import store from '@/store';
 import { mapGetters } from 'vuex';
+import * as imageIndex from '../constants';
 
 export default {
   name: 'OptionsImage',
@@ -105,9 +123,32 @@ export default {
       store.commit('SET_DIMRED_AS_HISTO_OVERLAY');
     },
   },
-  computed: mapGetters({
-    dimRedOverlay: 'getHistoDimRedOverlay',
-  }),
+  computed: {
+    ...mapGetters({
+      dimRedOverlay: 'getHistoDimRedOverlay',
+      availableHistoImages: 'getHistoImages',
+      dimredAvailable: 'getDimRedAvailable',
+    }),
+    histoImageIndex: {
+      get() {
+        return store.getters.getHistoImageIndex;
+      },
+      set(index) {
+        store.commit('SET_HISTO_IMAGE_INDEX', index);
+        store.dispatch('fetchHistoImage');
+      },
+    },
+    histoImageOptions: function() {
+      return store.getters
+        .getImageData(imageIndex.HIST)
+        .availableImages.map((imageName, index) => {
+          return {
+            value: index,
+            text: imageName,
+          };
+        });
+    },
+  },
 };
 </script>
 

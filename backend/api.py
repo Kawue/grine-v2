@@ -9,10 +9,12 @@ from flask_cors import CORS
 from PIL import Image
 from io import BytesIO
 from argparse import ArgumentParser
+from os import listdir
+from os.path import isdir
+import re
 
 parser = ArgumentParser()
 parser.add_argument('-j', '--json', dest='json_name', required=True, nargs='?', help='name of the json file', metavar='filename', type=str)
-parser.add_argument('-m', '--method', dest='dimred_method', type=str, required=True, nargs='?', choices=['pca', 'nmf', 'lda', 'tsne', 'umap', 'ica', 'kpca', 'lsa', 'lle', 'mds', 'isomap', 'spectralembedding'], help='method for dimensionality reduction.')
 args = parser.parse_args()
 # Constants for folder structure
 path_to_data = 'data/'
@@ -20,8 +22,9 @@ path_to_json = 'json/'
 path_to_matrix = 'matrix/'
 path_to_dataset = 'dataset/'
 path_to_dimreduce = 'dimreduce/'
+path_to_hist_images = 'histo-images/'
 matrix_blueprint = 'similarity-matrix-{}.npy'
-dimreduce_blueprint = 'dimreduce-{}-{}.h5'
+dimreduce_pattern_blueprint = '^dimreduce-{}-.*\.h5'
 dataset_blueprint = '{}.h5'
 
 # dict to handle multiple datasets
@@ -52,10 +55,26 @@ with open(path_to_data + path_to_json + args.json_name, 'r') as file:
     del firstDataset
 
 for dataset_name in datasets.keys():
+    '''
+    Explanation for of datasets dict:
+        dataset: mz cube for given dataset
+        dimreduce: dimreduce dataset or None if there is no dimreduce dataset
+        histo_images: name of files of histo images for given dataset or empty list if there are no images
+    '''
+    image_path = path_to_data + path_to_hist_images + dataset_name
+    dimreduce_file_candidates = [file_name for file_name in listdir(path_to_data + path_to_dimreduce) if re.match(dimreduce_pattern_blueprint.format(dataset_name), file_name)]
     datasets[dataset_name] = {
-        'dimreduce': DimRedDataSet(pd.read_hdf((path_to_data + path_to_dimreduce + dimreduce_blueprint).format(dataset_name, args.dimred_method)).droplevel('dataset')),
-        'dataset': MzDataSet(pd.read_hdf((path_to_data + path_to_dataset + dataset_blueprint).format(dataset_name)).droplevel('dataset'))
+        'dimreduce': None if len(dimreduce_file_candidates) is 0 else DimRedDataSet(pd.read_hdf(path_to_data + path_to_dimreduce + dimreduce_file_candidates[0]).droplevel('dataset')),
+        'dataset': MzDataSet(pd.read_hdf((path_to_data + path_to_dataset + dataset_blueprint).format(dataset_name)).droplevel('dataset')),
+        'histo_images': [image for image in listdir(image_path)] if isdir(image_path) else []
     }
+    if datasets[dataset_name]['dimreduce'] is None:
+        print('No dimensionality reduction image for dataset', dataset_name)
+    if len(datasets[dataset_name]['histo_images']) is 0:
+        if not isdir(image_path):
+            print('No histo image folder for dataset', dataset_name)
+        else:
+            print('Histo image folder is empty for dataset', dataset_name)
 
 # returns list of allowed merge methods for mz intensities
 def aggregation_methods_names():
@@ -81,6 +100,7 @@ def graph_data_all_datasets():
             data = {}
     return data
 
+
 # rcube: reference cube, mcube: matching cube, ocube: overlap cube
 def selection_match(polygon_ref, polygon_match, min_intensity, min_overlap, aggregation_method):
     # get thresholds for the minimum signal intensity that should be considered
@@ -95,6 +115,7 @@ def selection_match(polygon_ref, polygon_match, min_intensity, min_overlap, aggr
     overlap = polygon_ref * polygon_match
     match_score = overlap.sum() / len(polygon_ref)
     return match_score >= min_overlap
+
 
 def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, aggregation_method, min_intensity, min_overlap):
     mzDataSet = datasets[ds_name]["dataset"]
@@ -126,6 +147,16 @@ def aggregation_methods_action():
 @app.route('/datasets')
 def datasets_action():
     return json.dumps(dataset_names())
+
+
+@app.route('/datasets/<dataset_name>/images_info')
+def datasets_available_images(dataset_name):
+    if dataset_name not in dataset_names():
+        return abort(400)
+    return json.dumps({
+        'dimreduce': datasets[dataset_name]['dimreduce'] is not None,
+        'histo': datasets[dataset_name]['histo_images']
+    })
 
 
 # get mz values of dataset
@@ -200,7 +231,8 @@ def update_graph_cluster():
 
 @app.route('/graph/change_graph', methods=['PATCH'])
 def change_graph():
-    data = request.get_data().decode('utf-8')
+    data = json.loads(request.get_data().decode('utf-8'))
+    print(data)
     dataset_name = data['name']
     threshold = data['threshold']
     if dataset_name not in dataset_names():
@@ -290,6 +322,8 @@ def datasets_imagedata_multiple_mz_action(dataset_name):
 def datasets_imagedata_dimreduce_image(dataset_name):
     if dataset_name not in dataset_names():
         return abort(400)
+    if datasets[dataset_name]['dimreduce'] is None:
+        return abort(400)
     try:
         post_data = request.get_data()
         post_data_json = json.loads(post_data.decode('utf-8'))
@@ -327,9 +361,20 @@ def datasets_imagedata_dimreduce_image(dataset_name):
     response.mimetype = 'text/plain'
     return response
 
+
 @app.route('/datasets/<dataset_name>/hist')
 def hist_image(dataset_name):
-    with open(path_to_data + 'msi_prune_mask.png', 'rb') as file_reader:
+    index = request.args.get('index')
+    if index is None:
+        index = 0
+    else:
+        try:
+            index = int(index)
+        except ValueError:
+            return abort(400)
+    if index >= len(datasets[dataset_name]['histo_images']):
+        return abort(400)
+    with open(path_to_data + path_to_hist_images + '{}/{}'.format(dataset_name, datasets[dataset_name]['histo_images'][index]), 'rb') as file_reader:
         response = make_response('data:image/png;base64,' + base64.b64encode(file_reader.read()).decode('utf-8'))
         response.mimetype = 'text/plain'
         return response

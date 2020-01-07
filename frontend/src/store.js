@@ -65,6 +65,7 @@ export default new Vuex.Store({
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
           lassoFetching: false, // true during api call of lasso matching
+          available: false,
         },
         {
           // imageIndex.HIST data used to render the histopathologie image
@@ -75,6 +76,8 @@ export default new Vuex.Store({
           alpha: 0.5,
           showOverlay: false,
           overlayDimRed: false,
+          availableImages: [],
+          histoImageIndex: 0,
         },
       ],
       loadingImageData: false, // api fetch for image data is running
@@ -200,6 +203,24 @@ export default new Vuex.Store({
     },
     getHistoAlpha: state => {
       return state.images.imageData[imageIndex.HIST].alpha;
+    },
+    getHistoImages: state => {
+      return state.images.imageData[imageIndex.HIST].availableImages;
+    },
+    getHistoAvailable: state => {
+      return state.images.imageData[imageIndex.HIST].availableImages.length > 0;
+    },
+    getHistoImageIndex: state => {
+      return state.images.imageData[imageIndex.HIST].histoImageIndex;
+    },
+    getDimRedAvailable: state => {
+      return state.images.imageData[imageIndex.DIM_RED].available;
+    },
+    getDimRedThreshold: state => {
+      return state.options.image.dimred.threshold;
+    },
+    getDimRedRelative: state => {
+      return state.options.image.dimred.relative;
     },
     getImageScaler: state => {
       return state.images.scaler;
@@ -343,9 +364,10 @@ export default new Vuex.Store({
       }
     },
     SET_IMAGE_DIMENSIONS: (state, payload) => {
+      const scaler = 1;
+      /*
       let min = Math.min(payload.width, payload.height);
-      let scaler = 1;
-      /*if (min < 200) {
+      if (min < 200) {
         scaler = 3;
       } else if (min < 100) {
         scaler = 2;
@@ -430,25 +452,31 @@ export default new Vuex.Store({
       }
     },
     IMAGE_COPY_INTO_SELECTION_IMAGE: (state, index) => {
-      state.images.imageData[imageIndex.HIST].showOverlay = true;
-      state.images.imageData[imageIndex.HIST].overlayDimRed = false;
       state.images.imageData[imageIndex.LASSO].mzValues = _.cloneDeep(
-        state.images.imageData[index].mzValues
-      );
-      state.images.imageData[imageIndex.DIM_RED].mzValues = _.cloneDeep(
         state.images.imageData[index].mzValues
       );
       state.images.imageData[imageIndex.LASSO].base64Image = _.clone(
         state.images.imageData[index].base64Image
       );
+      if (state.images.imageData[imageIndex.HIST].availableImages.length > 0) {
+        state.images.imageData[imageIndex.HIST].showOverlay = true;
+        state.images.imageData[imageIndex.HIST].overlayDimRed = false;
+      }
+      if (state.images.imageData[imageIndex.DIM_RED].available) {
+        state.images.imageData[imageIndex.DIM_RED].mzValues = _.cloneDeep(
+          state.images.imageData[index].mzValues
+        );
+      }
     },
-    SET_DIMRED_AS_HISTO_OVERLAY: (state, payload) => {
-      console.log('Set to true');
+    SET_DIMRED_AS_HISTO_OVERLAY: state => {
       state.images.imageData[imageIndex.HIST].showOverlay = true;
       state.images.imageData[imageIndex.HIST].overlayDimRed = true;
     },
     SET_HISTO_ALPHA: (state, alpha) => {
       state.images.imageData[imageIndex.HIST].alpha = alpha;
+    },
+    SET_HISTO_IMAGE_INDEX: (state, index) => {
+      state.images.imageData[imageIndex.HIST].histoImageIndex = index;
     },
     SET_SHOW_HISTO_OVERLAY: (state, show) => {
       state.images.imageData[imageIndex.HIST].showOverlay = show;
@@ -831,12 +859,14 @@ export default new Vuex.Store({
                 'graph' + context.state.options.data.graph
               ].graph
             ).length - 1;
+          context.dispatch('fetchAvailableImages');
           context.commit('MZLIST_LOAD_GRAPH');
           context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
           context.commit('SET_LOADING_GRAPH_DATA', false);
           context.commit('MZLIST_SORT_MZ');
         })
-        .catch(function() {
+        .catch(function(err) {
+          console.error(err);
           alert('Error while loading graph data from api.');
           context.commit('SET_LOADING_GRAPH_DATA', false);
         });
@@ -846,15 +876,24 @@ export default new Vuex.Store({
       context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
     changeGraph: (context, graph) => {
+      context.state.options.data.graph = graph;
+      context.state.meta.threshold =
+        context.state.originalGraphData.graphs[
+          'graph' + context.state.options.data.graph
+        ].threshold;
+      const datasetName = context.state.options.data.graphChoices[graph];
+      const patchData = {
+        name: datasetName,
+        threshold: context.state.meta.threshold,
+      };
       axios
-        .post(API_URL + '/graph/change_graph', graph)
+        .patch(API_URL + '/graph/change_graph', patchData)
         .then(() => {
-          this.dispatch('updateGraphCluster');
+          context.dispatch('updateGraphCluster');
         })
         .catch(function() {
           console.error('Change Graph NOT OK');
         });
-      context.state.options.data.graph = graph;
       context.state.images.imageData[imageIndex.COMMUNITY].mzValues = [];
       context.state.images.imageData[imageIndex.SELECTED_MZ].mzValues = [];
       context.state.images.imageData[imageIndex.AGGREGATED].mzValues = [];
@@ -880,7 +919,7 @@ export default new Vuex.Store({
       context.state.network.clusterChange.merge.mergePossible = false;
       context.state.network.clusterChange.merge.assignmentPossible = false;
       context.state.network.nodeTrix.nodeTrixActive = false;
-      this.dispatch('fetchImageDimensions');
+      context.dispatch('fetchImageDimensions');
       context.commit('MZLIST_LOAD_GRAPH');
       context.commit('MZLIST_CALCULATE_VISIBLE_MZ');
       context.commit('MZLIST_SORT_MZ');
@@ -890,6 +929,7 @@ export default new Vuex.Store({
       context.commit('NETWORK_SIMULATION_INIT');
       context.commit('NETWORK_NODETRIX_CHANGE_COLORSCALE');
       context.commit('SET_IMAGE_DATA_VALUES', [imageIndex.DIM_RED, []]);
+      context.dispatch('fetchAvailableImages');
     },
     fetchImageDimensions: context => {
       const datasetName =
@@ -941,15 +981,17 @@ export default new Vuex.Store({
       context.dispatch('imagesSelectPoints', [index, []]);
     },
     fetchHistoImage: context => {
-      if (!context.state.images.imageData[imageIndex.HIST]) {
+      if (
+        context.state.images.imageData[imageIndex.HIST].availableImages
+          .length === 0
+      ) {
         return;
       }
       const datasetName =
         context.state.options.data.graphChoices[
           context.state.options.data.graph
         ];
-      // do an api fetch for a combination image of multiple mz values
-      const url = API_URL + '/datasets/' + datasetName + '/hist';
+      const url = `${API_URL}/datasets/${datasetName}/hist?index=${context.state.images.imageData[imageIndex.HIST].histoImageIndex}`;
       axios
         .get(url)
         .then(response => {
@@ -1075,9 +1117,7 @@ export default new Vuex.Store({
       clusters.sort((a, b) => (a[0] > b[0] ? 1 : -1));
       axios
         .patch(API_URL + '/graph/update_cluster', clusters.map(c => c[1]))
-        .then(() => {
-          console.log('OK');
-        })
+        .then(() => {})
         .catch(() => {
           console.error('NOT OK');
         });
@@ -1086,7 +1126,34 @@ export default new Vuex.Store({
       context.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', data);
       context.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
     },
+    fetchAvailableImages: context => {
+      /*
+        Check if dimreduce and histo images are available
+       */
+      const datasetName =
+        context.state.options.data.graphChoices[
+          context.state.options.data.graph
+        ];
+      const url = `${API_URL}/datasets/${datasetName}/images_info`;
+      axios
+        .get(url)
+        .then(response => {
+          context.state.images.imageData[
+            imageIndex.HIST
+          ].availableImages = response.data['histo'].map(
+            item => item.split('.')[0]
+          );
+          context.state.images.imageData[imageIndex.DIM_RED].available =
+            response.data['dimreduce'];
+          context.dispatch('fetchDimRedImage');
+          context.dispatch('fetchHistoImage');
+        })
+        .catch(err => console.error(err));
+    },
     fetchDimRedImage: context => {
+      if (!context.state.images.imageData[imageIndex.DIM_RED].available) {
+        return;
+      }
       context.commit('SET_LOADING_IMAGE_DATA', true);
       const datasetName =
         context.state.options.data.graphChoices[

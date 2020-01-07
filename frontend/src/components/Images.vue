@@ -173,7 +173,7 @@
         </div>
       </div>
       <!-- Dim Red Image -->
-      <div class="vertical-flex-container">
+      <div class="vertical-flex-container" v-if="dimredAvailable">
         <div class="horizontal-flex-container">
           <div>
             <span
@@ -221,7 +221,7 @@
         </div>
       </div>
       <!-- Histo Image -->
-      <div class="vertical-flex-container">
+      <div class="vertical-flex-container" v-if="histoAvailable">
         <div class="horizontal-flex-container">
           <div>
             <span
@@ -388,10 +388,13 @@ export default {
   },
   watch: {
     histoAlpha(newValue, oldValue) {
-      if (newValue != null && oldValue != null) {
-        clearTimeout(this.modalTimeout);
-        this.modalTimeout = setTimeout(() => this.updateDownloadUrl(), 500);
-      }
+      this.deferredImageURLUpdate(newValue, oldValue);
+    },
+    dimredThreshold(newValue, oldValue) {
+      this.deferredImageURLUpdate(newValue, oldValue);
+    },
+    dimredRelative(newValue, oldValue) {
+      this.deferredImageURLUpdate(newValue, oldValue);
     },
     modalIndex(newValue, oldValue) {
       if (newValue != null) {
@@ -424,11 +427,23 @@ export default {
     },
   },
   methods: {
+    deferredImageURLUpdate(newValue, oldValue) {
+      if (newValue != null && oldValue != null) {
+        clearTimeout(this.modalTimeout);
+        this.modalTimeout = setTimeout(() => this.updateDownloadUrl(), 500);
+      }
+    },
     modalArrowClick(toRight) {
       if (toRight) {
         this.modalIndex++;
+        if (this.modalIndex === imageIndex.DIM_RED && !this.dimredAvailable) {
+          this.modalIndex++;
+        }
       } else {
         this.modalIndex--;
+        if (this.modalIndex === imageIndex.DIM_RED && !this.dimredAvailable) {
+          this.modalIndex--;
+        }
       }
       this.blobUrl = null;
       setTimeout(() => {
@@ -541,9 +556,17 @@ export default {
   computed: {
     ...mapGetters({
       options: 'getOptionsImage',
+      histoAvailable: 'getHistoAvailable',
+      dimredAvailable: 'getDimRedAvailable',
     }),
     showModalRight() {
-      return this.modalIndex < imageIndex.HIST;
+      if (!this.histoAvailable && !this.dimredAvailable) {
+        return this.modalIndex < imageIndex.LASSO;
+      } else if (!this.histoAvailable && this.dimredAvailable) {
+        return this.modalIndex < imageIndex.DIM_RED;
+      } else {
+        return this.modalIndex < imageIndex.HIST;
+      }
     },
     showModalLeft() {
       return this.modalIndex > imageIndex.COMMUNITY;
@@ -555,6 +578,18 @@ export default {
       set(value) {
         this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW', value);
       },
+    },
+    dimredThreshold: function() {
+      if (this.modalIndex !== imageIndex.DIM_RED) {
+        return null;
+      }
+      return this.$store.getters.getDimRedThreshold;
+    },
+    dimredRelative: function() {
+      if (this.modalIndex !== imageIndex.DIM_RED) {
+        return null;
+      }
+      return this.$store.getters.getDimRedRelative;
     },
     histoAlpha: function() {
       if (this.modalIndex !== imageIndex.HIST) {
