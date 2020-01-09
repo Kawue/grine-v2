@@ -114,10 +114,6 @@ export default {
   border: #717273 1px solid;
 
   &.expanded {
-    width: 300px;
-    //&#images {
-    //  min-width: 1000px;
-    //}
   }
 }
 

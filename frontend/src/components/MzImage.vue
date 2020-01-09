@@ -262,12 +262,12 @@ export default {
         .getBBox();
 
       const selectedPoints = [];
-      for (let i = bbox.x; i < bbox.x + bbox.width; i++) {
-        for (let j = bbox.y; j < bbox.y + bbox.height; j++) {
+      for (let i = Math.floor(bbox.x); i < Math.ceil(bbox.x + bbox.width); i++) {
+        for (let j = Math.floor(bbox.y); j < Math.ceil(bbox.y + bbox.height); j++) {
           if (d3.polygonContains(lassoPolygon, [i, j])) {
-            // TODO: May use ~~(i/this.scale), ~~(j/this.scale)
-            //selectedPoints.push([i/this.scaler,j/this.scaler])
-            selectedPoints.push([i, j]);
+            //TODO: use numerical scaler value!
+            // i is width, which is axis 1, aka j, in the backend array. Vice versa for j. Therefore it needs to be switched to be consistent with the backend.
+            selectedPoints.push([j, i]);
           }
         }
       }

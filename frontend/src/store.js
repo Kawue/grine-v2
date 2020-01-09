@@ -27,9 +27,19 @@ export default new Vuex.Store({
       threshold: 0,
     },
     images: {
+      originalWidth: null,
+      originalHeight: null,
       width: null,
       height: null,
-      scaler: 1,
+      ScaleFactorObject: { 
+        "Smallest": 0.25,
+        "Smaller": 0.33,
+        "Small": 0.5,
+        "Original": 1,
+        "Large": 2,
+        "Larger": 3,
+        "Largest": 4,
+      },
       imageData: [
         {
           // imageIndex.COMMUNITY data used to render community image
@@ -154,6 +164,7 @@ export default new Vuex.Store({
           interpolatePlasma: 'Plasma',
           interpolateInferno: 'Inferno',
         },
+        imageScaleFactor: "Original",
         dimred: {
           show: false,
           relative: true,
@@ -222,8 +233,11 @@ export default new Vuex.Store({
     getDimRedRelative: state => {
       return state.options.image.dimred.relative;
     },
-    getImageScaler: state => {
-      return state.images.scaler;
+    getImageScaleFactor: state => {
+      return state.options.image.imageScaleFactor;
+    },
+    getImageScaleFactorValue: state => {
+      return state.images.ScaleFactorObject[state.options.image.imageScaleFactor];
     },
     getImageData: state => index => {
       return state.images.imageData[index];
@@ -364,21 +378,11 @@ export default new Vuex.Store({
       }
     },
     SET_IMAGE_DIMENSIONS: (state, payload) => {
-      const scaler = 1;
-      /*
-      let min = Math.min(payload.width, payload.height);
-      if (min < 200) {
-        scaler = 3;
-      } else if (min < 100) {
-        scaler = 2;
-      } else if (min > 800) {
-        scaler = 0.4;
-      } else if (min > 400) {
-        scaler = 0.8;
-      }*/
-      state.images.scaler = scaler;
-      state.images.width = payload.width * scaler;
-      state.images.height = payload.height * scaler;
+      state.images.originalWidth = payload.width;
+      state.images.originalHeight = payload.height;
+      let scaleFactor = state.images.ScaleFactorObject[state.options.image.imageScaleFactor];
+      state.images.width = Math.ceil(payload.width * scaleFactor);
+      state.images.height = Math.ceil(payload.height * scaleFactor);
     },
     SET_IMAGE_DATA_VALUES: (state, payload) => {
       state.images.imageData[payload[0]].base64Image = payload[1];
@@ -720,6 +724,9 @@ export default new Vuex.Store({
     },
     OPTIONS_IMAGE_CHANGE_COLOR_SCALE: (state, colorScale) => {
       state.options.image.colorScale = colorScale;
+    },
+    OPTIONS_IMAGE_CHANGE_IMAGE_SCALE_FACTOR: (state, data) => {
+      state.options.image.imageScaleFactor = data;
     },
     OPTIONS_IMAGE_CHANGE_MIN_INTENSITY: (state, data) => {
       state.options.image.minIntensity = data;
@@ -1083,6 +1090,11 @@ export default new Vuex.Store({
             );
           });
       }
+    },
+    rescaleImages: (context) => {
+      let scaleFactor = context.state.images.ScaleFactorObject[context.state.options.image.imageScaleFactor];
+      context.state.images.width = Math.ceil(context.state.images.originalWidth * scaleFactor);
+      context.state.images.height = Math.ceil(context.state.images.originalHeight * scaleFactor);
     },
     mzlistUpdatedMzs: (context, data) => {
       if (data.length === 1) {

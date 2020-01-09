@@ -2,6 +2,7 @@
   <SidebarWidget
     v-bind:side="side"
     v-bind:initial-expanded="initialExpanded"
+    v-bind:style="{width: expandedWidth + 'px!important'}"
     title="Images"
     v-on:change-expand="logEvent($event)"
   >
@@ -624,6 +625,15 @@ export default {
     },
     showHistoTrash: function() {
       return store.getters.getImageData(imageIndex.HIST).showOverlay;
+    },
+    expandedWidth: function() {
+      let width = this.$store.getters.getImageWidth;
+      let minWidth = 360;
+      if (width != null) {
+        return Math.max(minWidth, width + 40);
+      } else {
+        return minWidth;
+      }
     },
   },
 };
