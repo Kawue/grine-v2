@@ -264,6 +264,7 @@
         <div style="margin: auto">
           <mz-image
             :imageDataIndex="5"
+            v-bind:enable-lasso="true"
             v-bind:enableClickCopyToLassoImage="false"
             v-bind:hidden="!showHisto"
           ></mz-image>
@@ -330,6 +331,7 @@
                 :modal-image="true"
                 :modal-height="modalCanvasHeight"
                 :modal-width="modalCanvasWidth"
+                :enable-lasso="(modalIndex === lassoIndex) || (modalIndex === histoIndex)"
               ></mz-image>
             </div>
             <span
@@ -537,10 +539,13 @@ export default {
     },
     deleteLassoImage() {
       store.commit('CLEAR_IMAGE', imageIndex.LASSO);
+      store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
       store.commit('RESET_SELECTION');
     },
     deleteHistoOverlay() {
       store.commit('SET_SHOW_HISTO_OVERLAY', false);
+      store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+      store.commit('RESET_SELECTION');
     },
     logEvent(expanded) {
       this.$emit('change-expand', expanded);
@@ -624,7 +629,7 @@ export default {
       return store.getters.getImageData(imageIndex.LASSO).mzValues.length > 0;
     },
     showHistoTrash: function() {
-      return store.getters.getImageData(imageIndex.HIST).showOverlay;
+      return store.getters.getImageData(imageIndex.HIST).showOverlay || store.getters.getHistoImageLassoActive;
     },
     expandedWidth: function() {
       let width = this.$store.getters.getImageWidth;

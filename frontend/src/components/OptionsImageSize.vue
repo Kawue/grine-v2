@@ -14,6 +14,7 @@
 import { mapGetters } from 'vuex';
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
+import * as imageIndex from '../constants';
 
 export default {
   components: {
@@ -31,15 +32,23 @@ export default {
       set(value) {
         this.$store.commit('OPTIONS_IMAGE_CHANGE_IMAGE_SCALE_FACTOR', value)
 
+        this.$store.commit('CLEAR_IMAGE', imageIndex.LASSO);
+        this.$store.commit('RESET_SELECTION');
+
+        if (!this.$store.getters.getOptionsImage.dimred.relative) {
+          this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_RELATIVE', true);
+        }
+        this.$store.commit('CLEAR_IMAGE', imageIndex.DIM_RED);
+
+        this.$store.dispatch('rescaleImages')
+        /*
         let self = this;
         this.updateValue = value;
-        // why timeout?
-        setTimeout(function() {
-          // loop reasons?
-          if (self.updateValue === value) {
-            self.$store.dispatch('rescaleImages')
-          }
-        }, 500);
+        // loop reasons?
+        if (self.updateValue === value) {
+          self.$store.dispatch('rescaleImages')
+        }*/
+        
       },
     },
   },

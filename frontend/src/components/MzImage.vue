@@ -15,18 +15,18 @@
         v-bind:width="width"
         v-bind:height="height"
       ></canvas>
-      <svg
-        class="lasso-svg absolute-position"
-        v-if="enableLasso"
-        v-bind:width="width"
-        v-bind:height="height"
-      ></svg>
       <canvas
         v-bind:hidden="imageDataIndex !== histIndex"
         v-bind:width="width"
         v-bind:height="height"
         class="histo-overlay-canvas absolute-position"
       ></canvas>
+      <svg
+        class="lasso-svg absolute-position"
+        v-if="enableLasso"
+        v-bind:width="width"
+        v-bind:height="height"
+      ></svg>
     </div>
   </div>
 </template>
@@ -88,7 +88,14 @@ export default {
     },
     showHistoOverlay(newValue) {
       if (!newValue) {
+        console.log("TRIGGER")
+        d3.select(this.$el).select(".lasso-group path").remove();
         this.drawHistoOverlay();
+      }
+    },
+    lassoActive(value) {
+      if (!value) {
+        d3.select(this.$el).select(".lasso-group path").remove();
       }
     },
     imageValues() {
@@ -171,6 +178,10 @@ export default {
       return this.$store.getters.getImageData(this.imageDataIndex)
         .lassoFetching;
     },
+    lassoActive: function() {
+      console.log(this.$store.getters.getHistoImageLassoActive)
+      return this.$store.getters.getHistoImageLassoActive;
+    },
     histoDimRedOverlay: function() {
       return this.$store.getters.getHistoDimRedOverlay;
     },
@@ -218,13 +229,6 @@ export default {
       }
       return width;
     },
-    scaler: function() {
-      let scaler = this.$store.getters.getImageScaler;
-      if (scaler == null) {
-        scaler = 1;
-      }
-      return scaler;
-    },
   },
   methods: {
     isMzLassoActive() {
@@ -256,21 +260,46 @@ export default {
       return style;
     },
     handleLassoEnd(lassoPolygon) {
+      if (lassoPolygon.length < 2) {
+        this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+      } else {
+        this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', true);
+      }
+      
       let bbox = d3
         .select('#lassopath')
         .node()
         .getBBox();
 
       const selectedPoints = [];
-      for (let i = Math.floor(bbox.x); i < Math.ceil(bbox.x + bbox.width); i++) {
-        for (let j = Math.floor(bbox.y); j < Math.ceil(bbox.y + bbox.height); j++) {
+      
+      let canvasWidth = null;
+      let canvasHeight = null;
+      let imageScaleFactor = null;
+      if (this.modalImage) {
+        canvasWidth = this.modalWidth;
+        canvasHeight = this.modalHeight;
+        imageScaleFactor = this.modalWidth / this.$store.getters.getImageWidth;
+      } else {
+        canvasWidth = this.width;
+        canvasHeight = this.height;
+        imageScaleFactor = this.$store.getters.getImageScaleFactorValue;
+      }
+
+      // Lasso group can be outside of the canvas. Therefore the bbox needs to be restricted in those cases.
+      for (let i = Math.floor(bbox.x); i < Math.min(canvasWidth, Math.ceil(bbox.x + bbox.width)); i++) {
+        for (let j = Math.floor(bbox.y); j < Math.min(canvasHeight, Math.ceil(bbox.y + bbox.height)); j++) {
           if (d3.polygonContains(lassoPolygon, [i, j])) {
-            //TODO: use numerical scaler value!
             // i is width, which is axis 1, aka j, in the backend array. Vice versa for j. Therefore it needs to be switched to be consistent with the backend.
-            selectedPoints.push([j, i]);
+            // floor to avoid index out of bounds exception due to rounding.
+            let y = Math.floor(j/imageScaleFactor);
+            let x = Math.floor(i/imageScaleFactor);
+            selectedPoints.push([y, x]);
           }
         }
       }
+      
+      //console.log(selectedPoints)
 
       this.$store.dispatch('imagesSelectPoints', [
         this.imageDataIndex,
@@ -372,7 +401,7 @@ export default {
   width: 100%;
 
   canvas {
-    border: 1px solid lightgrey;
+    //border: 1px solid lightgrey;
     background: white;
   }
 }

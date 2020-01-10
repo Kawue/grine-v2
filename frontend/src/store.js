@@ -88,6 +88,7 @@ export default new Vuex.Store({
           overlayDimRed: false,
           availableImages: [],
           histoImageIndex: 0,
+          lassoActive: false,
         },
       ],
       loadingImageData: false, // api fetch for image data is running
@@ -223,6 +224,9 @@ export default new Vuex.Store({
     },
     getHistoImageIndex: state => {
       return state.images.imageData[imageIndex.HIST].histoImageIndex;
+    },
+    getHistoImageLassoActive: state => {
+      return state.images.imageData[imageIndex.HIST].lassoActive;
     },
     getDimRedAvailable: state => {
       return state.images.imageData[imageIndex.DIM_RED].available;
@@ -494,6 +498,9 @@ export default new Vuex.Store({
       if (!show) {
         state.images.imageData[imageIndex.HIST].overlayDimRed = false;
       }
+    },
+    SET_HISTO_IMAGE_LASSO_ACTIVE: (state, value) => {
+      state.images.imageData[imageIndex.HIST].lassoActive = value;
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
@@ -1024,6 +1031,7 @@ export default new Vuex.Store({
       let selectedPoints = payload[1];
       context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
       context.dispatch('fetchLassoSimilar', index);
+
 
       /*let imageData = imageService.markSelectedPoints(
         context.state.images.imageData[index],

@@ -121,7 +121,12 @@ def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, agg
     mzDataSet = datasets[ds_name]["dataset"]
     cube = mzDataSet.getCube()
     selected_points = list(zip(*selected_points))
-    polygon_ref = aggregation_method(cube[:,:,mzDataSet.getMzIndex(selected_mzs)], axis=2)[selected_points]
+
+    # only Histology Image mz array is ?always? empty.
+    if len(selected_mzs) == 0:
+        polygon_ref = mzDataSet.getBinaryImage(uInt8=True)[selected_points]
+    else:
+        polygon_ref = aggregation_method(cube[:,:,mzDataSet.getMzIndex(selected_mzs)], axis=2)[selected_points]
 
     node_names = []
     for node in node_data:
@@ -129,6 +134,7 @@ def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, agg
         match = selection_match(polygon_ref, polygon_match, min_intensity, min_overlap, aggregation_method)
         if match:
             node_names.append(node['name'])
+    print(node_names)
     return node_names
 
 

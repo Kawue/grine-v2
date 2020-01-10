@@ -31,9 +31,13 @@ class MzDataSet:
         self.__mapping = MzMapping(list(dframe.columns))
         gx = dframe.index.get_level_values("grid_x").astype('int')
         gy = dframe.index.get_level_values("grid_y").astype('int')
+        
+        self.__binaryimage = np.zeros((gy.max()+1, gx.max()+1))
+        self.__binaryimage[(gy,gx)] = 1
+        self.__binaryimage_8bit = np.zeros((gy.max()+1, gx.max()+1))
+        self.__binaryimage_8bit[(gy,gx)] = 255
 
         mzimgs = []
-
         for mz in dframe.columns:
             img = np.full((gy.max()+1, gx.max()+1), np.nan)
             img[(gy, gx)] = dframe[mz]
@@ -50,6 +54,12 @@ class MzDataSet:
 
     def getCube(self):
         return self.__cube
+
+    def getBinaryImage(self, uInt8):
+        if uInt8:
+            return self.__binaryimage_8bit
+        else:
+            return self.__binaryimage
 
     def getRawImage(self, mzValues, method=np.mean):
         return method(self.__cube[:,:,self.__mapping.getMultipleInverse(mzValues)], 2)
