@@ -72,7 +72,6 @@ export default {
       render: false,
       canvas: null,
       lassoInstance: null,
-      removeLassoAfterPointsDrawn: true,
       histIndex: imageIndex.HIST,
     };
   },
@@ -88,15 +87,18 @@ export default {
     },
     showHistoOverlay(newValue) {
       if (!newValue) {
-        console.log("TRIGGER")
         d3.select(this.$el).select(".lasso-group path").remove();
         this.drawHistoOverlay();
       }
     },
-    lassoActive(value) {
-      if (!value) {
-        d3.select(this.$el).select(".lasso-group path").remove();
-      }
+    imageScaleFactor: function() {
+      this.drawMzImage();
+      d3.select(
+        d3.selectAll(".canvas-root").nodes()[this.imageDataIndex]
+      )
+      .select(".lasso-group")
+      .attr("transform", "scale(" + this.imageScaleFactor + ")");
+      
     },
     imageValues() {
       if (this.imageDataIndex === imageIndex.DIM_RED) {
@@ -132,19 +134,6 @@ export default {
         this.drawHistoOverlay();
       }
     }
-    /*
-    if (
-      this.imageDataIndex === imageIndex.HIST &&
-      this.$store.getters.getImageData(imageIndex.HIST).base64Image == null
-    ) {
-      this.$store.dispatch('fetchHistoImage');
-    } else if (
-      this.imageDataIndex === imageIndex.DIM_RED &&
-      this.$store.getters.getImageData(imageIndex.DIM_RED).base64Image == null
-    ) {
-      this.$store.dispatch('fetchDimRedImage');
-    }
-    */
     this.$store.subscribe(mutation => {
       if (
         mutation.type === 'CLEAR_IMAGE' &&
@@ -178,9 +167,8 @@ export default {
       return this.$store.getters.getImageData(this.imageDataIndex)
         .lassoFetching;
     },
-    lassoActive: function() {
-      console.log(this.$store.getters.getHistoImageLassoActive)
-      return this.$store.getters.getHistoImageLassoActive;
+    imageScaleFactor: function() {
+      return this.$store.getters.getImageScaleFactorValue;
     },
     histoDimRedOverlay: function() {
       return this.$store.getters.getHistoDimRedOverlay;
@@ -188,27 +176,6 @@ export default {
     ...mapGetters({
       loading: 'getLoadingImageData',
     }),
-    /*height: function() {
-      let height = this.$store.getters.getImageData(this.imageDataIndex).max.y;
-      if (height != undefined){
-        // TODO: Dirty fix to update the lasso SVG height consistently when the canvas height is changed. Needs to be resolved more clean!
-        d3.selectAll('.canvas-root svg').attr('height', height);
-        d3.selectAll('.canvas-root svg g rect').attr('height', height);
-      } else {
-        height = 10;
-      }
-      return height;
-    },
-    width: function() {
-      let width = this.$store.getters.getImageData(this.imageDataIndex).max.x;
-      if (width != undefined){
-        d3.selectAll('.canvas-root svg').attr('width', width);
-        d3.selectAll('.canvas-root svg g rect').attr('width', width);
-      } else {
-        width = 10;
-      }
-      return width;
-    },*/
     height: function() {
       if (this.modalImage) {
         return this.modalHeight;
@@ -261,9 +228,19 @@ export default {
     },
     handleLassoEnd(lassoPolygon) {
       if (lassoPolygon.length < 2) {
+        this.$store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
         this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+        if (this.imageDataIndex === imageIndex.HIST && !this.$store.getters.getImageData(imageIndex.HIST).showOverlay) {
+          this.$store.commit('RESET_SELECTION');
+        }
       } else {
-        this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', true);
+        if (this.imageDataIndex === imageIndex.LASSO) {
+          this.$store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', true);
+          this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+        } else if (this.imageDataIndex === imageIndex.HIST) {
+          this.$store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
+          this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', true);
+        }
       }
       
       let bbox = d3
@@ -273,7 +250,7 @@ export default {
 
       const selectedPoints = [];
       
-      let canvasWidth = null;
+      /*let canvasWidth = null;
       let canvasHeight = null;
       let imageScaleFactor = null;
       if (this.modalImage) {
@@ -286,15 +263,22 @@ export default {
         imageScaleFactor = this.$store.getters.getImageScaleFactorValue;
       }
 
+      canvasWidth = this.width;
+      canvasHeight = this.height;
+      imageScaleFactor = this.$store.getters.getImageScaleFactorValue;*/
+      
       // Lasso group can be outside of the canvas. Therefore the bbox needs to be restricted in those cases.
-      for (let i = Math.floor(bbox.x); i < Math.min(canvasWidth, Math.ceil(bbox.x + bbox.width)); i++) {
-        for (let j = Math.floor(bbox.y); j < Math.min(canvasHeight, Math.ceil(bbox.y + bbox.height)); j++) {
+      /*for (let i = Math.floor(bbox.x); i < Math.min(canvasWidth, Math.ceil(bbox.x + bbox.width)); i++) {
+        for (let j = Math.floor(bbox.y); j < Math.min(canvasHeight, Math.ceil(bbox.y + bbox.height)); j++) {*/
+      for (let i = Math.floor(bbox.x); i < Math.ceil(bbox.x + bbox.width); i++) {
+        for (let j = Math.floor(bbox.y); j < Math.ceil(bbox.y + bbox.height); j++) {
           if (d3.polygonContains(lassoPolygon, [i, j])) {
             // i is width, which is axis 1, aka j, in the backend array. Vice versa for j. Therefore it needs to be switched to be consistent with the backend.
             // floor to avoid index out of bounds exception due to rounding.
-            let y = Math.floor(j/imageScaleFactor);
-            let x = Math.floor(i/imageScaleFactor);
-            selectedPoints.push([y, x]);
+            /*let y = Math.floor(j/this.imageScaleFactor);
+            let x = Math.floor(i/this.imageScaleFactor);
+            selectedPoints.push([y, x]);*/
+            selectedPoints.push([j, i]);
           }
         }
       }
@@ -319,8 +303,9 @@ export default {
           context.save();
           context.globalAlpha = this.histoAlpha;
           context.clearRect(0, 0, this.width, this.height);
-          const scale = this.width / image.width;
-          context.scale(scale, scale);
+          //const scale = this.width / image.width;
+          //context.scale(scale, scale);
+          context.scale(this.imageScaleFactor, this.imageScaleFactor);
           context.drawImage(image, 0, 0);
           context.restore();
         };
@@ -352,8 +337,8 @@ export default {
           d3.select('#' + this.widgetUniqueId() + ' .canvas-root svg')
             .select('g')
             .select('rect')
-            .attr('width', this.width)
-            .attr('height', this.height);
+            .attr('width', this.$store.getters.getImageOriginalWidth)
+            .attr('height', this.$store.getters.getImageOriginalHeight);
         }
         const image = new Image();
 
@@ -380,13 +365,6 @@ export default {
 
         image.src = this.base64Image;
 
-        if (this.removeLassoAfterPointsDrawn) {
-          if (this.enableLasso) {
-            this.lassoInstance.reset();
-          }
-        } else {
-          this.removeLassoAfterPointsDrawn = true;
-        }
       } else {
         const context = this.canvas.node().getContext('2d');
         context.clearRect(0, 0, this.width, this.height);

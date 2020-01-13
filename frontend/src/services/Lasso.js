@@ -48,8 +48,8 @@ export default function lasso() {
       lassoPath = g
         .append('path')
         .attr('id', 'lassopath')
-        .attr('fill', '#fff')
-        .attr('fill-opacity', 0.1)
+        .attr('fill', '#000')
+        .attr('fill-opacity', 0.8)
         .attr('stroke', '#fff')
         .attr('stroke-dasharray', '3, 3');
 

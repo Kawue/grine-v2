@@ -68,6 +68,7 @@ export default new Vuex.Store({
           base64Image: null, // points that are displayed as mz image
           selectedPoints: [], // points that are selected by the lasso
           lassoFetching: false, // true during api call of lasso matching
+          lassoActive: false,
         },
         {
           // imageIndex.DIM_RED data used to render the dimred image
@@ -228,6 +229,9 @@ export default new Vuex.Store({
     getHistoImageLassoActive: state => {
       return state.images.imageData[imageIndex.HIST].lassoActive;
     },
+    getCacheImageLassoActive: state => {
+      return state.images.imageData[imageIndex.LASSO].lassoActive;
+    },
     getDimRedAvailable: state => {
       return state.images.imageData[imageIndex.DIM_RED].available;
     },
@@ -249,11 +253,17 @@ export default new Vuex.Store({
     getImageWidth: state => {
       return state.images.width;
     },
+    getImageOriginalWidth: state => {
+      return state.images.originalWidth;
+    },
     getHistoDimRedOverlay: state => {
       return state.images.imageData[imageIndex.HIST].overlayDimRed;
     },
     getImageHeight: state => {
       return state.images.height;
+    },
+    getImageOriginalHeight: state => {
+      return state.images.originalHeight;
     },
     getOptionsImage: state => {
       return state.options.image;
@@ -501,6 +511,9 @@ export default new Vuex.Store({
     },
     SET_HISTO_IMAGE_LASSO_ACTIVE: (state, value) => {
       state.images.imageData[imageIndex.HIST].lassoActive = value;
+    },
+    SET_CACHE_IMAGE_LASSO_ACTIVE: (state, value) => {
+      state.images.imageData[imageIndex.LASSO].lassoActive = value;
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
@@ -1101,8 +1114,10 @@ export default new Vuex.Store({
     },
     rescaleImages: (context) => {
       let scaleFactor = context.state.images.ScaleFactorObject[context.state.options.image.imageScaleFactor];
-      context.state.images.width = Math.ceil(context.state.images.originalWidth * scaleFactor);
-      context.state.images.height = Math.ceil(context.state.images.originalHeight * scaleFactor);
+      /*context.state.images.width = Math.ceil(context.state.images.originalWidth * scaleFactor);
+      context.state.images.height = Math.ceil(context.state.images.originalHeight * scaleFactor);*/
+      context.state.images.width = context.state.images.originalWidth * scaleFactor;
+      context.state.images.height = context.state.images.originalHeight * scaleFactor;
     },
     mzlistUpdatedMzs: (context, data) => {
       if (data.length === 1) {

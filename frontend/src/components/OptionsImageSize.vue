@@ -32,13 +32,13 @@ export default {
       set(value) {
         this.$store.commit('OPTIONS_IMAGE_CHANGE_IMAGE_SCALE_FACTOR', value)
 
-        this.$store.commit('CLEAR_IMAGE', imageIndex.LASSO);
+        /*this.$store.commit('CLEAR_IMAGE', imageIndex.LASSO);
         this.$store.commit('RESET_SELECTION');
 
         if (!this.$store.getters.getOptionsImage.dimred.relative) {
           this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_RELATIVE', true);
         }
-        this.$store.commit('CLEAR_IMAGE', imageIndex.DIM_RED);
+        this.$store.commit('CLEAR_IMAGE', imageIndex.DIM_RED);*/
 
         this.$store.dispatch('rescaleImages')
         /*

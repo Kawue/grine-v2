@@ -134,7 +134,7 @@ def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, agg
         match = selection_match(polygon_ref, polygon_match, min_intensity, min_overlap, aggregation_method)
         if match:
             node_names.append(node['name'])
-    print(node_names)
+    
     return node_names
 
 

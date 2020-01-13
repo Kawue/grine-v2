@@ -377,6 +377,7 @@ export default {
       modalTitle: '',
       modalCanvasWidth: 0,
       modalCanvasHeight: 0,
+      modalScale: 0,
       showDownloadIcon: false,
       blobUrl: null,
       mzIndex: imageIndex.SELECTED_MZ,
@@ -472,14 +473,41 @@ export default {
     showModal() {
       this.computeDims();
       this.$refs['image-modal'].show();
+      let lassoPathNode = d3.select(this.$el).selectAll(".content .canvas-root .lasso-group path").node();
       setTimeout(() => {
         this.modalImageSelector = d3
           .select('#image-modal')
           .select('.canvas-root');
         this.updateDownloadUrl();
       }, 1000);
+
+      setTimeout(() => {
+        //d3.select("#image-modal .lasso-group rect").attr("height", store.getters.getImageHeight);
+        //d3.select("#image-modal .lasso-group rect").attr("width", store.getters.getImageWidth);
+        d3.select("#image-modal .lasso-group").attr("transform", "scale(" + (this.modalScale * store.getters.getImageScaleFactorValue) + ")");
+        console.log(this.modalScale)
+        if (lassoPathNode) {
+          d3.select("#image-modal .lasso-group").node().appendChild(lassoPathNode);
+        }
+      }, 100);
+      
+      
     },
     hideModal() {
+      let lassoPathNode = d3.select("#image-modal .lasso-group path").node();
+      let lassoGroupNode = null;
+      if (lassoPathNode) {
+        let scale = this.modalCanvasWidth/ store.getters.getImageWidth;
+        if (store.getters.getCacheImageLassoActive) {
+          lassoGroupNode = d3.select(this.$el).select(".content .canvas-root .lasso-group").nodes()[0];
+        } else if (store.getters.getHistoImageLassoActive) {
+          lassoGroupNode = d3.select(this.$el).selectAll(".content .canvas-root .lasso-group").nodes()[1];
+        }
+
+        lassoGroupNode.appendChild(lassoPathNode);
+        d3.select(lassoGroupNode).attr("transform", "scale(" + store.getters.getImageScaleFactorValue + ")")
+      }
+
       this.$refs['image-modal'].hide();
       this.modalIndex = null;
       this.modalImageSelector = null;
@@ -497,14 +525,20 @@ export default {
           document.documentElement.clientHeight,
           window.innerHeight || 0
         );
-      const iw = store.getters.getImageWidth;
-      const ih = store.getters.getImageHeight;
+      const iw = store.getters.getImageOriginalWidth;
+      const ih = store.getters.getImageOriginalHeight;
+      const iww = store.getters.getImageWidth;
+      const ihh = store.getters.getImageHeight;
+      this.modalCanvasHeight = h;
+      this.modalCanvasWidth = w;
       if (ih < iw) {
         this.modalCanvasHeight = h;
         this.modalCanvasWidth = Math.round((h * iw) / ih);
+        this.modalScale = this.modalCanvasWidth / iww;
       } else {
         this.modalCanvasHeight = Math.round((w * ih) / iw);
         this.modalCanvasWidth = w;
+        this.modalScale = this.modalCanvasHeight / ihh;
       }
     },
     updateDownloadUrl() {
@@ -540,6 +574,7 @@ export default {
     deleteLassoImage() {
       store.commit('CLEAR_IMAGE', imageIndex.LASSO);
       store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+      store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
       store.commit('RESET_SELECTION');
     },
     deleteHistoOverlay() {
@@ -631,15 +666,6 @@ export default {
     showHistoTrash: function() {
       return store.getters.getImageData(imageIndex.HIST).showOverlay || store.getters.getHistoImageLassoActive;
     },
-    expandedWidth: function() {
-      let width = this.$store.getters.getImageWidth;
-      let minWidth = 360;
-      if (width != null) {
-        return Math.max(minWidth, width + 40);
-      } else {
-        return minWidth;
-      }
-    },
   },
 };
 </script>
@@ -666,7 +692,7 @@ select {
 
 .sidebar-widget {
   &.expanded {
-    width: 300px !important;
+    width: 360px !important;
   }
 }
 
