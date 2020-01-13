@@ -2529,12 +2529,9 @@ class NetworkService {
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {
           store.commit('MZLIST_UPDATE_HIGHLIGHTED_MZ', n.mzs);
-          // console.log('Hit clicked node');
           if (!n.selected) {
             n.selected = true;
-            // console.log('node not selected');
             if (!isMzLassoSelectionActive) {
-              // console.log('hightlight node');
               d3.select('#' + n.name)
                 .transition()
                 .duration(250)
@@ -2542,7 +2539,6 @@ class NetworkService {
                 .attrTween('transform', NetworkService.simple90DegreeRotation)
                 .attr('ry', 0)
                 .on('end', function() {
-                  // console.log('End animation');
                   d3.select(this)
                     .attr('transform', null)
                     .attr('active', 'true');

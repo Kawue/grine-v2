@@ -172,7 +172,9 @@ export default {
       return store.getters.isMzLassoSelectionActive;
     },
     mzClicked: function() {
-      store.dispatch('mzlistUpdatedMzs', this.localSelectedMz);
+      if (this.localSelectedMz.length > 0) {
+        store.dispatch('mzlistUpdatedMzs', this.localSelectedMz);
+      }
     },
     sortMZ: function() {
       store.commit('MZLIST_SORT_MZ');
