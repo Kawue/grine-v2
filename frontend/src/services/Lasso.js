@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import store from '@/store';
 
 function polygonToPath(polygon) {
   return `M${polygon.map(d => d.join(',')).join('L')}`;
@@ -39,14 +40,16 @@ export default function lasso() {
 
     function handleDragStart() {
       lassoPolygon = [d3.mouse(this)];
-      if (lassoPath) {
-        lassoPath.remove();
+
+      if (d3.selectAll(".lasso-group path").nodes().length > 0) {
+        d3.selectAll(".lasso-group path").remove();
       }
 
       lassoPath = g
         .append('path')
-        .attr('fill', '#fff')
-        .attr('fill-opacity', 0.1)
+        .attr('id', 'lassopath')
+        .attr('fill', '#000')
+        .attr('fill-opacity', 0.8)
         .attr('stroke', '#fff')
         .attr('stroke-dasharray', '3, 3');
 

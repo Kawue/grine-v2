@@ -3,6 +3,7 @@
     <vue-slider
       v-model="minIntensity"
       v-bind="sliderOptions"
+      :dragOnClick="true"
       class="slider"
     ></vue-slider>
     <span class="percentage">{{ minIntensity }}%</span>

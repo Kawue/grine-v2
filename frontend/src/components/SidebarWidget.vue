@@ -1,7 +1,7 @@
 <template>
   <div
     class="sidebar-widget"
-    v-bind:class="getExpandedClass()"
+    v-bind:class="[getExpandedClass()]"
     @mouseover="eventMouseOver()"
     @mouseleave="eventMouseLeave()"
   >
@@ -85,6 +85,7 @@ export default {
     },
     toggleView: function() {
       this.expanded = !this.expanded;
+      this.$emit('change-expand', this.expanded);
     },
     getExpandedClass: function() {
       return this.expanded ? 'expanded' : '';
@@ -113,10 +114,6 @@ export default {
   border: #717273 1px solid;
 
   &.expanded {
-    width: 300px;
-    &#images {
-      min-width: 350px;
-    }
   }
 }
 

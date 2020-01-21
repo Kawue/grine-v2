@@ -3,6 +3,7 @@
     <vue-slider
       v-model="minOverlap"
       v-bind="sliderOptions"
+      :dragOnClick="true"
       class="slider"
     ></vue-slider>
     <span class="percentage">{{ minOverlap }}%</span>

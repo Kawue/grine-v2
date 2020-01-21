@@ -1,22 +1,28 @@
-version: '3'
+version: '3.2'
 
 services:
     server:
         build: ./backend
+        stop_signal: SIGINT
         expose:
             - 5000
         ports:
             - 5000:5000
         networks:
             - apiNetwork
-    
+        volumes:
+            # for windows users
+            # -
+            # for unix users
+            - ./backend/data:/app/data
+
     client:
         build: ./frontend
         expose:
             - 8080
-        ports: 
+        ports:
             - 8080:80
-        links: 
+        links:
             - server
         depends_on:
             - server

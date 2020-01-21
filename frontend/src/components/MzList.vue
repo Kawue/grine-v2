@@ -46,7 +46,7 @@
 
       <select
         v-model="localSelectedMz"
-        v-on:click="mzClicked"
+        v-on:change="mzClicked"
         class="list"
         multiple
         :disabled="isMzLassoActive()"
@@ -172,7 +172,9 @@ export default {
       return store.getters.isMzLassoSelectionActive;
     },
     mzClicked: function() {
-      store.dispatch('mzlistUpdatedMzs', this.localSelectedMz);
+      if (this.localSelectedMz.length > 0) {
+        store.dispatch('mzlistUpdatedMzs', this.localSelectedMz);
+      }
     },
     sortMZ: function() {
       store.commit('MZLIST_SORT_MZ');

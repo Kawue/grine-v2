@@ -9,5 +9,4 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt --src /usr/local/src
 COPY . .
 COPY nginx.conf /etc/nginx
-RUN chmod +x ./start.sh
-CMD ["./start.sh"]
+CMD service nginx start && uwsgi --ini uwsgi.ini
