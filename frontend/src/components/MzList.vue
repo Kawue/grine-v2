@@ -35,7 +35,7 @@
             v-on:click="toggleShowRaw"
             v-b-tooltip.hover.top="'Show Raw Query Values'"
           >
-            <v-icon name="crow" v-bind:class="{ inactive: !showRaw }"></v-icon>
+            <v-icon name="microscope" v-bind:class="{ inactive: !showRaw }"></v-icon>
           </span>
         </div>
         <span
@@ -220,7 +220,7 @@ export default {
     transmitEvent(expanded) {
       this.$emit('change-expand', {
         expanded: expanded,
-        showRaw: this.showRaw,
+        expandBig: this.showRaw && this.queryActive,
       });
     },
     sortMZ: function() {

@@ -55,7 +55,7 @@ export default {
     },
     handleMzListEvent: function(payload) {
       if (payload['expanded']) {
-        if (payload['showRaw']) {
+        if (payload['expandBig']) {
           d3.select('#mzlist').style('min-width', '240px');
         } else {
           d3.select('#mzlist').style('min-width', '120px');
