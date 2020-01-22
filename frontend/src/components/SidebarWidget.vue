@@ -33,7 +33,7 @@
     <div
       class="content"
       v-bind:class="{ hidden: !expanded }"
-      style="height: 100vw;"
+      style="height: 100vh;"
     >
       <slot name="content"></slot>
     </div>

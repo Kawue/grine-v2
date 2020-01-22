@@ -134,7 +134,7 @@ def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, agg
         match = selection_match(polygon_ref, polygon_match, min_intensity, min_overlap, aggregation_method)
         if match:
             node_names.append(node['name'])
-    
+
     return node_names
 
 
@@ -392,4 +392,4 @@ def datasets_all_datasets_all_graphdata_action():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

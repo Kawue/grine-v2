@@ -487,15 +487,12 @@ export default {
       }, 1000);
 
       setTimeout(() => {
-        //d3.select("#image-modal .lasso-group rect").attr("height", store.getters.getImageHeight);
-        //d3.select("#image-modal .lasso-group rect").attr("width", store.getters.getImageWidth);
         d3.select('#image-modal .lasso-group').attr(
           'transform',
           'scale(' +
             this.modalScale * store.getters.getImageScaleFactorValue +
             ')'
         );
-        console.log(this.modalScale);
         if (lassoPathNode) {
           d3.select('#image-modal .lasso-group')
             .node()

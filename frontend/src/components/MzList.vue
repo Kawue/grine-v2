@@ -35,7 +35,10 @@
             v-on:click="toggleShowRaw"
             v-b-tooltip.hover.top="'Show Raw Query Values'"
           >
-            <v-icon name="microscope" v-bind:class="{ inactive: !showRaw }"></v-icon>
+            <v-icon
+              name="microscope"
+              v-bind:class="{ inactive: !showRaw }"
+            ></v-icon>
           </span>
         </div>
         <span
@@ -179,6 +182,7 @@ export default {
     return {
       localSelectedMz: [],
       showRaw: false,
+      expanded: true,
       nameModalMz: {
         name: '',
         mz: 0,
@@ -201,10 +205,12 @@ export default {
   },
   watch: {
     queryActive: function(newValue) {
-      if (newValue && this.showRaw) {
-        d3.select('#mzlist').style('min-width', 2 * 120 + 'px');
-      } else {
-        d3.select('#mzlist').style('min-width', 120 + 'px');
+      if (this.expanded) {
+        if (newValue && this.showRaw) {
+          d3.select('#mzlist').style('min-width', 2 * 120 + 'px');
+        } else {
+          d3.select('#mzlist').style('min-width', 120 + 'px');
+        }
       }
     },
   },
@@ -218,6 +224,7 @@ export default {
       }
     },
     transmitEvent(expanded) {
+      this.expanded = expanded;
       this.$emit('change-expand', {
         expanded: expanded,
         expandBig: this.showRaw && this.queryActive,

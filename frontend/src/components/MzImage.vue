@@ -105,6 +105,9 @@ export default {
     },
     imageScaleFactor: function() {
       this.drawMzImage();
+      if (this.imageDataIndex === imageIndex.HIST) {
+        this.drawHistoOverlay();
+      }
       d3.select(d3.selectAll('.canvas-root').nodes()[this.imageDataIndex])
         .select('.lasso-group')
         .attr('transform', 'scale(' + this.imageScaleFactor + ')');
@@ -275,8 +278,6 @@ export default {
         }
       }
 
-      //console.log(selectedPoints)
-
       store.dispatch('imagesSelectPoints', [
         this.imageDataIndex,
         selectedPoints,
@@ -295,9 +296,9 @@ export default {
           context.save();
           context.globalAlpha = this.histoAlpha;
           context.clearRect(0, 0, this.width, this.height);
-          //const scale = this.width / image.width;
-          //context.scale(scale, scale);
-          context.scale(this.imageScaleFactor, this.imageScaleFactor);
+          const scale = this.width / image.width;
+          context.scale(scale, scale);
+          // context.scale(this.imageScaleFactor, this.imageScaleFactor);
           context.drawImage(image, 0, 0);
           context.restore();
         };
@@ -336,18 +337,14 @@ export default {
           const context = this.canvas.node().getContext('2d');
           context.save();
           context.clearRect(0, 0, this.width, this.height);
-          if (this.imageDataIndex === imageIndex.HIST) {
-            const scale = this.width / image.width;
-            context.scale(scale, scale);
-          } else {
-            if (this.imageDataIndex === imageIndex.DIM_RED) {
-              context.fillRect(0, 0, this.width, this.height);
-            } else {
-              context.clearRect(0, 0, this.width, this.height);
-            }
-            const scale = this.width / image.width;
-            context.scale(scale, scale);
+          if (this.imageDataIndex === imageIndex.DIM_RED) {
+            context.fillRect(0, 0, this.width, this.height);
+          } else if (this.imageDataIndex !== imageIndex.HIST){
+            context.clearRect(0, 0, this.width, this.height);
           }
+          const scale = this.width / image.width;
+          context.scale(scale, scale);
+
           context.imageSmoothingEnabled = false;
           context.drawImage(image, 0, 0);
           context.restore();
@@ -368,7 +365,6 @@ export default {
   width: 100%;
 
   canvas {
-    //border: 1px solid lightgrey;
     background: white;
   }
 }

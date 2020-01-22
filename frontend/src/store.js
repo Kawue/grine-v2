@@ -543,7 +543,6 @@ export default new Vuex.Store({
             originalData['graphs'][graph]['dataset'];
         }
       }
-      //state.options.data.graph = 0;
     },
     SET_NETWORK_OPTIONS: (state, options) => {
       state.options.network = options;

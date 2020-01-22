@@ -6,7 +6,7 @@
       @change="updateThreshold"
       :dragOnClick="true"
       class="slider"
-      v-bind:disabled="state.dimred.relative"
+      v-bind:disabled="state.dimred.relative || disableRelativeCheckbox"
     ></vue-slider>
     <span class="percentage">{{ threshold }}%</span>
   </div>
@@ -17,6 +17,7 @@ import { mapGetters } from 'vuex';
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
 import store from '@/store';
+import * as imageIndex from '../constants';
 
 export default {
   components: {
@@ -27,6 +28,13 @@ export default {
     ...mapGetters({
       state: 'getOptionsImage',
     }),
+    disableRelativeCheckbox: {
+      get() {
+        return (
+          store.getters.getImageData(imageIndex.DIM_RED).mzValues.length === 0
+        );
+      },
+    },
   },
   data() {
     return {
@@ -41,10 +49,7 @@ export default {
   },
   methods: {
     updateThreshold() {
-      store.commit(
-        'OPTIONS_IMAGE_DIM_RED_CHANGE_THRESHOLD',
-        this.threshold
-      );
+      store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_THRESHOLD', this.threshold);
       store.dispatch('fetchDimRedImage');
     },
   },
