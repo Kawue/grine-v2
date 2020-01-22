@@ -16,6 +16,7 @@
 import { mapGetters } from 'vuex';
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
+import store from '@/store';
 
 export default {
   components: {
@@ -40,11 +41,11 @@ export default {
   },
   methods: {
     updateThreshold() {
-      this.$store.commit(
+      store.commit(
         'OPTIONS_IMAGE_DIM_RED_CHANGE_THRESHOLD',
         this.threshold
       );
-      this.$store.dispatch('fetchDimRedImage');
+      store.dispatch('fetchDimRedImage');
     },
   },
   mounted() {

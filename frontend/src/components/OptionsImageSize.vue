@@ -15,6 +15,7 @@ import { mapGetters } from 'vuex';
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
 import * as imageIndex from '../constants';
+import store from '@/store';
 
 export default {
   components: {
@@ -30,25 +31,8 @@ export default {
         return this.state.imageScaleFactor;
       },
       set(value) {
-        this.$store.commit('OPTIONS_IMAGE_CHANGE_IMAGE_SCALE_FACTOR', value)
-
-        /*this.$store.commit('CLEAR_IMAGE', imageIndex.LASSO);
-        this.$store.commit('RESET_SELECTION');
-
-        if (!this.$store.getters.getOptionsImage.dimred.relative) {
-          this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_RELATIVE', true);
-        }
-        this.$store.commit('CLEAR_IMAGE', imageIndex.DIM_RED);*/
-
-        this.$store.dispatch('rescaleImages')
-        /*
-        let self = this;
-        this.updateValue = value;
-        // loop reasons?
-        if (self.updateValue === value) {
-          self.$store.dispatch('rescaleImages')
-        }*/
-        
+        store.commit('OPTIONS_IMAGE_CHANGE_IMAGE_SCALE_FACTOR', value);
+        store.dispatch('rescaleImages');
       },
     },
   },
@@ -56,8 +40,24 @@ export default {
     return {
       updateValue: null,
       sliderOptions: {
-        marks: {'Smallest': '- - -', 'Smaller': '- -', 'Small': '-', 'Original': '0', 'Large': '+', 'Larger': '+ +', 'Largest': '+ + +'},
-        data: ['Smallest', 'Smaller', 'Small', 'Original', 'Large', 'Larger', 'Largest'],
+        marks: {
+          Smallest: '- - -',
+          Smaller: '- -',
+          Small: '-',
+          Original: '0',
+          Large: '+',
+          Larger: '+ +',
+          Largest: '+ + +',
+        },
+        data: [
+          'Smallest',
+          'Smaller',
+          'Small',
+          'Original',
+          'Large',
+          'Larger',
+          'Largest',
+        ],
         tooltipFormatter: '{value}',
       },
     };

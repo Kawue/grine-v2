@@ -27,6 +27,15 @@
         v-bind:width="width"
         v-bind:height="height"
       ></svg>
+      <img
+        v-if="surprise"
+        style="z-index: 10;"
+        class="absolute-position"
+        src="https://media.giphy.com/media/CLrEXbY34xfPi/giphy.gif"
+        alt="something funny"
+        :width="width"
+        :height="height"
+      />
     </div>
   </div>
 </template>
@@ -36,6 +45,7 @@ import * as d3 from 'd3';
 import lasso from '../services/Lasso';
 import { mapGetters } from 'vuex';
 import * as imageIndex from '../constants';
+import store from '@/store';
 
 export default {
   name: 'MzImage',
@@ -87,27 +97,26 @@ export default {
     },
     showHistoOverlay(newValue) {
       if (!newValue) {
-        d3.select(this.$el).select(".lasso-group path").remove();
+        d3.select(this.$el)
+          .select('.lasso-group path')
+          .remove();
         this.drawHistoOverlay();
       }
     },
     imageScaleFactor: function() {
       this.drawMzImage();
-      d3.select(
-        d3.selectAll(".canvas-root").nodes()[this.imageDataIndex]
-      )
-      .select(".lasso-group")
-      .attr("transform", "scale(" + this.imageScaleFactor + ")");
-      
+      d3.select(d3.selectAll('.canvas-root').nodes()[this.imageDataIndex])
+        .select('.lasso-group')
+        .attr('transform', 'scale(' + this.imageScaleFactor + ')');
     },
     imageValues() {
       if (this.imageDataIndex === imageIndex.DIM_RED) {
-        this.$store.dispatch('fetchDimRedImage');
+        store.dispatch('fetchDimRedImage');
       } else if (
         !this.enableLasso &&
         this.imageDataIndex !== imageIndex.DIM_RED
       ) {
-        this.$store.dispatch('fetchImageData', this.imageDataIndex);
+        store.dispatch('fetchImageData', this.imageDataIndex);
       }
     },
     lassoBase64() {
@@ -134,7 +143,7 @@ export default {
         this.drawHistoOverlay();
       }
     }
-    this.$store.subscribe(mutation => {
+    store.subscribe(mutation => {
       if (
         mutation.type === 'CLEAR_IMAGE' &&
         this.imageDataIndex === imageIndex.HIST &&
@@ -146,41 +155,41 @@ export default {
   },
   computed: {
     showHistoOverlay: function() {
-      return this.$store.getters.getImageData(imageIndex.HIST).showOverlay;
+      return store.getters.getImageData(imageIndex.HIST).showOverlay;
     },
     base64Image: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex).base64Image;
+      return store.getters.getImageData(this.imageDataIndex).base64Image;
     },
     imageValues: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex).mzValues;
+      return store.getters.getImageData(this.imageDataIndex).mzValues;
     },
     histoAlpha: function() {
       if (this.imageDataIndex !== imageIndex.HIST) {
         return 0;
       }
-      return this.$store.getters.getHistoAlpha;
+      return store.getters.getHistoAlpha;
     },
     lassoBase64: function() {
-      return this.$store.getters.getImageData(imageIndex.LASSO).base64Image;
+      return store.getters.getImageData(imageIndex.LASSO).base64Image;
     },
     lassoFetching: function() {
-      return this.$store.getters.getImageData(this.imageDataIndex)
-        .lassoFetching;
+      return store.getters.getImageData(this.imageDataIndex).lassoFetching;
     },
     imageScaleFactor: function() {
-      return this.$store.getters.getImageScaleFactorValue;
+      return store.getters.getImageScaleFactorValue;
     },
     histoDimRedOverlay: function() {
-      return this.$store.getters.getHistoDimRedOverlay;
+      return store.getters.getHistoDimRedOverlay;
     },
     ...mapGetters({
       loading: 'getLoadingImageData',
+      surprise: 'getSurprise',
     }),
     height: function() {
       if (this.modalImage) {
         return this.modalHeight;
       }
-      let height = this.$store.getters.getImageHeight;
+      let height = store.getters.getImageHeight;
       if (height == null) {
         height = 10;
       }
@@ -190,7 +199,7 @@ export default {
       if (this.modalImage) {
         return this.modalWidth;
       }
-      let width = this.$store.getters.getImageWidth;
+      let width = store.getters.getImageWidth;
       if (width == null) {
         width = 10;
       }
@@ -199,7 +208,7 @@ export default {
   },
   methods: {
     isMzLassoActive() {
-      return this.$store.getters.isMzLassoSelectionActive;
+      return store.getters.isMzLassoSelectionActive;
     },
     isAbleToCopyDataIntoSelectionImage() {
       return (
@@ -210,10 +219,7 @@ export default {
     },
     imageClick() {
       if (this.isAbleToCopyDataIntoSelectionImage()) {
-        this.$store.commit(
-          'IMAGE_COPY_INTO_SELECTION_IMAGE',
-          this.imageDataIndex
-        );
+        store.commit('IMAGE_COPY_INTO_SELECTION_IMAGE', this.imageDataIndex);
       }
     },
     widgetUniqueId() {
@@ -228,70 +234,56 @@ export default {
     },
     handleLassoEnd(lassoPolygon) {
       if (lassoPolygon.length < 2) {
-        this.$store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
-        this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
-        if (this.imageDataIndex === imageIndex.HIST && !this.$store.getters.getImageData(imageIndex.HIST).showOverlay) {
-          this.$store.commit('RESET_SELECTION');
+        store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
+        store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+        if (
+          this.imageDataIndex === imageIndex.HIST &&
+          !store.getters.getImageData(imageIndex.HIST).showOverlay
+        ) {
+          store.commit('RESET_SELECTION');
         }
       } else {
         if (this.imageDataIndex === imageIndex.LASSO) {
-          this.$store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', true);
-          this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+          store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', true);
+          store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
         } else if (this.imageDataIndex === imageIndex.HIST) {
-          this.$store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
-          this.$store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', true);
+          store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
+          store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', true);
         }
       }
-      
+
       let bbox = d3
         .select('#lassopath')
         .node()
         .getBBox();
 
       const selectedPoints = [];
-      
-      /*let canvasWidth = null;
-      let canvasHeight = null;
-      let imageScaleFactor = null;
-      if (this.modalImage) {
-        canvasWidth = this.modalWidth;
-        canvasHeight = this.modalHeight;
-        imageScaleFactor = this.modalWidth / this.$store.getters.getImageWidth;
-      } else {
-        canvasWidth = this.width;
-        canvasHeight = this.height;
-        imageScaleFactor = this.$store.getters.getImageScaleFactorValue;
-      }
 
-      canvasWidth = this.width;
-      canvasHeight = this.height;
-      imageScaleFactor = this.$store.getters.getImageScaleFactorValue;*/
-      
-      // Lasso group can be outside of the canvas. Therefore the bbox needs to be restricted in those cases.
-      /*for (let i = Math.floor(bbox.x); i < Math.min(canvasWidth, Math.ceil(bbox.x + bbox.width)); i++) {
-        for (let j = Math.floor(bbox.y); j < Math.min(canvasHeight, Math.ceil(bbox.y + bbox.height)); j++) {*/
-      for (let i = Math.floor(bbox.x); i < Math.ceil(bbox.x + bbox.width); i++) {
-        for (let j = Math.floor(bbox.y); j < Math.ceil(bbox.y + bbox.height); j++) {
+      for (
+        let i = Math.floor(bbox.x);
+        i < Math.ceil(bbox.x + bbox.width);
+        i++
+      ) {
+        for (
+          let j = Math.floor(bbox.y);
+          j < Math.ceil(bbox.y + bbox.height);
+          j++
+        ) {
           if (d3.polygonContains(lassoPolygon, [i, j])) {
-            // i is width, which is axis 1, aka j, in the backend array. Vice versa for j. Therefore it needs to be switched to be consistent with the backend.
-            // floor to avoid index out of bounds exception due to rounding.
-            /*let y = Math.floor(j/this.imageScaleFactor);
-            let x = Math.floor(i/this.imageScaleFactor);
-            selectedPoints.push([y, x]);*/
             selectedPoints.push([j, i]);
           }
         }
       }
-      
+
       //console.log(selectedPoints)
 
-      this.$store.dispatch('imagesSelectPoints', [
+      store.dispatch('imagesSelectPoints', [
         this.imageDataIndex,
         selectedPoints,
       ]);
     },
     drawHistoOverlay() {
-      if (this.$store.getters.getImageData(imageIndex.HIST).showOverlay) {
+      if (store.getters.getImageData(imageIndex.HIST).showOverlay) {
         const image = new Image();
 
         image.onload = () => {
@@ -310,15 +302,13 @@ export default {
           context.restore();
         };
         if (this.histoDimRedOverlay) {
-          image.src = this.$store.getters.getImageData(
+          image.src = store.getters.getImageData(
             imageIndex.DIM_RED
           ).base64Image;
         } else if (
-          this.$store.getters.getImageData(imageIndex.LASSO).base64Image != null
+          store.getters.getImageData(imageIndex.LASSO).base64Image != null
         ) {
-          image.src = this.$store.getters.getImageData(
-            imageIndex.LASSO
-          ).base64Image;
+          image.src = store.getters.getImageData(imageIndex.LASSO).base64Image;
         }
       } else {
         const componentId = '#' + this.widgetUniqueId();
@@ -337,8 +327,8 @@ export default {
           d3.select('#' + this.widgetUniqueId() + ' .canvas-root svg')
             .select('g')
             .select('rect')
-            .attr('width', this.$store.getters.getImageOriginalWidth)
-            .attr('height', this.$store.getters.getImageOriginalHeight);
+            .attr('width', store.getters.getImageOriginalWidth)
+            .attr('height', store.getters.getImageOriginalHeight);
         }
         const image = new Image();
 
@@ -364,7 +354,6 @@ export default {
         };
 
         image.src = this.base64Image;
-
       } else {
         const context = this.canvas.node().getContext('2d');
         context.clearRect(0, 0, this.width, this.height);

@@ -14,6 +14,7 @@
 import { mapGetters } from 'vuex';
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
+import store from '@/store';
 
 export default {
   components: {
@@ -29,7 +30,7 @@ export default {
         return this.state.minIntensity;
       },
       set(value) {
-        this.$store.commit('OPTIONS_IMAGE_CHANGE_MIN_INTENSITY', value);
+        store.commit('OPTIONS_IMAGE_CHANGE_MIN_INTENSITY', value);
 
         let self = this;
         this.updatedValue = value;

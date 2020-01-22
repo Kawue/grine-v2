@@ -5,11 +5,15 @@
         <Images
           id="images"
           side="right"
-          v-on:change-expand="handleEvent($event)"
+          v-on:change-expand="handleImageEvent($event)"
         ></Images>
       </div>
       <div class="col-sm">
-        <MzList id="mzlist" side="right"></MzList>
+        <MzList
+          id="mzlist"
+          side="right"
+          v-on:change-expand="handleMzListEvent($event)"
+        ></MzList>
       </div>
     </div>
   </div>
@@ -30,7 +34,7 @@ export default {
   },
   data: function() {
     return {
-      imagesMinWidth: '20px',
+      minWidth: '20px',
       imagesExpanded: true,
     };
   },
@@ -45,13 +49,24 @@ export default {
     }),
   },
   methods: {
-    handleEvent: function(imagesExpanded) {
+    handleImageEvent: function(imagesExpanded) {
       this.imagesExpanded = imagesExpanded;
       this.updateMinWidth();
     },
+    handleMzListEvent: function(payload) {
+      if (payload['expanded']) {
+        if (payload['showRaw']) {
+          d3.select('#mzlist').style('min-width', '240px');
+        } else {
+          d3.select('#mzlist').style('min-width', '120px');
+        }
+      } else {
+        d3.select('#mzlist').style('min-width', '20px');
+      }
+    },
     updateMinWidth: function() {
       if (this.imagesExpanded) {
-        this.imagesMinWidth = (this.imageWidth + 70) + 'px';
+        this.imagesMinWidth = this.imageWidth + 70 + 'px';
       } else {
         this.imagesMinWidth = '30px';
       }
@@ -73,6 +88,7 @@ export default {
   z-index: 101;
   background: #4f5050;
   color: white;
+  height: 100%;
 
   .row {
     padding: 0;

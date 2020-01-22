@@ -76,9 +76,11 @@ def eccentricity():
     """
     global G, calculated_ranks
     if len(calculated_ranks['eccentricity']) == 0:
-        sorted_arg = np.argsort(nx.floyd_warshall_numpy(G).A.max(axis=0))
+        max_array = nx.floyd_warshall_numpy(G).A.max(axis=0)
+        sorted_arg = np.argsort(max_array)
+        sorted = np.sort(max_array)
         node_list = list(G.nodes())
-        calculated_ranks['eccentricity'] = [node_list[sorted_arg[i]] for i in range(len(node_list))]
+        calculated_ranks['eccentricity'] = [{'nodeIndex':node_list[sorted_arg[i]], 'value': sorted[i]} for i in range(len(node_list))]
     return calculated_ranks['eccentricity']
 
 
@@ -136,7 +138,7 @@ def within_group_degree():
         :return: sorted list of nodes
     """
     global G
-    w_degree = between_group_degree()
+    w_degree = [{'nodeIndex': d['nodeIndex'], 'value': 1-d['value']}for d in between_group_degree()]
     w_degree.reverse()
     return w_degree
 
@@ -248,4 +250,4 @@ def sort_and_map_tuple_list_to_name(l, reverse=True):
         :return: sorted list of nodes
     """
     l.sort(key=lambda x: x[1], reverse=reverse)
-    return list(map(lambda x: x[0], l))
+    return [{'nodeIndex': index, 'value': value} for (index, value) in l]

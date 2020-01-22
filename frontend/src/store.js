@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import OptionsService from './services/OptionsService';
 import MzListService from './services/MzListService';
 import NetworkService from './services/NetworkService';
 import axios from 'axios';
@@ -10,9 +9,7 @@ import * as imageIndex from './constants';
 Vue.use(Vuex);
 Vue.config.devtools = true;
 
-const optionsService = new OptionsService();
 const mzListService = new MzListService();
-// const imageService = new ImageService();
 const networkService = new NetworkService();
 
 const API_URL = 'http://localhost:5000';
@@ -31,14 +28,14 @@ export default new Vuex.Store({
       originalHeight: null,
       width: null,
       height: null,
-      ScaleFactorObject: { 
-        "Smallest": 0.25,
-        "Smaller": 0.33,
-        "Small": 0.5,
-        "Original": 1,
-        "Large": 2,
-        "Larger": 3,
-        "Largest": 4,
+      ScaleFactorObject: {
+        Smallest: 0.25,
+        Smaller: 0.33,
+        Small: 0.5,
+        Original: 1,
+        Large: 2,
+        Larger: 3,
+        Largest: 4,
       },
       imageData: [
         {
@@ -94,12 +91,15 @@ export default new Vuex.Store({
       ],
       loadingImageData: false, // api fetch for image data is running
     },
+    surprise: false,
     mzList: {
+      queryActive: false,
       selectedMz: [],
       visibleMz: [],
       notVisibleMz: [],
     },
     network: {
+      loadingGraphQuery: false, // api fetch for graph query is running
       svgElements: {
         svg: null,
         nodeElements: null,
@@ -166,7 +166,7 @@ export default new Vuex.Store({
           interpolatePlasma: 'Plasma',
           interpolateInferno: 'Inferno',
         },
-        imageScaleFactor: "Original",
+        imageScaleFactor: 'Original',
         dimred: {
           show: false,
           relative: true,
@@ -245,7 +245,9 @@ export default new Vuex.Store({
       return state.options.image.imageScaleFactor;
     },
     getImageScaleFactorValue: state => {
-      return state.images.ScaleFactorObject[state.options.image.imageScaleFactor];
+      return state.images.ScaleFactorObject[
+        state.options.image.imageScaleFactor
+      ];
     },
     getImageData: state => index => {
       return state.images.imageData[index];
@@ -261,6 +263,15 @@ export default new Vuex.Store({
     },
     getImageHeight: state => {
       return state.images.height;
+    },
+    getLoadingGraphQuery: state => {
+      return state.network.loadingGraphQuery;
+    },
+    getSurprise: state => {
+      return state.surprise;
+    },
+    getGraphQueryActive: state => {
+      return state.mzList.queryActive;
     },
     getImageOriginalHeight: state => {
       return state.images.originalHeight;
@@ -394,7 +405,8 @@ export default new Vuex.Store({
     SET_IMAGE_DIMENSIONS: (state, payload) => {
       state.images.originalWidth = payload.width;
       state.images.originalHeight = payload.height;
-      let scaleFactor = state.images.ScaleFactorObject[state.options.image.imageScaleFactor];
+      let scaleFactor =
+        state.images.ScaleFactorObject[state.options.image.imageScaleFactor];
       state.images.width = Math.ceil(payload.width * scaleFactor);
       state.images.height = Math.ceil(payload.height * scaleFactor);
     },
@@ -517,6 +529,9 @@ export default new Vuex.Store({
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
+    },
+    SET_SURPRISE: (state, val) => {
+      state.surprise = val;
     },
     SET_ORIGINAL_GRAPH_DATA: (state, originalData) => {
       state.originalGraphData = originalData;
@@ -815,6 +830,7 @@ export default new Vuex.Store({
       );
     },
     RESET_SELECTION: (state, keepLasso) => {
+      state.mzList.queryActive = false;
       state.images.imageData[imageIndex.HIST].showOverlay =
         state.images.imageData[imageIndex.HIST].overlayDimRed;
       state.network.nodeTrix.nodeTrixPossible = false;
@@ -904,10 +920,6 @@ export default new Vuex.Store({
           alert('Error while loading graph data from api.');
           context.commit('SET_LOADING_GRAPH_DATA', false);
         });
-    },
-    updateOptionsImage: (context, data) => {
-      let calculatedImageOptions = optionsService.calculateImageOptions(data);
-      context.commit('OPTIONS_IMAGE_UPDATE', calculatedImageOptions);
     },
     changeGraph: (context, graph) => {
       context.state.options.data.graph = graph;
@@ -1044,19 +1056,6 @@ export default new Vuex.Store({
       let selectedPoints = payload[1];
       context.commit('SET_IMAGE_DATA_SELECTED_POINTS', [index, selectedPoints]);
       context.dispatch('fetchLassoSimilar', index);
-
-
-      /*let imageData = imageService.markSelectedPoints(
-        context.state.images.imageData[index],
-        selectedPoints
-      );
-      let imageData = context.state.images.imageData[index];
-      //imageData = imageService.calculateColors(
-      //  imageData,
-      //  context.state.options.image.colorScale
-      //);
-      context.commit('SET_IMAGE_DATA_VALUES', [index, imageData]);
-      */
     },
     fetchLassoSimilar: (context, index) => {
       const selectedPoints =
@@ -1112,12 +1111,15 @@ export default new Vuex.Store({
           });
       }
     },
-    rescaleImages: (context) => {
-      let scaleFactor = context.state.images.ScaleFactorObject[context.state.options.image.imageScaleFactor];
-      /*context.state.images.width = Math.ceil(context.state.images.originalWidth * scaleFactor);
-      context.state.images.height = Math.ceil(context.state.images.originalHeight * scaleFactor);*/
-      context.state.images.width = context.state.images.originalWidth * scaleFactor;
-      context.state.images.height = context.state.images.originalHeight * scaleFactor;
+    rescaleImages: context => {
+      let scaleFactor =
+        context.state.images.ScaleFactorObject[
+          context.state.options.image.imageScaleFactor
+        ];
+      context.state.images.width =
+        context.state.images.originalWidth * scaleFactor;
+      context.state.images.height =
+        context.state.images.originalHeight * scaleFactor;
     },
     mzlistUpdatedMzs: (context, data) => {
       if (data.length === 1) {
@@ -1131,6 +1133,7 @@ export default new Vuex.Store({
       }, 700);
     },
     graphQuery: context => {
+      context.state.network.loadingGraphQuery = true;
       axios
         .get(API_URL + '/graph/' + context.state.options.graphStatistic)
         .then(response => {
@@ -1142,9 +1145,12 @@ export default new Vuex.Store({
           context.state.mzList.visibleMz = mzListService.sortMzList(
             context.state.mzList.visibleMz
           );
+          context.state.mzList.queryActive = true;
+          context.state.network.loadingGraphQuery = false;
         })
         .catch(err => {
           console.error(err);
+          context.state.network.loadingGraphQuery = false;
         });
     },
     updateGraphCluster: context => {

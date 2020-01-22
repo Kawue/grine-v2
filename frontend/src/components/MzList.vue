@@ -2,39 +2,44 @@
   <SidebarWidget
     v-bind:side="side"
     v-bind:initial-expanded="initialExpanded"
+    v-on:change-expand="transmitEvent($event)"
     title="m/z List"
   >
     <div slot="content">
-      <div style="padding: 4px 8px 0 8px;">
+      <div
+        style="display: flex; flex-direction: row; justify-content: space-between; padding: 10px"
+      >
+        <div>
+          <span
+            class="text-primary clickable"
+            v-on:click="toggleShowAll()"
+            v-b-tooltip.hover.top="'Show all'"
+          >
+            <v-icon name="eye" v-if="showAll"></v-icon>
+            <v-icon name="eye-slash" v-else class="inactive"></v-icon>
+          </span>
+          <span
+            class="text-primary clickable"
+            style="padding: 0 10px"
+            v-on:click="toggleShowAnnotation"
+            v-b-tooltip.hover.top="'Show Annotations'"
+          >
+            <v-icon
+              name="sticky-note"
+              v-bind:class="{ inactive: !showAnnotation }"
+            ></v-icon>
+          </span>
+          <span
+            v-if="queryActive"
+            class="text-primary clickable"
+            v-on:click="toggleShowRaw"
+            v-b-tooltip.hover.top="'Show Raw Query Values'"
+          >
+            <v-icon name="crow" v-bind:class="{ inactive: !showRaw }"></v-icon>
+          </span>
+        </div>
         <span
-          style="float: left;"
-          class="text-primary clickable"
-          v-on:click="
-            toggleShowAll();
-            calculateCurrentMz();
-          "
-          v-b-tooltip.hover.top="'Show all'"
-        >
-          <v-icon name="eye" v-if="showAll"></v-icon>
-          <v-icon name="eye-slash" v-else class="inactive"></v-icon>
-        </span>
-        <span
-          style="float: left;margin-left: 15px;"
-          class="text-primary clickable"
-          v-on:click="toggleShowAnnotation"
-          v-b-tooltip.hover.top="'Show Annotations'"
-        >
-          <v-icon
-            name="sticky-note"
-            v-bind:class="{ inactive: !showAnnotation }"
-          ></v-icon>
-        </span>
-        <span
-          v-on:click="
-            toggleAsc();
-            sortMZ();
-          "
-          style="float: right; padding: 0"
+          v-on:click="toggleAsc()"
           class="clickable"
           v-b-tooltip.hover.top="'Sort'"
         >
@@ -43,29 +48,53 @@
           ></v-icon>
         </span>
       </div>
-
-      <select
-        v-model="localSelectedMz"
-        v-on:change="mzClicked"
-        class="list"
-        multiple
-        :disabled="isMzLassoActive()"
-      >
-        <option
-          v-for="mzObject in currentMz"
-          v-bind:class="{ inactive: !mzObject.highlight }"
-          v-bind:title="'mz: ' + mzObject.mz"
-          v-bind:value="mzObject.mz"
-          v-bind:key="mzObject.mz"
-          v-on:dblclick="doubleClick(mzObject)"
+      <div style="display: flex; flex-direction: row-reverse">
+        <select
+          v-model="localSelectedMz"
+          v-on:change="mzClicked"
+          class="list"
+          :class="{
+            'full-width': !queryActive || !showRaw,
+            'half-width': queryActive && showRaw,
+          }"
+          multiple
+          :disabled="isMzLassoActive()"
         >
-          {{
-            showAnnotation && mzObject.annotation != null
-              ? mzObject.annotation
-              : mzObject.mz.toFixed(3)
-          }}
-        </option>
-      </select>
+          <option
+            v-for="mzObject in currentMz"
+            v-bind:class="{ inactive: !mzObject.highlight }"
+            v-bind:title="'mz: ' + mzObject.mz"
+            v-bind:value="mzObject.mz"
+            v-bind:key="mzObject.mz"
+            v-on:dblclick="doubleClick(mzObject)"
+          >
+            {{
+              showAnnotation && mzObject.annotation != null
+                ? mzObject.annotation
+                : mzObject.mz.toFixed(3)
+            }}
+          </option>
+        </select>
+        <select
+          v-if="queryActive && showRaw"
+          v-model="localSelectedMz"
+          v-on:change="mzClicked"
+          class="list half-width"
+          multiple
+          :disabled="isMzLassoActive()"
+        >
+          <option
+            v-for="mzObject in currentMz"
+            v-bind:class="{ inactive: !mzObject.highlight }"
+            v-bind:title="'mz: ' + mzObject.mz"
+            v-bind:value="mzObject.mz"
+            v-bind:key="mzObject.mz"
+            v-on:dblclick="doubleClick(mzObject)"
+          >
+            {{ mzObject.queryValue }}
+          </option>
+        </select>
+      </div>
       <b-modal
         id="nameModal"
         ref="nameModal"
@@ -138,6 +167,7 @@
 import SidebarWidget from './SidebarWidget';
 import store from '@/store';
 import { mapGetters } from 'vuex';
+import * as d3 from 'd3';
 
 export default {
   extends: SidebarWidget,
@@ -148,6 +178,7 @@ export default {
   data: function() {
     return {
       localSelectedMz: [],
+      showRaw: false,
       nameModalMz: {
         name: '',
         mz: 0,
@@ -165,7 +196,17 @@ export default {
       asc: 'mzListOptionsAsc',
       graph: 'stateOptionsGraph',
       meta: 'meta',
+      queryActive: 'getGraphQueryActive',
     }),
+  },
+  watch: {
+    queryActive: function(newValue) {
+      if (newValue && this.showRaw) {
+        d3.select('#mzlist').style('min-width', 2 * 120 + 'px');
+      } else {
+        d3.select('#mzlist').style('min-width', 120 + 'px');
+      }
+    },
   },
   methods: {
     isMzLassoActive() {
@@ -176,14 +217,30 @@ export default {
         store.dispatch('mzlistUpdatedMzs', this.localSelectedMz);
       }
     },
+    transmitEvent(expanded) {
+      this.$emit('change-expand', {
+        expanded: expanded,
+        showRaw: this.showRaw,
+      });
+    },
     sortMZ: function() {
       store.commit('MZLIST_SORT_MZ');
     },
     toggleAsc: function() {
       store.commit('OPTIONS_MZLIST_TOOGLE_ASC');
+      this.sortMZ();
     },
     toggleShowAll: function() {
       store.commit('OPTIONS_MZLIST_TOOGLE_SHOW_ALL');
+      this.calculateCurrentMz();
+    },
+    toggleShowRaw: function() {
+      this.showRaw = !this.showRaw;
+      if (this.showRaw) {
+        d3.select('#mzlist').style('min-width', 2 * 120 + 'px');
+      } else {
+        d3.select('#mzlist').style('min-width', 120 + 'px');
+      }
     },
     toggleShowAnnotation: function() {
       store.commit('OPTIONS_MZLIST_TOOGLE_SHOW_ANNOTATION');
@@ -266,10 +323,16 @@ export default {
 .list {
   padding: 0;
   font-size: 0.9em;
-  min-height: 93vh;
-  width: 100%;
+  min-height: 92vh;
   text-align: center;
-  margin-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  width: 50%;
 }
 
 select {

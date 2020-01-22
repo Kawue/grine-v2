@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     disableSlider: function() {
-      return this.$store.getters.getImageData(imageIndex.HIST).showOverlay;
+      return store.getters.getImageData(imageIndex.HIST).showOverlay;
     },
     alpha: {
       get() {

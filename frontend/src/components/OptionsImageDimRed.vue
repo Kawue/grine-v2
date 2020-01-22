@@ -19,6 +19,7 @@
 import { mapGetters } from 'vuex';
 import OptionsImageDimRedThreshold from './OptionsImageDimRedThreshold';
 import * as imageIndex from '../constants';
+import store from '@/store';
 
 export default {
   components: {
@@ -34,14 +35,14 @@ export default {
         return this.state.dimred.relative;
       },
       set(value) {
-        this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_RELATIVE', value);
-        this.$store.dispatch('fetchDimRedImage');
+        store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_RELATIVE', value);
+        store.dispatch('fetchDimRedImage');
       },
     },
     disableRelativeCheckbox: {
       get() {
         return (
-          this.$store.getters.getImageData(imageIndex.DIM_RED).mzValues
+          store.getters.getImageData(imageIndex.DIM_RED).mzValues
             .length === 0
         );
       },

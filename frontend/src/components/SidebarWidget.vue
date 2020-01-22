@@ -30,7 +30,11 @@
     <div class="content-collapsed" v-bind:class="{ hidden: expanded }">
       <slot name="content-collapsed"></slot>
     </div>
-    <div class="content" v-bind:class="{ hidden: !expanded }">
+    <div
+      class="content"
+      v-bind:class="{ hidden: !expanded }"
+      style="height: 100vw;"
+    >
       <slot name="content"></slot>
     </div>
     <div class="content-always">

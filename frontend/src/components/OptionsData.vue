@@ -23,13 +23,18 @@
         </a>
       </div>
     </div>
-    <div class="row">
+    <div class="row" style="margin-top: 20px">
       <div class="col-md-12">
         <b-form-select
           v-model="selectedStatistic"
           :options="statisticOptions"
         ></b-form-select>
-        <b-button variant="primary" @click="executeQuery">
+        <b-button
+          variant="primary"
+          @click="executeQuery"
+          :disabled="loading"
+          :class="{ loadingQuery: loading }"
+        >
           Query
         </b-button>
       </div>
@@ -78,13 +83,14 @@ export default {
       state: 'getOptionsData',
       wholeData: 'getWholeData',
       stat: 'networkGraphStatistic',
+      loading: 'getLoadingGraphQuery',
     }),
     selectedGraph: {
       get() {
         return this.state.graph;
       },
       set(value) {
-        this.$store.dispatch('changeGraph', value);
+        store.dispatch('changeGraph', value);
       },
     },
     selectedStatistic: {
@@ -116,5 +122,8 @@ export default {
 }
 #json-export {
   margin: 10px;
+}
+.loadingQuery {
+  cursor: wait !important;
 }
 </style>

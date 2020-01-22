@@ -41,8 +41,8 @@ export default function lasso() {
     function handleDragStart() {
       lassoPolygon = [d3.mouse(this)];
 
-      if (d3.selectAll(".lasso-group path").nodes().length > 0) {
-        d3.selectAll(".lasso-group path").remove();
+      if (d3.selectAll('.lasso-group path').nodes().length > 0) {
+        d3.selectAll('.lasso-group path').remove();
       }
 
       lassoPath = g

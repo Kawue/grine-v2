@@ -2,9 +2,9 @@
   <SidebarWidget
     v-bind:side="side"
     v-bind:initial-expanded="initialExpanded"
-    v-bind:style="{width: expandedWidth + 'px!important'}"
+    v-bind:style="{ width: expandedWidth + 'px!important' }"
     title="Images"
-    v-on:change-expand="logEvent($event)"
+    v-on:change-expand="transmitEvent($event)"
   >
     <div slot="content" style="margin: 30px 10px 25px 10px">
       <!-- Community Image -->
@@ -331,7 +331,9 @@
                 :modal-image="true"
                 :modal-height="modalCanvasHeight"
                 :modal-width="modalCanvasWidth"
-                :enable-lasso="(modalIndex === lassoIndex) || (modalIndex === histoIndex)"
+                :enable-lasso="
+                  modalIndex === lassoIndex || modalIndex === histoIndex
+                "
               ></mz-image>
             </div>
             <span
@@ -473,7 +475,10 @@ export default {
     showModal() {
       this.computeDims();
       this.$refs['image-modal'].show();
-      let lassoPathNode = d3.select(this.$el).selectAll(".content .canvas-root .lasso-group path").node();
+      let lassoPathNode = d3
+        .select(this.$el)
+        .selectAll('.content .canvas-root .lasso-group path')
+        .node();
       setTimeout(() => {
         this.modalImageSelector = d3
           .select('#image-modal')
@@ -484,28 +489,42 @@ export default {
       setTimeout(() => {
         //d3.select("#image-modal .lasso-group rect").attr("height", store.getters.getImageHeight);
         //d3.select("#image-modal .lasso-group rect").attr("width", store.getters.getImageWidth);
-        d3.select("#image-modal .lasso-group").attr("transform", "scale(" + (this.modalScale * store.getters.getImageScaleFactorValue) + ")");
-        console.log(this.modalScale)
+        d3.select('#image-modal .lasso-group').attr(
+          'transform',
+          'scale(' +
+            this.modalScale * store.getters.getImageScaleFactorValue +
+            ')'
+        );
+        console.log(this.modalScale);
         if (lassoPathNode) {
-          d3.select("#image-modal .lasso-group").node().appendChild(lassoPathNode);
+          d3.select('#image-modal .lasso-group')
+            .node()
+            .appendChild(lassoPathNode);
         }
       }, 100);
-      
-      
     },
     hideModal() {
-      let lassoPathNode = d3.select("#image-modal .lasso-group path").node();
+      let lassoPathNode = d3.select('#image-modal .lasso-group path').node();
       let lassoGroupNode = null;
       if (lassoPathNode) {
-        let scale = this.modalCanvasWidth/ store.getters.getImageWidth;
+        let scale = this.modalCanvasWidth / store.getters.getImageWidth;
         if (store.getters.getCacheImageLassoActive) {
-          lassoGroupNode = d3.select(this.$el).select(".content .canvas-root .lasso-group").nodes()[0];
+          lassoGroupNode = d3
+            .select(this.$el)
+            .select('.content .canvas-root .lasso-group')
+            .nodes()[0];
         } else if (store.getters.getHistoImageLassoActive) {
-          lassoGroupNode = d3.select(this.$el).selectAll(".content .canvas-root .lasso-group").nodes()[1];
+          lassoGroupNode = d3
+            .select(this.$el)
+            .selectAll('.content .canvas-root .lasso-group')
+            .nodes()[1];
         }
 
         lassoGroupNode.appendChild(lassoPathNode);
-        d3.select(lassoGroupNode).attr("transform", "scale(" + store.getters.getImageScaleFactorValue + ")")
+        d3.select(lassoGroupNode).attr(
+          'transform',
+          'scale(' + store.getters.getImageScaleFactorValue + ')'
+        );
       }
 
       this.$refs['image-modal'].hide();
@@ -582,7 +601,7 @@ export default {
       store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
       store.commit('RESET_SELECTION');
     },
-    logEvent(expanded) {
+    transmitEvent(expanded) {
       this.$emit('change-expand', expanded);
     },
     deleteDrImage() {
@@ -636,26 +655,26 @@ export default {
         return this.options.dimred.show;
       },
       set(value) {
-        this.$store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW', value);
+        store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_SHOW', value);
       },
     },
     dimredThreshold: function() {
       if (this.modalIndex !== imageIndex.DIM_RED) {
         return null;
       }
-      return this.$store.getters.getDimRedThreshold;
+      return store.getters.getDimRedThreshold;
     },
     dimredRelative: function() {
       if (this.modalIndex !== imageIndex.DIM_RED) {
         return null;
       }
-      return this.$store.getters.getDimRedRelative;
+      return store.getters.getDimRedRelative;
     },
     histoAlpha: function() {
       if (this.modalIndex !== imageIndex.HIST) {
         return null;
       }
-      return this.$store.getters.getHistoAlpha;
+      return store.getters.getHistoAlpha;
     },
     showDimredTrash: function() {
       return store.getters.getImageData(imageIndex.DIM_RED).mzValues.length > 0;
@@ -664,7 +683,10 @@ export default {
       return store.getters.getImageData(imageIndex.LASSO).mzValues.length > 0;
     },
     showHistoTrash: function() {
-      return store.getters.getImageData(imageIndex.HIST).showOverlay || store.getters.getHistoImageLassoActive;
+      return (
+        store.getters.getImageData(imageIndex.HIST).showOverlay ||
+        store.getters.getHistoImageLassoActive
+      );
     },
   },
 };

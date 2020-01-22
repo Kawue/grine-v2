@@ -1,4 +1,3 @@
-
 export const COMMUNITY = 0;
 export const SELECTED_MZ = 1;
 export const AGGREGATED = 2;
