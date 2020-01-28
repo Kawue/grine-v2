@@ -107,7 +107,7 @@
         >Split</b-button
       >
       <b-button
-        v-b-modal="'assignmentModal'"
+        v-b-modal.assignmentModal
         variant="primary"
         size="lg"
         class="small-left-margin"
@@ -116,7 +116,7 @@
         >Change Assignment</b-button
       >
       <b-button
-        v-b-modal="'assignmentModal'"
+        v-b-modal.assignmentModal
         variant="primary"
         size="lg"
         class="small-left-margin"
