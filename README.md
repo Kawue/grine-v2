@@ -3,18 +3,15 @@
 GRINE is an interactive visualization tool for the exploration of community structures in MSI image networks. If you use GRINE for your own work please reference it as [1].
 
 ## Data Creation
-To start Grine three files need to be provided:
+To start Grine four files need to be provided:
  1. A .HDF5 file that contains the MSI data information.
  2. A .JSON file that contains the community detection and graph information.
  3. A .NPY file that contains the dimension reduction information.
+ 4. A .NPY file that contains the similarity matrix information.
 
-For 1. we refer to our preprocessing pipeline [A Mad Pie](https://github.com/Kawue/amadpie/) . For a self written processing we refer to [pyImzML-Parser](https://github.com/alexandrovteam/pyimzML/blob/master/pyimzml/ImzMLParser.py) and [Pandas](https://pandas.pydata.org/) .
+For 1. we refer to our processing pipeline [ProViM](https://github.com/Kawue/provim). For a self written processing we refer to [pyImzML-Parser](https://github.com/alexandrovteam/pyimzML/blob/master/pyimzml/ImzMLParser.py) and [Pandas](https://pandas.pydata.org/) .
 
-For 2. we refer to our [MSI Community Detection Project](https://github.com/Kawue/msi-community-detection). The theory is explained in [1].
-
-For 3. We refer to [?](www.google.de).
-
-All three projects produce the needed data files, which can then be used to start GRINE as stated below.
+For 2. to 4. we refer to our [MSI Community Detection Project](https://github.com/Kawue/msi-community-detection). The theory is explained in [1].
 
 ## Project Production startup
 ### Start:
