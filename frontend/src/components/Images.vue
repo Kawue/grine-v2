@@ -278,6 +278,7 @@
         @hide="hideModal"
         hide-footer
         id="image-modal"
+        centered
       >
         <template v-slot:modal-header="{ close }">
           <div
@@ -536,7 +537,7 @@ export default {
         0.8 *
         Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
       const h =
-        0.75 *
+        0.8 *
         Math.max(
           document.documentElement.clientHeight,
           window.innerHeight || 0
@@ -545,13 +546,21 @@ export default {
       const ih = store.getters.getImageOriginalHeight;
       const iww = store.getters.getImageWidth;
       const ihh = store.getters.getImageHeight;
-      this.modalCanvasHeight = h;
-      this.modalCanvasWidth = w;
       if (ih < iw) {
         this.modalCanvasHeight = h;
         this.modalCanvasWidth = Math.round((h * iw) / ih);
+        if (this.modalCanvasWidth > w) {
+          const factor = w/this.modalCanvasWidth;
+          this.modalCanvasWidth *= factor;
+          this.modalCanvasHeight *= factor;
+        }
         this.modalScale = this.modalCanvasWidth / iww;
       } else {
+        if (this.modalCanvasHeight > h) {
+          const factor = h/this.modalCanvasHeight;
+          this.modalCanvasWidth *= factor;
+          this.modalCanvasHeight *= factor;
+        }
         this.modalCanvasHeight = Math.round((w * ih) / iw);
         this.modalCanvasWidth = w;
         this.modalScale = this.modalCanvasHeight / ihh;
