@@ -264,12 +264,12 @@ export default {
 
       for (
         let i = Math.floor(bbox.x);
-        i < Math.ceil(bbox.x + bbox.width);
+        i < Math.min(store.getters.getImageOriginalWidth+1, Math.ceil(bbox.x + bbox.width));
         i++
       ) {
         for (
           let j = Math.floor(bbox.y);
-          j < Math.ceil(bbox.y + bbox.height);
+          j < Math.min(store.getters.getImageOriginalHeight+1, Math.ceil(bbox.y + bbox.height));
           j++
         ) {
           if (d3.polygonContains(lassoPolygon, [i, j])) {

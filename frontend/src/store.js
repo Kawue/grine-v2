@@ -264,6 +264,9 @@ export default new Vuex.Store({
     getImageHeight: state => {
       return state.images.height;
     },
+    getImageOriginalHeight: state => {
+      return state.images.originalHeight;
+    },
     getLoadingGraphQuery: state => {
       return state.network.loadingGraphQuery;
     },
@@ -272,9 +275,6 @@ export default new Vuex.Store({
     },
     getGraphQueryActive: state => {
       return state.mzList.queryActive;
-    },
-    getImageOriginalHeight: state => {
-      return state.images.originalHeight;
     },
     getOptionsImage: state => {
       return state.options.image;
