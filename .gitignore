@@ -60,4 +60,5 @@ backend/data/dataset/vibrissae_163_6.h5
 backend/data/dimreduce/dimreduce-vibrissae_163_6-umap.h5
 backend/data/dimreduce/dimreduce-MK_202_3-umap.h5
 backend/__pycache__
+backend/venv
 frontend/package-lock.json

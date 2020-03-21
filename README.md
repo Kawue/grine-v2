@@ -17,13 +17,17 @@ For 3. We refer to [?](www.google.de).
 All three projects produce the needed data files, which can then be used to start GRINE as stated below.
 
 ## Project Production startup
-Docker is not compatible with Windows 7, 8 and 10 Home. For details about a workaround see instructions below.
+Docker is not compatible with Windows 7, 8 and 10 Home. For details about a workaround see instructions below. 
+### First time usage
+This command is only necessary when you use GRINE for the first time.
+```
+docker-compose build
+```
 ### Start:
 ```
-docker-compose up --build -d
+docker-compose up -d
 ```
 Visit Browser under `localhost:8080`
-(Only when starting the tool the first time it is necessary to add the `--build` flag)
 
 ### Stop:
 ```
