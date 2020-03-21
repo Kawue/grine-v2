@@ -10,6 +10,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import store from '@/store';
 
 export default {
   name: 'OptionsImageMergeMethod',
@@ -23,7 +24,7 @@ export default {
         return this.state.mergeMethod;
       },
       set(value) {
-        this.$store.commit('OPTIONS_IMAGE_CHANGE_MERGE_METHOD', value);
+        store.commit('OPTIONS_IMAGE_CHANGE_MERGE_METHOD', value);
       },
     },
   },

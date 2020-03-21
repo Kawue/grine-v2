@@ -62,6 +62,7 @@ import OptionsNetwork from './OptionsNetwork';
 import OptionsImage from './OptionsImage';
 import OptionsData from './OptionsData';
 import { mapGetters } from 'vuex';
+import store from '@/store';
 
 export default {
   components: {
@@ -78,7 +79,7 @@ export default {
         return this.state.tabActive;
       },
       set(value) {
-        this.$store.commit('OPTIONS_STATE_UPDATE', { tabActive: value });
+        store.commit('OPTIONS_STATE_UPDATE', { tabActive: value });
       },
     },
     tabLocked: {
@@ -86,7 +87,7 @@ export default {
         return this.state.tabLocked;
       },
       set(value) {
-        this.$store.commit('OPTIONS_STATE_UPDATE', { tabLocked: value });
+        store.commit('OPTIONS_STATE_UPDATE', { tabLocked: value });
       },
     },
     tabsExpanded: {
@@ -94,7 +95,7 @@ export default {
         return this.state.tabsExpanded;
       },
       set(value) {
-        this.$store.commit('OPTIONS_STATE_UPDATE', { tabsExpanded: value });
+        store.commit('OPTIONS_STATE_UPDATE', { tabsExpanded: value });
       },
     },
   },

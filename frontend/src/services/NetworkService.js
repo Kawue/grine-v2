@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import * as d3lasso from 'd3-lasso';
 import * as d3annotate from '../../node_modules/d3-svg-annotation';
 import * as _ from 'lodash';
+import * as imageIndex from '../constants';
 import store from '@/store';
 
 // data structure for a quadratic and symmetric matrix
@@ -468,7 +469,10 @@ class NetworkService {
           })
       )
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
-      .force('forceCollide', d3.forceCollide().radius(d => d.radius))
+      .force(
+        'forceCollide',
+        d3.forceCollide().radius(d => d.radius)
+      )
       .alphaDecay(1 - Math.pow(0.001, 1 / parameters.iterations))
       .alpha(1)
       .on('tick', this.simulationUpdate.bind(this));
@@ -680,9 +684,9 @@ class NetworkService {
     // construct new parent one hierarchy higher
     const newParentIndex =
       Math.max(
-        ...Object.keys(graph['hierarchy' + parentHierarchy].nodes).map(
-          nodeKey => parseInt(nodeKey.split('n')[1], 10)
-        )
+        ...Object.keys(
+          graph['hierarchy' + parentHierarchy].nodes
+        ).map(nodeKey => parseInt(nodeKey.split('n')[1], 10))
       ) + 1;
     const newParentName = 'h' + parentHierarchy + 'n' + newParentIndex;
     const newParentChilds = newGroup.map(n =>
@@ -1485,7 +1489,10 @@ class NetworkService {
 
     const oldElements = store.getters.networkNodeTrixOldElements;
     oldElements.oldNodes = sel;
-    NetworkService.removeEdgesFromNodes(edges, sel.map(n => n.name));
+    NetworkService.removeEdgesFromNodes(
+      edges,
+      sel.map(n => n.name)
+    );
     sel.push(...selNodeTrixNodes);
     let deepNodes = [];
     // compute nodes of the deepest hierarchy of selected nodes
@@ -2504,7 +2511,7 @@ class NetworkService {
   }
 
   nodeClick(n) {
-    store.commit('CLEAR_IMAGES');
+    // store.commit('CLEAR_IMAGES');
     let isMzLassoSelectionActive = store.getters.isMzLassoSelectionActive;
     if (
       (d3.event.ctrlKey || d3.event.metaKey) &&
@@ -2520,6 +2527,12 @@ class NetworkService {
     } else {
       if (!isMzLassoSelectionActive) {
         NetworkService.clearHighlightNodeTrixNodes();
+      }
+      if (n.mzs.length > 1) {
+        // Clear the mz Image if a community node is clicked
+        store.commit('CLEAR_IMAGE', imageIndex.SELECTED_MZ);
+      } else if (n.parent == null) {
+        store.commit('CLEAR_IMAGE', imageIndex.COMMUNITY);
       }
       for (let i = 0; i < store.getters.networkNodes.length; i++) {
         if (store.getters.networkNodes[i].name === n.name) {
@@ -2562,9 +2575,8 @@ class NetworkService {
           }
         }
       }
+      store.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
     }
-
-    store.commit('IMAGE_DATA_UPDATE_FROM_SELECTED_NODES');
   }
 
   shrinkNode(graph, oldNode, nodes, edges) {

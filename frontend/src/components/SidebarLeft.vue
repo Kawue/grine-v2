@@ -24,7 +24,7 @@ export default {
   position: absolute;
   left: 0;
   top: 0;
-  z-index: 101;
+  z-index: 102;
 
   .row {
     padding: 0;

@@ -1,0 +1,819 @@
+{
+	"graphs": {
+		"graph0": {
+			"graph": {
+				"hierarchy0": {
+					"nodes": {
+						"h0n0": {
+							"index": 0,
+							"name": "h0n0",
+							"childs": [
+								0,
+								1
+							],
+							"mzs": [
+								74.651,
+								104.107
+							]
+						},
+						"h0n1": {
+							"index": 1,
+							"name": "h0n1",
+							"childs": [
+								2,
+								3
+							],
+							"mzs": [
+								118.277,
+								705.185
+							]
+						},
+						"h0n2": {
+							"index": 2,
+							"name": "h0n2",
+							"childs": [
+								4,
+								5,
+								6,
+								7,
+								8
+							],
+							"mzs": [
+								1515.45,
+								1677.505,
+								1839.557,
+								2001.743,
+								2163.914
+							]
+						}},
+					"edges": {
+						"h0e0": {
+							"index": 0,
+							"name": "h0e0",
+							"source": "h0n0",
+							"target": "h0n1",
+							"weight": 0.7224027286482838
+						},
+						"h0e1": {
+							"index": 1,
+							"name": "h0e1",
+							"source": "h0n0",
+							"target": "h0n2",
+							"weight": 0.7267746017517603
+						},
+						"h0e2": {
+							"index": 2,
+							"name": "h0e2",
+							"source": "h0n1",
+							"target": "h0n2",
+							"weight": 0.7085779527251409
+						}
+					}
+				},
+				"hierarchy1": {
+					"nodes": {
+						"h1n0": {
+							"index": 0,
+							"name": "h1n0",
+							"membership": 0,
+							"mzs": [
+								74.651
+							]
+						},
+						"h1n1": {
+							"index": 1,
+							"name": "h1n1",
+							"membership": 0,
+							"mzs": [
+								104.107
+							]
+						},
+						"h1n2": {
+							"index": 2,
+							"name": "h1n2",
+							"membership": 1,
+							"mzs": [
+								118.277
+							]
+						},
+						"h1n3": {
+							"index": 3,
+							"name": "h1n3",
+							"membership": 1,
+							"mzs": [
+								705.185
+							]
+						},
+						"h1n4": {
+							"index": 4,
+							"name": "h1n4",
+							"membership": 2,
+							"mzs": [
+								1515.45
+							]
+						},
+						"h1n5": {
+							"index": 5,
+							"name": "h1n5",
+							"membership": 2,
+							"mzs": [
+								1677.505
+							]
+						},
+						"h1n6": {
+							"index": 6,
+							"name": "h1n6",
+							"membership": 2,
+							"mzs": [
+								1839.557
+							]
+						},
+						"h1n7": {
+							"index": 7,
+							"name": "h1n7",
+							"membership": 2,
+							"mzs": [
+								2001.743
+							]
+						},
+						"h1n8": {
+							"index": 8,
+							"name": "h1n8",
+							"membership": 2,
+							"mzs": [
+								2163.914
+							]
+						}
+					},
+					"edges": {
+						"h1e0": {
+							"index": 0,
+							"name": "h1e0",
+							"source": "h1n0",
+							"target": "h1n1",
+							"weight": 0.99
+						},
+						"h1e1": {
+							"index": 1,
+							"name": "h1e1",
+							"source": "h1n2",
+							"target": "h1n3",
+							"weight": 0.9
+						},
+						"h1e2": {
+							"index": 2,
+							"name": "h1e2",
+							"source": "h1n1",
+							"target": "h1n4",
+							"weight": 0.75
+						},
+						"h1e3": {
+							"index": 3,
+							"name": "h1e3",
+							"source": "h1n3",
+							"target": "h1n7",
+							"weight": 0.79
+						},
+						"h1e4": {
+							"index": 4,
+							"name": "h1e4",
+							"source": "h1n4",
+							"target": "h1n5",
+							"weight": 0.91
+						},
+						"h1e5": {
+							"index": 5,
+							"name": "h1e5",
+							"source": "h1n5",
+							"target": "h1n6",
+							"weight": 0.94
+						},
+						"h1e6": {
+							"index": 6,
+							"name": "h1e6",
+							"source": "h1n6",
+							"target": "h1n7",
+							"weight": 0.94
+						},
+						"h1e7": {
+							"index": 7,
+							"name": "h1e7",
+							"source": "h1n7",
+							"target": "h1n8",
+							"weight": 0.93
+						},
+						"h1e8": {
+							"index": 8,
+							"name": "h1e8",
+							"source": "h1n8",
+							"target": "h1n4",
+							"weight": 0.89
+						},
+						"h1e9": {
+							"index": 9,
+							"name": "h1e9",
+							"source": "h1n7",
+							"target": "h1n4",
+							"weight": 0.91
+						},
+						"h1e10": {
+							"index": 10,
+							"name": "h1e10",
+							"source": "h1n8",
+							"target": "h1n5",
+							"weight": 0.95
+						},
+						"h1e11": {
+							"index": 11,
+							"name": "h1e11",
+							"source": "h1n8",
+							"target": "h1n5",
+							"weight": 0.92
+						},
+						"h1e12": {
+							"index": 12,
+							"name": "h1e12",
+							"source": "h1n8",
+							"target": "h1n6",
+							"weight": 0.9
+						},
+						"h1e13": {
+							"index": 13,
+							"name": "h1e13",
+							"source": "h1n4",
+							"target": "h1n6",
+							"weight": 0.96
+						},
+						"h1e14": {
+							"index": 14,
+							"name": "h1e14",
+							"source": "h1n7",
+							"target": "h1n5",
+							"weight": 0.9
+						}
+					}
+				}
+			},
+			"dataset": "homo-nodetrix",
+			"threshold": 0.70,
+			"mzs": {
+				"74.651": {
+					"hierarchy0": "h0n0",
+					"hierarchy1": "h1n0"
+				},
+				"104.107": {
+					"hierarchy0": "h0n0",
+					"hierarchy1": "h1n1"
+				},
+				"118.277": {
+					"hierarchy0": "h0n1",
+					"hierarchy1": "h1n2"
+				},
+				"705.185": {
+					"hierarchy0": "h0n1",
+					"hierarchy1": "h1n3"
+				},
+				"1515.45": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n4"
+				},
+				"1677.505": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n5"
+				},
+				"1839.557": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n6"
+				},
+				"2001.743": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n7"
+				},
+				"2163.914": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n8"
+				}
+			}
+		},
+		"graph1": {
+			"graph": {
+				"hierarchy0": {
+					"nodes": {
+						"h0n0": {
+							"index": 0,
+							"name": "h0n0",
+							"childs": [
+								0,
+								1
+							],
+							"mzs": [
+								74.651,
+								104.107
+							]
+						},
+						"h0n1": {
+							"index": 1,
+							"name": "h0n1",
+							"childs": [
+								2,
+								3
+							],
+							"mzs": [
+								118.277,
+								705.185
+							]
+						},
+						"h0n2": {
+							"index": 2,
+							"name": "h0n2",
+							"childs": [
+								4,
+								5,
+								6,
+								7,
+								8
+							],
+							"mzs": [
+								1515.45,
+								1677.505,
+								1839.557,
+								2001.743,
+								2163.914
+							]
+						}},
+					"edges": {
+						"h0e0": {
+							"index": 0,
+							"name": "h0e0",
+							"source": "h0n0",
+							"target": "h0n1",
+							"weight": 0.7224027286482838
+						},
+						"h0e1": {
+							"index": 1,
+							"name": "h0e1",
+							"source": "h0n0",
+							"target": "h0n2",
+							"weight": 0.7267746017517603
+						},
+						"h0e2": {
+							"index": 2,
+							"name": "h0e2",
+							"source": "h0n1",
+							"target": "h0n2",
+							"weight": 0.7085779527251409
+						}
+					}
+				},
+				"hierarchy1": {
+					"nodes": {
+						"h1n0": {
+							"index": 0,
+							"name": "h1n0",
+							"membership": 0,
+							"mzs": [
+								74.651
+							]
+						},
+						"h1n1": {
+							"index": 1,
+							"name": "h1n1",
+							"membership": 0,
+							"mzs": [
+								104.107
+							]
+						},
+						"h1n2": {
+							"index": 2,
+							"name": "h1n2",
+							"membership": 1,
+							"mzs": [
+								118.277
+							]
+						},
+						"h1n3": {
+							"index": 3,
+							"name": "h1n3",
+							"membership": 1,
+							"mzs": [
+								705.185
+							]
+						},
+						"h1n4": {
+							"index": 4,
+							"name": "h1n4",
+							"membership": 2,
+							"mzs": [
+								1515.45
+							]
+						},
+						"h1n5": {
+							"index": 5,
+							"name": "h1n5",
+							"membership": 2,
+							"mzs": [
+								1677.505
+							]
+						},
+						"h1n6": {
+							"index": 6,
+							"name": "h1n6",
+							"membership": 2,
+							"mzs": [
+								1839.557
+							]
+						},
+						"h1n7": {
+							"index": 7,
+							"name": "h1n7",
+							"membership": 2,
+							"mzs": [
+								2001.743
+							]
+						},
+						"h1n8": {
+							"index": 8,
+							"name": "h1n8",
+							"membership": 2,
+							"mzs": [
+								2163.914
+							]
+						}
+					},
+					"edges": {
+						"h1e0": {
+							"index": 0,
+							"name": "h1e0",
+							"source": "h1n0",
+							"target": "h1n1",
+							"weight": 0.99
+						},
+						"h1e1": {
+							"index": 1,
+							"name": "h1e1",
+							"source": "h1n2",
+							"target": "h1n3",
+							"weight": 0.55
+						},
+						"h1e2": {
+							"index": 2,
+							"name": "h1e2",
+							"source": "h1n1",
+							"target": "h1n4",
+							"weight": 0.75
+						},
+						"h1e3": {
+							"index": 3,
+							"name": "h1e3",
+							"source": "h1n3",
+							"target": "h1n7",
+							"weight": 0.79
+						},
+						"h1e4": {
+							"index": 4,
+							"name": "h1e4",
+							"source": "h1n4",
+							"target": "h1n5",
+							"weight": 0.93
+						},
+						"h1e5": {
+							"index": 5,
+							"name": "h1e5",
+							"source": "h1n5",
+							"target": "h1n6",
+							"weight": 0.82
+						},
+						"h1e7": {
+							"index": 7,
+							"name": "h1e7",
+							"source": "h1n7",
+							"target": "h1n8",
+							"weight": 0.93
+						},
+						"h1e9": {
+							"index": 9,
+							"name": "h1e9",
+							"source": "h1n7",
+							"target": "h1n4",
+							"weight": 0.91
+						},
+						"h1e11": {
+							"index": 11,
+							"name": "h1e11",
+							"source": "h1n8",
+							"target": "h1n5",
+							"weight": 0.99
+						},
+						"h1e14": {
+							"index": 14,
+							"name": "h1e14",
+							"source": "h1n7",
+							"target": "h1n5",
+							"weight": 0.87
+						}
+					}
+				}
+			},
+			"dataset": "hetero-nodetrix",
+			"threshold": 0.70,
+			"mzs": {
+				"74.651": {
+					"hierarchy0": "h0n0",
+					"hierarchy1": "h1n0"
+				},
+				"104.107": {
+					"hierarchy0": "h0n0",
+					"hierarchy1": "h1n1"
+				},
+				"118.277": {
+					"hierarchy0": "h0n1",
+					"hierarchy1": "h1n2"
+				},
+				"705.185": {
+					"hierarchy0": "h0n1",
+					"hierarchy1": "h1n3"
+				},
+				"1515.45": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n4"
+				},
+				"1677.505": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n5"
+				},
+				"1839.557": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n6"
+				},
+				"2001.743": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n7"
+				},
+				"2163.914": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n8"
+				}
+			}
+		},
+		"graph2": {
+			"graph": {
+				"hierarchy0": {
+					"nodes": {
+						"h0n0": {
+							"index": 0,
+							"name": "h0n0",
+							"childs": [
+								0,
+								1
+							],
+							"mzs": [
+								74.651,
+								104.107
+							]
+						},
+						"h0n1": {
+							"index": 1,
+							"name": "h0n1",
+							"childs": [
+								2,
+								3
+							],
+							"mzs": [
+								118.277,
+								705.185
+							]
+						},
+						"h0n2": {
+							"index": 2,
+							"name": "h0n2",
+							"childs": [
+								4,
+								5,
+								6,
+								7,
+								8
+							],
+							"mzs": [
+								1515.45,
+								1677.505,
+								1839.557,
+								2001.743,
+								2163.914
+							]
+						}},
+					"edges": {
+						"h0e0": {
+							"index": 0,
+							"name": "h0e0",
+							"source": "h0n0",
+							"target": "h0n1",
+							"weight": 0.7224027286482838
+						},
+						"h0e1": {
+							"index": 1,
+							"name": "h0e1",
+							"source": "h0n0",
+							"target": "h0n2",
+							"weight": 0.7267746017517603
+						},
+						"h0e2": {
+							"index": 2,
+							"name": "h0e2",
+							"source": "h0n1",
+							"target": "h0n2",
+							"weight": 0.7085779527251409
+						}
+					}
+				},
+				"hierarchy1": {
+					"nodes": {
+						"h1n0": {
+							"index": 0,
+							"name": "h1n0",
+							"membership": 0,
+							"mzs": [
+								74.651
+							]
+						},
+						"h1n1": {
+							"index": 1,
+							"name": "h1n1",
+							"membership": 0,
+							"mzs": [
+								104.107
+							]
+						},
+						"h1n2": {
+							"index": 2,
+							"name": "h1n2",
+							"membership": 1,
+							"mzs": [
+								118.277
+							]
+						},
+						"h1n3": {
+							"index": 3,
+							"name": "h1n3",
+							"membership": 1,
+							"mzs": [
+								705.185
+							]
+						},
+						"h1n4": {
+							"index": 4,
+							"name": "h1n4",
+							"membership": 2,
+							"mzs": [
+								1515.45
+							]
+						},
+						"h1n5": {
+							"index": 5,
+							"name": "h1n5",
+							"membership": 2,
+							"mzs": [
+								1677.505
+							]
+						},
+						"h1n6": {
+							"index": 6,
+							"name": "h1n6",
+							"membership": 2,
+							"mzs": [
+								1839.557
+							]
+						},
+						"h1n7": {
+							"index": 7,
+							"name": "h1n7",
+							"membership": 2,
+							"mzs": [
+								2001.743
+							]
+						},
+						"h1n8": {
+							"index": 8,
+							"name": "h1n8",
+							"membership": 2,
+							"mzs": [
+								2163.914
+							]
+						}
+					},
+					"edges": {
+						"h1e0": {
+							"index": 0,
+							"name": "h1e0",
+							"source": "h1n0",
+							"target": "h1n1",
+							"weight": 0.99
+						},
+						"h1e1": {
+							"index": 1,
+							"name": "h1e1",
+							"source": "h1n2",
+							"target": "h1n3",
+							"weight": 0.9
+						},
+						"h1e2": {
+							"index": 2,
+							"name": "h1e2",
+							"source": "h1n1",
+							"target": "h1n4",
+							"weight": 0.75
+						},
+						"h1e3": {
+							"index": 3,
+							"name": "h1e3",
+							"source": "h1n3",
+							"target": "h1n7",
+							"weight": 0.79
+						},
+						"h1e4": {
+							"index": 4,
+							"name": "h1e4",
+							"source": "h1n4",
+							"target": "h1n5",
+							"weight": 0.97
+						},
+						"h1e5": {
+							"index": 5,
+							"name": "h1e5",
+							"source": "h1n5",
+							"target": "h1n6",
+							"weight": 0.85
+						},
+						"h1e6": {
+							"index": 6,
+							"name": "h1e6",
+							"source": "h1n6",
+							"target": "h1n7",
+							"weight": 0.91
+						},
+						"h1e7": {
+							"index": 7,
+							"name": "h1e7",
+							"source": "h1n7",
+							"target": "h1n8",
+							"weight": 0.95
+						},
+						"h1e12": {
+							"index": 12,
+							"name": "h1e12",
+							"source": "h1n8",
+							"target": "h1n6",
+							"weight": 0.9
+						},
+						"h1e13": {
+							"index": 13,
+							"name": "h1e13",
+							"source": "h1n4",
+							"target": "h1n6",
+							"weight": 0.89
+						}
+					}
+				}
+			},
+			"dataset": "cluster-nodetrix",
+			"threshold": 0.70,
+			"mzs": {
+				"74.651": {
+					"hierarchy0": "h0n0",
+					"hierarchy1": "h1n0"
+				},
+				"104.107": {
+					"hierarchy0": "h0n0",
+					"hierarchy1": "h1n1"
+				},
+				"118.277": {
+					"hierarchy0": "h0n1",
+					"hierarchy1": "h1n2"
+				},
+				"705.185": {
+					"hierarchy0": "h0n1",
+					"hierarchy1": "h1n3"
+				},
+				"1515.45": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n4"
+				},
+				"1677.505": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n5"
+				},
+				"1839.557": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n6"
+				},
+				"2001.743": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n7"
+				},
+				"2163.914": {
+					"hierarchy0": "h0n2",
+					"hierarchy1": "h1n8"
+				}
+			}
+		}
+	}
+}

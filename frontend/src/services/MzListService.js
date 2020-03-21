@@ -25,6 +25,7 @@ class MzListService {
         originalIndex: node.index,
         mutableIndex: node.index,
         mz: parseFloat(mz),
+        queryValue: 0,
       });
     }
     return mzObjects;
@@ -35,16 +36,21 @@ class MzListService {
     const namePrefix = `h${store.getters.meta.maxHierarchy}n`;
     for (let i = 0; i < mutation.length; i++) {
       const visibleIndex = visibleMz.findIndex(mzObject => {
-        return mzObject[deepestHierarchy] === namePrefix + mutation[i];
+        return (
+          mzObject[deepestHierarchy] === namePrefix + mutation[i]['nodeIndex']
+        );
       });
       if (visibleIndex > -1) {
+        visibleMz[visibleIndex].queryValue = mutation[i]['value'];
         visibleMz[visibleIndex].mutableIndex = i;
       } else {
-        notVisibleMz[
-          notVisibleMz.findIndex(mzObject => {
-            return mzObject[deepestHierarchy] === namePrefix + mutation[i];
-          })
-        ].mutableIndex = i;
+        const notVisibleIndex = notVisibleMz.findIndex(mzObject => {
+          return (
+            mzObject[deepestHierarchy] === namePrefix + mutation[i]['nodeIndex']
+          );
+        });
+        notVisibleMz[notVisibleIndex].mutableIndex = i;
+        notVisibleMz[notVisibleIndex].queryValue = mutation[i]['value'];
       }
     }
   }
@@ -52,9 +58,11 @@ class MzListService {
   resetPermutation(visibleMz, notVisibleMz) {
     for (const mzObject of visibleMz) {
       mzObject.mutableIndex = mzObject.originalIndex;
+      mzObject.queryValue = 0;
     }
     for (const mzObject of notVisibleMz) {
       mzObject.mutableIndex = mzObject.originalIndex;
+      mzObject.queryValue = 0;
     }
   }
 

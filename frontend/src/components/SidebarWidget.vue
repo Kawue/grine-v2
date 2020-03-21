@@ -1,7 +1,7 @@
 <template>
   <div
     class="sidebar-widget"
-    v-bind:class="getExpandedClass()"
+    v-bind:class="[getExpandedClass()]"
     @mouseover="eventMouseOver()"
     @mouseleave="eventMouseLeave()"
   >
@@ -30,7 +30,11 @@
     <div class="content-collapsed" v-bind:class="{ hidden: expanded }">
       <slot name="content-collapsed"></slot>
     </div>
-    <div class="content" v-bind:class="{ hidden: !expanded }">
+    <div
+      class="content"
+      v-bind:class="{ hidden: !expanded }"
+      style="height: 100vh;"
+    >
       <slot name="content"></slot>
     </div>
     <div class="content-always">
@@ -85,6 +89,7 @@ export default {
     },
     toggleView: function() {
       this.expanded = !this.expanded;
+      this.$emit('change-expand', this.expanded);
     },
     getExpandedClass: function() {
       return this.expanded ? 'expanded' : '';
@@ -113,10 +118,6 @@ export default {
   border: #717273 1px solid;
 
   &.expanded {
-    width: 300px;
-    &#images {
-      min-width: 350px;
-    }
   }
 }
 

@@ -9,6 +9,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import store from '@/store';
 
 export default {
   name: 'OptionsImageColorScale',
@@ -22,7 +23,7 @@ export default {
         return this.state.colorScale;
       },
       set(value) {
-        this.$store.commit('OPTIONS_IMAGE_CHANGE_COLOR_SCALE', value);
+        store.commit('OPTIONS_IMAGE_CHANGE_COLOR_SCALE', value);
       },
     },
   },
