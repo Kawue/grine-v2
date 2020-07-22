@@ -194,6 +194,7 @@ export default {
         }
       });
       this.mergeNodes = false;
+      this.$refs['assignmentModal'].show()
     },
     clickMergeNodes() {
       this.selected = null;
@@ -206,6 +207,7 @@ export default {
         })
         .sort((a, b) => (a.name > b.name ? 1 : -1));
       this.mergeNodes = true;
+      this.$refs['assignmentModal'].show()
     },
     handleOk() {
       if (this.mergeNodes) {

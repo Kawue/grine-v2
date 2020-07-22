@@ -1547,6 +1547,39 @@ class NetworkService {
       }
     }
     // remove duplicated nodes
+    /*//start
+    debugger
+    const map = {};
+    for (let i = 0; i < deepNodes.length; i++) {
+      map[deepNodes[i].name] = i;
+    }
+    const edgeWeights = [];
+    const edgeKeys = Object.keys(
+      graph['hierarchy' + deepestHierarchy]['edges']
+    );
+    for (const edge of edgeKeys) {
+      const sourceIndex =
+        map[graph['hierarchy' + deepestHierarchy]['edges'][edge].source];
+      const targetIndex =
+        map[graph['hierarchy' + deepestHierarchy]['edges'][edge].target];
+      if (sourceIndex != null && targetIndex != null) {
+        const weight =
+          graph['hierarchy' + deepestHierarchy]['edges'][edge].weight;
+          edgeWeights.push({"source": sourceIndex, "target": targetIndex, "weight": weight});
+      }
+    }
+    // cluster edgeweights
+    weightArray = edgeWeight.map((e)=>{return(e.weight)})
+    maxWeight = Math.max(...weightArray)
+    weightIndex = weightArray.indexOf(maxWeight)
+    weightArray.splice(index, weightIndex);
+    edgeWeight.splice(index, weightIndex);
+    for (const weight in ) {
+      
+      
+    }
+    debugger;
+    //end*/
     deepNodes.sort((a, b) => (a.name > b.name ? 1 : -1));
     deepNodes.forEach((item, index) => {
       if (

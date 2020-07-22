@@ -154,7 +154,7 @@
               ></v-icon>
             </span>
           </div>
-          <p>Cache / Lasso</p>
+          <p>Cache - Lasso</p>
           <div style="min-width: 10%" v-on:click="deleteLassoImage()">
             <v-icon
               name="trash-alt"
@@ -216,6 +216,7 @@
         <div style="margin: auto">
           <mz-image
             :imageDataIndex="4"
+            v-bind:enable-lasso="true"
             v-bind:enableClickCopyToLassoImage="false"
             v-bind:hidden="!showDimRed"
           ></mz-image>
@@ -251,7 +252,7 @@
               ></v-icon>
             </span>
           </div>
-          <p>Histo</p>
+          <p>Modality</p>
           <div style="min-width: 10%" v-on:click="deleteHistoOverlay()">
             <v-icon
               name="trash-alt"
@@ -371,6 +372,7 @@ export default {
   },
   data: function() {
     return {
+      expandedWidth: 360,
       showCommunity: true,
       showMz: true,
       showAggregated: true,
@@ -600,12 +602,16 @@ export default {
       store.commit('CLEAR_IMAGE', imageIndex.LASSO);
       store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
       store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
+      store.commit('SET_CACHE_DIMRED_LASSO_ACTIVE', false);
       store.commit('RESET_SELECTION');
     },
     deleteHistoOverlay() {
       store.commit('SET_SHOW_HISTO_OVERLAY', false);
       store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
       store.commit('RESET_SELECTION');
+      d3.select(this.$el)
+        .selectAll('.content .canvas-root .lasso-group path')
+        .node().remove();;
     },
     transmitEvent(expanded) {
       this.$emit('change-expand', expanded);
@@ -615,6 +621,11 @@ export default {
         store.commit('OPTIONS_IMAGE_DIM_RED_CHANGE_RELATIVE', true);
       }
       store.commit('CLEAR_IMAGE', imageIndex.DIM_RED);
+      store.commit('RESET_SELECTION');
+      store.commit('SET_DIMRED_IMAGE_LASSO_ACTIVE', false);
+      d3.select(this.$el)
+        .selectAll('.content .canvas-root .lasso-group path')
+        .node().remove();
     },
   },
   mounted: function() {
@@ -683,7 +694,8 @@ export default {
       return store.getters.getHistoAlpha;
     },
     showDimredTrash: function() {
-      return store.getters.getImageData(imageIndex.DIM_RED).mzValues.length > 0;
+      return store.getters.getImageData(imageIndex.DIM_RED).mzValues.length > 0 ||
+        store.getters.getDimRedLassoActive;
     },
     showLassoTrash: function() {
       return store.getters.getImageData(imageIndex.LASSO).mzValues.length > 0;

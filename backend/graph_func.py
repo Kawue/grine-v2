@@ -24,14 +24,19 @@ def graph_initialisation(similarity_matrix, threshold):
         'group_degree': [],
         'within_cluster_coefficient': []
     }
-    distance_matrix = 1 - similarity_matrix
-    distance_matrix[distance_matrix < 0.001] = 0.001
-    adjacency_matrix = distance_matrix.copy()
-    adjacency_matrix[adjacency_matrix > (1 - threshold)] = 0
+    #distance_matrix = 1 - similarity_matrix
+    #distance_matrix[distance_matrix < 0.001] = 0.001
+    #adjacency_matrix = distance_matrix.copy()
+    #adjacency_matrix[adjacency_matrix > (1 - threshold)] = 0
+    adjacency_matrix = similarity_matrix.copy()
+    adjacency_matrix[adjacency_matrix < threshold] = 0
     np.fill_diagonal(adjacency_matrix, 0)
     G.clear()
     G = nx.from_numpy_matrix(adjacency_matrix)
+    #G = force_connected_graph(G, similarity_matrix)
     del adjacency_matrix
+    del similarity_matrix
+    '''
     while len(list(nx.connected_components(G))) > 1:
         sub_components = list(map(lambda x: np.array(list(x)), list(nx.connected_components(G))))
         for idx, node_list in enumerate(sub_components):
@@ -40,7 +45,8 @@ def graph_initialisation(similarity_matrix, threshold):
             local_dist[node_list[:, np.newaxis], complement_node_list] -= 20
             edge_to_add = np.unravel_index(np.argmin(local_dist), local_dist.shape)
             G.add_edge(edge_to_add[0], edge_to_add[1], weight=distance_matrix[edge_to_add[0], edge_to_add[1]])
-    del distance_matrix
+    '''
+    #del distance_matrix
 
 
 def update_graph(node_cluster):
@@ -108,7 +114,7 @@ def cluster_coefficient():
         degree_per_node.sort(key=lambda x: x[0])
         cluster_coeff_per_node.sort(key=lambda x: x[0])
         adj_cluster_coeff_per_node = [
-            (degree_per_node[i][0], math.log(degree_per_node[i][1]) * cluster_coeff_per_node[i][1]) for i in
+            (degree_per_node[i][0], math.log(degree_per_node[i][1]) * cluster_coeff_per_node[i][1]) if degree_per_node[i][1] > 1 else (degree_per_node[i][0], 0) for i in
             range(len(degree_per_node))]
         calculated_ranks['cluster_coefficient'] = sort_and_map_tuple_list_to_name(adj_cluster_coeff_per_node)
     return calculated_ranks['cluster_coefficient']
@@ -127,7 +133,10 @@ def between_group_degree():
             for neighbor in G.neighbors(node):
                 if G.nodes[node]['cluster'] != G.nodes[neighbor]['cluster']:
                     counter += G.get_edge_data(neighbor, node)['weight']
-            b_degree.append((node, counter / sum_edge_weights(G, node)))
+            if counter == 0:
+                b_degree.append((node, 0))
+            else:
+                b_degree.append((node, counter / sum_edge_weights(G, node)))
         calculated_ranks['between_group_degree'] = sort_and_map_tuple_list_to_name(b_degree)
     return calculated_ranks['between_group_degree']
 
@@ -138,8 +147,9 @@ def within_group_degree():
         :return: sorted list of nodes
     """
     global G
-    w_degree = [{'nodeIndex': d['nodeIndex'], 'value': 1-d['value']}for d in between_group_degree()]
-    w_degree.reverse()
+    #w_degree = [{'nodeIndex': d['nodeIndex'], 'value': 1-d['value']} for d in between_group_degree()]
+    w_degree = [{'nodeIndex': d['nodeIndex'], 'value': 1-d['value']} if nx.degree(G, d['nodeIndex']) > 0 else {'nodeIndex': d['nodeIndex'], 'value': 0} for d in between_group_degree()]
+    w_degree = sorted(w_degree, key=lambda x: x['value'], reverse=True)
     return w_degree
 
 
@@ -180,7 +190,7 @@ def average_weight_per_edge():
     """
     global G, calculated_ranks
     if len(calculated_ranks['cluster_coefficient']) == 0:
-        degree_per_node = list(map(lambda x: (x[0], sum_edge_weights(G, x[0]) / x[1]), list(G.degree())))
+        degree_per_node = list(map(lambda x: (x[0], sum_edge_weights(G, x[0]) / x[1]) if x[1] > 0 else (x[0], 0), list(G.degree())))
         calculated_ranks['cluster_coefficient'] = sort_and_map_tuple_list_to_name(degree_per_node, False)
     return calculated_ranks['cluster_coefficient']
 
@@ -206,7 +216,10 @@ def avg_neighbor_degree():
             neighbor_degrees = []
             for n in G.neighbors(node):
                 neighbor_degrees.append(degrees[n])
-            b_degree.append((node, sum(neighbor_degrees)/len(neighbor_degrees)))
+            if len(neighbor_degrees) == 0:
+                b_degree.append((node, 0))
+            else:
+                b_degree.append((node, sum(neighbor_degrees)/len(neighbor_degrees)))
         calculated_ranks['avg_neighbor_degree'] = sort_and_map_tuple_list_to_name(b_degree)
     return calculated_ranks['avg_neighbor_degree']
 
@@ -251,3 +264,26 @@ def sort_and_map_tuple_list_to_name(l, reverse=True):
     """
     l.sort(key=lambda x: x[1], reverse=reverse)
     return [{'nodeIndex': index, 'value': value} for (index, value) in l]
+
+def force_connected_graph(G, similarity_matrix):
+    non_zero_weight_constant = 0.0000000001
+    #similarity_matrix += non_zero_weight_constant
+    if (similarity_matrix <= 0).any():
+        similarity_matrix += (np.abs(np.amin(similarity_matrix)) + non_zero_weight_constant)
+    while len(list(nx.connected_components(G))) > 1:
+        components = list([np.array(list(c)) for c in nx.connected_components(G)])
+        candidate_edges = []
+        for i, c1 in enumerate(components):
+            for j, c2 in enumerate(components[i+1:], start=i+1):
+                try:
+                    bool_matrix = np.zeros_like(similarity_matrix)
+                    bool_matrix[np.ix_(c1,c2)] = 1
+                    bool_matrix[bool_matrix == 0] = -np.inf
+                    candidate_edges.append(np.unravel_index(np.argmax(similarity_matrix * bool_matrix), similarity_matrix.shape))
+                except Exception as e:
+                    print(f"Exception: {e}; For edge pair ({i}, {j}).")
+        edge_to_add = candidate_edges[np.argmax([similarity_matrix[e[0], e[1]] for e in candidate_edges])]
+        G.add_edge(edge_to_add[0], edge_to_add[1], weight=similarity_matrix[edge_to_add[0], edge_to_add[1]])
+    if len(list(nx.connected_components(G))) > 1:
+        raise ValueError("Bug in force_connected. Connection unsuccessful!")
+    return G

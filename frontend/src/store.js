@@ -74,6 +74,7 @@ export default new Vuex.Store({
           selectedPoints: [], // points that are selected by the lasso
           lassoFetching: false, // true during api call of lasso matching
           available: false,
+          lassoActive: false,
         },
         {
           // imageIndex.HIST data used to render the histopathologie image
@@ -232,6 +233,9 @@ export default new Vuex.Store({
     getCacheImageLassoActive: state => {
       return state.images.imageData[imageIndex.LASSO].lassoActive;
     },
+    getDimRedLassoActive: state => {
+      return state.images.imageData[imageIndex.DIM_RED].lassoActive;
+    },
     getDimRedAvailable: state => {
       return state.images.imageData[imageIndex.DIM_RED].available;
     },
@@ -373,7 +377,9 @@ export default new Vuex.Store({
       return state.options.image.colorScales;
     },
     isMzLassoSelectionActive: state => {
-      return state.images.imageData[imageIndex.LASSO].selectedPoints.length > 0;
+      return (state.images.imageData[imageIndex.LASSO].selectedPoints.length > 0) 
+      || (state.images.imageData[imageIndex.HIST].selectedPoints.length > 0) 
+      || (state.images.imageData[imageIndex.DIM_RED].selectedPoints.length > 0);
     },
   },
   mutations: {
@@ -526,6 +532,9 @@ export default new Vuex.Store({
     },
     SET_CACHE_IMAGE_LASSO_ACTIVE: (state, value) => {
       state.images.imageData[imageIndex.LASSO].lassoActive = value;
+    },
+    SET_DIMRED_IMAGE_LASSO_ACTIVE: (state, value) => {
+      state.images.imageData[imageIndex.DIM_RED].lassoActive = value;
     },
     SET_LOADING_GRAPH_DATA: (state, loading) => {
       state.loadingGraphData = loading;
@@ -839,6 +848,8 @@ export default new Vuex.Store({
       state.network.clusterChange.split.newGroup = [];
       state.network.clusterChange.split.oldGroup = [];
       state.images.imageData[imageIndex.LASSO].selectedPoints = [];
+      state.images.imageData[imageIndex.DIM_RED].selectedPoints = [];
+      state.images.imageData[imageIndex.HIST].selectedPoints = [];
       const tuple = mzListService.resetHighlightedMz(
         state.mzList.visibleMz,
         state.mzList.notVisibleMz,
@@ -860,8 +871,9 @@ export default new Vuex.Store({
       state.images.imageData[imageIndex.SELECTED_MZ].base64Image = null;
       state.images.imageData[imageIndex.AGGREGATED].mzValues = [];
       state.images.imageData[imageIndex.AGGREGATED].base64Image = null;
-      state.images.imageData[imageIndex.DIM_RED].mzValues = [];
       if (!keepLasso) {
+        state.images.imageData[imageIndex.DIM_RED].mzValues = [];
+        state.images.imageData[imageIndex.HIST].mzValues = [];
         state.images.imageData[imageIndex.LASSO].mzValues = [];
         state.images.imageData[imageIndex.LASSO].base64Image = null;
       }
@@ -1084,6 +1096,15 @@ export default new Vuex.Store({
           visibleNodes.push({ name: node.name, mzs: node.mzs });
           counter++;
         }
+
+        let lasso_id = -1;
+        for (const images of context.state.images.imageData){
+          lasso_id += 1;
+          if (images.lassoActive === true){
+            break;
+          }
+        }
+
         const postData = {
           visibleNodes: visibleNodes,
           selectedMzs: context.state.images.imageData[index].mzValues,
@@ -1091,6 +1112,7 @@ export default new Vuex.Store({
           method: mergeMethod,
           minIntensity: context.state.options.image.minIntensity,
           minOverlap: context.state.options.image.minOverlap,
+          lasso_id: lasso_id
         };
         axios
           .post(url, postData)

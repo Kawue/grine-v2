@@ -239,6 +239,7 @@ export default {
       if (lassoPolygon.length < 2) {
         store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
         store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+        store.commit('SET_DIMRED_IMAGE_LASSO_ACTIVE', false);
         if (
           this.imageDataIndex === imageIndex.HIST &&
           !store.getters.getImageData(imageIndex.HIST).showOverlay
@@ -249,9 +250,15 @@ export default {
         if (this.imageDataIndex === imageIndex.LASSO) {
           store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', true);
           store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+          store.commit('SET_DIMRED_IMAGE_LASSO_ACTIVE', false);
         } else if (this.imageDataIndex === imageIndex.HIST) {
           store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
           store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', true);
+          store.commit('SET_DIMRED_IMAGE_LASSO_ACTIVE', false);
+        } else if (this.imageDataIndex === imageIndex.DIM_RED) {
+          store.commit('SET_CACHE_IMAGE_LASSO_ACTIVE', false);
+          store.commit('SET_HISTO_IMAGE_LASSO_ACTIVE', false);
+          store.commit('SET_DIMRED_IMAGE_LASSO_ACTIVE', true);
         }
       }
 

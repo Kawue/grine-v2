@@ -113,17 +113,20 @@ def selection_match(polygon_ref, polygon_match, min_intensity, min_overlap, aggr
 
     # find amount of common entries in selected and node dataset
     overlap = polygon_ref * polygon_match
+    #overlap = (polygon_ref * polygon_match) + (~polygon_ref * ~polygon_match)
     match_score = overlap.sum() / len(polygon_ref)
     return match_score >= min_overlap
 
 
-def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, aggregation_method, min_intensity, min_overlap):
+def check_nodes_for_match(ds_name, node_data, selected_mzs, selected_points, aggregation_method, min_intensity, min_overlap, lasso_id):
     mzDataSet = datasets[ds_name]["dataset"]
     cube = mzDataSet.getCube()
     selected_points = list(zip(*selected_points))
 
-    # only Histology Image mz array is ?always? empty.
-    if len(selected_mzs) == 0:
+    # 4: DimRed Image
+    # 5: Modality Image
+    # See constants.js in frontend
+    if lasso_id in [4,5]:
         polygon_ref = mzDataSet.getBinaryImage(uInt8=True)[selected_points]
     else:
         polygon_ref = aggregation_method(cube[:,:,mzDataSet.getMzIndex(selected_mzs)], axis=2)[selected_points]
@@ -269,6 +272,7 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name):
         post_data_aggregation_method = post_data_json['method']
         post_data_min_intensity = float(post_data_json['minIntensity']) / 100
         post_data_min_overlap = float(post_data_json['minOverlap']) / 100
+        lasso_id = int(post_data_json['lasso_id'])
     except Exception as e:
         print("Exception during Dimension Reduction Matching.")
         print(e)
@@ -284,7 +288,8 @@ def datasets_imagedata_selection_match_nodes_action(dataset_name):
         post_data_selected_points,
         aggregation_methods[post_data_aggregation_method],
         post_data_min_intensity,
-        post_data_min_overlap
+        post_data_min_overlap,
+        lasso_id
     )
 
     return json.dumps(ret)
