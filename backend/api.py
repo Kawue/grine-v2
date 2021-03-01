@@ -64,13 +64,13 @@ for dataset_name in datasets.keys():
     image_path = path_to_data + path_to_hist_images + dataset_name
     dimreduce_file_candidates = [file_name for file_name in listdir(path_to_data + path_to_dimreduce) if re.match(dimreduce_pattern_blueprint.format(dataset_name), file_name)]
     datasets[dataset_name] = {
-        'dimreduce': None if len(dimreduce_file_candidates) is 0 else DimRedDataSet(pd.read_hdf(path_to_data + path_to_dimreduce + dimreduce_file_candidates[0]).droplevel('dataset')),
+        'dimreduce': None if len(dimreduce_file_candidates) == 0 else DimRedDataSet(pd.read_hdf(path_to_data + path_to_dimreduce + dimreduce_file_candidates[0]).droplevel('dataset')),
         'dataset': MzDataSet(pd.read_hdf((path_to_data + path_to_dataset + dataset_blueprint).format(dataset_name)).droplevel('dataset')),
         'histo_images': [image for image in listdir(image_path)] if isdir(image_path) else []
     }
     if datasets[dataset_name]['dimreduce'] is None:
         print('No dimensionality reduction image for dataset', dataset_name)
-    if len(datasets[dataset_name]['histo_images']) is 0:
+    if len(datasets[dataset_name]['histo_images']) == 0:
         if not isdir(image_path):
             print('No histo image folder for dataset', dataset_name)
         else:

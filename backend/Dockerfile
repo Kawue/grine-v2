@@ -1,4 +1,4 @@
-FROM python:3.6-slim
+FROM python:3.7-slim
 RUN apt-get clean \
     && apt-get -y update
 RUN apt-get -y install nginx \

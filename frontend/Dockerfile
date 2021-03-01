@@ -1,5 +1,5 @@
 # build stage
-FROM node:8 as build-stage
+FROM node:14 as build-stage
 WORKDIR /app
 # RUN apk add yarn
 COPY package.json ./

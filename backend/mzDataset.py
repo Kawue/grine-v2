@@ -1,4 +1,5 @@
 import numpy as np
+from copy import copy
 from matplotlib import cm
 
 
@@ -31,7 +32,7 @@ class MzDataSet:
         self.__mapping = MzMapping(list(dframe.columns))
         gx = dframe.index.get_level_values("grid_x").astype('int')
         gy = dframe.index.get_level_values("grid_y").astype('int')
-        
+
         self.__binaryimage = np.zeros((gy.max()+1, gx.max()+1))
         self.__binaryimage[(gy,gx)] = 1
         self.__binaryimage_8bit = np.zeros((gy.max()+1, gx.max()+1))
@@ -71,7 +72,7 @@ class MzDataSet:
         return intensity
 
     def getColorImage(self, mzValues, method=np.mean, cmap='viridis', bytes=True):
-        colorMap = cm.get_cmap(cmap)
+        colorMap = copy(cm.get_cmap(cmap))
         colorMap.set_bad(color='white')
         alphaChannel = np.full((self.__cube.shape[0],self.__cube.shape[1]), 254, dtype=np.uint8)
         alphaChannel[np.isnan(self.__cube[:,:,0])] = 0
