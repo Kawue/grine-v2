@@ -35,6 +35,7 @@ docker-compose down
 * Copy JSON into `backend/data/json`. The name of the file is irrelevant.
 * For every graph in the JSON file identify the dataset name, which you can find in the JSON file itself. The name should be unique for every dataset.
 * Copy every dataset file into `backend/data/dataset`. The name of the files must have the pattern `<dataset_name>.h5`, where `<dataset_name>` is the placeholder for the real dataset name.
+* Copy the computed similarity matrices into `backend/data/matrix`. The name of the files must have the pattern `similarity-matrix-<dataset_name>.npy`, where `<dataset_name>` is the placeholder for the real dataset name.
 * (Optional)
 Copy every dimensionality reduction data file into `backend/data/dimreduce`. The files will be automatically detected and loaded, if the name of the files begins with`dimreduce-<dataset_name>`.
 * (Optional)
